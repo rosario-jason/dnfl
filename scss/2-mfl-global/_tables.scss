@@ -1,0 +1,2087 @@
+table.no-borderspacing { 
+  margin: 0; 
+  border: 0; 
+  border-spacing: 0; 
+} 
+
+.report { 
+  width: 100%; 
+  border: 0; 
+  margin: 0; 
+  padding: 0; 
+  border-spacing: 0; 
+  background: var(--homepage-table-bg); 
+  border-radius: var(--homepage-table-border-radius); 
+  border-collapse: var(--homepage-table-border-collapse); 
+  overflow: var(--homepage-table-overflow); 
+} 
+
+.mobile-wrap, 
+.settings-mobile-wrap, 
+#options_45 #container-wrap table.report, 
+#body_live_scoring_summary #live_scoring_summary table.scoresummary table, 
+#body_live_scoring_summary #live_scoring_summary table.teamscoresummary table, 
+#body_live_scoring_summary #live_scoring_summary table[width="90%"], 
+#body_live_scoring_summary #live_scoring_summary span.reportnavigation+table { 
+  background: var(--mobile-wrap-bg); 
+  border: var(--mobile-wrap-border); 
+  color: var(--mobile-wrap-color); 
+  border-radius: var(--mobile-wrap-border-radius); 
+  margin: .625rem auto; 
+  margin-top: 0; 
+  padding: .625rem; 
+  overflow-x: auto; 
+  max-width: 100%; 
+  -webkit-overflow-scrolling: touch; 
+} 
+
+.homepagemodule.report caption span { 
+  pointer-events: none; 
+} 
+
+.homepagemodule.report caption span a, 
+.homepagemodule.report caption span.module_expand { 
+  pointer-events: all; 
+} 
+
+.homepagecolumn .homepagemodule caption, 
+caption, 
+#commissioner_setup table.two_column_layout th { 
+  font-size: var(--caption-font-size, 1.1rem); 
+  text-align: var(--caption-text-align, center); 
+  background: var(--caption-background, none); 
+  padding: var(--caption-padding, .5rem .313rem); 
+  text-align: var(--caption-text-align, left); 
+  line-height: var(--caption-line-height, 100%); 
+  text-transform: var(--caption-text-transform, capitalize); 
+} 
+
+.homepagemodule caption.withfranchiseicon, 
+caption.withfranchiseicon { 
+  background: none; 
+  text-align: center; 
+} 
+
+.homepagecolumn .homepagemodule caption, 
+caption, 
+caption a, 
+caption a:link, 
+caption a:active, 
+caption a:visited { 
+  color: var(--caption-color); 
+} 
+
+caption { 
+  caption-side: top !important; 
+} 
+
+caption a:hover, 
+caption a:link:hover, 
+caption a:active:hover, 
+caption a:visited:hover { 
+  color: var(--accent); 
+} 
+
+caption.withfranchiseicon, 
+caption.withfranchiseicon a, 
+caption.withfranchiseicon a:link, 
+caption.withfranchiseicon a:active, 
+caption.withfranchiseicon a:visited { 
+  color: var(--main-four, var(--main)); 
+  text-align: center; 
+} 
+
+caption.withfranchiseicon a:hover, 
+caption.withfranchiseicon a:link:hover, 
+caption.withfranchiseicon a:active:hover, 
+caption.withfranchiseicon a:visited:hover { 
+  color: var(--accent); 
+} 
+
+caption .module_expand.custom_collapse, 
+caption .module_expand.custom_expand { 
+  color: var(--main-two, var(--main)); 
+  background: none; 
+} 
+
+caption .module_expand.custom_collapse:hover, 
+caption .module_expand.custom_expand:hover { 
+  color: var(--accent-four, var(--accent)); 
+} 
+
+caption .ownername { 
+  color: var(--accent); 
+  font-weight: 400; 
+  font-size: .75rem; 
+  padding: 0; 
+  background: none; 
+} 
+
+caption.withfranchiseicon .ownername { 
+  color: var(--accent); 
+} 
+
+th { 
+  background: var(--th-bg); 
+  font-size: .875rem; 
+  font-style: normal; 
+  font-weight: var(--th-weight); 
+  text-align: center; 
+  text-transform: var(--th-transform); 
+  padding: var(--th-padding); 
+  border-bottom: var(--th-border-bottom); 
+} 
+
+th, 
+th a, 
+th a:link, 
+th a:active, 
+th a:visited, 
+.oddtablerow th, 
+.oddtablerow th a, 
+.oddtablerow th a:link, 
+.oddtablerow th a:active, 
+.oddtablerow th a:visited, 
+.eventablerow th, 
+.eventablerow th a, 
+.eventablerow th a:link, 
+.eventablerow th a:active, 
+.eventablerow th a:visited { 
+  color: var(--accent, var(--accent)); 
+} 
+
+th a:hover, 
+th a:link:hover, 
+th a:active:hover, 
+th a:visited:hover, 
+.oddtablerow th:hover, 
+.oddtablerow th a:hover, 
+.oddtablerow th a:link:hover, 
+.oddtablerow th a:active:hover, 
+.oddtablerow th a:visited:hover, 
+.eventablerow th:hover, 
+.eventablerow th a:hover, 
+.eventablerow th a:link:hover, 
+.eventablerow th a:active:hover, 
+.eventablerow th a:visited:hover { 
+  color: var(--make-accent, var(--accent)); 
+} 
+
+.oddtablerow { 
+  background: var(--oddtablerow); 
+} 
+
+.eventablerow { 
+  background: var(--eventablerow); 
+} 
+
+.oddtablerow td, 
+.eventablerow td { 
+  padding: var(--row-padding); 
+} 
+
+.oddtablerow td { 
+  background: none; 
+  color: var(--row-color); 
+} 
+
+.eventablerow td { 
+  background: none; 
+  color: var(--row-color); 
+} 
+
+.oddtablerow td a, 
+.oddtablerow td a:link, 
+.oddtablerow td a:active, 
+.oddtablerow td a:visited, 
+#owner_activity td.franchisename { 
+  color: var(--row-color); 
+} 
+
+.eventablerow td a, 
+.eventablerow td a:link, 
+.eventablerow td a:active, 
+.eventablerow td a:visited { 
+  color: var(--row-color); 
+} 
+
+.oddtablerow td a:hover, 
+.oddtablerow td a:link:hover, 
+.oddtablerow td a:active:hover, 
+.oddtablerow td a:visited:hover { 
+  color: var(--accent); 
+} 
+
+.eventablerow td a:hover, 
+.eventablerow td a:link:hover, 
+.eventablerow td a:active:hover, 
+.eventablerow td a:visited:hover { 
+  color: var(--accent); 
+}
+
+.eventablerow td.pf, 
+.eventablerow td.pa, 
+.eventablerow td.bbidbalance, 
+.oddtablerow td.pf, 
+.oddtablerow td.pa, 
+.oddtablerow td.bbidbalance { 
+  color: var(--bcol-color); 
+} 
+
+.eventablerow td.h2hwlt, 
+.oddtablerow td.h2hwlt { 
+  font-size: var(--wlt-font-size); 
+  font-weight: var(--wlt-font-weight); 
+  text-decoration: var(--wlt-text-decoration); 
+}
+
+.newposition td, 
+.newposition th { 
+  border-color: var(--accent); 
+} 
+
+.reportfooter td, 
+td.reportfooter { 
+  color: var(--main); 
+  text-align: center; 
+  background: #fff; 
+  border-top: .25rem solid #ddd; 
+  border-bottom: .25rem solid #ddd; 
+} 
+
+.reportfooter td a, 
+.reportfooter td a:link, 
+.reportfooter td a:active, 
+.reportfooter td a:visited, 
+td.reportfooter a, 
+td.reportfooter a:link, 
+td.reportfooter a:active, 
+td.reportfooter a:visited { 
+  color: var(--accent); 
+} 
+
+.reportfooter td a:hover, 
+.reportfooter td a:link:hover, 
+.reportfooter td a:active:hover, 
+.reportfooter td a:visited:hover, 
+td.reportfooter a:hover, 
+td.reportfooter a:link:hover, 
+td.reportfooter a:active:hover, 
+td.reportfooter a:visited:hover { 
+  color: var(--main); 
+} 
+
+#options_117 .freeagent, 
+#top_starters .freeagent, 
+#top_drops .freeagent, 
+#top_adds .freeagent, 
+#options_08 .freeagent, 
+#options_236 .freeagent, 
+#body_top #top .freeagent { 
+  background-color: #ff14141a; 
+} 
+
+#options_117 .myfranchise, 
+#top_starters .myfranchise, 
+#top_drops .myfranchise, 
+#top_adds .myfranchise, 
+#options_08 .myfranchise, 
+#options_236 .myfranchise, 
+#body_top #top .myfranchise { 
+  background-color: #14ff141a; 
+}
+
+.franchiseicon { 
+  min-width: var(--ficon-min-width) !important; 
+  max-width: var(--ficon-max-width) !important; 
+  width: var(--ficon-width) !important; 
+  min-height: var(--ficon-min-height) !important; 
+  max-height: var(--ficon-max-height) !important; 
+  height: var(--ficon-height) !important; 
+  aspect-ratio: var(--ficon-aspect-ratio) !important; 
+  object-fit: var(--ficon-object-fit) !important; 
+  border-radius: var(--ficon-border-radius) !important; 
+  border: var(--ficon-border) !important; 
+} 
+
+td.ficonname a, 
+td.ficonname a:link, 
+td.ficonname a:visited, 
+td.ficonname a:hover, 
+td.ficonname a:active, 
+td.fname a, 
+td.fname a:link, 
+td.fname a:visited, 
+td.fname a:hover, 
+td.fname a:active { 
+  font-size: var(--franchise-font-size); 
+  font-weight: var(--franchise-font-weight); 
+  font-style: var(--franchise-font-style); 
+  text-decoration: var(--franchise-text-decoration); 
+  padding-right: var(--franchise-padding-right); 
+}
+
+.oddtablerow td ul, 
+.eventablerow td ul, 
+.sub-content ul { 
+  list-style-type: none; 
+} 
+
+.oddtablerow td ul li:before, 
+.eventablerow td ul li:before, 
+.sub-content ul li:before, 
+.show-sub-heads ul li:before, 
+.trade-assets-wrapper li::marker { 
+  content: "\f005"; 
+  font-family: 'Font Awesome 6 Pro'; 
+  padding-right: .188rem; 
+  margin-left: -1.5em; 
+} 
+
+.cal-event-desc li:before, 
+.oddtablerow td ul li:before, 
+.eventablerow td ul li:before, 
+.sub-content ul li:before, 
+.show-sub-heads ul li:before, 
+.trade-assets-wrapper li::marker { 
+  color: var(--accent); 
+}
+
+img.articlepicture, 
+#my_player_photos td img, 
+td.player_photo img { 
+  border: .188rem solid #fff; 
+  height: auto; 
+  max-width: 6.25rem; 
+  outline: .063rem solid var(--accent); 
+  margin: 0 auto; 
+} 
+
+th.warning, 
+td.warning { 
+  background: #FFF; 
+  color: red; 
+} 
+
+#fantasy_articles th select, 
+#options_185 .report th select { 
+  width: 100%; 
+  max-width: 25rem; 
+  margin: 0; 
+} 
+
+#league_chat td b { 
+  color: var(--main); 
+} 
+
+#league_chat caption span i { 
+  vertical-align: top; 
+  padding-left: .313rem; 
+}
+
+#league_chat .chatLapsedTime { 
+  color: var(--accent); 
+} 
+
+#league_chat form { 
+  padding: .313rem; 
+  text-align: center; 
+} 
+
+#league_chat input[type="button"], 
+#player_search input[type="button"] { 
+  width: 100%; 
+  margin-left: 0; 
+  border: 0 !important; 
+} 
+
+input#chat_text_field, 
+#player_search input { 
+  width: 100% !important; 
+  padding: .5rem; 
+  margin-left: 0; 
+} 
+
+#league_chat img[title="New Window"] { 
+  display: none; 
+} 
+
+#league_chat .fa-comments { 
+  margin-top: -.313rem; 
+  color: #fff !important; 
+} 
+
+#league_chat .fa-comments:hover { 
+  color: #ddd !important; 
+} 
+
+.reportform { 
+  text-align: center; 
+  margin: .625rem 0; 
+  margin-top: 0; 
+  padding: .313rem; 
+  box-shadow: 0 0 .063rem .063rem #0000001a; 
+  background: #fff; 
+  border-radius: .188rem; 
+} 
+
+.reportform input, 
+.reportform select { 
+  vertical-align: middle !important; 
+  margin-top: .125rem; 
+  margin-bottom: .125rem; 
+} 
+
+div.mobile-wrap .reportform { 
+  text-align: center; 
+  background: none; 
+  margin: 0; 
+  padding: .125rem; 
+  border-radius: 0; 
+  border: 0; 
+} 
+
+#body_board_show div.hcl { 
+  background: none !important; 
+} 
+
+#body_board_show .fa-thumbtack { 
+  color: green; 
+  margin-right: .125rem; 
+} 
+
+#body_board_show .fa-lock-keyhole { 
+  color: red; 
+  margin-right: .125rem; 
+} 
+
+.messageboardbar { 
+  width: 100%; 
+  display: inline-block; 
+} 
+
+.messageboardbar+td { 
+  display: block; 
+  width: 100%; 
+  text-align: center; 
+} 
+
+#board_show td { 
+  vertical-align: top; 
+} 
+
+.alert, 
+.tdalert span, 
+#body_live_scoring_summary #live_scoring_summary span.reportnavigation { 
+  padding: .313rem; 
+  margin: .625rem 0; 
+  margin-top: 0; 
+  height: 1.563rem; 
+  line-height: 1.563rem; 
+  display: inline-table; 
+  text-align: left; 
+  border-radius: .188rem; 
+} 
+
+#body_commissioner_setup #commissioner_setup .alert { 
+  text-align: center; 
+} 
+
+.alert-info-table, 
+.tdalert span { 
+  width: 99%; 
+  background: #fff; 
+  color: var(--accent); 
+  margin: .188rem 0; 
+  box-shadow: 0 0 .063rem .063rem #0000001a; 
+} 
+
+.alert.alert-info-table .reportnavigationheader, 
+.tdalert span b { 
+  padding-right: .313rem; 
+  color: var(--main); 
+} 
+
+.alert.alert-info-table a, 
+.alert.alert-info-table a:link, 
+.alert.alert-info-table a:active, 
+.alert.alert-info-table a:visited, 
+.tdalert span a, 
+.tdalert span a:active, 
+.tdalert span a:visited, 
+.tdalert span a:link { 
+  color: var(--main); 
+} 
+
+.alert.alert-info-table a:hover, 
+.alert.alert-info-table a:link:hover, 
+.alert.alert-info-table a:active:hover, 
+.alert.alert-info-table a:visited:hover, 
+.tdalert span a:hover, 
+.tdalert span a:active:hover, 
+.tdalert span a:visited:hover, 
+.tdalert span a:link:hover { 
+  color: var(--main); 
+} 
+
+.alert-info-body, 
+#body_live_scoring_summary #live_scoring_summary span.reportnavigation { 
+  width: 100%; 
+  background: #fff; 
+  color: var(--main); 
+  box-shadow: 0 0 .063rem .063rem #0000001a; 
+} 
+
+.alert.alert-info-body .reportnavigationheader { 
+  color: var(--main); 
+  padding-right: .313rem; 
+} 
+
+.alert.alert-info-body a, 
+.alert.alert-info-body a:link, 
+.alert.alert-info-body a:active, 
+.alert.alert-info-body a:visited { 
+  color: var(--accent); 
+} 
+
+.alert.alert-info-body a:hover, 
+.alert.alert-info-body a:link:hover, 
+.alert.alert-info-body a:active:hover, 
+.alert.alert-info-body a:visited:hover { 
+  color: var(--main); 
+} 
+
+.tdalert span { 
+  height: auto; 
+  line-height: initial; 
+  margin: .125rem; 
+}
+
+.starters_pos_th { 
+  border-bottom: .188rem solid var(--accent-two, var(--accent, #B82601)); 
+} 
+
+th.select-total-starters { 
+  border-bottom: .125rem solid #fff; 
+  width: 100%; 
+  padding: .125rem 0; 
+} 
+
+abbr { 
+  cursor: pointer; 
+  text-decoration: none; 
+  color: var(--accent, #B82601); 
+} 
+
+#tooltip { 
+  background: var(--accent, #B82601) !important; 
+  font-size: .875rem; 
+  border-radius: .188rem; 
+} 
+
+#tooltip:after { 
+  border-top-color: var(--accent, #B82601) !important; 
+} 
+
+#tooltip.top:after { 
+  border-top-color: var(--accent, #B82601) !important; 
+} 
+
+.franchise_offline, 
+.franchise_online { 
+  background: none; 
+  padding: 0; 
+} 
+
+.franchise_offline::after, 
+.franchise_online::after { 
+  content: ""; 
+  display: inline-block; 
+  border: .063rem solid #666; 
+  width: .625rem; 
+  height: .625rem; 
+  margin-left: .25rem; 
+  border-radius: .313rem; 
+} 
+
+.franchise_offline::after { 
+  background: #aaa; 
+} 
+
+.franchise_online::after { 
+  background: lime; 
+}
+
+#body_live_scoring th,
+#body_live_scoring_summary th,
+#body_options_101 th.franchisename,
+#body_options_08 th.status,
+#options_03 .report th,
+#body_options_16 .matchup,
+.pooltab td:first-of-type,
+#options_153 .report td:first-of-type,
+#options_232 .report td.franchisename,
+#options_156 .report td.franchisename,
+#options_204 .report td.franchisename,
+#options_208 .report td.franchisename,
+#options_158 .report td.franchisename,
+#options_157 .report td.player,
+#options_157 .report td.status,
+#body_free_agents .report td.player,
+#body_free_agents .report td:nth-child(3),
+#bbid_summary td.franchisename,
+#season_records td.franchisename,
+#record_streaks td.franchisename,
+#franchise_records td.franchisename,
+#player_records td.player,
+#body_options_07 .report td.player,
+#body_options_49 .report td:nth-child(2),
+#body_options_49 .report td:first-of-type,
+#options_171 .report td:first-of-type,
+#body_options_23 .report td:first-of-type,
+#options_08 .report .player,
+#body_top .report .player,
+#body_player .biography td,
+#body_options_236 .report td.player,
+#body_options_08 .report td.status,
+#brief_standings td.fname,
+#brief_standings th.fname,
+#standings td.fname,
+#standings th.fname,
+#standings td.ficonname,
+#standings th.ficonname,
+#brief_standings th.ficonname,
+#bar_chart th.franchisename,
+#news_articles th.headline,
+#power_rank th.franchisename,
+#transactions th.franchisename,
+#weekly_summary .franchisename,
+#nfl_confidence_pool th:first-of-type,
+#nfl_confidence_pool td:first-of-type,
+#body_options_20 .report th.franchisename,
+#nfl_survivor_pool th:first-of-type,
+#fantasy_confidence_pool th:first-of-type,
+#fantasy_confidence_pool td:first-of-type,
+#poll_summary th:first-of-type,
+#my_bye_weeks th,
+#weekly_mvp_starters th:first-of-type,
+#weekly_mvp th:first-of-type,
+#my_watch_list th,
+#weekly_fantasy_articles th,
+#all_my_leagues th,
+#league_links th,
+#my_links th,
+#franchise_records th.franchisename,
+#season_records th.franchisename,
+#player_records th.franchisename,
+#player_records .status,
+#bbid_summary th.franchisename,
+#top_starters .player,
+#top_owns .player,
+#top_survivor_picks th:first-of-type+th,
+#draft_tracker th:first-of-type+th,
+#my_draft_list th:first-of-type+th,
+#waiver_order .franchisename,
+#article_summary th,
+#my_draft_picks th,
+#my_draft_picks td:last-of-type,
+#recent_draft_picks th,
+#recent_draft_picks td:last-of-type,
+#average_auction_values th:first-of-type+th,
+#bar_chart th,
+#player_records .player,
+#top_adds .player,
+#top_drops .player,
+#hot_news .player,
+#top_performers .player,
+#top_fa .player,
+#my_news th,
+#roster .player,
+#news_articles .timestamp,
+#twitter_feed th,
+#league_champions th.rank+th,
+#record_streaks th.franchisename,
+#my_trophy_case th,
+#transactions th,
+#trade_bait th,
+#options_54 .report th:first-of-type,
+#options_07 .report tr:first-of-type .player,
+#options_07 .report tr th,
+#options_105 .report th,
+#options_138 .report th:first-of-type,
+#body_nfl_team_stats .report td:first-of-type,
+#body_nfl_team_stats .report th:first-of-type,
+#body_depth_chart .report th,
+#body_injury .report th,
+#body_options_156 th.franchisename,
+#options_06 .two_column_layout .report th,
+#body_options_169 .two_column_layout .report .player,
+#body_options_169 .two_column_layout .report .points+th,
+#body_accounting_report .report th,
+#body_accounting_report .report td,
+#body_options_118 .report .player,
+#body_options_118 .report th:first-of-type,
+#body_options_118 .report+.report td,
+#body_fantasy_box_score .report td:first-of-type,
+#body_fantasy_box_score .report th:first-of-type,
+#body_options_202 th,
+#options_194 .report .rank+th,
+#body_options_208 .report .franchisename,
+#body_options_171 .report th:first-of-type,
+#body_options_158 .report th.franchisename,
+#options_157 .report .player,
+#options_157 .report .status,
+#body_options_31 .report .franchisename,
+#body_options_119 .report th:first-of-type,
+#options_153 th:first-of-type,
+#body_options_81 .report .rank+th,
+#body_options_81 .report .rank+td,
+#lineup .report td:first-of-type,
+#lineup .report td:first-of-type+td,
+#lineup .report th:first-of-type+th,
+#lineup .report th:first-of-type+th+th,
+#body_pro_matchup .report td:first-of-type,
+#body_pro_matchup .report tr:nth-child(2)>th:nth-child(1),
+#body_options_215 .report th,
+#body_player .biography.report+.report th,
+#body_player #player_stats_table td,
+#body_tweets .report th,
+blockquote,
+#who_should_i_start .player,
+#standings .ficon,
+#body_board_show .topiclist.report.nocaption td,
+#body_board_show .topiclist.report.nocaption th,
+#body_accounting_report .report.nocaption th:first-of-type,
+#body_options_17 .report .franchisename,
+#body_options_17 .report .player,
+#body_options_17 div.mobile-wrap:nth-child(6) .report td,
+#body_options_17 div.mobile-wrap:nth-child(6) .report th,
+#body_options_208 .report td:last-of-type,
+#body_options_208 .report th:last-of-type,
+#body_options_120 .report th:first-of-type,
+#body_options_205 .mobile-wrap>.report th,
+#body_options_133 .mobile-wrap>.report td,
+#body_options_133 .mobile-wrap>.report th,
+#top_steals th:nth-child(2),
+#top_steals th:nth-child(3),
+#top_steals td:nth-child(2),
+#top_steals td:nth-child(3),
+#top_busts th:nth-child(2),
+#top_busts th:nth-child(3),
+#top_busts td:nth-child(2),
+#top_busts td:nth-child(3),
+#body_processed_waivers .mobile-wrap .report th,
+#body_options_210 .mobile-wrap .report th,
+#body_options_236 .report td:last-of-type,
+#body_options_236 .report th:last-of-type,
+#body_top .report td.status,
+#body_top th.status,
+#body_options_204 th.franchisename,
+#body_options_232 th.franchisename,
+#body_options_09 th.event,
+#body_options_122 th:first-of-type,
+#body_options_180 th:first-of-type,
+#body_reports_adp #container-wrap .mobile-wrap table td.player,
+#body_reports_adp #container-wrap .mobile-wrap table th.player,
+#next_weeks_fantasy_schedule th,
+#last_weeks_fantasy_results th,
+#body_free_agents table.report th.player,
+#body_free_agents table.report th.week+th,
+#body_options_152 table.report th,
+#body_options_15 table.h2hmatchups th,
+#body_options_22 table.scoresummary.report th,
+#body_options_22 table.report th[colspan="2"],
+#body_options_17 #container-wrap .mobile-wrap table th,
+#body_options_17 #container-wrap .mobile-wrap table td,
+#body_options_100 table.report th,
+#body_weekly .h2hmatchups.scoresummary th:first-child,
+#body_detailed th,
+#body_options_37 .pagebody .report .player,
+#body_options_37 .pagebody .report .franchisename,
+#body_options_117 .pagebody .report .player,
+#body_options_243 th,
+#body_options_243 td,
+#body_reports_fullfa table.report td.player,
+#body_reports_fullfa table.report th.player,
+#body_reports_salaries table.report th,
+#body_reports_salaries table.report td,
+#body_options_142 td,
+#body_options_142 th,
+#body_reports_newplay table.report tr th,
+#owner_activity th,
+#league_chat th,
+#top_owns .player+td+td,
+#top_owns .player+th+th,
+#top_starters .player+td+td,
+#top_starters .player+th+th,
+#top_drops .player+td+td,
+#top_drops .player+th+th,
+#top_adds .player+td+td,
+#top_adds .player+th+th,
+#body_reports_aav .pagebody table.report th,
+#body_reports_aav .pagebody table.report td {
+    text-align: left
+}
+
+#body_options_17 div.mobile-wrap:nth-child(4) .franchisename,
+#body_options_122 table th:first-of-type,
+#body_options_122 table td:first-of-type,
+#body_options_180 table th:first-of-type,
+#body_options_180 table td:first-of-type,
+#body_options_17 #container-wrap .mobile-wrap:last-of-type table td,
+#body_options_17 #container-wrap .mobile-wrap:last-of-type table th,
+#body_options_17 #container-wrap .mobile-wrap:last-of-type table .points,
+#ScoreDetails td,
+#ScoreDetails th,
+#ScoreNFLDetails td:first-child,
+#ScoreNFLDetails th:first-child {
+    text-align: left !important
+}
+
+#body_live_scoring .points,
+#body_live_scoring_summary .teamscoresummary th:last-of-type,
+#body_live_scoring_summary .teamscoresummary .points,
+#body_options_16 .week,
+#body_options_03 .report .rank,
+#top_survivor_picks td:first-of-type,
+#roster .contractyear,
+#roster .contractstatus,
+#options_17 .report .timestamp,
+#options_202 .report .year,
+#options_202 .reportfooter,
+#options_194 .report .rank,
+#options_232 .report td,
+#options_156 .report td,
+#options_208 .report td,
+#options_204 .report td,
+#body_options_23 .report td,
+#options_158 .report td,
+#options_157 .report td,
+#options_232 .report .rank,
+#options_156 .report td.rank,
+#nfl_confidence_pool .reportfooter td,
+#options_208 .report th.rank,
+#options_204 .report th.rank,
+#options_158 .report .rank,
+#options_157 .report .rank,
+#options_171 .report td,
+#body_free_agents .report td,
+#options_187 .contractyear,
+#options_187 .contractstatus,
+#options_187 .contractinfo,
+#bbid_summary td,
+#season_records td,
+#record_streaks td,
+#franchise_records td,
+#player_records td,
+#hot_news .reportfooter,
+#body_options_151 .report td,
+#hot_news td.points,
+#hot_news td.rank,
+#draft_tracker td.rank,
+#options_153 .report td,
+#body_options_07 .report td,
+#recent_draft_picks td[align="right"],
+.pooltab td,
+#my_draft_picks td[align="right"],
+#body_options_170 .report td,
+#options_17 .report td.rank,
+#options_117 .report td.rank,
+#options_117 td[align="right"],
+#body_options_49 .report tr:last-of-type td:first-of-type,
+table#youtubevideo.homepagemodule.report embed,
+#my_watch_list .reportfooter,
+#fantasy_confidence_pool .reportfooter td,
+#body_news_articles .report td.timestamp,
+#body_news_articles .report td.rank,
+#body_options_49 .report td,
+#body_options_09 .report td.test,
+#player_search form,
+#body_options_20 .report td.points,
+#body_options_215 .report td:first-of-type,
+#body_options_09 .report td.edit,
+#options_08 .report td,
+#body_top .report td,
+#youtubevideo td,
+#power_rank td+td,
+#body_options_101 .report td+td,
+#body_options_20 .report td.points,
+#body_options_151 .report td:first-of-type,
+#body_options_119 .report td+td,
+#body_options_236 .report td,
+#standings td,
+#standings th,
+#brief_standings td,
+#brief_standings th,
+#bar_chart .points,
+#transactions .rank,
+#weekly_summary td,
+#nfl_confidence_pool td,
+#nfl_confidence_pool tr.reportfooter td,
+#nfl_survivor_pool .reportfooter,
+#fantasy_confidence_pool td,
+#fantasy_confidence_pool tr.reportfooter td,
+#franchise_schedule .week,
+#average_auction_values .rank,
+#poll_summary td.poll_voted,
+#weekly_mvp_starters .points,
+#weekly_mvp .points,
+#my_watch_list th:last-of-type,
+#my_watch_list td.points,
+#top_starters .rank,
+#top_starters td[align="right"],
+#top_owns .rank,
+#top_owns td[align="right"],
+#top_survivor_picks td:last-of-type,
+#my_draft_list .points,
+#waiver_order .rank,
+#my_draft_picks th:first-of-type,
+#recent_draft_picks tr.reportfooter td,
+#my_draft_picks tr.reportfooter td,
+#recent_draft_picks th:first-of-type,
+#top_adds .rank,
+#top_adds td:last-of-type,
+#top_drops .rank,
+#top_drops td:last-of-type,
+#top_performers .rank,
+#top_performers .points,
+#top_fa .rank,
+#top_fa .points,
+#league_champions .rank,
+#my_trophy_case .year,
+#trade_bait th:last-of-type,
+#trade_bait td:last-of-type,
+#roster .points,
+#roster .week,
+#options_07 .report tr:first-of-type th,
+#options_07 .report td,
+#options_138 .report td.points,
+#options_138 .report th:first-of-type.player,
+#body_depth_chart .report th:nth-child(1),
+#body_depth_chart .report th:nth-child(2),
+#body_depth_chart .report td:nth-child(1),
+#body_depth_chart .report td:nth-child(2),
+#body_nfl_team_stats .report tr th:last-of-type,
+#body_nfl_team_stats .report td,
+#body_options_169 .two_column_layout .report .points,
+#body_accounting_report .report td.salary,
+#body_accounting_report .report th.debit,
+#body_accounting_report .report th.credit,
+#body_options_118 .report td,
+#body_options_118 .report+.report td:first-of-type,
+#body_fantasy_box_score .report td,
+#body_fantasy_box_score .report th,
+#body_fantasy_box_score .report td:first-of-type.points,
+#body_options_31 .report td,
+#body_options_81 .report td,
+#lineup .report td,
+#body_pro_matchup .report td,
+#body_pro_matchup .report th,
+#body_options_215 .report th:first-of-type,
+#body_player #player_stats_table th,
+#body_player #player_stats_table td.points,
+#body_player #player_stats_table td.week,
+#body_player .biography.report+.report+.report td,
+#body_player #player_stats_table .reportfooter,
+#who_should_i_start .points,
+#body_player .biography.report+.report td.reportfooter,
+#body_accounting_report .report.nocaption th,
+#body_options_17 div.mobile-wrap:nth-child(6) .report td:last-of-type,
+#body_options_17 div.mobile-wrap:nth-child(6) .report th:last-of-type,
+#body_options_54 .mobile-wrap>.report td,
+#body_options_205 .mobile-wrap>.report .points,
+#top_steals th,
+#top_steals td,
+#top_busts td,
+#top_busts th,
+#body_options_210 .mobile-wrap .report th:first-of-type,
+#body_options_210 .mobile-wrap .report td.week,
+#body_processed_waivers .mobile-wrap .report th:first-of-type,
+#body_processed_waivers .mobile-wrap .report td:first-of-type,
+#body_options_09 td.points,
+#body_reports_adp #container-wrap .mobile-wrap table td,
+#body_reports_adp #container-wrap .mobile-wrap table th,
+#top_adds td,
+#top_drops td,
+#top_starters td,
+#top_owns td,
+#next_weeks_fantasy_schedule .points,
+#last_weeks_fantasy_results .points,
+#body_options_06 td.two_column_layout table.report th:last-of-type,
+#body_options_06 td.two_column_layout table.report td.points,
+#body_options_22 td.two_column_layout table.report tr td.points,
+#body_live_scoring_summary #live_scoring_summary span.reportnavigation,
+#body_options_17 #container-wrap .mobile-wrap table th:first-of-type,
+#body_options_17 #container-wrap .mobile-wrap table th:first-of-type+.points,
+#body_options_17 #container-wrap .mobile-wrap table td:first-of-type,
+#body_options_17 #container-wrap .mobile-wrap table td:first-of-type+.points,
+#top_survivor_picks .points,
+#body_options_100 table.report th:first-child,
+#body_options_100 table.report th:last-child,
+#body_weekly .h2hmatchups.scoresummary td.points,
+#body_weekly .two_column_layout table th[colspan],
+#body_options_37 .pagebody .report td,
+#body_options_37 .pagebody .report th,
+#body_options_117 .pagebody .report td,
+#body_options_117 .pagebody .report th,
+#body_options_243 th.points,
+#body_options_243 td.points,
+#body_reports_fullfa table.report td,
+#body_reports_fullfa table.report th,
+#body_reports_salaries table.report .points,
+#body_reports_salaries table.report .salary,
+#body_reports_newplay table.report tr th[align="center"],
+#roster .drafted,
+#body_reports_aav .pagebody table.report .rank,
+#body_reports_aav .pagebody table.report .salary,
+#body_reports_aav .pagebody table.report .points,
+#body_reports_aav .pagebody table.report tr.reportfooter td {
+    text-align: center
+}
+
+#options_17 #container-wrap .mobile-wrap:last-of-type table .points:last-of-type,
+#body_live_scoring_summary tr.total td,
+#body_live_scoring_summary tr.players_yet_to_play td,
+#body_live_scoring_summary tr.players_currently_playing td,
+#body_live_scoring_summary tr.player_minutes_remaining td,
+#ScoreNFLDetails td,
+#ScoreNFLDetails th {
+    text-align: center !important
+}
+
+#body_live_scoring_summary tr.total th,
+#body_live_scoring_summary tr.players_yet_to_play th,
+#body_live_scoring_summary tr.players_currently_playing th,
+#body_live_scoring_summary tr.player_minutes_remaining th {
+    text-align: right !important
+}
+
+.report {
+    text-align: left
+}
+
+#options_210 .mobile-wrap .report th {
+    white-space: nowrap
+}
+
+#options_15 table.h2hmatchups th.points,
+#options_22 table.scoresummary.report .points,
+#options_22 table.report th,
+#body_weekly .two_column_layout table th {
+    text-align: right
+}
+
+#ScoreNFLDetails th[colspan],
+#body_pro_matchup th[colspan] {
+    font-size: 120%;
+    border-bottom: .25rem solid #fff;
+    font-weight: 700;
+    text-align: center !important
+}
+
+#ScoreDetails td.subtotal,
+#ScoreDetails td.subtotal+td,
+#body_detailed td.subtotal,
+#body_detailed td.subtotal+td {
+    color: var(--accent, #B82601)
+}
+
+#fullSeasonPts td b {
+    color: var(--accent, #B82601);
+    font-weight: 400
+}
+
+#my_draft_picks th:first-of-type,
+#recent_draft_picks th:first-of-type,
+#draft_tracker th:first-of-type,
+#my_draft_list th:first-of-type {
+    width: 3.75rem
+}
+
+#recent_draft_picks span.warning {
+    font-weight: 700
+}
+
+#top_adds .rank:first-of-type,
+#top_drops .rank:first-of-type,
+#top_starters .rank:first-of-type,
+#top_owns .rank:first-of-type,
+#top_steals>tbody>tr>td:first-of-type,
+#top_busts>tbody>tr>td:first-of-type {
+    width: 2.5rem
+}
+
+#top_adds .rank:last-of-type,
+#top_drops .rank:last-of-type,
+#top_starters .rank:last-of-type,
+#top_owns .rank:last-of-type {
+    width: 5rem
+}
+
+#top_adds .player,
+#top_drops .player,
+#top_starters .player,
+#top_owns .player {
+    width: 15.625rem
+}
+
+#options_234 table #SCRATCHPAD {
+    width: 100%
+}
+
+#options_179 table th,
+#options_121 table th {
+    text-align: left
+}
+
+#body_csetup_draftpref .mobile-wrap table {
+    table-layout: fixed;
+    width: auto
+}
+
+#body_csetup_draftpref .mobile-wrap table td:first-of-type {
+    width: 4.375rem
+}
+
+#body_csetup_draftpref .mobile-wrap table td {
+    white-space: nowrap
+}
+
+#body_csetup_draftpref .mobile-wrap table td input {
+    vertical-align: middle
+}
+
+#body_csetup_draftpref .mobile-wrap {
+    max-width: max-content
+}
+
+#options_18 h2 {
+    display: none
+}
+
+#options_18 .report.nocaption th,
+#options_18 .report.nocaption td.inputfield {
+    text-align: left
+}
+
+#options_18 .report.nocaption th.dropplayer,
+#options_18 .report.nocaption th[align="center"],
+#options_18 .report.nocaption td.inputfield.dropplayer {
+    text-align: center
+}
+
+#options_18 .report.nocaption td.inputfield input,
+#options_18 .report.nocaption td.inputfield span {
+    vertical-align: middle
+}
+
+#options_18 .report.nocaption td.inputfield {
+    white-space: nowrap
+}
+
+#options_180 .report td,
+#options_122 .report td {
+    text-align: center
+}
+
+#options_180 .report th:first-of-type,
+#options_122 .report th:first-of-type,
+#options_180 .report td:first-of-type,
+#options_122 .report td:first-of-type {
+    text-align: center;
+    width: 1%;
+    white-space: nowrap
+}
+
+#options_180 .report .franchiseicon,
+#options_122 .report .franchiseicon {
+    max-width: 9.375rem
+}
+
+#body_depth_chart.depth_chart_page .mobile-wrap th.status,
+#body_depth_chart.depth_chart_page .mobile-wrap th.depth,
+#body_depth_chart.depth_chart_page .mobile-wrap td:last-of-type,
+#body_depth_chart.depth_chart_page .mobile-wrap td:first-of-type+td {
+    text-align: center !important
+}
+
+#body_depth_chart.depth_chart_page .mobile-wrap td:first-of-type+td {
+    width: 3.75rem
+}
+
+#options_06 .withfranchiseicon span,
+#options_07 .withfranchiseicon span {
+    font-size: 0
+}
+
+#options_112 .inputlabel {
+    width: 6.25rem;
+    white-space: nowrap;
+    font-weight: 700
+}
+
+#bar_chart .weeklypointtotals table td,
+#options_20 .weeklypointtotals table td {
+    border-right: 0;
+    border-left: 0;
+    padding-right: 0;
+    padding-left: 0;
+    border: 0
+}
+
+.playerBio-Table { 
+  table-layout: fixed; 
+} 
+
+div.mobile-wrap>.playerBio-Table { 
+  table-layout: auto; 
+} 
+
+#body_player td[width="33%"] { 
+  width: 33%; 
+} 
+
+#body_player td[width="67%"] { 
+  width: 67%; 
+} 
+
+#body_player .reportnaviation { 
+  display: none; 
+} 
+
+#options_20 .report td img, 
+#bar_chart .weeklypointtotals table td img { 
+  max-width: 100%; 
+} 
+
+#bar_chart .weeklypointtotals table, 
+#options_20 .weeklypointtotals table { 
+  width: auto; 
+} 
+
+#bar_chart .weeklypointtotals table td, 
+#options_20 .weeklypointtotals table td { 
+  border-right: 0; 
+  border-left: 0; 
+  padding-right: 0; 
+  padding-left: 0; 
+  border: 0; 
+} 
+
+caption.withfranchiseicon { 
+  padding: .313rem 0; 
+  text-align: center !important; 
+  text-indent: 0; 
+} 
+
+caption.withfranchiseicon span { 
+  background: none !important; 
+  padding-left: 0; 
+} 
+
+#options_13 img.franchiselogo, 
+#options_13 .franchiselogo { 
+  display: none; 
+} 
+
+.franchiselogo { 
+  height: auto; 
+  max-width: 98%; 
+  margin: .625rem auto; 
+} 
+
+#options_27 textarea { 
+  width: 100%; 
+} 
+
+#options_27 .picks { 
+  width: 100%; 
+  min-width: 25rem; 
+} 
+
+.franchiselogo, 
+.franchiseicon { 
+  max-width: 100%; 
+  height: auto; 
+} 
+
+#body_login .warning { 
+  text-align: center; 
+} 
+
+#messageBoxDIV textarea { 
+  width: 100%; 
+  margin-left: 0; 
+} 
+
+#commishContainer table input { 
+  padding: 0; 
+  font-size: .875rem; 
+  font-weight: 400; 
+}
+
+#body_login td[width="175"] { 
+  display: none; 
+} 
+
+#owner_activity td.franchisename { 
+  font-family: 'Roboto', sans-serif; 
+  color: var(--main, #080e25); 
+} 
+
+#welcome #welcome caption span i { 
+  display: none; 
+} 
+
+#welcome #welcome caption span { 
+  pointer-events: none; 
+} 
+
+#player_records .rank:first-of-type+th, 
+#player_records .rank:first-of-type+td { 
+  display: none; 
+} 
+
+#player_records th { 
+  text-align: left; 
+} 
+
+#player_records td { 
+  text-align: left; 
+} 
+
+#player_records .rank, 
+#player_records .week, 
+#player_records .points, 
+#player_records .reportfooter td { 
+  text-align: center; 
+} 
+
+#league_champions th[colspan="2"] { 
+  font-size: 1rem; 
+  background: none; 
+  font-weight: 700; 
+  padding: .313rem; 
+  color: var(--accent, #B82601); 
+} 
+
+#owner_activity .videoconferenceicon { 
+  display: none; 
+} 
+
+#last_weeks_fantasy_results td.points { 
+  font-weight: 700; 
+  font-size: 1rem; 
+  color: var(--accent, #B82601); 
+} 
+
+#options_169 div.mobile-wrap:nth-child(4), 
+#options_06 .weekly-navbar+div.mobile-wrap { 
+  display: none; 
+} 
+
+.franchise-icon { 
+  width: 9.375rem; 
+} 
+
+#power_rank tr:nth-child(2) th, 
+#options_101 .mobile-wrap>.report tr:nth-child(2) th { 
+  white-space: nowrap; 
+} 
+
+textarea#IN_EXCHANGE_FOR { 
+  width: 100%; 
+} 
+
+tr.assets input[name^="bbid"] { 
+  width: 100%; 
+  min-width: 100%; 
+} 
+
+#comments_field_id textarea { 
+  width: 100%; 
+  margin: .313rem; 
+} 
+
+#body_player .playerBio-Table td[width="45%"], 
+#body_player .playerBio-Table td[width="55%"] { 
+  width: 50%; 
+  vertical-align: top; 
+  padding-right: .625rem; 
+} 
+
+#body_player .playerBio-Table td[width="55%"] { 
+  padding-right: 0; 
+} 
+
+#body_player .playerBio-Table td[width="55%"] p { 
+  text-align: center; 
+} 
+
+.bottomteam, 
+.topteam, 
+.bracket { 
+  border-color: var(--main, #080e25); 
+} 
+
+td.is-freeagent { 
+  color: red; 
+} 
+
+#weekly_summary .highscore { 
+  color: green; 
+  font-weight: 700; 
+} 
+
+#weekly_summary .lowscore { 
+  color: red; 
+  font-style: normal; 
+  text-decoration: none; 
+  font-weight: 700; 
+} 
+
+#options_176 div.mobile-wrap table td { 
+  width: 100%; 
+  display: inline-table; 
+  text-align: center; 
+} 
+
+#options_176 div.mobile-wrap table td[width="600"] { 
+  width: 100%; 
+  margin: 0 auto; 
+  display: block; 
+  float: none; 
+} 
+
+#options_176 div.mobile-wrap table td table { 
+  max-width: 25rem; 
+  display: inline-table; 
+  margin: .625rem; 
+} 
+
+#options_176 div.mobile-wrap table td table td { 
+  text-align: right; 
+  display: table-cell; 
+} 
+
+#options_176 div.mobile-wrap table td table .player { 
+  text-align: left; 
+} 
+
+#options_176 div.mobile-wrap table td table .points { 
+  text-align: center; 
+} 
+
+table.previews_table>tbody>tr:nth-child(1)>table.report.nocaption td { 
+  width: 50% !important; 
+  text-align: center; 
+  font-weight: 700; 
+  font-size: 1.25rem; 
+} 
+
+table.previews_table>tbody>tr:nth-child(1)>table.report.nocaption td div { 
+  width: 100% !important; 
+} 
+
+#options_22 .week_optionsbox+div.mobile-wrap, 
+#body_weekly .week_optionsbox+div.mobile-wrap { 
+  max-width: 25rem; 
+} 
+
+#body_reports_fsummary table.report td, 
+#body_reports_fsummary table.report th { 
+  text-align: center; 
+} 
+
+#body_reports_fsummary table.report .franchisename { 
+  width: 1%; 
+  white-space: nowrap; 
+  text-align: left; 
+} 
+
+#body_reports_fsummary table.report .franchisename+td, 
+#body_reports_fsummary table.report .franchisename+th { 
+  text-align: left; 
+} 
+
+#top_owns .player+td, 
+#top_owns .player+th, 
+#top_drops .player+td, 
+#top_drops .player+th, 
+#top_starters .player+td, 
+#top_starters .player+th, 
+#top_adds .player+td, 
+#top_adds .player+th { 
+  display: none; 
+} 
+
+#top_performers .rank, 
+#top_fa .rank { 
+  width: 1.875rem; 
+} 
+
+#top_performers .points, 
+#top_fa .points { 
+  width: 3.125rem; 
+} 
+
+#body_top #top_da .player, 
+#body_top #top .status, 
+#options_236 td.player, 
+#options_236 td.week+td, 
+#options_08 td.player, 
+#options_08 td.status { 
+  white-space: nowrap; 
+}
+
+#MFLroster th { 
+  border-bottom: .125rem solid #f1f1f1 !important; 
+} 
+
+#roster.homepagemodule.report tr:first-child th, 
+#roster.homepagemodule.report tr:last-child th { 
+  border-bottom: 0; 
+} 
+
+.playoffbracketname, 
+#power_rank tr:first-child th, 
+#roster.homepagemodule.report th[colspan="3"], 
+#roster.homepagemodule.report th[colspan="4"], 
+#roster.homepagemodule.report th[colspan="5"], 
+#roster.homepagemodule.report th[colspan="6"] { 
+  border-bottom: .125rem solid #f1f1f1; 
+} 
+
+#MFLroster table>tbody tr:first-child>th { 
+  border: 0 !important; 
+} 
+
+#MFLroster tr.total_salary_row th:first-of-type, 
+#MFLroster tr.salary_cap_row th:first-of-type, 
+#MFLroster tr.cap_room_available_row th:first-of-type { 
+  text-align: right; 
+} 
+
+#MFLroster tr.total_salary_row th:first-of-type+th, 
+#MFLroster tr.salary_cap_row th:first-of-type+th, 
+#MFLroster tr.cap_room_available_row th:first-of-type+th { 
+  text-align: left; 
+} 
+
+#MFLroster td.salary, 
+#MFLroster td.drafted { 
+  text-align: center; 
+} 
+
+#MFLroster tr.total_salary_row th, 
+tr.tradedifference td { 
+  color: #fff; 
+} 
+
+#MFLroster tr.total_salary_row th { 
+  background: #00b200; 
+  color: #fff; 
+} 
+
+#MFLroster tr.salary_cap_row th { 
+  background: #f55; 
+  color: #fff; 
+} 
+
+#MFLroster .savingsreview { 
+  border-top: .25rem solid var(--accent-two, var(--accent, #B82601)); 
+  background: var(--main-four, var(--main, #080e25)) !important; 
+  box-shadow: 0 0 .6rem #2d2d2d80; 
+} 
+
+#tradereview th.pointstotal, 
+#tradereview th.pointsdifference { 
+  text-align: center !important; 
+} 
+
+#MFLroster .checkBox input { 
+  display: none; 
+} 
+
+#MFLroster .checkBox label { 
+  font-size: 1rem; 
+} 
+
+#MFLroster th[class="no-checkBox"], 
+#MFLroster td[class="no-checkBox"], 
+#MFLroster th[class="checkBox"], 
+#MFLroster td[class="checkBox"] { 
+  min-width: unset !important; 
+  width: unset !important; 
+  margin: 0 !important; 
+  padding: 0 3px !important; 
+} 
+
+#MFLroster .checkBox input+label:before { 
+  font-family: 'Font Awesome 6 Pro'; 
+  display: inline-block; 
+  position: absolute; 
+  left: 50%; 
+  top: 50%; 
+  transform: translate(-50%, -50%); 
+  cursor: pointer; 
+  color: #888; 
+  content: "\f096"; 
+} 
+
+#MFLroster .checkBox input:checked+label:before { 
+  color: green; 
+  content: "\f046"; 
+} 
+
+#MFLroster td.checkBox { 
+  position: relative; 
+} 
+
+.standingstable .headerrow th { 
+  background: var(--accent, #B82601); 
+  color: #fff; 
+  font-size: 1.375rem; 
+  text-transform: uppercase; 
+  border-bottom: .188rem solid #fff; 
+} 
+
+#mflhistory td.gamedetailcell:first-of-type { 
+  color: var(--accent, #B82601); 
+} 
+
+#mflhistory .gamecentertable td.gamescore { 
+  color: var(--accent, #B82601); 
+  font-weight: 700; 
+} 
+
+#mflhistory .homepagemodule.prevmatchups caption { 
+  background: var(--accent, #B82601); 
+  color: #fff; 
+} 
+
+#mflhistory .winnermark { 
+  color: #00a517; 
+} 
+
+.dh_comments_cell { 
+  background: #fff; 
+  border: .063rem solid #ccc; 
+  color: #000; 
+} 
+
+.dh-control-setting, 
+.th-control-setting, 
+.trh-control-setting { 
+  color: #000; 
+} 
+
+.ph_tabs_scroll caption { 
+  color: #000; 
+}
+
+#options_03 div.mobile-wrap .report .franchise-date, 
+#transactions td .franchise-date { 
+  color: var(--accent, #B82601); 
+  font-size: smaller; 
+  font-style: italic; 
+} 
+
+#options_03 div.mobile-wrap .report td, 
+#transactions td { 
+  padding: .625rem .125rem; 
+} 
+
+#options_03 div.mobile-wrap .report td b.warning, 
+#transactions td b.warning { 
+  text-align: left; 
+  text-transform: uppercase; 
+  padding-left: .625rem; 
+  display: inline-block; 
+  padding-top: .313rem; 
+} 
+
+#options_113 table.report td a { 
+  white-space: nowrap; 
+} 
+
+#options_209 table.report td, 
+#options_182 table.report td, 
+#options_182 table.report th, 
+#options_113 table.report td, 
+#options_113 table.report th { 
+  text-align: center; 
+} 
+
+#options_209 table.report td:nth-child(2), 
+#options_209 table.report td:nth-child(3), 
+#options_209 table.report th:nth-child(2), 
+#options_209 table.report th:nth-child(3), 
+#options_182 table.report .player { 
+  text-align: left; 
+} 
+
+#options_182 #container-wrap>div.mobile-wrap>table>tbody>tr>td:nth-child(3), 
+#options_182 #container-wrap>div.mobile-wrap>table>tbody>tr>td:nth-child(4) { 
+  float: left; 
+  width: 100%; 
+  text-align: left; 
+} 
+
+#options_182 #container-wrap>div.mobile-wrap>table>tbody>tr>td:nth-child(4) table tr:last-child td { 
+  background: var(--th-bg, #080e25); 
+  color: #fff; 
+} 
+
+#options_182 #container-wrap>div.mobile-wrap>table>tbody>tr>td:nth-child(4) table tr:last-child td:first-child { 
+  text-align: right; 
+} 
+
+#options_182 #container-wrap>div.mobile-wrap>table>tbody>tr:nth-child(1)>th:nth-child(4) { 
+  display: none; 
+} 
+
+#options_209 table.report .franchiseicon { 
+  max-width: 9.375rem; 
+} 
+
+#options_65 .two_column_layout select { 
+  width: 100%; 
+} 
+
+#options_65 .two_column_layout td { 
+  text-align: center; 
+} 
+
+#options_71 .two_column_layout .mobile-wrap { 
+  background: var(--mobile-wrap-bg, #fff); 
+  border: .063rem solid var(--mobile-wrap-border, #eee); 
+  box-shadow: none; 
+} 
+
+#options_71 .two_column_layout .mobile-wrap td { 
+  text-align: center; 
+} 
+
+#options_71 .two_column_layout .mobile-wrap select { 
+  width: 100%; 
+} 
+
+#options_71 .two_column_layout caption { 
+  color: var(--main, #080e25); 
+}
+
+.wp_bar .lessthan { 
+  background: red !important; 
+  color: #fff !important; 
+} 
+
+.wp_bar .greaterthan { 
+  background: green !important; 
+  color: #fff !important; 
+} 
+
+#TeamWinPctRow td { 
+  padding: .063rem .188rem !important; 
+} 
+
+.wp_bar { 
+  display: inline-block !important; 
+  background: #f9f9f9; 
+  padding: .125rem; 
+  width: 100%; 
+  border-radius: .625rem; 
+}
+
+.hz-main-table tbody th.fixed-side {
+    text-align: left !important
+}
+
+.hz-main-table tbody .lh_defunct_check th.fixed-side,
+.hz-main-table .lh_defunct_check th.lh_overall_franchise.fixed-side {
+    text-align: left !important
+}
+
+.hz-main-table tbody th.fixed-side.has-ficon {
+    text-align: center !important
+}
+
+#historical_records tr.active_fran td,
+#series_records td {
+    border-right: .063rem solid var(--table-header-bg)
+}
+
+#historical_records tr.fran-last td,
+#historical_records tr.fran-last th,
+#series_records tr.fran-last td,
+#series_records tr.fran-last th {
+    border-bottom: .063rem solid var(--table-header-bg)
+}
+
+#historical_records tr.active_fran td,
+#series_records tr.active_fran td {
+    border-right: .063rem solid var(--table-header-bg)
+}
+
+#historical_records tr.lh_defunct_check td,
+#series_records tr.lh_defunct_check td {
+    border-right: .063rem solid var(--defunct-bg)
+}
+
+#historical_records tr.lh_defunct_check:last-of-type td,
+#series_records tr.lh_defunct_check:last-of-type td {
+    border-bottom: .063rem solid var(--defunct-bg)
+}
+
+.hs_tabs_wrap,
+.ls-history-modal {
+    --color-settings: #000;
+    --checkbox-check: green;
+    --checkbox-box: red;
+    --popup-win: green;
+    --popup-loss: red;
+    --popup-tie: orange;
+    --popup-th-bg: #eee;
+    --my-franchise: #000;
+    --my-franchise-bg: #FFFBCC;
+    --table-separate: .125rem solid #ddd;
+    --dash-x-boxes: #999;
+    --highlight-separate: .063rem solid #eee;
+    --table-header-bg: var(--th-bg, #080e25);
+    --table-header-bg-fixed: var(--th-bg, #080e25);
+    --defunct-bg-text: #fff;
+    --defunct-bg: red;
+    --defunct-bg-fixed: red
+}
+
+td.winIcon .roadWinIcon-img:before {
+    font-family: 'Font Awesome 6 Pro';
+    content: "\f0d9";
+    color: green;
+    font-size: 1rem
+}
+
+td.winIcon .homeWinIcon-img:before {
+    font-family: 'Font Awesome 6 Pro';
+    content: "\f0da";
+    color: green;
+    font-size: 1rem
+}
+
+td.winIcon .roadWinIcon-img img,
+td.winIcon .homeWinIcon-img img,
+td.winIcon .blankwin-img img {
+    display: none
+}
+
+#body_all_reports table td.two_column_layout th { 
+  color: var(--accent, #B82601); 
+  font-size: 1.375rem; 
+  background: none; 
+  text-align: left; 
+  line-height: 100%; 
+  text-transform: uppercase; 
+  font-weight: 700; 
+  padding-top: 1.5rem; 
+  padding-bottom: .2rem; 
+} 
+
+#body_all_reports table td.two_column_layout .oddtablerow { 
+  background: var(--oddtablerow, #f1f1f1); 
+} 
+
+#body_all_reports table td.two_column_layout .oddtablerow li { 
+  padding: .2rem 0 !important; 
+} 
+
+#body_all_reports table>tbody>tr>td:nth-child(1)>div>table>tbody>tr:nth-child(1)>th, 
+#body_all_reports table>tbody>tr>td:nth-child(2)>div>table>tbody>tr:nth-child(1)>th { 
+  padding-top: 0; 
+}
+
+@media only screen and (max-width:55em) { 
+  #csetup_revtrad table.report table, 
+  #csetup_revtrad table.report tbody, 
+  #csetup_revtrad table.report th, 
+  #csetup_revtrad table.report td, 
+  #csetup_revtrad table.report tr { 
+    display: block; 
+  } 
+
+  #csetup_revtrad table.report th { 
+    position: absolute; 
+    top: -9999rem; 
+    left: -9999rem; 
+  } 
+
+  #csetup_revtrad table.report td { 
+    position: relative; 
+    text-align: left; 
+    padding: .313rem 0; 
+    padding-left: 7.5rem; 
+    width: 100%; 
+  } 
+
+  #csetup_revtrad table.report td:before { 
+    position: absolute; 
+    left: .375rem; 
+    padding-right: .313rem; 
+    white-space: nowrap; 
+  } 
+
+  #csetup_revtrad table.report tr.newposition td { 
+    border: 0; 
+  } 
+
+  #csetup_revtrad table.report tr.newposition td:nth-of-type(3), 
+  #csetup_revtrad table.report tr.newposition td:nth-of-type(5) { 
+    border-bottom: .125rem solid #ccc; 
+  } 
+
+  #csetup_revtrad table.report tr.newposition+tr td:last-of-type { 
+    border-bottom: .25rem solid var(--accent); 
+  } 
+
+  #csetup_revtrad div.mobile-wrap { 
+    max-height: 34.375rem; 
+  } 
+
+  #csetup_revtrad table.report tr.newposition:before { 
+    display: table-caption; 
+    width: 100%; 
+    color: var(--accent); 
+    font-weight: 700; 
+    text-align: center; 
+  } 
+
+  #csetup_revtrad table.report tr.newposition:nth-of-type(2):before { content: "TRADE PENDING #1"; } 
+  #csetup_revtrad table.report tr.newposition:nth-of-type(4):before { content: "TRADE PENDING #2"; } 
+  #csetup_revtrad table.report tr.newposition:nth-of-type(6):before { content: "TRADE PENDING #3"; } 
+  #csetup_revtrad table.report tr.newposition:nth-of-type(8):before { content: "TRADE PENDING #4"; } 
+  #csetup_revtrad table.report tr.newposition:nth-of-type(10):before { content: "TRADE PENDING #5"; } 
+  #csetup_revtrad table.report tr.newposition:nth-of-type(12):before { content: "TRADE PENDING #6"; } 
+
+  #csetup_revtrad table.report tr.newposition td:nth-of-type(1):before { content: "Offer Date:"; } 
+  #csetup_revtrad table.report tr.newposition td:nth-of-type(2):before { content: "From Franchise:"; } 
+  #csetup_revtrad table.report tr.newposition td:nth-of-type(3):before { content: "Players/Picks:"; } 
+  #csetup_revtrad table.report tr.newposition td:nth-of-type(4):before { content: "To Franchise:"; } 
+  #csetup_revtrad table.report tr.newposition td:nth-of-type(5):before { content: "Players/Picks:"; } 
+  #csetup_revtrad table.report tr.newposition td:nth-of-type(6):before { content: "Expires:"; } 
+  #csetup_revtrad table.report tr.newposition td:nth-of-type(7):before { content: "Action:"; } 
+  
+  #options_67 table.report .rank { 
+    display: none !important; 
+  } 
+
+  #options_67 table.report table, 
+  #options_67 table.report tbody, 
+  #options_67 table.report th, 
+  #options_67 table.report td, 
+  #options_67 table.report tr { 
+    display: block; 
+  } 
+
+  #options_67 table.report th { 
+    position: absolute; 
+    top: -9999rem; 
+    left: -9999rem; 
+  } 
+
+  #options_67 table.report td { 
+    position: relative; 
+    text-align: left !important; 
+    padding: .313rem 0 .313rem 6.875rem !important; 
+    width: 100% !important; 
+  } 
+
+  #options_67 table.report td:before { 
+    position: absolute; 
+    left: .375rem; 
+    padding-right: .313rem; 
+    white-space: nowrap; 
+  } 
+
+  #options_67 div.mobile-wrap { 
+    max-height: 21.875rem; 
+  } 
+
+  #options_67 table.report td:nth-of-type(2):before { content: "Delete/Check"; } 
+  #options_67 table.report td:nth-of-type(3):before { content: "Franchise(s)"; } 
+  #options_67 table.report td:nth-of-type(4):before { content: "Type"; } 
+  #options_67 table.report td:nth-of-type(5):before { content: "Transaction"; } 
+  #options_67 table.report td:nth-of-type(6):before { content: "Date"; } 
+
+  #options_67 tr td.timestamp { 
+    border-bottom: .25rem solid #ddd; 
+  } 
+
+  #options_67 tr:last-of-type td.timestamp { 
+    border-bottom: 0; 
+  } 
+
+  /* Trade Offers Workspace (#options_05) */
+  #options_05 #container-wrap>.mobile-wrap table.report .rank { 
+    display: none !important; 
+  } 
+
+  #options_05 #container-wrap>.mobile-wrap table.report table, 
+  #options_05 #container-wrap>.mobile-wrap table.report tbody, 
+  #options_05 #container-wrap>.mobile-wrap table.report th, 
+  #options_05 #container-wrap>.mobile-wrap table.report td, 
+  #options_05 #container-wrap>.mobile-wrap table.report tr { 
+    display: block; 
+  } 
+
+  #options_05 #container-wrap>.mobile-wrap table.report th { 
+    position: absolute; 
+    top: -9999rem; 
+    left: -9999rem; 
+  } 
+
+  #options_05 #container-wrap>.mobile-wrap table.report td { 
+    position: relative; 
+    text-align: left !important; 
+    padding: .313rem 0 .313rem 8.125rem !important; 
+    width: 100% !important; 
+  } 
+
+  #options_05 #container-wrap>.mobile-wrap table.report td:before { 
+    position: absolute; 
+    left: .375rem; 
+    padding-right: .313rem; 
+    white-space: nowrap; 
+  } 
+
+  #options_05 #container-wrap>.mobile-wrap div.mobile-wrap { 
+    max-height: 21.875rem; 
+  } 
+
+  #options_05 #container-wrap>.mobile-wrap table.report tr.newposition td:nth-of-type(1):before { content: "Offer Date:"; } 
+  #options_05 #container-wrap>.mobile-wrap table.report tr.newposition td:nth-of-type(2):before { content: "From Franchise:"; } 
+  #options_05 #container-wrap>.mobile-wrap table.report tr.newposition td:nth-of-type(3):before { content: "Players/Picks:"; } 
+  #options_05 #container-wrap>.mobile-wrap table.report tr.newposition td:nth-of-type(4):before { content: "To Franchise:"; } 
+  #options_05 #container-wrap>.mobile-wrap table.report tr.newposition td:nth-of-type(5):before { content: "Players/Picks:"; } 
+  #options_05 #container-wrap>.mobile-wrap table.report td:nth-of-type(6):before { content: "Expires:"; } 
+  #options_05 #container-wrap>.mobile-wrap table.report tr.newposition td:nth-of-type(6):before { content: "Action:"; } 
+
+  #options_05 #container-wrap>.mobile-wrap { 
+    max-height: 34.375rem; 
+  } 
+
+  #options_05 #container-wrap>.mobile-wrap table.report td textarea { 
+    width: 100%; 
+  } 
+
+  #options_05 #container-wrap>.mobile-wrap table.report tr.newposition td { 
+    border: 0; 
+  } 
+
+  #options_05 #container-wrap>.mobile-wrap table.report tr.newposition td:nth-of-type(3), 
+  #options_05 #container-wrap>.mobile-wrap table.report tr.newposition td:nth-of-type(5) { 
+    border-bottom: .125rem solid #ddd; 
+  } 
+
+  #options_05 #container-wrap>.mobile-wrap table.report tr.newposition+tr td:last-of-type { 
+    border-bottom: .25rem solid var(--accent); 
+  } 
+}

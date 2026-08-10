@@ -1,0 +1,324 @@
+@import "https://mflscripts.com/font-awesome/css/all.min.css"; 
+@import "https://mflscripts.com/font-awesome/css/v4-shims.min.css"; 
+
+html, div, td { 
+  scrollbar-color: auto !important; 
+}
+
+html {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    position: relative;
+    min-height: 100%
+}
+
+* {
+    caret-color: #0000
+}
+
+textarea,
+input[type="text"],
+input[type="password"] {
+    caret-color: #000f
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    accent-color: var(--accent);
+    width: .875rem;
+    height: .875rem
+}
+
+*,
+::before,
+::after {
+    -webkit-box-sizing: inherit;
+    -moz-box-sizing: inherit;
+    box-sizing: inherit
+}
+
+body {
+    color: var(--main);
+    background: var(--body-bg);
+    background-attachment: fixed;
+    background-position: center top;
+    -webkit-font-smoothing: antialiased !important;
+    overflow-y: scroll
+}
+
+body a,
+body a:link,
+body a:active,
+body a:visited {
+    color: var(--accent);
+    outline: none
+}
+
+body a:hover,
+body a:link:hover,
+body a:active:hover,
+body a:visited:hover {
+    color: var(--main)
+}
+
+a:hover, a:link:hover, a:active:hover, a:visited:hover { 
+  color: var(--accent); 
+} 
+
+a:link img, a:visited img { 
+  border-color: transparent; 
+} 
+
+a:hover img { 
+  border-color: transparent; 
+} 
+
+a:active { 
+  background: none repeat scroll 0 0 transparent; 
+}
+
+img { 
+  image-rendering: -webkit-optimize-contrast; 
+  image-rendering: optimize-contrast; 
+} 
+
+.warning, 
+.warning a, 
+.warning a:link, 
+.warning a:active, 
+.warning a:visited { 
+  color: red; 
+} 
+
+.warning a:hover, 
+.warning a:link:hover, 
+.warning a:active:hover, 
+.warning a:visited:hover { 
+  color: red; 
+} 
+
+.pagebody input, 
+select, 
+textarea { 
+  border-radius: .188rem; 
+  margin: .125rem; 
+  padding: .188rem; 
+  font-style: normal; 
+  text-decoration: none; 
+  outline: none; 
+  border: .063rem solid #eee !important; 
+} 
+
+input[type="submit"]::-moz-focus-inner, 
+input[type="button"]::-moz-focus-inner, 
+button::-moz-focus-inner, 
+input[type="reset"]::-moz-focus-inner { 
+  border: 0 none; 
+} 
+
+.pagebody input[type="text"], 
+.pagebody input[type="password"] { 
+  text-transform: none; 
+} 
+
+.pagebody input[type="file"] { 
+  border: 0; 
+} 
+
+input[type="button"], 
+input[type="submit"] { 
+  cursor: pointer; 
+  border: 0; 
+  -moz-appearance: none; 
+  -webkit-appearance: none; 
+  border: 0 !important; 
+  font-size: 1rem; 
+} 
+
+@media (hover: hover) { 
+  input[type="button"]:hover, 
+  input[type="submit"]:hover { 
+    cursor: pointer; 
+  } 
+} 
+
+#source_list, 
+#destination_list { 
+  margin: 0; 
+}
+
+input[type="password"], 
+input[type="text"] { 
+  padding: .25rem; 
+  font-size: 1.1em; 
+  min-width: 6.25rem; 
+} 
+
+select+input[type="submit"], 
+form.reportform input[type="submit"] { 
+  margin-left: .313rem; 
+  padding: .188rem .938rem; 
+} 
+
+#destination_list, 
+textarea, 
+input[type="text"], 
+li.player-search a input, 
+#picker, 
+#drop, 
+#add { 
+  background: #fff !important; 
+  border-color: #eee !important; 
+  color: var(--main) !important; 
+} 
+
+input[type="button"], 
+input[type="submit"] { 
+  padding: .625rem; 
+  margin-bottom: .625rem; 
+  margin-top: .625rem; 
+  font-weight: 700; 
+  text-transform: uppercase; 
+  cursor: pointer; 
+  border-radius: .188rem; 
+  box-shadow: 0 0 .063rem .063rem #0000001a; 
+  color: #fff; 
+  background: var(--gradient-dark); 
+  background-image: none; 
+  background-image: linear-gradient(to bottom, var(--gradient-light), var(--gradient-dark)); 
+} 
+
+@media (hover: hover) { 
+  input[type="button"]:hover, 
+  input[type="submit"]:hover { 
+    color: #fff; 
+    background: var(--gradient-light); 
+    background-image: none; 
+    background-image: linear-gradient(to bottom, var(--gradient-dark), var(--gradient-light)); 
+  } 
+}
+
+img { 
+  vertical-align: middle; 
+} 
+
+div.mobile-wrap:empty { 
+  border: 0; 
+  margin: 0; 
+  border-radius: 0; 
+  background: none; 
+  box-shadow: none; 
+  padding: 0; 
+}
+
+
+* {
+    scrollbar-color: #f8f8f8 #eee;
+    scrollbar-width: auto
+}
+
+td::-webkit-scrollbar {
+    background: #ccc
+}
+
+::-webkit-scrollbar {
+    width: var(--scrollbar-width, 0.75rem);
+    height: var(--scrollbar-height, 0.75rem);
+    background: none;
+    border: 0
+}
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-bg, #ccc);
+    border: 0;
+    margin: .125rem;
+    border-radius: .313rem
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb, var(--accent, #B82601));
+    border-radius: .313rem;
+    border: 0
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-active, var(--gradient-dark, #9c2000))
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: var(--scrollbar-thumb-active, var(--gradient-dark, #9c2000))
+}
+
+::-webkit-scrollbar-thumb:vertical {
+    border: 0
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+    border: 0
+}
+
+::-webkit-scrollbar-button {
+    border-style: solid;
+    height: var(--scrollbar-height, 0.75rem);
+    width: var(--scrollbar-width, 0.75rem);
+    background: none
+}
+
+::-webkit-scrollbar-button:vertical:decrement {
+    border-width: var(--scrollbar-border-width-up, 0 0.375rem 0.625rem 0.375rem);
+    border-color: transparent transparent var(--scrollbar-thumb, var(--main, #080e25))
+}
+
+::-webkit-scrollbar-button:vertical:decrement:hover {
+    border-color: transparent transparent var(--accent, #B82601)
+}
+
+::-webkit-scrollbar-button:vertical:increment {
+    border-width: var(--scrollbar-border-width-down, 0.625rem 0.375rem 0 0.375rem);
+    border-color: var(--scrollbar-thumb, var(--main, #080e25)) transparent transparent
+}
+
+::-webkit-scrollbar-button:vertical:increment:hover {
+    border-color: var(--accent, #B82601) transparent transparent
+}
+
+::-webkit-scrollbar-button:horizontal:decrement {
+    border-width: var(--scrollbar-border-width-left, 0.375rem 0.625rem 0.375rem 0);
+    border-color: transparent var(--scrollbar-thumb, var(--main, #080e25)) transparent transparent
+}
+
+::-webkit-scrollbar-button:horizontal:decrement:hover {
+    border-color: transparent var(--accent, #B82601) transparent transparent
+}
+
+::-webkit-scrollbar-button:horizontal:increment {
+    border-width: var(--scrollbar-border-width-right, 0.375rem 0 0.375rem 0.625rem);
+    border-color: transparent transparent transparent var(--scrollbar-thumb, var(--main, #080e25))
+}
+
+::-webkit-scrollbar-button:horizontal:increment:hover {
+    border-color: transparent transparent transparent var(--accent, #B82601)
+}
+
+.wp_bar .lessthan {
+    background: red !important;
+    color: #fff !important
+}
+
+.wp_bar .greaterthan {
+    background: green !important;
+    color: #fff !important
+}
+
+#TeamWinPctRow td {
+    padding: .063rem .188rem !important
+}
+
+.wp_bar {
+    display: inline-block !important;
+    background: #f9f9f9;
+    padding: .125rem;
+    width: 100%;
+    border-radius: .625rem
+}

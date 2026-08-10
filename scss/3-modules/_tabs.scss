@@ -1,0 +1,306 @@
+#tabmenu-wrap li#tab6 a:before, 
+#tabmenu-wrap #tab_title.tab6:before { 
+  content: "\f091"; 
+} 
+
+#tabmenu-wrap li#tab7 a:before, 
+#tabmenu-wrap #tab_title.tab7:before { 
+  content: "\f155"; 
+} 
+
+#tabmenu-wrap li#tab8 a:before, 
+#tabmenu-wrap #tab_title.tab8:before { 
+  content: "\f155"; 
+}
+
+.myfantasyleague_tabmenu ul#homepagetabs {
+    border: 0
+}
+
+label[for='sub100']+#homepagetabs {
+    white-space: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden
+}
+
+.myfantasyleague_tabmenu #collapseLink i,
+.myfantasyleague_tabmenu #expandLink i {
+    top: 1.438rem !important
+}
+
+.myfantasyleague_tabmenu {
+    background: var(--tab-menu, var(--main, #080e25));
+    margin-bottom: 0;
+    margin-top: .625rem;
+    border: .063rem solid #fff;
+    z-index: 99997;
+    outline: .063rem solid var(--tab-menu, var(--main, #080e25))
+}
+
+.myfantasyleague_tabmenu #homepagetabs li {
+    border-right: 0;
+    border-left: .063rem solid #fff
+}
+
+.myfantasyleague_tabmenu #homepagetabs li:first-of-type a,
+.myfantasyleague_tabmenu #homepagetabs li:first-of-type {
+    border-right: 0
+}
+
+.myfantasyleague_tabmenu #homepagetabs li a {
+    color: #fff
+}
+
+.myfantasyleague_tabmenu #homepagetabs li:hover {
+    background: var(--tab-menu-hover, var(--accent, #B82601));
+    box-shadow: none
+}
+
+.myfantasyleague_tabmenu #homepagetabs li:hover a {
+    color: #fff;
+    opacity: 1 !important
+}
+
+.myfantasyleague_tabmenu #homepagetabs li.currenttab a {
+    color: #fff
+}
+
+.myfantasyleague_tabmenu #homepagetabs li.currenttab,
+.myfantasyleague_tabmenu #homepagetabs li.currenttab:hover {
+    box-shadow: none;
+    background: var(--tab-menu-hover, var(--accent, #B82601))
+}
+
+@media only screen and (max-width:48em) {
+
+    #tabmenu-wrap li[id*="tab"] a:before,
+    #tabmenu-wrap #tab_title[class*="tab"]:before {
+        font-family: 'Font Awesome 6 Pro';
+        width: 1.25rem;
+        display: inline-flex;
+        text-indent: 0
+    }
+
+    #tabmenu-wrap #tab_title[class*="tab"]:before {
+        margin-right: .125rem
+    }
+}
+
+@media only screen and (min-width:48.1em) {
+    #tabmenu-wrap li[id*="tab"] a:before {
+        font-family: 'Font Awesome 6 Pro';
+        padding-right: .188rem
+    }
+}
+
+#tabmenu-wrap li#tab0 a:before,
+#tabmenu-wrap #tab_title.tab0:before {
+    content: "\f015"
+}
+
+#tabmenu-wrap li#tab1 a:before,
+#tabmenu-wrap #tab_title.tab1:before {
+    content: "\f085"
+}
+
+#tabmenu-wrap li#tab2 a:before,
+#tabmenu-wrap #tab_title.tab2:before {
+    content: "\f080"
+}
+
+#tabmenu-wrap li#tab3 a:before,
+#tabmenu-wrap #tab_title.tab3:before {
+    content: "\f0c0"
+}
+
+#tabmenu-wrap li#tab4 a:before,
+#tabmenu-wrap #tab_title.tab4:before {
+    content: "\f1ea"
+}
+
+#tabmenu-wrap li#tab5 a:before,
+#tabmenu-wrap #tab_title.tab5:before {
+    content: "\f0cb"
+}
+
+#tabmenu-wrap li#tab6 a:before,
+#tabmenu-wrap #tab_title.tab6:before {
+    content: "\f0d6"
+}
+
+#myfantasyleague_tabs .myfantasyleague_tabmenu {
+    box-shadow: none;
+    margin: .188rem 0;
+    background: var(--subtab-menu, var(--accent, #B82601));
+    border: .063rem solid #fff;
+    outline: .063rem solid var(--subtab-menu, var(--accent, #B82601));
+    z-index: 99996
+}
+
+#myfantasyleague_tabs .myfantasyleague_tabmenu #homepagetabs li {
+    display: table-cell;
+    width: 1%
+}
+
+#myfantasyleague_tabs .myfantasyleague_tabmenu #homepagetabs li a {
+    display: block;
+    white-space: nowrap;
+    padding: 0 .125rem;
+    color: #fff
+}
+
+#myfantasyleague_tabs .myfantasyleague_tabmenu #homepagetabs li a:hover {
+    color: #fff;
+    text-decoration: none
+}
+
+#myfantasyleague_tabs .myfantasyleague_tabmenu #homepagetabs li:hover {
+    background: var(--subtab-menu-hover, var(--main, #080e25))
+}
+
+#myfantasyleague_tabs .myfantasyleague_tabmenu #homepagetabs li:hover a {
+    text-decoration: none
+}
+
+#myfantasyleague_tabs .myfantasyleague_tabmenu #homepagetabs li.currenttab,
+#myfantasyleague_tabs .myfantasyleague_tabmenu #homepagetabs li.currenttab:hover {
+    background: var(--subtab-menu-hover, var(--main, #080e25))
+}
+
+#myfantasyleague_tabs .myfantasyleague_tabmenu #homepagetabs li.currenttab a,
+#myfantasyleague_tabs .myfantasyleague_tabmenu #homepagetabs li.currenttab:hover a {
+    color: #fff
+}
+
+#rulestabs { 
+  color: var(--main, #080e25); 
+} 
+
+#rulestabs h4 { 
+  text-align: center; 
+  font-size: .875rem; 
+  padding: .313rem 0; 
+} 
+
+#rulestabs h4 a { 
+  font-weight: 400; 
+  text-decoration: none; 
+} 
+
+#rulestabs .number_space { 
+  width: .25rem; 
+  display: inline-block; 
+} 
+
+#rulestabs .number-hide { 
+  visibility: hidden; 
+} 
+
+#rulestabs .tabhead+div { 
+  padding-left: .313rem; 
+} 
+
+#rulestabs .subhead+div { 
+  padding-left: 1.375rem; 
+} 
+
+#rulestabs p { 
+  margin: .313rem 0; 
+} 
+
+#rulestabs p a:active, 
+#rulestabs p a:visited, 
+#rulestabs p a:link { 
+  font-weight: 400; 
+} 
+
+#rulestabs p a:hover { 
+  text-decoration: underline; 
+} 
+
+a.tabhead, 
+a.tabheaddouble { 
+  font-size: 1rem; 
+  text-decoration: none; 
+  color: var(--accent, #B82601) !important; 
+  font-weight: 600; 
+} 
+
+a.tabheaddouble { 
+  padding-left: .125rem; 
+} 
+
+a.subhead { 
+  font-size: .813rem; 
+  color: var(--main, #080e25) !important; 
+  padding-left: 1.25rem; 
+  font-weight: 600; 
+  text-decoration: none; 
+} 
+
+#rulestabs #monthly_calendar { 
+  margin-top: 0; 
+} 
+
+#rulestabs td { 
+  text-align: center; 
+} 
+
+#rulestabs td.event { 
+  text-align: left; 
+} 
+
+#rulestabs th.event { 
+  width: 33%; 
+} 
+
+#rulestabs th.range { 
+  width: 33%; 
+} 
+
+#rulestabs td.require { 
+  text-align: left; 
+} 
+
+#rulestabs th.limit { 
+  width: 12.5rem; 
+} 
+
+#rulestabs .subtext { 
+  color: var(--accent, #B82601); 
+  margin-left: 1.25rem; 
+}
+
+/* Mobile Responsive Dashboard Tab Switches */
+@media only screen and (max-width:54.25em) { 
+  #LS_TopTableHolder #LS_CenterTop, 
+  #LS_TopTableHolder .prmin, 
+  #LS_TopTableHolder .LS_ScoreboardTitle { 
+    display: none; 
+  } 
+  #LS_AwayTeamName, 
+  #LS_HomeTeamName { 
+    width: 50%; 
+  } 
+  .flex-direction-nav .flex-prev { 
+    opacity: 1; 
+    left: .625rem; 
+  } 
+  .flex-direction-nav .flex-next { 
+    opacity: 1; 
+    right: .625rem; 
+  } 
+} 
+
+@media only screen and (min-width:48.1em) { 
+  #body_ajax_ls .ls-outer-table { 
+    table-layout: fixed; 
+  } 
+  #body_ajax_ls #roster_away caption, 
+  #roster_home caption { 
+    display: none; 
+  } 
+} 
+
+
+

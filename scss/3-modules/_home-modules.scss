@@ -1,0 +1,465 @@
+#division00, 
+#division01, 
+#division02, 
+#division03, 
+#division04, 
+#division05 { 
+  background: var(--division-header-bg); 
+  border-radius: var(--division-header-border-radius); 
+} 
+
+.homepagecolumn #standings h3, 
+#standings h3, 
+.homepagecolumn #brief_standings h3, 
+#brief_standings h3 { 
+  background: var(--h3-bg); 
+  color: var(--h3-color); 
+  font-size: var(--h3-font-size); 
+  text-transform: var(--h3-text-transform); 
+  text-align: var(--h3-text-align); 
+  border: var(--h3-border); 
+  border-width: var(--h3-border-width); 
+  outline: var(--h3-outline); 
+  padding: var(--h3-padding); 
+  margin: var(--h3-margin); 
+} 
+
+.standingslogo { 
+  margin: .313rem 0; 
+  max-width: 100%; 
+} 
+
+.homepagecolumn #division00 h3, 
+#division00 h3 { 
+  margin-top: 0; 
+} 
+
+#brief_standings h3, 
+.homepagecolumn #brief_standings h3 { 
+  font-size: var(--h3-font-size); 
+} 
+
+.mobile-wrap h3 a, 
+.mobile-wrap h3 a:link, 
+.mobile-wrap h3 a:active, 
+.mobile-wrap h3 a:visited { 
+  font-size: 1.25rem; 
+  color: var(--accent); 
+} 
+
+.mobile-wrap h3 a:hover, 
+.mobile-wrap h3 a:link:hover, 
+.mobile-wrap h3 a:active:hover, 
+.mobile-wrap h3 a:visited:hover { 
+  font-size: 1.25rem; 
+  color: var(--main); 
+} 
+
+.mobile-wrap h3, 
+.mobile-wrap h3.warning { 
+  color: red; 
+  font-size: 1.25rem; 
+} 
+
+.h3-menu { 
+  color: var(--accent); 
+  padding: .313rem; 
+  margin: .625rem 0; 
+  margin-top: 0; 
+  font-size: 1rem; 
+  box-shadow: 0 0 .063rem .063rem #0000001a; 
+  background: #fff; 
+  border-radius: .188rem; 
+} 
+
+.h3-menu a, 
+.h3-menu a:link, 
+.h3-menu a:active, 
+.h3-menu a:visited { 
+  color: var(--main); 
+  text-decoration: none; 
+} 
+
+.h3-menu a:hover, 
+.h3-menu a:link:hover, 
+.h3-menu a:active:hover, 
+.h3-menu a:visited:hover { 
+  color: var(--accent); 
+}
+
+.commish { 
+  width: 95% !important; 
+  margin: 0 auto !important; 
+} 
+
+.commish h1 { 
+  text-align: left !important; 
+  font-size: 1.2rem !important; 
+  font-weight: bold !important; 
+  font-family: 'Roboto', sans-serif !important; 
+  padding-top: 1rem !important; 
+} 
+
+.commish h2 { 
+  text-align: left !important; 
+  font-size: 1.1rem !important; 
+  font-weight: normal !important; 
+  font-style: italic !important; 
+  font-family: 'Roboto', sans-serif !important; 
+  padding-top: 1rem !important; 
+} 
+
+.commish h3 { 
+  text-align: left !important; 
+  font-size: 1.0rem !important; 
+  font-weight: bold !important; 
+  font-family: 'Roboto', sans-serif !important; 
+  color: var(--accent) !important; 
+  padding-top: 1rem !important; 
+} 
+
+.commish h4 { 
+  text-align: left !important; 
+  font-size: 0.8rem !important; 
+  font-weight: bold !important; 
+  font-style: italic !important; 
+  text-decoration: underline !important; 
+  font-family: 'Roboto', sans-serif !important; 
+  padding-top: 1rem !important; 
+} 
+
+.commish .note { 
+  font-style: italic !important; 
+}
+
+#standings-settings { 
+  box-shadow: 0 0 .063rem .063rem #0000001a; 
+  border-radius: .188rem; 
+  padding: .625rem !important; 
+  background: var(--mobile-wrap-bg, #fff); 
+} 
+
+.standings-settings_overlay { 
+  background-color: #000; 
+  opacity: .7; 
+} 
+
+#standings-settings input+label:before { 
+  color: red; 
+} 
+
+#standings-settings input:checked+label:before { 
+  color: green; 
+} 
+
+#standings-settings #fname_checkbox:checked+label:before, 
+#standings-settings #fname_checkbox+label:before, 
+#standings-settings #ficon_checkbox:checked+label:before, 
+#standings-settings #ficon_checkbox+label:before, 
+#standings-settings #ficonname_checkbox:checked+label:before, 
+#standings-settings #ficonname_checkbox+label:before { 
+  color: red; 
+} 
+
+.standings-cog { 
+  font-size: .938rem; 
+}
+
+#collapseLink.collapseLink,
+#expandLink.expandLink,
+#collapseLink.collapseLink:hover,
+#expandLink.expandLink:hover {
+    color: #fff
+}
+
+.plus-toggle span::before,
+.plus-toggle span::after {
+    background: #aaa
+}
+
+span.custom_expand:hover+span+.plus-toggle span:before,
+span.custom_expand:hover+span+.plus-toggle span:after,
+span.custom_collapse:hover+.plus-toggle span:before,
+span.custom_collapse:hover+.plus-toggle span:after {
+    background: var(--accent)
+}
+
+.homepagecolumn .mobile-wrap {
+    position: relative
+}
+
+.toggle-btn-main::before,
+.toggle-btn-main::after {
+    background: var(--tab-menu, var(--main))
+}
+
+#expandLink:hover+.plus-toggle-main span:before,
+#expandLink:hover+.plus-toggle-main span:after,
+#collapseLink:hover+a+.plus-toggle-main span:before,
+#collapseLink:hover+a+.plus-toggle-main span:after {
+    background: var(--accent)
+}
+
+#monthly_calendar { 
+  width: 100%; 
+  text-align: left; 
+  border: 0; 
+} 
+
+#monthly_calendar td { 
+  border: .125rem solid #fff; 
+  padding: 0; 
+} 
+
+#monthly_calendar th { 
+  border: 0; 
+} 
+
+#monthly_calendar .month_header th a { 
+  color: var(--main, #080e25); 
+} 
+
+#monthly_calendar td .calendarday { 
+  background: var(--accent, #B82601); 
+  border-bottom: .063rem solid #555; 
+  border-left: .063rem solid #aaa; 
+  color: #FFF; 
+} 
+
+.calendarday { 
+  padding: 0 .125rem; 
+  line-height: 1.5; 
+} 
+
+#monthly_calendar td.today { 
+  border: .188rem dotted var(--accent, #B82601); 
+} 
+
+#calendar, 
+#monthly_calendar { 
+  visibility: hidden; 
+} 
+
+#calendar .today, 
+#calendar .today.first-td, 
+#calendar .today:last-of-type { 
+  border: .188rem dotted red; 
+} 
+
+#calendar th { 
+  border: .063rem solid #ddd; 
+  border-right: 0; 
+} 
+
+#calendar th:last-of-type { 
+  border-right: .063rem solid #ddd; 
+} 
+
+#calendar td { 
+  border-color: #ddd; 
+} 
+
+#calendar td:last-of-type { 
+  border-right: .063rem solid #ddd; 
+} 
+
+#calendar .date { 
+  background: var(--accent, #B82601); 
+  color: #fff; 
+} 
+
+#calendar .month_header th a[title="Next Month"]:before, 
+#calendar .month_header th a[title="Previous Month"]:before { 
+  color: #ccc; 
+} 
+
+#calendar .month_header th a[title="Previous Month"]:hover:before, 
+#calendar .month_header th a[title="Next Month"]:hover:before { 
+  color: #999; 
+} 
+
+.cal-event li { 
+  padding: .313rem; 
+  border-radius: .313rem; 
+  color: #000; 
+  background: #fff; 
+  border: .063rem dashed #999; 
+} 
+
+.cal-event li a, 
+.cal-event li a:link, 
+.cal-event li a:active, 
+.cal-event li a:visited, 
+.cal-event li a:hover, 
+.cal-event li a:link:hover, 
+.cal-event li a:active:hover, 
+.cal-event li a:visited:hover { 
+  color: #000; 
+} 
+
+.cal-event li:before { 
+  color: #000; 
+} 
+
+.cal-event li.calendar_event_nfl_game { 
+  border: .063rem dashed orange; 
+} 
+
+.cal-event li.calendar_event_nfl_game:before { 
+  color: orange; 
+} 
+
+.cal-event li.calendar_event_injury_report { 
+  border: .063rem dashed red; 
+} 
+
+.cal-event li.calendar_event_injury_report:before { 
+  color: red; 
+} 
+
+.cal-event li.calendar_event_waiver_reverse { 
+  border: .063rem dashed green; 
+} 
+
+.cal-event li.calendar_event_waiver_reverse:before { 
+  color: green; 
+} 
+
+.cal-event li.calendar_event_waiver_lock { 
+  border: .063rem dashed purple; 
+} 
+
+.cal-event li.calendar_event_waiver_lock:before { 
+  color: purple; 
+} 
+
+.cal-event li.calendar_event_trade { 
+  border: .063rem dashed red; 
+  color: red; 
+} 
+
+.cal-event li.calendar_event_trade:before { 
+  color: red; 
+} 
+
+.cal-event li.calendar_event_waiver_none { 
+  border: .063rem dashed red; 
+  color: red; 
+} 
+
+.cal-event li.calendar_event_waiver_none:before { 
+  color: red; 
+}
+
+table.playoffbracket {
+    border-spacing: 0
+}
+
+.playoffbracket .franchiseicon {
+    max-width: 12.5rem;
+    width: 100%;
+    padding: 0 .313rem
+}
+
+.playoffbracket td.bottomteam,
+.playoffbracket td.topteam {
+    display: flex;
+    align-items: center;
+    justify-content: left;
+    font-weight: 700;
+    color: var(--accent, #B82601)
+}
+
+.playoffbracket td {
+    text-align: center
+}
+
+#csetup_hmpgmsg form {
+    text-align: center
+}
+
+#body_csetup_hmpgmod #home_page_setup table[id^="hpm_table_"] select {
+    width: 100%;
+    max-height: 6.25rem;
+    overflow: auto;
+    margin: .313rem 0;
+    margin-bottom: 0
+}
+
+#body_csetup_hmpgmod #home_page_setup table[id^="hpm_table_"] {
+    width: 100% !important;
+    display: inline-table !important;
+    margin: .313rem 0;
+    text-align: center;
+    border: .125rem solid #eee;
+    padding: .313rem;
+    border-radius: .313rem
+}
+
+#body_csetup_hmpgmod #home_page_setup table[id^="hpm_table_"] td[valign="middle"] {
+    min-width: 4.375rem;
+    width: 4.375rem;
+    text-align: center
+}
+
+#body_csetup_hmpgmod #home_page_setup table[id^="hpm_table_"] button[name^="add_tab_"],
+button[id^="add_to_tab_"] {
+    margin-top: .313rem
+}
+
+#body_csetup_hmpgmod #home_page_setup>div.mobile-wrap>table {
+    text-align: center
+}
+
+#body_csetup_hmpgmod #home_page_setup>div.mobile-wrap>table>tbody>tr:nth-child(1) {
+    display: none
+}
+
+#body_csetup_hmpgmod #home_page_setup>div.mobile-wrap>table>tbody>tr:nth-child(2)>td:before,
+#hpm_table_0:before {
+    content: "Home Page Tabs";
+    background: var(--th-bg, #080e25);
+    color: var(--make-white, var(--accent, #fff));
+    width: 100%;
+    margin-bottom: .313rem;
+    font-size: .875rem;
+    font-style: normal;
+    font-weight: 300;
+    text-align: center;
+    padding: .125rem;
+    font-family: 'Roboto Condensed', sans-serif
+}
+
+#hpm_table_0:before {
+    content: "Home Page Tabs";
+    display: table-caption;
+    width: 100%;
+    margin-top: -.375rem
+}
+
+#body_csetup_hmpgmod #home_page_setup>div.mobile-wrap>table>tbody>tr:nth-child(2)>td:before {
+    content: "Available Modules";
+    display: block;
+    margin-top: -.125rem
+}
+
+#body_csetup_hmpgmod table[id*="hpm_table_"] table:first-child {
+    table-layout: fixed;
+    background: var(--th-bg, #080e25);
+    color: #fff;
+    border: .063rem solid var(--th-bg, #080e25)
+}
+
+#body_csetup_hmpgmod table[id*="hpm_table_"] table:first-child a {
+    color: #fff
+}
+
+#MSG,
+#options_05 textarea {
+    width: 100%;
+    margin: .625rem 0
+}
+
+form[name="home_page_setup"] {
+    text-align: center
+}

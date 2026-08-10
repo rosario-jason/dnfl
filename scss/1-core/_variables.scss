@@ -1,0 +1,287 @@
+    :root {
+        /* Duke Color Palette */
+        --duke-blue-1-navy: #012169;
+        --duke-blue-2-royal: #00539B;
+        --duke-blue-3-prussian: #005587;
+        --duke-blue-4-shale: #0577B1;        
+        --duke-cast-iron: #262626;
+        --duke-graphite: #666666;
+        --duke-granite: #B5B5B5;
+        --duke-limestone: #E5E5E5;
+
+        /* DNFL Extended Color Palette */
+        --charcoal-blue: #181c28;
+        --charcoal-gray: #222;
+        --gunmetal: #293141;
+        --dark-slate-gray: #3b465b;
+        --japanese-indigo: #303949;
+        --medium-gray: #999;
+        --plumbeous: #637088;
+        --electric-blue: #00F0FF;
+        --light-steel-blue: #a3bad3;
+        --cloud-haze: #def4fd;
+        --white-gray: #eee;
+        --desert-storm: #f1f1f1;
+        --white-smoke: #f8f8f8;
+        --make-white: #fff;
+    }
+
+    /* DNFL Dark Theme */
+    .dnfl-dark {
+        /* Backgrounds Colors*/
+        --body-bg: var(--charcoal-blue);
+
+        /* General Theme Colors */
+        --main: var(--duke-cast-iron);
+        --accent: var(--duke-blue-4-shale);
+        --lightest-color: var(--cloud-haze);
+        --gradient-light: var(--duke-blue-4-shale);
+        --gradient-dark: var(--duke-blue-2-royal);
+
+        /* Banner Styling */
+        --banner-bg: var(--charcoal-blue);
+        --banner-border-bottom: 0;
+        --banner-box-shadow: 0;
+        --b-name-color: var(--duke-granite);
+        --bannericon-color-a: var(--duke-limestone);
+        --bannericon-color-b: var(--accent);
+        --bannericon-color-c: var(--duke-granite);
+        --bannericon-color-d: var(--japanese-indigo);
+        --bannericon-color-e: var(--charcoal-gray);
+        --bannericon-color-f: var(--accent);
+        --bannericon-color-g: var(--accent);
+        --bannericon-color-h: var(--accent);
+        
+        /* DNFL Logo Styling */
+        --dnfl-logo-fill: var(--duke-blue-2-royal);
+        --dnfl-logo-border: var(--make-white);
+        --dnfl-logo-d: var(--make-white);
+        --dnfl-logo-devil: var(--duke-blue-2-royal);
+        --dnfl-logo-devil-face: var(--make-white);
+
+        /* Tab Menu Styling */
+
+        /* Mobile Wrap Styling */
+        --mobile-wrap-bg: var(--gunmetal);
+        --mobile-wrap-border: 1px solid var(--dark-slate-gray);
+        --mobile-wrap-border-radius: 1.25rem;
+        --mobile-wrap-color: var(--make-white);
+
+        /* Homepage Table Styles */
+        --homepage-table-bg: var(--japanese-indigo);
+        --homepage-table-border-radius: 1.25rem;
+        --homepage-table-border-collapse: separate;
+        --homepage-table-overflow: hidden;
+
+       /* Homepage Table Caption Styles */
+        --caption-color: var(--make-white);
+        --caption-display: none;
+        --caption-font-size: 1.1rem;
+        --caption-text-align: left;
+        --caption-background: none;
+        --caption-padding: .5rem .313rem;
+        --caption-line-height: 100%;
+        --caption-text-transform: capitalize;
+
+       /* Homepage Table Header Styles */
+        --division-header-bg: linear-gradient(var(--duke-blue-4-shale), var(--duke-blue-2-royal));
+        --division-header-border-radius: .5rem;
+        --h3-bg: none;
+        --h3-color: var(--make-white);
+        --h3-font-size: 1.1rem;
+        --h3-text-transform: capitalize;
+        --h3-text-align: left;
+        --h3-border: solid var(--mobile-wrap-bg);
+        --h3-border-width: 0;
+        --h3-outline: 0;
+        --h3-margin: 0;
+        --h3-padding: .3rem 1.5rem .3rem 1.5rem;
+
+       /* Homepage Table Sub-Header Styles */
+        --th-bg: var(--japanese-indigo);
+        --th-weight: 700;
+        --th-transform: uppercase;
+        --th-padding: .3rem 1.5rem .3rem 1.5rem;
+        --th-border-bottom: 0.1rem solid var(--plumbeous);
+
+       /* Homepage Table Data Row Styles */
+        --oddtablerow: var(--japanese-indigo);
+        --eventablerow: var(--japanese-indigo);
+        --row-padding: .5rem 1.5rem .5rem 1.5rem;
+        --row-color: var(--make-white);
+
+        /* Tab Menu Styles */
+        --tab-menu: var(--duke-blue-1-navy);
+        --tab-menu-hover: linear-gradient(var(--duke-blue-2-royal), var(--duke-blue-4-shale), var(--duke-blue-2-royal));
+        --subtab-menu: var(--duke-blue-1-navy);
+        --subtab-menu-hover: linear-gradient(var(--duke-blue-2-royal), var(--duke-blue-4-shale), var(--duke-blue-2-royal));
+
+        /* Scrollbar Styles*/        
+        --scrollbar-bg: var(--duke-limestone);
+        --scrollbar-thumb: var(--duke-granite);
+        --scrollbar-thumb-active: var(--duke-blue-4-shale);
+        --scrollbar-width: .563rem;
+        --scrollbar-height: .563rem;
+        --scrollbar-border-width-up: 0 .25rem .5rem .25rem;
+        --scrollbar-border-width-down: .5rem .25rem 0 .25rem;
+        --scrollbar-border-width-left: .25rem .5rem .25rem 0;
+        --scrollbar-border-width-right: .25rem 0 .25rem .5rem;
+
+        /* Franchise Icon Styles */
+        --ficon-min-width: 3em;
+        --ficon-max-width: 3em;
+        --ficon-width: 3em;
+        --ficon-min-height: 3em;
+        --ficon-max-height: 3em;
+        --ficon-height: 3em;        
+        --ficon-aspect-ratio: 1/1;
+        --ficon-object-fit: cover;
+        --ficon-border-radius: 25%;
+        --ficon-border: .063rem solid var(--charcoal-blue);
+
+        /* Franchise Name Styles */
+        --franchise-font-size: 1.0rem;
+        --franchise-font-weight: bold;
+        --franchise-font-style: italic;
+        --franchise-text-decoration: none;
+        --franchise-padding-right: .313rem;
+
+        /* Standings W-L-T Styles */
+        --wlt-font-size: 1.0rem;
+        --wlt-font-weight: bold;
+        --wlt-text-decoration: none;
+
+        /* Standings B-Column Styles */
+        --bcol-color: var(--light-steel-blue);
+    }
+
+     /* DNFL Light Theme */
+    .dnfl-light {
+        /* Backgrounds Colors*/
+        --body-bg: var(--white-smoke);
+
+        /* General Theme Colors */
+        --main: var(--charcoal-gray);
+        --accent:var(--duke-blue-4-shale);
+        --lightest-color: var(--cloud-haze);
+        --gradient-light: var(--duke-blue-4-shale);
+        --gradient-dark: var(--duke-blue-2-royal);
+
+        /* Banner Styling */
+        --banner-bg: var(--white-smoke);
+        --banner-border-bottom: 0;
+        --banner-box-shadow: 0;
+        --b-name-color: var(--charcoal-gray);
+        --bannericon-color-a: var(--duke-limestone);
+        --bannericon-color-b: var(--accent);
+        --bannericon-color-c: var(--duke-granite);
+        --bannericon-color-d: var(--white-gray);
+        --bannericon-color-e: var(--charcoal-gray);
+        --bannericon-color-f: var(--accent);
+        --bannericon-color-g: var(--accent);
+        --bannericon-color-h: var(--accent);        
+
+        /* DNFL Logo Styling */
+        --dnfl-logo-fill: var(--make-white);
+        --dnfl-logo-border: var(--duke-blue-2-royal);
+        --dnfl-logo-d: var(--duke-blue-2-royal);
+        --dnfl-logo-devil: var(--duke-blue-2-royal);
+        --dnfl-logo-devil-face: var(--make-white);
+
+        /* Mobile Wrap Styling */
+        --mobile-wrap-bg: var(--make-white);
+        --mobile-wrap-border: var(--white-gray);
+        --mobile-wrap-border-radius: 1.25rem;
+        --mobile-wrap-color: var(--charcoal-gray);
+
+        /* Homepage Table Styles */
+        --homepage-table-bg: var(--white-smoke);
+        --homepage-table-border-radius: 1.25rem;
+        --homepage-table-border-collapse: separate;
+        --homepage-table-overflow: hidden;
+
+       /* Homepage Table Caption Styles */
+        --caption-color: var(--accent);
+        --caption-display: none;
+        --caption-font-size: 1.1rem;
+        --caption-text-align: left;
+        --caption-background: none;
+        --caption-padding: .5rem .313rem;
+        --caption-line-height: 100%;
+        --caption-text-transform: capitalize;
+
+       /* Homepage Table Header Styles */
+        --division-header-bg: linear-gradient(var(--duke-blue-4-shale), var(--duke-blue-2-royal));
+        --division-header-border-radius: .5rem;
+        --h3-bg: none;
+        --h3-color: var(--make-white);
+        --h3-font-size: 1.1rem;
+        --h3-text-transform: capitalize;
+        --h3-text-align: left;
+        --h3-border: solid var(--mobile-wrap-bg);
+        --h3-border-width: 0;
+        --h3-outline: 0;
+        --h3-margin: 0;
+        --h3-padding: .3rem 1.5rem .3rem 1.5rem;
+
+       /* Homepage Table Sub-Header Styles */
+        --th-bg: var(--white-smoke);
+        --th-weight: 700;
+        --th-transform: uppercase;
+        --th-padding: .3rem 1.5rem .3rem 1.5rem;
+        --th-border-bottom: 0.1rem solid var(--medium-gray);
+
+       /* Homepage Table Data Row Styles */
+        --oddtablerow: var(--white-smoke);
+        --eventablerow: var(--white-smoke);
+        --row-padding: .5rem 1.5rem .5rem 1.5rem;
+        --row-color: var(--charcoal-gray);
+
+        /* Tab Menu Styles */
+        --tab-menu: var(--duke-blue-1-navy);
+        --tab-menu-hover: linear-gradient(var(--duke-blue-2-royal), var(--duke-blue-4-shale), var(--duke-blue-2-royal));
+        --subtab-menu: var(--duke-blue-1-navy);
+        --subtab-menu-hover: linear-gradient(var(--duke-blue-2-royal), var(--duke-blue-4-shale), var(--duke-blue-2-royal));
+
+        /* Scrollbar Styles*/        
+        --scrollbar-bg: var(--duke-limestone);
+        --scrollbar-thumb: var(--duke-granite);
+        --scrollbar-thumb-active: var(--duke-blue-4-shale);
+        --scrollbar-width: .563rem;
+        --scrollbar-height: .563rem;
+        --scrollbar-border-width-up: 0 .25rem .5rem .25rem;
+        --scrollbar-border-width-down: .5rem .25rem 0 .25rem;
+        --scrollbar-border-width-left: .25rem .5rem .25rem 0;
+        --scrollbar-border-width-right: .25rem 0 .25rem .5rem;
+
+        /* Franchise Icon Styles */
+        --ficon-min-width: 3em;
+        --ficon-max-width: 3em;
+        --ficon-width: 3em;
+        --ficon-min-height: 3em;
+        --ficon-max-height: 3em;
+        --ficon-height: 3em;        
+        --ficon-aspect-ratio: 1/1;
+        --ficon-object-fit: cover;
+        --ficon-border-radius: 25%;
+        --ficon-border: .063rem solid var(--charcoal-gray);
+
+        /* Franchise Name Styles */
+        --franchise-font-size: 1.0rem;
+        --franchise-font-weight: bold;
+        --franchise-font-style: italic;
+        --franchise-text-decoration: none;
+        --franchise-padding-right: .313rem;
+
+        /* Standings W-L-T Styles */
+        --wlt-font-size: 1.0rem;
+        --wlt-font-weight: bold;
+        --wlt-text-decoration: none;
+
+        /* Standings B-Column Styles */
+        --bcol-color: var(--plumbeous);
+    }
+
+    /* DNFL Traditional Theme */    
+    .dnfl-traditional {
+    }
