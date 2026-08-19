@@ -1,4 +1,4 @@
-// dnfl-standings.js v1.2
+// dnfl-standings.js v1.02
 (async function() {
     console.log("[DNFL Standings] - Component file injected. Initiating matrix alignment...");
     

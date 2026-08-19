@@ -1,0 +1,26 @@
+{
+  "name": "dnfl",
+  "version": "1.0.0",
+  "description": "Front end repository for all DNFL scripts",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rosario-jason/dnfl.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/rosario-jason/dnfl/issues"
+  },
+  "homepage": "https://github.com/rosario-jason/dnfl#readme",
+  "dependencies": {
+    "css-tree": "^3.2.1",
+    "csv-parser": "^3.2.1",
+    "csv-writer": "^1.6.0"
+  }
+}

@@ -1,0 +1,1514 @@
+Selector,Type,Category
+.FA,standard,base html
+.HPMFinished,standard,base html
+.HPMWarning,standard,base html
+.LS_MainScoreboard,custom,skin / global app
+.LS_ScoreboardTitle,custom,skin / global app
+.MFLBoxArrowFaded,standard,base html
+.MFLBoxArrowLeft,standard,base html
+.MFLBoxArrowRight,standard,base html
+.MFLBoxDetailsArrow,standard,base html
+.MFLBoxLiveStatsClose,standard,base html
+.MFLBoxLiveStatsContent,standard,base html
+.MFLBoxPlayerDetailsClose,standard,players
+.MFLBoxPlayerDetailsHeader,standard,players
+.MFLBoxPlayerDetailsTR,standard,players
+.MFLGameClock,standard,base html
+.MFLGameLinks,standard,base html
+.MFLGameTable,standard,base html
+.MFLLiveClock,unknown,uncategorized
+.MFLLiveTeam,standard,franchise
+.MFLMainScoreboard,standard,scoreboard
+.MFLNFLGameTable,standard,base html
+.MFLNFLLiveClock,unknown,uncategorized
+.MFLNFLWinMarker,standard,base html
+.MFLPaceScore,standard,scoreboard
+.MFLPaceScoreNegative,standard,scoreboard
+.MFLPaceScorePositive,standard,scoreboard
+.MFLPlayerName,standard,players
+.MFLPlayerPopupArticleContainer,custom,popups - player
+.MFLPlayerPopupLoader,custom,popups - player
+.MFLPlayerPopupNotificationContainer,custom,popups - player
+.MFLPlayerPopupPlayerTabs,custom,popups - player
+.MFLPlayerPopupTab,custom,popups - player
+.MFLPlayerPopupTabContent,custom,popups - player
+.MFLPopTabWrap,standard,base html
+.MFLPopupFontAwesomeMenu,custom,popups - addon
+.MFLScoreboardLineups,standard,rosters
+.MFLScoreboardTitle,standard,scoreboard
+.MFLSkinSelection,standard,forms
+.MFLSkinSelection-content,standard,forms
+.MFLSkinSelectionbtn,standard,forms
+.MFLTeamLineup,standard,rosters
+.MFLWinMarker,standard,base html
+.TeamData,standard,franchise
+.ThemeSwith_overlay,standard,base html
+.a,standard,base html
+.accountingBorderLeft,standard,base html
+.accountingBorderRight,standard,base html
+.accountingDetailAcquired,standard,base html
+.accountingDetailGaveUp,standard,base html
+.accountingExtraCol,standard,base html
+.accountingFree,standard,base html
+.accountingIcon,standard,base html
+.action,standard,base html
+.actions-by,standard,base html
+.actions-expired,standard,base html
+.activated,standard,base html
+.active,standard,base html
+.active_fran,standard,base html
+.add-drop-player-row,standard,players
+.add-player-container,standard,players
+.addDropSubmit,standard,base html
+.addon-icons,standard,base html
+.addon-icons-mobile,standard,base html
+.adds-names,standard,base html
+.alert,standard,base html
+.alert-info-body,standard,layout
+.alert-info-table,custom,tabs
+.all_scores_matchup,standard,scoreboard
+.all_scores_matchup_name,standard,scoreboard
+.all_scores_matchups,standard,scoreboard
+.all_scores_tablewrap,standard,scoreboard
+.allplay-conference-title,custom,allplay
+.allplay-crosshair,custom,allplay
+.allplay-franchise,custom,allplay
+.allplay-lit,custom,allplay
+.allplay-pf,custom,allplay
+.allplay-record-total,custom,allplay
+.allplay-total,custom,allplay
+.allplay-week,custom,allplay
+.alternate,standard,base html
+.alternate2,standard,base html
+.altstripe,standard,base html
+.appButton,standard,forms
+.appendStats,standard,base html
+.appendStats-ls-events,custom,skin / global app
+.appendStats-ls-pts,custom,skin / global app
+.arrow-down,standard,base html
+.articlecaption,standard,league
+.articlepicture,standard,league
+.articlepicturetable,standard,league
+.as_close_btn,standard,forms
+.as_pace_box,standard,base html
+.as_scores,standard,scoreboard
+.as_spacer_bottom,standard,base html
+.assets,standard,base html
+.auctionDraft,standard,draft
+.ava,standard,base html
+.avg-matchup,standard,scoreboard
+.awayteam,standard,franchise
+.b,unknown,uncategorized
+.b_est,unknown,uncategorized
+.b_name,standard,base html
+.b_name2,standard,base html
+.b_slogan,standard,base html
+.banner-container,standard,layout
+.banner-container-full,standard,layout
+.banner-container-wrap,standard,layout
+.banner-container-wrap-full,standard,layout
+.banner-icon,standard,base html
+.banner-leftside,standard,base html
+.banner-rightside,standard,base html
+.bannericon,standard,base html
+.bannerlinkicons-full,standard,base html
+.bannertext,standard,base html
+.bbid_ir-modal-content,standard,IR
+.bbidbalance,standard,players
+.bid-amount,standard,players
+.biography,standard,base html
+.blank,standard,base html
+.blankwin-img,standard,base html
+.border_none,unknown,uncategorized
+.bottomteam,standard,franchise
+.box-add-drop-btn,standard,forms
+.bracket,standard,base html
+.button-disabled,standard,forms
+.bye,unknown,uncategorized
+.bye-matchup,standard,scoreboard
+.c,unknown,uncategorized
+.cal-event,standard,base html
+.cal-event-desc,standard,base html
+.calculator-check,standard,base html
+.calculator-close,standard,base html
+.calculator-minus-wrapper,standard,layout
+.calculator-plus-wrapper,standard,layout
+.calendarHighlight,standard,base html
+.calendarLegend,standard,base html
+.calendar_event_injury_report,standard,base html
+.calendar_event_nfl_game,standard,base html
+.calendar_event_trade,standard,trades
+.calendar_event_waiver_bbid,standard,players
+.calendar_event_waiver_lock,standard,players
+.calendar_event_waiver_none,standard,players
+.calendar_event_waiver_reverse,standard,players
+.calendarday,standard,base html
+.cap_room_available_row,standard,base html
+.carousel,standard,base html
+.ccl,unknown,uncategorized
+.chatLapsedTime,standard,league
+.chat_popup,custom,popups - addon
+.cheatsheetnotes,standard,base html
+.checkBox,unknown,uncategorized
+.checked,unknown,uncategorized
+.close,unknown,uncategorized
+.collapseLink,standard,base html
+.column-heads,standard,base html
+.comments-disabled,standard,base html
+.comments-row,unknown,uncategorized
+.comments-to,unknown,uncategorized
+.comments-to-textarea,standard,base html
+.commish-adjust,custom,commissioner abilities
+.container,standard,layout
+.container-fail,standard,layout
+.container-pass,standard,layout
+.contractAAV,standard,base html
+.contractAAVExtend,standard,base html
+.contractDesignation,standard,base html
+.contractTaxiAAV,standard,rosters
+.contractTypeName,standard,base html
+.contractTypeNote,standard,base html
+.contractUtility,standard,base html
+.contractUtilityFound,standard,base html
+.contractinfo,standard,base html
+.contractstatus,standard,base html
+.contractyear,standard,base html
+.create-table,custom,tabs
+.credit,unknown,uncategorized
+.current,unknown,uncategorized
+.current-conditions-header,standard,layout
+.current-conditions-place,standard,base html
+.current-conditions-temp,standard,base html
+.current-conditions-text,unknown,uncategorized
+.current-conditions-wrapper,standard,layout
+.current_bench_row,standard,rosters
+.current_matchup,standard,scoreboard
+.current_starters_row,standard,rosters
+.currenttab,standard,base html
+.currentweek,unknown,uncategorized
+.cus_first_name,standard,base html
+.cus_last_name,standard,base html
+.cus_player_image,standard,players
+.cus_player_images,standard,players
+.cus_player_photo,standard,players
+.cus_player_position,standard,players
+.cus_player_wrapper,standard,players
+.cus_players_name,standard,players
+.cus_team_logo,standard,franchise
+.custom-loadplayer,standard,players
+.custom-loadplayer-table,custom,tabs
+.custom_collapse,standard,base html
+.custom_expand,custom,moduleExpand
+.custom_lineup_body,standard,rosters
+.custom_lineup_submission_body,standard,rosters
+.d,unknown,uncategorized
+.date,standard,base html
+.debit,unknown,uncategorized
+.default-btn,standard,forms
+.depth,standard,base html
+.depth_chart_page,standard,layout
+.deselect-btn,standard,forms
+.desktop-Hide,standard,base html
+.detach-input,standard,forms
+.details_pop_players_row,standard,players
+.detailtablerow,standard,base html
+.dh-control-setting,standard,base html
+.dh_comments_cell,unknown,uncategorized
+.dh_tabs_wrap,custom,tabs
+.dice_value,custom,diceRoll
+.diff,unknown,uncategorized
+.diff-negative,standard,base html
+.diff-positive,standard,base html
+.disabled-draftPick,standard,draft
+.disabled-dropbox,standard,base html
+.disabled-locked,standard,base html
+.div-wrap-trade-table,custom,tabs
+.divide-trades,standard,trades
+.dldbBase,standard,base html
+.done,unknown,uncategorized
+.draft-list-arrow,standard,draft
+.draft-overflow,standard,draft
+.draftNow,standard,draft
+.draftPageForm,standard,draft
+.draft_picks_header,standard,draft
+.draft_warning,standard,draft
+.draftbutton,standard,draft
+.drafted,standard,draft
+.draftpickTD,standard,draft
+.draftpicks,standard,draft
+.drop-player-container,standard,players
+.drop-player-list,standard,players
+.dropplayer,standard,players
+.e,unknown,uncategorized
+.edit,unknown,uncategorized
+.edit-wrapper,standard,layout
+.editHPMs,standard,base html
+.editable,standard,base html
+.enter-player,standard,players
+.entryFeeOwed,standard,base html
+.entryFeePaid,standard,base html
+.error_box,unknown,uncategorized
+.establshed-svgtext,standard,base html
+.even,unknown,uncategorized
+.event,unknown,uncategorized
+.eventablerow,standard,base html
+.expandAccounting,custom,moduleExpand
+.expandLink,custom,moduleExpand
+.expires-by,standard,base html
+.f,unknown,uncategorized
+.f-icon,unknown,uncategorized
+.f-link,unknown,uncategorized
+.f-title,unknown,uncategorized
+.f-title-icon,unknown,uncategorized
+.fa-arrow-circle-down,standard,base html
+.fa-arrow-circle-up,standard,base html
+.fa-arrow-right-arrow-left,standard,base html
+.fa-check-to-slot,standard,base html
+.fa-checkbox,standard,base html
+.fa-circle-xmark,standard,base html
+.fa-comments,standard,base html
+.fa-forward-step,standard,base html
+.fa-handshake,standard,base html
+.fa-hourglass-half,standard,base html
+.fa-inbox,standard,base html
+.fa-lock,standard,base html
+.fa-lock-keyhole,standard,base html
+.fa-minus,standard,base html
+.fa-paintbrush,standard,base html
+.fa-pause-circle,standard,base html
+.fa-play-circle,standard,base html
+.fa-plus,standard,base html
+.fa-solid,standard,base html
+.fa-stack,standard,base html
+.fa-stop-circle,standard,base html
+.fa-thumbtack,standard,base html
+.fa-triangle-exclamation,standard,base html
+.fantasy_survivor_legend_highscore,standard,scoreboard
+.fantasy_survivor_legend_lowscore,standard,scoreboard
+.fantasy_survivor_legend_warning,standard,base html
+.ffpts_pace_total,standard,base html
+.ficon,unknown,uncategorized
+.ficonname,standard,base html
+.filter-controls,standard,base html
+.first-container,standard,layout
+.first-td,standard,base html
+.fixed-side,unknown,uncategorized
+.flex-active,standard,base html
+.flex-container,standard,layout
+.flex-control-nav,standard,navigation
+.flex-control-paging,standard,base html
+.flex-control-thumbs,standard,base html
+.flex-direction-nav,standard,navigation
+.flex-disabled,standard,base html
+.flex-next,unknown,uncategorized
+.flex-pauseplay,standard,base html
+.flex-play,standard,base html
+.flex-prev,standard,base html
+.flex-slider,custom,slider
+.flex-viewport,standard,base html
+.flexslider,custom,slider
+.fname,standard,base html
+.footercontainer,standard,layout
+.footercontainer-outer,standard,layout
+.form_buttons,standard,forms
+.fran-last,standard,base html
+.franPlayerFA,standard,players
+.franchise,standard,franchise
+.franchise-avg,standard,franchise
+.franchise-box,standard,franchise
+.franchise-bye,standard,franchise
+.franchise-date,standard,franchise
+.franchise-icon,standard,franchise
+.franchise-icon-hr,standard,franchise
+.franchise-name,standard,franchise
+.franchise-name-scroll,standard,franchise
+.franchise-offered-by,standard,franchise
+.franchise-offered-to,standard,franchise
+.franchise-pmr-wrap,standard,franchise
+.franchise-record,standard,franchise
+.franchise-score,standard,scoreboard
+.franchise-score-scroll,standard,scoreboard
+.franchiseIconPrependPlayer,standard,players
+.franchiseIconPrependTeam,standard,franchise
+.franchiseNoIconPrependPlayer,standard,players
+.franchise_offline,standard,franchise
+.franchise_online,standard,franchise
+.franchiseicon,standard,franchise
+.franchiselogo,standard,franchise
+.franchisename,standard,franchise
+.freeagent,standard,players
+.full-width,unknown,uncategorized
+.full_height_banner,standard,base html
+.g,unknown,uncategorized
+.gameWeather,standard,base html
+.gamecentertable,standard,base html
+.gamedetailcell,standard,base html
+.gamescore,standard,scoreboard
+.gb,unknown,uncategorized
+.glffl,custom,skin / global app
+.glffl-plus,custom,skin / global app
+.greaterthan,standard,base html
+.grid_pos_cb,standard,base html
+.grid_pos_de,standard,base html
+.grid_pos_def,standard,base html
+.grid_pos_dt,standard,base html
+.grid_pos_lb,standard,base html
+.grid_pos_pk,standard,base html
+.grid_pos_pn,standard,base html
+.grid_pos_qb,standard,base html
+.grid_pos_rb,standard,base html
+.grid_pos_s,standard,base html
+.grid_pos_te,standard,base html
+.grid_pos_wr,standard,base html
+.grow,unknown,uncategorized
+.h,unknown,uncategorized
+.h2hmatchups,standard,scoreboard
+.h3-menu,standard,navigation
+.hMenuPopupTradeOffered,custom,popups - addon
+.hMenuPopupTradePoll,custom,popups - addon
+.hMenuTradeApproval,standard,navigation
+.hMenuTradeContainer,standard,navigation
+.hMenuTradeOffered,standard,navigation
+.hMenuTradePoll,standard,navigation
+.hMenuTradeReceived,standard,navigation
+.habmanAllPlay_franchise,custom,allplay
+.habmanAllPlay_hilite,custom,allplay
+.habmanAllPlay_img,custom,allplay
+.habmanAllPlay_ptsScored,custom,allplay
+.habmanAllPlay_record,custom,allplay
+.habmanAllPlay_record_total,custom,allplay
+.habmanAllPlay_total,custom,allplay
+.habmanAllPlay_week,custom,allplay
+.habmanHTH_franchise,standard,franchise
+.habmanHTH_hilite,standard,base html
+.habmanHTH_img,standard,base html
+.habmanHTH_isFuture,standard,base html
+.habmanHTH_loss,standard,base html
+.habmanHTH_na,standard,base html
+.habmanHTH_pa_total,standard,base html
+.habmanHTH_pf_total,standard,base html
+.habmanHTH_ptsScored,standard,scoreboard
+.habmanHTH_record,standard,base html
+.habmanHTH_record_total,standard,base html
+.habmanHTH_tie,standard,base html
+.habmanHTH_tooltip,standard,base html
+.habmanHTH_tooltipleft,standard,base html
+.habmanHTH_tooltiptext,standard,base html
+.habmanHTH_total,standard,base html
+.habmanHTH_week,standard,base html
+.habmanHTH_win,standard,base html
+.habmanPtsScored_adjusted,standard,scoreboard
+.habmanPtsScored_asterisk,standard,scoreboard
+.habmanPtsScored_franchise,standard,scoreboard
+.habmanPtsScored_img,standard,scoreboard
+.habmanPtsScored_ptsScored,standard,scoreboard
+.habmanPtsScored_ptsScoredTotal,standard,scoreboard
+.habmanPtsScored_total,standard,scoreboard
+.habmanPtsScored_week,standard,scoreboard
+.habskin,custom,skin / global app
+.has-buttons-left,standard,forms
+.has-buttons-right,standard,forms
+.has-buttons-rightL,standard,forms
+.has-ficon,standard,base html
+.has-rounds-add,standard,base html
+.has-rounds-row,standard,base html
+.has-sub,standard,base html
+.hasGroups,standard,base html
+.has_my_ranks,standard,base html
+.hcl,unknown,uncategorized
+.head-th,standard,base html
+.head-to-head,standard,base html
+.headerrow,standard,layout
+.headline,standard,base html
+.hidden,unknown,uncategorized
+.hide_bench,standard,rosters
+.highlight,unknown,uncategorized
+.highscore,standard,scoreboard
+.homeWinIcon-img,standard,league
+.homepagecolumn,standard,league
+.homepagemessage,standard,league
+.homepagemodule,standard,league
+.hometeam,standard,franchise
+.hot_button,standard,forms
+.hs_tabs_wrap,custom,tabs
+.hz-hide-shadow,standard,base html
+.hz-main-table,custom,tabs
+.icon-bar,standard,base html
+.icon-bar-full,standard,base html
+.icon-hide,unknown,uncategorized
+.inactive,standard,base html
+.inj,unknown,uncategorized
+.inj_status,standard,base html
+.inner_player_table,standard,players
+.inputfield,standard,forms
+.inputlabel,standard,forms
+.insertIcons,unknown,uncategorized
+.ir-report-modal-content,standard,IR
+.is-freeagent,standard,players
+.isMedia,standard,base html
+.kickoff-conditions-header,standard,layout
+.kickoff-conditions-temp,standard,base html
+.kickoff-conditions-text,unknown,uncategorized
+.kickoff-conditions-wrapper,standard,layout
+.label-input,standard,forms
+.lastTable,standard,base html
+.last_row,standard,base html
+.lastrow,standard,base html
+.league_name,standard,base html
+.leftS,unknown,uncategorized
+.leftSL,unknown,uncategorized
+.lessthan,standard,base html
+.lh_defunct_check,unknown,uncategorized
+.lh_overall_franchise,standard,franchise
+.limit,unknown,uncategorized
+.lineup_head,standard,rosters
+.lineup_player_row,standard,rosters
+.links_nav,standard,navigation
+.lions-den,unknown,uncategorized
+.loading,standard,base html
+.locked_bench,standard,rosters
+.locked_starter,standard,rosters
+.logo-text,unknown,uncategorized
+.lombardi,standard,base html
+.lottery-ball,standard,base html
+.lottery-ball-bonus,standard,base html
+.lottery-ball-dispersal,standard,base html
+.lottery-ball-selected,standard,forms
+.lottery-ball-winner,standard,base html
+.lottery-ball-winning-ball,standard,base html
+.lottery-ball-wrapper,standard,layout
+.lottery-clickable,standard,base html
+.lottery-icon,unknown,uncategorized
+.lottery-icon-loser,unknown,uncategorized
+.lottery-icon-winner,unknown,uncategorized
+.lottery-narrow-hide,standard,base html
+.lottery-not-clickable,standard,base html
+.lottery-scrollable-container-left,standard,layout
+.lottery-scrollable-container-right,standard,layout
+.lottery-scrollable-wrapper,standard,layout
+.lottery-simulate-unknown-large,standard,base html
+.lottery-simulate-unknown-small,standard,base html
+.lottery-wide-hide,unknown,uncategorized
+.lottery_assumption,standard,base html
+.lottery_asterisk,standard,base html
+.lottery_balls,standard,base html
+.lottery_bonus_balls,standard,base html
+.lottery_details,standard,base html
+.lottery_franchise,standard,franchise
+.lottery_icon,unknown,uncategorized
+.lottery_odds,unknown,uncategorized
+.lottery_owner,unknown,uncategorized
+.lottery_pick1,standard,draft
+.lottery_pick2,standard,draft
+.lottery_pick3,standard,draft
+.lottery_picknone,standard,draft
+.lottery_table_2nd_overall,standard,base html
+.lottery_table_simulator,standard,base html
+.lottery_total_balls,standard,base html
+.lottery_total_th,standard,base html
+.lowscore,standard,scoreboard
+.ls-boxscore,custom,skin / global app
+.ls-events,custom,skin / global app
+.ls-explain-points-li,custom,skin / global app
+.ls-explain-points-name,custom,skin / global app
+.ls-explain-points-total,custom,skin / global app
+.ls-game-is-final,custom,skin / global app
+.ls-game-scheduled,custom,skin / global app
+.ls-history-modal,custom,history
+.ls-matchup,custom,skin / global app
+.ls-modal,custom,skin / global app
+.ls-modal-body,custom,skin / global app
+.ls-modal-content,custom,skin / global app
+.ls-modal-header,custom,skin / global app
+.ls-nfl-gametime-final,custom,skin / global app
+.ls-nfl-spread,custom,skin / global app
+.ls-nfl-winner,custom,skin / global app
+.ls-outer-table,custom,tabs
+.ls-popup-player-li,custom,popups - player
+.ls-popup-points,custom,popups - addon
+.ls-popup-position-li,custom,popups - addon
+.ls-popup-stats,custom,popups - addon
+.ls-popup-status-ir,custom,popups - addon
+.ls-popup-status-ns,custom,popups - addon
+.ls-popup-status-s,custom,popups - addon
+.ls-popup-status-ts,custom,popups - addon
+.ls-ppts,custom,skin / global app
+.ls-ppts-pts,custom,skin / global app
+.ls-pts,custom,skin / global app
+.lsBenchstotals,custom,skin / global app
+.lsStarterstotals,custom,skin / global app
+.ls_above_projected,custom,skin / global app
+.ls_append_input,custom,skin / global app
+.ls_at_projected,custom,skin / global app
+.ls_below_projected,custom,skin / global app
+.ls_box_gameover,custom,skin / global app
+.ls_changed,custom,skin / global app
+.ls_game_info,custom,skin / global app
+.ls_gameinprogress,custom,skin / global app
+.ls_gameis_over,custom,skin / global app
+.ls_has_ball,custom,skin / global app
+.ls_in_redzone,custom,skin / global app
+.ls_nfl_box_inprog,custom,skin / global app
+.ls_nfl_box_over,custom,skin / global app
+.ls_nfl_icon,custom,skin / global app
+.ls_nonstarters,custom,skin / global app
+.ls_noposs,custom,skin / global app
+.ls_nothas_ball,custom,skin / global app
+.ls_num_1,custom,skin / global app
+.ls_num_2,custom,skin / global app
+.ls_og_cell,custom,skin / global app
+.ls_og_icon,custom,skin / global app
+.ls_og_selected,custom,skin / global app
+.ls_other_game,custom,skin / global app
+.ls_pace_box,custom,skin / global app
+.ls_player_stats,custom,skin / global app
+.ls_players_table,custom,skin / global app
+.ls_projected,custom,skin / global app
+.ls_projections,custom,skin / global app
+.ls_redzone,custom,skin / global app
+.ls_scroller,custom,skin / global app
+.ls_starters,custom,skin / global app
+.ls_team_points,custom,skin / global app
+.ls_withposs,custom,skin / global app
+.lsm-nav-btn,custom,skin / global app
+.lsm_error,custom,skin / global app
+.lsm_statusText,custom,skin / global app
+.make-pick-table,custom,tabs
+.matchup,standard,scoreboard
+.matchup-box,standard,scoreboard
+.matchup-box-scroll,standard,scoreboard
+.matchup-box-scroll-wrap,standard,scoreboard
+.matchupHilite,standard,scoreboard
+.matchupIsOver,standard,scoreboard
+.matchupLolite,standard,scoreboard
+.matchupOver,standard,scoreboard
+.matchup_container,standard,scoreboard
+.menu_arrow,standard,navigation
+.messageboardbar,standard,league
+.mfl-icon,unknown,uncategorized
+.mflLive_details_pace_ahead,standard,base html
+.mflLive_details_pace_behind,standard,base html
+.mflModal-content,standard,base html
+.mflUpdateWrap,standard,base html
+.minichat2_blink,standard,league
+.minichat2_time,standard,league
+.minifranchiseicon,standard,franchise
+.missed-projection,standard,base html
+.mm-home,standard,league
+.mm-myleagues,standard,base html
+.mm-thispage,standard,layout
+.mm_sizing_head,standard,base html
+.mobile-Hide,unknown,uncategorized
+.mobile-menu-open,standard,navigation
+.mobile-view,unknown,uncategorized
+.mobile-wrap,standard,base html
+.module_expand,custom,moduleExpand
+.mondayLoser,standard,base html
+.mondayWinner,standard,base html
+.monday_proj_total,standard,base html
+.month_header,standard,layout
+.moohighlight,unknown,uncategorized
+.move-Up-down-btn-twenty,standard,forms
+.move-down-btn,standard,forms
+.move-down-btn-twenty,standard,forms
+.move-up-btn,standard,forms
+.move-up-btn-twenty,standard,forms
+.moveBtns,standard,forms
+.myfantasyleague_menu,standard,navigation
+.myfantasyleague_menuMobile,standard,navigation
+.myfantasyleague_tabmenu,standard,navigation
+.myfranchise,standard,franchise
+.newposition,standard,base html
+.nfl-box-scroll,unknown,uncategorized
+.nfl-box-scroll-wrap,standard,base html
+.nfl-icon-onload,standard,base html
+.nflStatsAvgRow,standard,base html
+.nflStatsTotalRow,standard,base html
+.nflStatsWeekRow,standard,base html
+.nflggstat,standard,base html
+.nfltheme,custom,skin / global app
+.no-borderspacing,standard,base html
+.no-charge,standard,base html
+.no-js,unknown,uncategorized
+.no-rounds-add,standard,base html
+.no-sub,unknown,uncategorized
+.no-trades,standard,trades
+.no_icons,unknown,uncategorized
+.no_stats,standard,base html
+.nocaption,standard,base html
+.notification-bar-content,custom,popups - notifications
+.notification-default,custom,popups - notifications
+.notification-fail,custom,popups - notifications
+.notification-icon-search,custom,popups - notifications
+.notification-ir,custom,popups - notifications
+.notification-message,custom,popups - notifications
+.notification-online,custom,popups - notifications
+.notification-success,custom,popups - notifications
+.notification-trade,custom,popups - notifications
+.notification-warning,custom,popups - notifications
+.nra,standard,base html
+.number-hide,unknown,uncategorized
+.number_space,standard,base html
+.odd,unknown,uncategorized
+.oddtablerow,standard,base html
+.offSeason,standard,base html
+.offeredbymeTable,standard,base html
+.offeredtomeTable,standard,base html
+.offeree,unknown,uncategorized
+.offerer,unknown,uncategorized
+.one_column,unknown,uncategorized
+.oppRankAvgMatchup,standard,scoreboard
+.oppRankBadMatchup,standard,scoreboard
+.oppRankGoodMatchup,standard,scoreboard
+.oppRankGreatMatchup,standard,scoreboard
+.oppRankPoorMatchup,standard,scoreboard
+.original-projection,standard,base html
+.ovBench,standard,rosters
+.ovStart,standard,base html
+.ovStartTiebreak,standard,base html
+.ovTiebreak,standard,base html
+.owner-away,standard,base html
+.ownername,standard,base html
+.pa,standard,base html
+.pagebody,standard,layout
+.pagefooter,standard,layout
+.pageheader,standard,layout
+.pagetitle,standard,layout
+.ph_tabs_scroll,custom,tabs
+.pick,standard,draft
+.picks,standard,draft
+.plaque,standard,base html
+.plaqueframe,standard,base html
+.player,standard,players
+.player-image,standard,players
+.player-img-wrapper,standard,players
+.player-img-wrapper-clippler,standard,players
+.player-img-wrapper-waiv,standard,players
+.player-info,standard,players
+.player-inj,standard,players
+.player-live-score,standard,scoreboard
+.player-myrank,standard,players
+.player-name,standard,players
+.player-pos,standard,players
+.player-position,standard,players
+.player-projected-score,standard,scoreboard
+.player-row,standard,players
+.player-score-box,standard,scoreboard
+.player-search,standard,players
+.player-stats,standard,players
+.player-status,standard,players
+.player-team,standard,players
+.player-to-draft,standard,draft
+.player-wproj,standard,players
+.playerBio-Table,custom,tabs
+.playerContainer,standard,players
+.playerFirstName,standard,players
+.playerImgTable,standard,players
+.playerPhoto,standard,players
+.playerPopupIcon,custom,popups - player
+.playerPosition,standard,players
+.player_minutes_remaining,standard,players
+.player_photo,standard,players
+.player_row,standard,players
+.players,standard,players
+.players-bench,standard,rosters
+.players-offered-by,standard,players
+.players-offered-to,standard,players
+.players-playing,standard,players
+.players-playingMin,standard,players
+.players-pmr-wrap,standard,players
+.players-yetToPlayer,standard,players
+.players_currently_playing,standard,players
+.players_yet_to_play,standard,players
+.playing,standard,base html
+.playoff-report-modal-content,standard,base html
+.playoff-report-modal-header,standard,layout
+.playoff-seeding-wrap,custom,playoff seeding
+.playoffbracket,standard,base html
+.playoffbracketname,standard,base html
+.plus-toggle,standard,base html
+.plus-toggle-main,standard,base html
+.plus-toggle-stats,standard,base html
+.points,standard,base html
+.points_row,standard,base html
+.pointsdifference,standard,base html
+.pointstotal,standard,base html
+.poll_voted,standard,league
+.pooltab,standard,base html
+.popreport,standard,base html
+.popup-league-name,custom,popups - addon
+.pos-rank,standard,base html
+.position-table,custom,tabs
+.position_name_roster,standard,rosters
+.position_name_roster_mobile,standard,rosters
+.postSeason,standard,base html
+.pphoto,standard,base html
+.pproj_higher,standard,base html
+.pproj_lower,standard,base html
+.previews_table,standard,base html
+.previous_starter,standard,rosters
+.prevmatchups,standard,scoreboard
+.prmin,standard,base html
+.proj-pts,standard,base html
+.qbBase,standard,base html
+.range,standard,base html
+.rank,standard,base html
+.rbwrBase,standard,base html
+.regularSeason,standard,base html
+.report,standard,base html
+.reportfooter,standard,layout
+.reportform,standard,forms
+.reportnaviation,standard,navigation
+.reportnavigation,standard,navigation
+.reportnavigationheader,standard,navigation
+.requests-table,custom,tabs
+.require,unknown,uncategorized
+.restoreHPMs,standard,base html
+.rfaStatus,standard,base html
+.rfa_asterisk1,standard,base html
+.rfa_asterisk2,standard,base html
+.rfa_comp,standard,base html
+.rfa_icon,standard,base html
+.rfa_maxYr,standard,base html
+.rfa_minBid,standard,players
+.rfa_salary,standard,base html
+.rfa_ul_wrapper,standard,layout
+.rfa_ytdPts,standard,base html
+.rightSL,unknown,uncategorized
+.roadWinIcon-img,standard,base html
+.rookieDraft,standard,draft
+.roster-container,standard,rosters
+.rosterFreeze,standard,rosters
+.roster_base,standard,rosters
+.rosters_display,standard,rosters
+.round,unknown,uncategorized
+.rounds-fields-row,unknown,uncategorized
+.rounds-row,unknown,uncategorized
+.row-add-drop-btn,standard,forms
+.rowCurrentlyPlaying,standard,base html
+.rowGameOver,standard,base html
+.rs_active,standard,base html
+.rulestable,custom,rules
+.salary,standard,base html
+.salary_cap_row,standard,base html
+.savingsreview,standard,base html
+.scoredetailsWrap,standard,scoreboard
+.scoresContainer,standard,scoreboard
+.scoresummary,standard,scoreboard
+.screen-hide,unknown,uncategorized
+.scroll-spacer,standard,base html
+.sdd,unknown,uncategorized
+.seed-advanced,standard,base html
+.seed-eliminated,standard,base html
+.seed-group,standard,base html
+.select-btn,standard,forms
+.select-total-starters,standard,rosters
+.selected-player,standard,players
+.selection,standard,forms
+.settings-mobile-wrap,standard,base html
+.shadow-fade-bottom,standard,base html
+.shadow-right,standard,base html
+.shouldHavebench,standard,rosters
+.shouldHavestart,standard,base html
+.shouldbench,standard,rosters
+.shouldstart,standard,base html
+.show,unknown,uncategorized
+.show-sub-heads,standard,base html
+.showFilters,unknown,uncategorized
+.showHideRowShow,unknown,uncategorized
+.shrink,unknown,uncategorized
+.single-matchup,standard,scoreboard
+.sister-league,standard,base html
+.slider,custom,slider
+.slides,unknown,uncategorized
+.sort-bar,standard,base html
+.sort-btn,standard,forms
+.sort01,unknown,uncategorized
+.source-list-arrow,standard,base html
+.standings-cog,standard,standings
+.standings-settings_overlay,custom,standing settings
+.standingslogo,standard,standings
+.standingstable,standard,standings
+.starter_count,standard,rosters
+.starter_count_reason_less,standard,rosters
+.starter_count_reason_more,standard,rosters
+.starter_count_sub,standard,rosters
+.starter_count_sub_fail,standard,rosters
+.starter_count_total_wrapper,standard,rosters
+.starter_totalsRow,standard,rosters
+.starters_pos_row,standard,rosters
+.starters_pos_th,standard,rosters
+.status,standard,base html
+.still-tied,unknown,uncategorized
+.strk,standard,base html
+.sub-arrow-down,standard,base html
+.sub-content,unknown,uncategorized
+.subhead,standard,base html
+.subtext,unknown,uncategorized
+.subtotal,standard,base html
+.summary-moves,standard,base html
+.svg-icon,unknown,uncategorized
+.svg-iconlink,unknown,uncategorized
+.svg-text,unknown,uncategorized
+.tab0,custom,tabs
+.tab1,custom,tabs
+.tab2,custom,tabs
+.tab3,custom,tabs
+.tab4,custom,tabs
+.tab5,custom,tabs
+.tab6,custom,tabs
+.tab7,custom,tabs
+.tabLabel,custom,tabs
+.tabhead,custom,tabs
+.tabheaddouble,custom,tabs
+.table-autofilter,custom,tabs
+.table-filtered,custom,tabs
+.table-sortable,custom,tabs
+.table-sorted-asc,custom,tabs
+.table-sorted-desc,custom,tabs
+.target_report,standard,base html
+.taxiYearWarning,standard,rosters
+.tbt,unknown,uncategorized
+.td-first-type,standard,base html
+.td-pad,standard,base html
+.td-totals-row,custom,skin / global app
+.tdalert,standard,base html
+.teamAway,standard,franchise
+.teamHome,standard,franchise
+.teamPositionCircle,standard,franchise
+.team_lineup_table,standard,rosters
+.team_name_roster_circle,standard,rosters
+.team_roster_table,standard,rosters
+.team_watch_table,standard,franchise
+.teamdetailsWrap,standard,franchise
+.teamscoresummary,standard,scoreboard
+.telbBase,standard,base html
+.test,unknown,uncategorized
+.textbox_calculator,standard,base html
+.th-control-setting,standard,base html
+.th-warning,standard,base html
+.theme-bears,standard,base html
+.theme-bengals,standard,base html
+.theme-bills,unknown,uncategorized
+.theme-blue-orange,standard,base html
+.theme-blueonblue,unknown,uncategorized
+.theme-broncos,unknown,uncategorized
+.theme-brown,unknown,uncategorized
+.theme-brown-gold,unknown,uncategorized
+.theme-browns,unknown,uncategorized
+.theme-bucs,unknown,uncategorized
+.theme-cardinals,standard,base html
+.theme-charger,standard,base html
+.theme-chiefs,unknown,uncategorized
+.theme-colts,unknown,uncategorized
+.theme-cowboys,unknown,uncategorized
+.theme-dark-blue,standard,base html
+.theme-dolphins,standard,base html
+.theme-eagles,standard,base html
+.theme-falcons,standard,base html
+.theme-giants,standard,base html
+.theme-gold,unknown,uncategorized
+.theme-green,unknown,uncategorized
+.theme-grey,unknown,uncategorized
+.theme-jaguars,standard,base html
+.theme-jets,unknown,uncategorized
+.theme-light-blue,unknown,uncategorized
+.theme-lions,unknown,uncategorized
+.theme-niners,unknown,uncategorized
+.theme-orange,standard,base html
+.theme-packers,standard,base html
+.theme-panthers,standard,base html
+.theme-patriots,standard,base html
+.theme-purple,standard,base html
+.theme-raiders,standard,base html
+.theme-rams,standard,base html
+.theme-ravens,standard,base html
+.theme-red,unknown,uncategorized
+.theme-redonred,unknown,uncategorized
+.theme-redskins,unknown,uncategorized
+.theme-saints,standard,base html
+.theme-seahawks,standard,base html
+.theme-steelers,unknown,uncategorized
+.theme-teal,standard,base html
+.theme-texans,standard,base html
+.theme-titans,standard,base html
+.theme-vikings,unknown,uncategorized
+.ticker-wrapper,standard,layout
+.tie-broken,unknown,uncategorized
+.tie-broken-team,standard,franchise
+.timestamp,standard,base html
+.today,standard,base html
+.toggle-btn-main,standard,forms
+.toggle-hint,unknown,uncategorized
+.toggle_module_search,standard,base html
+.toggle_tabs,custom,tabs
+.top,standard,base html
+.topiclist,standard,base html
+.tops_image,standard,base html
+.topteam,standard,franchise
+.total,standard,base html
+.total_contract_bracketed,standard,base html
+.total_contract_row,standard,base html
+.total_salary_row,standard,base html
+.trade-assets-wrapper,standard,trades
+.trade-bbid-amt,standard,players
+.trade-offer,standard,trades
+.trade-player,standard,players
+.trade-toggle-mobile,standard,trades
+.trade-twocolumn-table,custom,tabs
+.tradedifference,standard,trades
+.tradesTable,standard,trades
+.trh-control-setting,standard,base html
+.two_column,unknown,uncategorized
+.two_column_layout,standard,base html
+.ufaStatus,standard,base html
+.videoconferenceicon,unknown,uncategorized
+.visitorSync,unknown,uncategorized
+.waiver-container,standard,players
+.warning,standard,base html
+.warning_maximum_error,standard,base html
+.warning_minimum_error,standard,base html
+.week,unknown,uncategorized
+.weekNav,standard,navigation
+.week_optionsbox,standard,base html
+.weekly-navbar,standard,navigation
+.weekly-navbar-mobile,standard,navigation
+.weekly-opp,standard,base html
+.weeklypointtotals,standard,base html
+.winIcon,unknown,uncategorized
+.win_percentage,standard,base html
+.win_percentage_bar,standard,base html
+.winnerMark,standard,base html
+.winner_mark,standard,base html
+.winnermark,standard,base html
+.winprob_away,standard,base html
+.winprob_home,standard,league
+.withfranchiseicon,standard,franchise
+.withfranchiseiconn,standard,franchise
+.wp_bar,standard,base html
+.wrapper-add-first,standard,layout
+.wrapper-add-second,standard,layout
+.year,standard,base html
+.year-text,standard,base html
+.ym,unknown,uncategorized
+#AddDropForm,standard,forms
+#All_Scores_Table,standard,scoreboard
+#COPY_LEAGUE,standard,base html
+#COPY_YEAR,standard,base html
+#CurrentWatchList,standard,base html
+#Customdraft_makepick,standard,draft
+#FORCE_WAIVER,standard,players
+#HPMEditCap,standard,base html
+#IN_EXCHANGE_FOR,standard,base html
+#LSModuleSettings,unknown,uncategorized
+#LS_AwayScore,standard,scoreboard
+#LS_AwayTeamName,standard,franchise
+#LS_CenterTop,standard,base html
+#LS_HomeScore,standard,scoreboard
+#LS_HomeTeamName,standard,franchise
+#LS_TopTableHolder,standard,base html
+#LSscoringBox,unknown,uncategorized
+#MFLBoxContainer,standard,layout
+#MFLBoxHolder,unknown,uncategorized
+#MFLBoxMatchups,standard,scoreboard
+#MFLBoxOverlay,standard,base html
+#MFLBoxPlayerDetails,standard,players
+#MFLBoxWrapper,standard,layout
+#MFLCenterTop,standard,base html
+#MFLChatPopupContainer,custom,popups - addon
+#MFLChatPopupOverlay,custom,popups - addon
+#MFLFantasyMatchupsUpdate,standard,scoreboard
+#MFLHomePMR,standard,league
+#MFLHomePlayers,standard,players
+#MFLHomeScore,standard,scoreboard
+#MFLHomeTeamName,standard,franchise
+#MFLHomeTeamRecord,standard,franchise
+#MFLHomeYTP,standard,league
+#MFLNFLMatchupsUpdate,standard,scoreboard
+#MFLPlayerPopupArticleLoaded,custom,popups - player
+#MFLPlayerPopupBio,custom,popups - player
+#MFLPlayerPopupBioTab,custom,popups - player
+#MFLPlayerPopupClose,custom,popups - player
+#MFLPlayerPopupContainer,custom,popups - player
+#MFLPlayerPopupHeader,custom,popups - player
+#MFLPlayerPopupLinks,custom,popups - player
+#MFLPlayerPopupLoading,custom,popups - player
+#MFLPlayerPopupNews,custom,popups - player
+#MFLPlayerPopupOverlay,custom,popups - player
+#MFLPlayerPopupProjections,custom,popups - player
+#MFLPlayerPopupStats,custom,popups - player
+#MFLPlayerPopupStatsHistory,custom,popups - player
+#MFLRoadPMR,standard,base html
+#MFLRoadPlayers,standard,players
+#MFLRoadScore,standard,scoreboard
+#MFLRoadTeamName,standard,franchise
+#MFLRoadTeamRecord,standard,franchise
+#MFLRoadYTP,standard,base html
+#MFLScoreboardLoading,standard,scoreboard
+#MFLroster,standard,rosters
+#MSG,unknown,uncategorized
+#SCRATCHPAD,standard,base html
+#ScoreDetails,standard,scoreboard
+#ScoreNFLDetails,standard,scoreboard
+#TeamDetails,standard,franchise
+#TeamWinPctRow,standard,franchise
+#accounting_table,standard,base html
+#add,standard,base html
+#add-drop-enhanced-ui,standard,base html
+#add-drop-enhanced-ui-tables,custom,tabs
+#add-drop-summary,standard,base html
+#add-player-list,standard,players
+#addDropSearch,standard,base html
+#add_drop,standard,base html
+#add_drop_submit,standard,base html
+#add_filt_nfl,standard,base html
+#add_name_field_id,standard,base html
+#adjust_scores,standard,scoreboard
+#ajax_loading,standard,base html
+#all_my_leagues,standard,base html
+#allplay-table,custom,allplay
+#amt_field_id,standard,base html
+#app3_fixedtipdiv,standard,base html
+#appearance_setup,standard,base html
+#article,standard,league
+#article_summary,standard,league
+#auction-status,standard,base html
+#auction_setup,standard,base html
+#autorotateCountdown,standard,base html
+#average_auction_values,standard,base html
+#avg_draft_time,standard,draft
+#bar_chart,standard,base html
+#bbid_summary,standard,players
+#bench-caption-fixed,standard,rosters
+#board_show,standard,base html
+#body_accounting_report,standard,layout
+#body_add_drop,standard,layout
+#body_adp,standard,layout
+#body_ajax_ls,standard,layout
+#body_all_reports,standard,layout
+#body_api_info,standard,layout
+#body_board_show,standard,layout
+#body_commissioner_setup,custom,commissioner abilities
+#body_csetup_cantadd,standard,layout
+#body_csetup_cantcut,standard,layout
+#body_csetup_draftpref,standard,draft
+#body_csetup_fcontact,standard,layout
+#body_csetup_fcustom,standard,layout
+#body_csetup_fmobile,standard,layout
+#body_csetup_hmpgmod,standard,layout
+#body_csetup_hmpgmsg,standard,layout
+#body_csetup_loadrost,standard,layout
+#body_depth_chart,standard,layout
+#body_detailed,standard,layout
+#body_fantasy_box_score,standard,scoreboard
+#body_free_agents,standard,layout
+#body_home,standard,league
+#body_injury,standard,layout
+#body_ir,standard,layout
+#body_lineup,standard,rosters
+#body_live_scoring,standard,layout
+#body_live_scoring_summary,standard,layout
+#body_login,standard,layout
+#body_news_articles,standard,league
+#body_nfl_team_stats,standard,franchise
+#body_options_03,standard,layout
+#body_options_06,standard,layout
+#body_options_07,standard,layout
+#body_options_08,standard,layout
+#body_options_09,standard,layout
+#body_options_100,standard,layout
+#body_options_101,standard,layout
+#body_options_117,standard,layout
+#body_options_118,standard,layout
+#body_options_119,standard,layout
+#body_options_120,standard,layout
+#body_options_122,standard,layout
+#body_options_133,standard,layout
+#body_options_142,standard,layout
+#body_options_15,standard,layout
+#body_options_151,standard,layout
+#body_options_152,standard,layout
+#body_options_156,standard,layout
+#body_options_158,standard,layout
+#body_options_16,standard,layout
+#body_options_169,standard,layout
+#body_options_17,standard,layout
+#body_options_170,standard,layout
+#body_options_171,standard,layout
+#body_options_180,standard,layout
+#body_options_20,standard,layout
+#body_options_202,standard,layout
+#body_options_204,standard,layout
+#body_options_205,standard,layout
+#body_options_208,standard,layout
+#body_options_210,standard,layout
+#body_options_215,standard,layout
+#body_options_22,standard,layout
+#body_options_23,standard,layout
+#body_options_232,standard,layout
+#body_options_236,standard,layout
+#body_options_243,standard,layout
+#body_options_31,standard,layout
+#body_options_37,standard,layout
+#body_options_49,standard,layout
+#body_options_54,standard,layout
+#body_options_81,standard,layout
+#body_player,standard,players
+#body_player_history,custom,history
+#body_pro_matchup,standard,scoreboard
+#body_processed_waivers,standard,players
+#body_reports_aav,standard,layout
+#body_reports_adp,standard,layout
+#body_reports_fsummary,standard,layout
+#body_reports_fullfa,standard,layout
+#body_reports_newplay,standard,layout
+#body_reports_ranks,standard,layout
+#body_reports_salaries,standard,layout
+#body_submit_lineups,standard,rosters
+#body_taxi_squad,standard,rosters
+#body_top,standard,layout
+#body_trade_offer,standard,trades
+#body_tweets,standard,layout
+#body_weekly,standard,layout
+#brief_standings,standard,standings
+#cache-addon,standard,base html
+#calculator-container,standard,layout
+#calendar,standard,base html
+#championship_plaque,standard,base html
+#chat_audio_clip,standard,league
+#chat_text_field,standard,league
+#cheatsheettable,standard,base html
+#clearAddList,standard,base html
+#clearDropList,standard,base html
+#collapseLink,standard,base html
+#comments_field_id,unknown,uncategorized
+#commishContainer,custom,commissioner abilities
+#commissioner_franchise_setup,custom,commissioner abilities
+#commissioner_setup,custom,commissioner abilities
+#container-wrap,standard,layout
+#contest_lineup,standard,rosters
+#contractPopupTable,custom,popups - addon
+#contractReportAjaxLoading,standard,base html
+#contractReportPopupContainer,custom,popups - addon
+#contractReportWrapper,standard,layout
+#contractTable,standard,base html
+#contract_9999,standard,base html
+#contracttypetable,standard,base html
+#csetup_cantadd,standard,base html
+#csetup_cantcut,standard,base html
+#csetup_hmpgmsg,standard,base html
+#csetup_loadrost,standard,base html
+#csetup_revtrad,standard,base html
+#curRosterTable,standard,rosters
+#current_auctions,standard,base html
+#current_nominator,standard,base html
+#custom_draftroom,standard,draft
+#destination_list,standard,base html
+#detailed,standard,base html
+#diceRemoveBtn,custom,diceRoll
+#diceRollResult,custom,diceRoll
+#division00,unknown,uncategorized
+#draft-control,standard,draft
+#draft-controller,standard,draft
+#draft-edit,standard,draft
+#draft-pick-edit,standard,draft
+#draftDetails,standard,draft
+#draftHistortable,standard,draft
+#draftTable,standard,draft
+#draft_countdown_timer,standard,draft
+#draft_picks_container,standard,draft
+#draft_player_link,standard,draft
+#draft_player_photo,standard,draft
+#draft_setup,standard,draft
+#draft_status,standard,draft
+#draft_status_table,standard,draft
+#draft_tracker,standard,draft
+#drop,standard,base html
+#drop-player-list,standard,players
+#dropInputDiv,standard,forms
+#drop_name_field_id,standard,base html
+#enhanced-add-drop-ui,standard,base html
+#entry_fee_accounting,standard,base html
+#expandLink,custom,moduleExpand
+#fantasy_articles,standard,league
+#fantasy_confidence_pool,standard,base html
+#fantasy_preview,standard,base html
+#fantasy_recap,standard,base html
+#fantasy_schedule_setup,standard,schedule
+#fantasy_survivor,standard,base html
+#ficon_checkbox,unknown,uncategorized
+#ficonname_checkbox,standard,base html
+#fname_checkbox,standard,base html
+#force_waiver_claim_p,standard,players
+#franchise_records,standard,franchise
+#franchise_schedule,standard,schedule
+#fs-sticky-footer,standard,layout
+#fullSeasonPts,standard,base html
+#general_setup,standard,base html
+#habmanAllPlay,custom,allplay
+#habmanAllPlay_populating,custom,allplay
+#habmanAllPlay_tableHTH,custom,allplay
+#habmanAllPlay_tableLegend,custom,allplay
+#habmanHTH,standard,base html
+#habmanHTH_populating,standard,base html
+#habmanHTH_tableLegend,standard,base html
+#habmanPtsScored,standard,scoreboard
+#habmanPtsScored_populating,standard,scoreboard
+#habmanPtsScored_tableLegend,standard,scoreboard
+#historical_records,standard,base html
+#history_setup,custom,history
+#home,standard,league
+#home_page_message_setup,standard,league
+#home_page_setup,standard,league
+#homepagecolumns,standard,league
+#homepagetabs,custom,tabs
+#hot_news,unknown,uncategorized
+#hpm_table_0,standard,base html
+#hsubmenu,standard,navigation
+#icon-wrapper,standard,layout
+#ir-report-modal-container,standard,IR
+#lastAuctionOverCountdownRow,standard,base html
+#last_update,standard,base html
+#last_weeks_fantasy_results,standard,base html
+#league_champions,standard,base html
+#league_chat,standard,league
+#league_links,standard,base html
+#league_news_feed,standard,base html
+#lineup,standard,rosters
+#live_scoring_summary,standard,base html
+#load_rosters,standard,rosters
+#loadingchatdata,standard,league
+#locked-msg,unknown,uncategorized
+#logo_svg_inserticon,unknown,uncategorized
+#lottery-simulate-1,standard,base html
+#lottery-simulate-2,standard,base html
+#lottery-simulate-3,standard,base html
+#lottery-simulator-container,standard,layout
+#lotteryReportTable,standard,base html
+#ls-modal-2-header-content,custom,skin / global app
+#ls-modal-3-header-content,custom,skin / global app
+#ls-modal-content,custom,skin / global app
+#ls_error,unknown,uncategorized
+#ls_mfl_notes,unknown,uncategorized
+#ls_pace_wrapper,standard,layout
+#ls_setting_drop,standard,base html
+#ls_ticker_label,standard,base html
+#ls_ticker_tab_id,standard,base html
+#lsmNextWeek,unknown,uncategorized
+#lsmPrevWeek,standard,base html
+#make_pick,standard,draft
+#marquee_away,custom,marquee
+#marquee_home,custom,marquee
+#menu-trigger,standard,navigation
+#message,standard,league
+#messageBoxDIV,standard,league
+#mfl-cache-inner,standard,base html
+#mfl-cache-overlay,standard,base html
+#mflUpdateWrapContent,standard,base html
+#mflhistory,custom,history
+#minichat2_chat,standard,league
+#minichat2_chatTable,standard,league
+#minichat2_onlineList,standard,league
+#minichat2_onlineTitle,standard,league
+#minichat2_privateMessageWrapper,standard,league
+#minichat2_wrapper,standard,league
+#modal-cancel,standard,base html
+#modal-confirm,standard,base html
+#monthly_calendar,standard,base html
+#myMFLSkinSelection,standard,forms
+#my_bye_weeks,unknown,uncategorized
+#my_draft_list,standard,draft
+#my_draft_picks,standard,draft
+#my_links,unknown,uncategorized
+#my_news,unknown,uncategorized
+#my_options,standard,base html
+#my_player_photos,standard,players
+#my_trophy_case,standard,base html
+#my_watch_list,standard,base html
+#myfantasyleague_customtabs,custom,tabs
+#myfantasyleague_tabs,custom,tabs
+#new_predraft,standard,draft
+#news_articles,standard,league
+#next_weeks_fantasy_schedule,standard,schedule
+#nflAvgActive,standard,base html
+#nflAvgInactive,standard,base html
+#nflTotalActive,standard,base html
+#nflTotalInactive,standard,base html
+#nfl_confidence_pool,standard,base html
+#nfl_games,standard,base html
+#nfl_survivor_pool,standard,base html
+#nflschedule,standard,schedule
+#options_01,standard,base html
+#options_03,standard,base html
+#options_05,standard,base html
+#options_06,standard,base html
+#options_07,standard,base html
+#options_08,standard,base html
+#options_101,standard,base html
+#options_105,standard,base html
+#options_112,standard,base html
+#options_113,standard,base html
+#options_117,standard,base html
+#options_118,standard,base html
+#options_121,standard,base html
+#options_122,standard,base html
+#options_128,standard,base html
+#options_129,standard,base html
+#options_13,standard,base html
+#options_138,standard,base html
+#options_15,standard,base html
+#options_153,standard,base html
+#options_156,standard,base html
+#options_157,standard,base html
+#options_158,standard,base html
+#options_169,standard,base html
+#options_17,standard,base html
+#options_171,standard,base html
+#options_176,standard,base html
+#options_178,standard,base html
+#options_179,standard,base html
+#options_18,standard,base html
+#options_180,standard,base html
+#options_182,standard,base html
+#options_185,standard,base html
+#options_187,standard,base html
+#options_194,standard,base html
+#options_199,standard,base html
+#options_20,standard,base html
+#options_202,standard,base html
+#options_204,standard,base html
+#options_208,standard,base html
+#options_209,standard,base html
+#options_210,standard,base html
+#options_22,standard,base html
+#options_232,standard,base html
+#options_234,standard,base html
+#options_236,standard,base html
+#options_247,standard,base html
+#options_256,standard,base html
+#options_257,standard,base html
+#options_27,standard,base html
+#options_43,standard,base html
+#options_45,standard,base html
+#options_52,standard,base html
+#options_54,standard,base html
+#options_65,standard,base html
+#options_67,standard,base html
+#options_68,standard,base html
+#options_71,standard,base html
+#options_73,standard,base html
+#other_games,standard,base html
+#other_transactions_setup,standard,base html
+#outerMFLScoreboardDiv,standard,scoreboard
+#overviewAjaxLoading,custom,overview
+#overviewDropbox,custom,overview
+#owner_activity,standard,base html
+#picker,standard,draft
+#picker_filt_nfl,standard,draft
+#picker_filt_pos,standard,draft
+#player,standard,players
+#player-profile,standard,players
+#player-search,standard,players
+#player_adp,standard,players
+#player_dob_age,standard,players
+#player_height_weight,standard,players
+#player_records,standard,players
+#player_search,standard,players
+#player_stats_table,standard,players
+#players-bench,standard,rosters
+#players_and_rosters,standard,rosters
+#playoff-report-modal-container,standard,layout
+#playoff-report-modal-content,standard,base html
+#playoffTable,standard,base html
+#playoff_setup,standard,base html
+#poll_summary,standard,league
+#popup-ignoreLeagues-caption,custom,popups - addon
+#popup-ignoreLeagues-container,custom,popups - addon
+#popup-ignoreLeagues-content,custom,popups - addon
+#popup-ignoreLeagues-table,custom,popups - addon
+#popup-selectLeagues-caption,custom,popups - addon
+#popup-weather-container,custom,popups - addon
+#popup-weather-wrapper,custom,popups - addon
+#popupcontainer,custom,popups - addon
+#position-filter,standard,base html
+#power_rank,standard,base html
+#prize_money_net,standard,base html
+#prize_money_transactions,standard,base html
+#prize_money_winnings,standard,base html
+#processed_waivers,standard,players
+#recent_draft_picks,standard,draft
+#recently_used,unknown,uncategorized
+#record_streaks,standard,base html
+#rfaReportTable,standard,base html
+#rfa_list,standard,base html
+#roster,standard,rosters
+#roster_away,standard,rosters
+#roster_column_left,standard,rosters
+#roster_home,standard,rosters
+#rostertable,standard,rosters
+#round_field_id,unknown,uncategorized
+#rulebanner,standard,base html
+#rulestabs,custom,tabs
+#salary_cap_setup,standard,base html
+#scoreboardTooltip,standard,scoreboard
+#scoring_setup,standard,base html
+#season_records,standard,base html
+#sel_name,standard,base html
+#series_records,unknown,uncategorized
+#source_list,unknown,uncategorized
+#standings,standard,standings
+#standings-settings,custom,standing settings
+#standings_legend,standard,standings
+#starter-caption-fixed,standard,rosters
+#sticky_filters,unknown,uncategorized
+#sub0,unknown,uncategorized
+#survivorAjaxLoading,standard,base html
+#tab0,standard,base html
+#tab1,standard,base html
+#tab2,standard,base html
+#tab3,standard,base html
+#tab4,standard,base html
+#tab5,standard,base html
+#tab6,standard,base html
+#tab7,standard,base html
+#tab_title,standard,base html
+#tableCounter,standard,base html
+#tabmenu-wrap,standard,navigation
+#taxiSquadTable,standard,rosters
+#teamBox,standard,franchise
+#teamBoxOverlay,standard,franchise
+#todayscalendar,standard,base html
+#tooltip,standard,base html
+#top,standard,base html
+#top_adds,standard,base html
+#top_busts,standard,base html
+#top_drops,standard,base html
+#top_fa,standard,base html
+#top_owns,standard,base html
+#top_performers,standard,forms
+#top_starters,standard,rosters
+#top_steals,standard,base html
+#top_survivor_picks,standard,draft
+#tradeShowMyTeam,standard,franchise
+#trade_bait,standard,trades
+#tradereview,standard,trades
+#transactions,standard,base html
+#trash_talk_video,standard,base html
+#twitter_feed,unknown,uncategorized
+#typicalCalendar,standard,base html
+#typicalCalendarLegend,standard,base html
+#use_with_caution,standard,base html
+#verticalMenu,standard,navigation
+#waiver_order,standard,players
+#waiver_request_list,standard,players
+#waivers_setup,standard,players
+#weather-wrapper,standard,layout
+#weekly,unknown,uncategorized
+#weekly_calendar,standard,base html
+#weekly_fantasy_articles,standard,league
+#weekly_mvp,standard,base html
+#weekly_mvp_starters,standard,rosters
+#weekly_summary,standard,base html
+#welcome,unknown,uncategorized
+#who_should_i_start,standard,base html
+#youtubevideo,unknown,uncategorized
