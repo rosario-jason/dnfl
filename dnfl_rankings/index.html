@@ -211,7 +211,7 @@ function renderChart(records) {
                     font: { size: 14 },
                     padding: { bottom: 7 }
                 },
-                legend: { display: false },
+                legend: { display: true, position: 'top', labels: { font: {size: 14 } } },   
                 tooltip: {
                     backgroundColor: 'rgba(20, 20, 20, 0.95)',
                     titleColor: '#ffffff',
@@ -249,11 +249,12 @@ function renderChart(records) {
                 x: {
                     min: 50, max: 100,
                     grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    ticks: { color: '#ffffff' }
+                    ticks: { color: '#ffffff', font: { size: 14, weight: 'bold'} },
+                    title: { display: true, text: 'Grade', font: { size: 16, weight: 'bold'}, padding: { top: 10, bottom: 0 } },
                 },
                 y: {
                     grid: { display: false },
-                    ticks: { color: '#ffffff', font: { size: 12 } }
+                    ticks: { color: '#ffffff', font: { size: 14 }, padding: { top: 0, bottom: 10 } }
                 }
             }
         }
