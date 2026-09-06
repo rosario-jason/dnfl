@@ -2,56 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>TEST1 2026 DNFL Power Rankings</title>
+    <title>TEST2 2026 DNFL Power Rankings</title>
     <!-- Load Chart.js v4 and PapaParse CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
     <style>
         body {
-            font-family: Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
             background-color: #121212;
             color: #ffffff;
             margin: 0;
-            padding: 1.5rem;
-            font-size: 1.063rem;
+            padding: 1.5rem; /* Responsive canvas margins */
+            font-size: 1.063rem; /* Approx 17px base layout typography */
         }
         .chart-container {
             max-width: 900px;
             margin: 0 auto;
             background: #1e1e1e;
-            padding: 1.5rem;
-            border-radius: 12px;
+            padding: 1.5rem; 
+            border-radius: 12px; /* Rigid px structures keep border edges crisp */
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
         }
         .controls {
             display: flex;
             align-items: center;
             justify-content: flex-start;
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.25rem; 
             flex-wrap: wrap;
-            gap: 1.25rem;
+            gap: 1.25rem; 
             background: #262626;
-            padding: 0.938rem;
+            padding: 0.938rem; 
             border-radius: 8px;
         }
         .filter-group {
             display: flex;
             flex-direction: column;
-            gap: 0.375rem;
+            gap: 0.375rem; /* Gap scales proportionally if user zooms browser */
         }
         .filter-group label {
-            font-size: 0.875rem;
+            font-size: 0.875rem; /* Approx 14px easily scannable headers */
             color: #aaa;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: 600;
         }
         select {
             background: #121212;
             color: #ffffff;
-            border: 1px solid #444;
-            padding: 8px 12px;
+            border: 1px solid #444; /* Clean 1px framework lines */
+            padding: 8px 12px; 
             border-radius: 6px;
-            font-size: 1rem;
+            font-size: 1rem; /* Standard input text readability */
             min-width: 160px;
         }
         select:focus {
@@ -60,7 +61,7 @@
         }
         .chart-wrapper {
             position: relative;
-            height: 750px; 
+            height: 850px; 
             width: 100%;
         }
     </style>
@@ -68,6 +69,8 @@
 <body>
 
 <div class="chart-container">
+    <h2>2026 DNFL Power Rankings</h2>
+
     <div class="controls">
         <div class="filter-group">
             <label for="weekSelector">Week:</label>
@@ -96,7 +99,6 @@ let chartInstance = null;
 // 🟢 CHRONOLOGICAL LOG: Add new weeks to the BOTTOM of this list as the season moves on
 const publishedWeeks = [
     { id: "00_pre-season", display: "Pre-Season" }
-    // { id: "01", display: "Week 1" } <-- Add rows here each week!
 ];
 
 const conferenceColors = {
@@ -122,7 +124,6 @@ function initDashboard() {
         selector.appendChild(opt);
     });
 
-    // Auto-select the newest entry at the bottom of the list
     const mostRecentWeek = publishedWeeks[publishedWeeks.length - 1];
     selector.value = mostRecentWeek.id;
 
@@ -139,28 +140,30 @@ function loadWeeklyData() {
         dynamicTyping: true,
         skipEmptyLines: true,
         complete: function(results) {
-            masterData = results.data.map(row => ({
-                franchise: row['Franchise'] || 'Unknown Team',
-                conference: row['Conference'] || 'Other',
-                division: row['Conference - Division'] || '',
-                owner: row['Owner Name'] || row['Owner'] || 'N/A',
-                coOwner: row['Co-Owner Name'] || row['Co-Owner'] || '',
-                grade: parseFloat(row['Overall Grade'] || row['Grade'] || 0),
-                projectedRecord: row['Projected W-L'] || 'N/A',
-                rank: row['Rank'] || 'N/A'
-            }));
+            masterData = results.data.map(row => {
+                const rawConference = row['Conference'] ? String(row['Conference']).trim() : 'Other';
+                const divisionName = row['Conference - Division'] ? String(row['Conference - Division']).trim() : 'N/A';
+
+                return {
+                    franchise: row['Franchise'] ? String(row['Franchise']).trim() : 'Unknown Team',
+                    conference: rawConference,
+                    division: divisionName,
+                    owner: row['Owner Name'] || 'N/A',
+                    coOwner: row['Co-Owner Name'] || '',
+                    grade: parseFloat(row['Overall Grade'] || 0),
+                    projectedRecord: row['Projected W-L'] || 'N/A'
+                };
+            });
 
             applyConferenceFilter();
         },
         error: function(err) {
-            console.error("Data error: ", err);
-            alert(`Error reading file. Ensure data_${selectedWeekFile}.csv is inside your data/ folder.`);
+            console.error("Data fetch error: ", err);
         }
     });
 }
 
 function renderChart(records) {
-    // Sort highest to lowest grade for display logic
     const sorted = [...records].sort((a, b) => b.grade - a.grade);
 
     const labels = sorted.map(r => r.franchise);
@@ -169,7 +172,12 @@ function renderChart(records) {
     const borderColors = sorted.map(r => conferenceBorders[r.conference] || 'rgb(201, 203, 207)');
 
     const weekDropdown = document.getElementById('weekSelector');
-    const displaySubtitle = weekDropdown.options[weekDropdown.selectedIndex].text + " Ranking";
+    const displaySubtitle = weekDropdown.options[weekDropdown.selectedIndex] ? 
+                            weekDropdown.options[weekDropdown.selectedIndex].text + " Ranking" : "Ranking";
+
+    // 🖥️ Programmatic Rem-to-Px Conversion Engine:
+    // Captures user baseline and safely scales canvas text parameters
+    const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
 
     const ctx = document.getElementById('powerRankingChart').getContext('2d');
 
@@ -189,7 +197,7 @@ function renderChart(records) {
             }]
         },
         options: {
-            indexAxis: 'y', // Explicitly horizontal
+            indexAxis: 'y', 
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
@@ -197,13 +205,20 @@ function renderChart(records) {
                     display: true,
                     text: 'DNFL Power Ranking',
                     color: '#ffffff',
-                    font: { size: 20, weight: 'bold' }
+                    font: { 
+                        size: 1.5 * rootFontSize, /* Responsive 1.5rem equivalent (24px) */
+                        weight: 'bold' 
+                    },
+                    padding: { top: 5, bottom: 2 }
                 },
                 subtitle: {
                     display: true,
                     text: displaySubtitle, 
                     color: '#aaaaaa',
-                    font: { size: 14, style: 'italic' },
+                    font: { 
+                        size: 1.0 * rootFontSize, /* Responsive 1.0rem equivalent (16px) */
+                        style: 'italic' 
+                    },
                     padding: { bottom: 15 }
                 },
                 legend: { display: false },
@@ -215,23 +230,28 @@ function renderChart(records) {
                     borderWidth: 1,
                     padding: 12,
                     enabled: true,
+                    titleFont: { 
+                        size: 1.0 * rootFontSize, /* Responsive 16px hover title text */
+                        weight: 'bold' 
+                    },
+                    bodyFont: { 
+                        size: 0.875 * rootFontSize /* Responsive 14px description text */
+                    },
                     callbacks: {
                         title: function(context) { 
-                            return context[0].label; 
+                            return context.label; 
                         },
                         label: function(context) {
                             const franchiseName = context.label;
-                            // Find precise record from sorted source data
                             const item = sorted.find(r => r.franchise === franchiseName);
                             
                             if (!item) return 'No data found';
 
                             const owners = item.coOwner ? `${item.owner}, ${item.coOwner}` : item.owner;
                             return [
-                                `${item.division}`,
-                                `${owners}`,
-                                `Rank: ${item.rank}`,
-                                `Grade: ${item.grade}`,
+                                `Division Group: ${item.division}`,
+                                `Owners: ${owners}`,
+                                `Overall Grade: ${item.grade}`,
                                 `Projected Record: ${item.projectedRecord}`
                             ];
                         }
@@ -242,28 +262,13 @@ function renderChart(records) {
                 x: {
                     min: 50, max: 100,
                     grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    ticks: { color: '#ffffff' }
+                    ticks: { 
+                        color: '#ffffff',
+                        font: { size: 0.813 * rootFontSize } /* Responsive 13px scale text */
+                    }
                 },
                 y: {
                     grid: { display: false },
-                    ticks: { color: '#ffffff', font: { size: 12 } }
-                }
-            }
-        }
-    });
-}
+                    ticks: { 
+                        color: '#ffffff', 
 
-function applyConferenceFilter() {
-    const selected = document.getElementById('confFilter').value;
-    if (selected === 'All') {
-        renderChart(masterData);
-    } else {
-        const filtered = masterData.filter(d => d.conference.trim().toLowerCase() === selected.toLowerCase());
-        renderChart(filtered);
-    }
-}
-
-window.onload = initDashboard;
-</script>
-</body>
-</html>
