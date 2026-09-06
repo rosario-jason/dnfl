@@ -197,13 +197,13 @@ function renderChart(records) {
                     display: true,
                     text: 'DNFL Power Ranking',
                     color: '#ffffff',
-                    font: { size: 20, weight: 'bold' }
+                    font: { size: 18, weight: 'bold' }
                 },
                 subtitle: {
                     display: true,
                     text: displaySubtitle, 
-                    color: '#aaaaaa',
-                    font: { size: 14, style: 'italic' },
+                    color: '#ffffff',
+                    font: { size: 16, style: 'italic' },
                     padding: { bottom: 15 }
                 },
                 legend: { display: false },
@@ -211,6 +211,8 @@ function renderChart(records) {
                     backgroundColor: 'rgba(20, 20, 20, 0.95)',
                     titleColor: '#ffffff',
                     bodyColor: '#dddddd',
+                    titleFont: { size: 14 },
+                    bodyFont: { size: 14 },
                     borderColor: '#444',
                     borderWidth: 1,
                     padding: 12,
@@ -230,8 +232,8 @@ function renderChart(records) {
                             return [
                                 `${item.division}`,
                                 `${owners}`,
-                                `Rank: ${item.rank}`,
-                                `Grade: ${item.grade}`,
+                                `DNFL Rank: ${item.rank}`,
+                                `Overall Grade: ${item.grade}`,
                                 `Projected Record: ${item.projectedRecord}`
                             ];
                         }
@@ -243,6 +245,7 @@ function renderChart(records) {
                     min: 50, max: 100,
                     grid: { color: 'rgba(255, 255, 255, 0.1)' },
                     ticks: { color: '#ffffff' }
+                    title: { display: true, text: 'Power Rank Grade', font: { size: 16, weight: 'bold'}, padding: { top: 10, bottom: 0 } }
                 },
                 y: {
                     grid: { display: false },
