@@ -223,11 +223,25 @@ function renderChart(records) {
                     borderColor: '#444',
                     borderWidth: 1,
                     padding: 12,
+                    enabled: true, // Explicitly forces tooltip visibility on hover
                     callbacks: {
-                        title: function(context) { return sorted[context.dataIndex].franchise; },
+                        title: function(context) {
+                            // Chart.js safe label tracking configuration
+                            return context[0].label;
+                        },
                         label: function(context) {
-                            const item = sorted[context.dataIndex];
+                            const franchiseName = context.label;
+                            
+                            // Find the matching team record inside our sorted dataset row list
+                            const item = sorted.find(r => r.franchise === franchiseName);
+                            
+                            if (!item) {
+                                return 'No data found';
+                            }
+                
                             const owners = item.coOwner ? `${item.owner}, ${item.coOwner}` : item.owner;
+                            
+                            // Returns an explicitly clean string array block for the multi-line layout grid
                             return [
                                 `Conference-Division: ${item.conference} - ${item.division}`,
                                 `Owners: ${owners}`,
@@ -236,6 +250,7 @@ function renderChart(records) {
                             ];
                         }
                     }
+                }
                 }
             },
             scales: {
