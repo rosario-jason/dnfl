@@ -138,15 +138,21 @@ function loadWeeklyData() {
         dynamicTyping: true,
         skipEmptyLines: true,
         complete: function(results) {
-            masterData = results.data.map(row => ({
-                franchise: row['Franchise'] || 'Unknown Team',
-                conference: row['Conference'] || 'Other',
-                division: row['Division'] || '',
-                owner: row['Primary Owner'] || row['Owner'] || 'N/A',
-                coOwner: row['Secondary Owner'] || row['Co-Owner'] || '',
-                grade: parseFloat(row['Overall Grade'] || row['Grade'] || 0),
-                projectedRecord: row['Projected Record'] || 'N/A'
-            }));
+            masterData = results.data.map(row => {
+                // Safely clean mapping parameters based on your formatted headers
+                const rawConference = row['Conference'] ? String(row['Conference']).trim() : 'Other';
+                const divisionName = row['Conference - Division'] ? String(row['Conference - Division']).trim() : 'N/A';
+
+                return {
+                    franchise: row['Franchise'] || 'Unknown Team',
+                    conference: rawConference,
+                    division: divisionName,
+                    owner: row['Owner Name'] || 'N/A',
+                    coOwner: row['Co-Owner Name'] || '',
+                    grade: parseFloat(row['Overall Grade'] || 0),
+                    projectedRecord: row['Projected W-L'] || 'N/A'
+                };
+            });
 
             applyConferenceFilter();
         },
@@ -226,7 +232,7 @@ function renderChart(records) {
 
                             const owners = item.coOwner ? `${item.owner}, ${item.coOwner}` : item.owner;
                             return [
-                                `Conference-Division: ${item.division}`,
+                                `Division Group: ${item.division}`,
                                 `Owners: ${owners}`,
                                 `Overall Grade: ${item.grade}`,
                                 `Projected Record: ${item.projectedRecord}`
