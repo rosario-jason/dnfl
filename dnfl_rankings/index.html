@@ -40,7 +40,7 @@
             gap: 0.375rem;
         }
         .filter-group label {
-            font-size: 0.875rem;
+            font-: 0.875rem;
             color: #aaa;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -51,7 +51,7 @@
             border: 1px solid #444;
             padding: 8px 12px;
             border-radius: 6px;
-            font-size: 1rem;
+            font-: 1rem;
             min-width: 160px;
         }
         select:focus {
@@ -206,12 +206,19 @@ function renderChart(records) {
                     font: { size: 14, style: 'italic' },
                     padding: { bottom: 15 }
                 },
+                body: {
+                    color: '#ffffff',
+                    font: { size: 14 },
+                    padding: { bottom: 7 }
+                },
                 legend: { display: false },
                 tooltip: {
                     backgroundColor: 'rgba(20, 20, 20, 0.95)',
                     titleColor: '#ffffff',
                     bodyColor: '#dddddd',
-                    borderColor: '#444',
+                    titlefont: { size: 14 },
+                    bodyfont: { size: 14 },
+                    borderColor: '#fff',
                     borderWidth: 1,
                     padding: 12,
                     enabled: true,
