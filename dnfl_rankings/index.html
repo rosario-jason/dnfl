@@ -141,12 +141,12 @@ function loadWeeklyData() {
             masterData = results.data.map(row => ({
                 franchise: row['Franchise'] || 'Unknown Team',
                 conference: row['Conference'] || 'Other',
-                division: row['Conferenc - Division'] || '',
+                division: row['Conference - Division'] || '',
                 owner: row['Owner Name'] || row['Owner'] || 'N/A',
                 coOwner: row['Co-Owner Name'] || row['Co-Owner'] || '',
                 grade: parseFloat(row['Overall Grade'] || row['Grade'] || 0),
                 projectedRecord: row['Projected W-L'] || 'N/A',
-                rank: row['Rank'] || 'N/A',
+                rank: row['Rank'] || 'N/A'
             }));
 
             applyConferenceFilter();
