@@ -130,8 +130,6 @@ function initDashboard() {
 
 function loadWeeklyData() {
     const selectedWeekFile = document.getElementById('weekSelector').value;
-    
-    // Crucial: Adjusted data path explicitly to map relative to your folder structure
     const filePath = `data/data_${selectedWeekFile}.csv`;
 
     Papa.parse(filePath, {
@@ -140,21 +138,33 @@ function loadWeeklyData() {
         dynamicTyping: true,
         skipEmptyLines: true,
         complete: function(results) {
-            masterData = results.data.map(row => ({
-                franchise: row['Franchise'] || 'Unknown Team',
-                conference: row['Conference'] || 'Other',
-                division: row['Division'] || '',
-                owner: row['Primary Owner'] || row['Owner'] || 'N/A',
-                coOwner: row['Secondary Owner'] || row['Co-Owner'] || '',
-                grade: parseFloat(row['Overall Grade'] || row['Grade'] || 0),
-                projectedRecord: row['Projected Record'] || 'N/A'
-            }));
+            masterData = results.data.map(row => {
+                // 1. Strip out trailing whitespaces from the raw conference name
+                const rawConference = row['Conference'] ? String(row['Conference']).trim() : 'Other';
+                
+                // 2. Safely parse and split the "Conference - Division" column
+                let divisionName = '';
+                if (row['Conference - Division']) {
+                    const parts = String(row['Conference - Division']).split('-');
+                    divisionName = parts[1] ? parts[1].trim() : String(row['Conference - Division']).trim();
+                }
+
+                return {
+                    franchise: row['Franchise'] || 'Unknown Team',
+                    conference: rawConference,
+                    division: divisionName,
+                    owner: row['Owner Name'] || 'N/A',
+                    coOwner: row['Co-Owner Name'] || '',
+                    grade: parseFloat(row['Overall Grade'] || 0),
+                    projectedRecord: row['Projected W-L'] || 'N/A'
+                };
+            });
 
             applyConferenceFilter();
         },
         error: function(err) {
             console.error("Data error: ", err);
-            alert(`Error reading file. Ensure data_ ${selectedWeekFile}.csv is inside your data/ folder.`);
+            alert(`Error reading file. Ensure data_${selectedWeekFile}.csv is inside your data/ folder.`);
         }
     });
 }
