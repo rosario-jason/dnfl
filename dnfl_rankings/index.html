@@ -139,9 +139,15 @@ function loadWeeklyData() {
         skipEmptyLines: true,
         complete: function(results) {
             masterData = results.data.map(row => {
-                // Safely clean mapping parameters based on your formatted headers
+                // Strip out trailing whitespaces from the raw conference name
                 const rawConference = row['Conference'] ? String(row['Conference']).trim() : 'Other';
-                const divisionName = row['Conference - Division'] ? String(row['Conference - Division']).trim() : 'N/A';
+                
+                // Safely parse and split the "Conference - Division" column
+                let divisionName = '';
+                if (row['Conference - Division']) {
+                    const parts = String(row['Conference - Division']).split('-');
+                    divisionName = parts.length > 1 ? parts[1].trim() : String(row['Conference - Division']).trim();
+                }
 
                 return {
                     franchise: row['Franchise'] || 'Unknown Team',
@@ -232,7 +238,7 @@ function renderChart(records) {
 
                             const owners = item.coOwner ? `${item.owner}, ${item.coOwner}` : item.owner;
                             return [
-                                `Division Group: ${item.division}`,
+                                `Conference-Division: ${item.conference} - ${item.division}`,
                                 `Owners: ${owners}`,
                                 `Overall Grade: ${item.grade}`,
                                 `Projected Record: ${item.projectedRecord}`
