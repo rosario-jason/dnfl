@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>DNFL 2026 Power Rankings</title>
+    <title>DNFL Power Ranking Matrix</title>
     <!-- Chart.js and PapaParse CDN libraries -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
+    <script src="https://jsdelivr.net"></script>
+    <script src="https://jsdelivr.net"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -204,7 +204,7 @@ function renderChart(records) {
             plugins: {
                 title: {
                     display: true,
-                    text: '2026 DNFL Power Rankings',
+                    text: 'DNFL Power Ranking',
                     color: '#ffffff',
                     font: { size: 20, weight: 'bold' }
                 },
@@ -223,25 +223,11 @@ function renderChart(records) {
                     borderColor: '#444',
                     borderWidth: 1,
                     padding: 12,
-                    enabled: true, // Explicitly forces tooltip visibility on hover
                     callbacks: {
-                        title: function(context) {
-                            // Chart.js safe label tracking configuration
-                            return context[0].label;
-                        },
+                        title: function(context) { return sorted[context.dataIndex].franchise; },
                         label: function(context) {
-                            const franchiseName = context.label;
-                            
-                            // Find the matching team record inside our sorted dataset row list
-                            const item = sorted.find(r => r.franchise === franchiseName);
-                            
-                            if (!item) {
-                                return 'No data found';
-                            }
-                
+                            const item = sorted[context.dataIndex];
                             const owners = item.coOwner ? `${item.owner}, ${item.coOwner}` : item.owner;
-                            
-                            // Returns an explicitly clean string array block for the multi-line layout grid
                             return [
                                 `Conference-Division: ${item.conference} - ${item.division}`,
                                 `Owners: ${owners}`,
@@ -250,7 +236,6 @@ function renderChart(records) {
                             ];
                         }
                     }
-                }
                 }
             },
             scales: {
