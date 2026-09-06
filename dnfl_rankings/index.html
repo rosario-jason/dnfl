@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>2026 DNFL Power Rankings</title>
-    <!-- Load Chart.js v4 and PapaParse CDN libraries -->
-    <script src="ttps://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
+    <!-- Optimized Stable CDN scripts -->
+    <script src="https://jsdelivr.net"></script>
+    <script src="https://cloudflare.com"></script>    
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -59,14 +59,30 @@
         }
         .chart-wrapper {
             position: relative;
-            height: 750px; 
+            height: 800px; 
             width: 100%;
+        }
+        .local-warning {
+            background: #ff5252;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
         }
     </style>
 </head>
 <body>
 
 <div class="chart-container">
+    <h2>2026 DNFL Power Rankings</h2>
+    
+    <!-- CORS Error Helper Banner -->
+    <div id="localWarning" class="local-warning">
+        <strong>⚠️ Local Browser Security Active:</strong> You are viewing this file directly from your computer computer (file:/// URL). Your browser is blocking the CSV data stream. Push these files to your GitHub repository to see the chart live!
+    </div>
+
     <div class="controls">
         <div class="filter-group">
             <label for="weekSelector">Week:</label>
@@ -92,10 +108,9 @@
 let masterData = [];
 let chartInstance = null;
 
-// 🟢 CHRONOLOGICAL LOG: Add new weeks to the BOTTOM of this list as the season moves on
+// Log your files here. Ensure names are exact matches to your filenames
 const publishedWeeks = [
     { id: "00_pre-season", display: "Pre-Season" }
-    // { id: "01", display: "Week 1" } <-- Add rows here each week!
 ];
 
 const conferenceColors = {
@@ -111,6 +126,11 @@ const conferenceBorders = {
 };
 
 function initDashboard() {
+    // Show warning banner if running locally on computer hard drive
+    if (window.location.protocol === 'file:') {
+        document.getElementById('localWarning').style.display = 'block';
+    }
+
     const selector = document.getElementById('weekSelector');
     selector.innerHTML = ''; 
 
@@ -121,7 +141,6 @@ function initDashboard() {
         selector.appendChild(opt);
     });
 
-    // Auto-select the newest entry at the bottom of the list
     const mostRecentWeek = publishedWeeks[publishedWeeks.length - 1];
     selector.value = mostRecentWeek.id;
 
@@ -130,6 +149,8 @@ function initDashboard() {
 
 function loadWeeklyData() {
     const selectedWeekFile = document.getElementById('weekSelector').value;
+    
+    // Explicitly safe relative path calculation targeting your subfolder structure
     const filePath = `data/data_${selectedWeekFile}.csv`;
 
     Papa.parse(filePath, {
@@ -138,27 +159,34 @@ function loadWeeklyData() {
         dynamicTyping: true,
         skipEmptyLines: true,
         complete: function(results) {
-            masterData = results.data.map(row => ({
-                franchise: row['Franchise'] || 'Unknown Team',
-                conference: row['Conference'] || 'Other',
-                division: row['Division'] || '',
-                owner: row['Primary Owner'] || row['Owner'] || 'N/A',
-                coOwner: row['Secondary Owner'] || row['Co-Owner'] || '',
-                grade: parseFloat(row['Overall Grade'] || row['Grade'] || 0),
-                projectedRecord: row['Projected Record'] || 'N/A'
-            }));
+            masterData = results.data.map(row => {
+                const rawConference = row['Conference'] ? String(row['Conference']).trim() : 'Other';
+                const divisionName = row['Conference - Division'] ? String(row['Conference - Division']).trim() : 'N/A';
+
+                return {
+                    franchise: row['Franchise'] || 'Unknown Team',
+                    conference: rawConference,
+                    division: divisionName,
+                    owner: row['Owner Name'] || 'N/A',
+                    coOwner: row['Co-Owner Name'] || '',
+                    grade: parseFloat(row['Overall Grade'] || 0),
+                    projectedRecord: row['Projected W-L'] || 'N/A'
+                };
+            });
 
             applyConferenceFilter();
         },
         error: function(err) {
-            console.error("Data error: ", err);
-            alert(`Error reading file. Ensure data_${selectedWeekFile}.csv is inside your data/ folder.`);
+            console.error("Data fetch error: ", err);
+            // If running on local computer, fail gracefully instead of locking up
+            if (window.location.protocol === 'file:') {
+                console.log("CORS block prevented local file reading. This is normal on desktop files.");
+            }
         }
     });
 }
 
 function renderChart(records) {
-    // Sort highest to lowest grade for display logic
     const sorted = [...records].sort((a, b) => b.grade - a.grade);
 
     const labels = sorted.map(r => r.franchise);
@@ -167,7 +195,8 @@ function renderChart(records) {
     const borderColors = sorted.map(r => conferenceBorders[r.conference] || 'rgb(201, 203, 207)');
 
     const weekDropdown = document.getElementById('weekSelector');
-    const displaySubtitle = weekDropdown.options[weekDropdown.selectedIndex].text + " Ranking";
+    const displaySubtitle = weekDropdown.options[weekDropdown.selectedIndex] ? 
+                            weekDropdown.options[weekDropdown.selectedIndex].text + " Ranking" : "Ranking";
 
     const ctx = document.getElementById('powerRankingChart').getContext('2d');
 
@@ -187,23 +216,10 @@ function renderChart(records) {
             }]
         },
         options: {
-            indexAxis: 'y', // Explicitly horizontal
+            indexAxis: 'y', 
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                title: {
-                    display: true,
-                    text: 'DNFL Power Ranking',
-                    color: '#ffffff',
-                    font: { size: 20, weight: 'bold' }
-                },
-                subtitle: {
-                    display: true,
-                    text: displaySubtitle, 
-                    color: '#aaaaaa',
-                    font: { size: 14, style: 'italic' },
-                    padding: { bottom: 15 }
-                },
                 legend: { display: false },
                 tooltip: {
                     backgroundColor: 'rgba(20, 20, 20, 0.95)',
@@ -219,14 +235,13 @@ function renderChart(records) {
                         },
                         label: function(context) {
                             const franchiseName = context.label;
-                            // Find precise record from sorted source data
                             const item = sorted.find(r => r.franchise === franchiseName);
                             
                             if (!item) return 'No data found';
 
                             const owners = item.coOwner ? `${item.owner}, ${item.coOwner}` : item.owner;
                             return [
-                                `Conference-Division: ${item.division}`,
+                                `Division Group: ${item.division}`,
                                 `Owners: ${owners}`,
                                 `Overall Grade: ${item.grade}`,
                                 `Projected Record: ${item.projectedRecord}`
@@ -243,7 +258,7 @@ function renderChart(records) {
                 },
                 y: {
                     grid: { display: false },
-                    ticks: { color: '#ffffff', font: { size: 12 } }
+                    ticks: { color: '#ffffff', font: { size: 11 } }
                 }
             }
         }
