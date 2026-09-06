@@ -227,12 +227,11 @@ function renderChart(records) {
 
                             const owners = item.coOwner ? `${item.owner}, ${item.coOwner}` : item.owner;
                             return [
-                                `Franchise: ${item.franchise}`,
-                                `Conference-Division: ${item.division}`,
-                                `Owners: ${owners}`,
-                                `Overall Grade: ${item.grade}`,
-                                `Projected Record: ${item.projectedRecord}`,
-                                `Rank: ${item.rank}`
+                                `${item.division}`,
+                                `${owners}`,
+                                `Rank: ${item.rank}`,
+                                `Grade: ${item.grade}`,
+                                `Projected Record: ${item.projectedRecord}`
                             ];
                         }
                     }
