@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <title>DNFL Power Ranking Matrix</title>
-    <!-- Chart.js and PapaParse CDN libraries -->
-    <script src="https://jsdelivr.net"></script>
-    <script src="https://jsdelivr.net"></script>
+    <!-- Corrected Chart.js v4 and PapaParse CDN libraries -->
+    <script src="ttps://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
@@ -69,11 +69,11 @@
 <div class="chart-container">
     <div class="controls">
         <div class="filter-group">
-            <label for="weekSelector">Ranking Week:</label>
+            <label for="weekSelector">Timeline</label>
             <select id="weekSelector" onchange="loadWeeklyData()"></select>
         </div>
         <div class="filter-group">
-            <label for="confFilter">Conference:</label>
+            <label for="confFilter">Conference Filter</label>
             <select id="confFilter" onchange="applyConferenceFilter()">
                 <option value="All">All Conferences</option>
                 <option value="Cameron Crazies">Cameron Crazies</option>
@@ -95,7 +95,7 @@ let chartInstance = null;
 // 🟢 CHRONOLOGICAL LOG: Add new weeks to the BOTTOM of this list as the season moves on
 const publishedWeeks = [
     { id: "00_pre-season", display: "Pre-Season" }
-    // { id: "01", display: "Week 1" } <-- Uncomment/Add rows here each week!
+    // { id: "01", display: "Week 1" } <-- Add rows here each week!
 ];
 
 const conferenceColors = {
@@ -139,14 +139,14 @@ function loadWeeklyData() {
         skipEmptyLines: true,
         complete: function(results) {
             masterData = results.data.map(row => {
-                // 1. Strip out trailing whitespaces from the raw conference name
+                // Strip out trailing whitespaces from the raw conference name
                 const rawConference = row['Conference'] ? String(row['Conference']).trim() : 'Other';
                 
-                // 2. Safely parse and split the "Conference - Division" column
+                // Safely parse and split the "Conference - Division" column
                 let divisionName = '';
                 if (row['Conference - Division']) {
                     const parts = String(row['Conference - Division']).split('-');
-                    divisionName = parts[1] ? parts[1].trim() : String(row['Conference - Division']).trim();
+                    divisionName = parts.length > 1 ? parts[1].trim() : String(row['Conference - Division']).trim();
                 }
 
                 return {
@@ -170,6 +170,7 @@ function loadWeeklyData() {
 }
 
 function renderChart(records) {
+    // Sort highest to lowest grade for display logic
     const sorted = [...records].sort((a, b) => b.grade - a.grade);
 
     const labels = sorted.map(r => r.franchise);
@@ -198,7 +199,7 @@ function renderChart(records) {
             }]
         },
         options: {
-            indexAxis: 'y',          
+            indexAxis: 'y', // Explicitly horizontal
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
@@ -223,10 +224,18 @@ function renderChart(records) {
                     borderColor: '#444',
                     borderWidth: 1,
                     padding: 12,
+                    enabled: true,
                     callbacks: {
-                        title: function(context) { return sorted[context.dataIndex].franchise; },
+                        title: function(context) { 
+                            return context[0].label; 
+                        },
                         label: function(context) {
-                            const item = sorted[context.dataIndex];
+                            const franchiseName = context.label;
+                            // Find precise record from sorted source data
+                            const item = sorted.find(r => r.franchise === franchiseName);
+                            
+                            if (!item) return 'No data found';
+
                             const owners = item.coOwner ? `${item.owner}, ${item.coOwner}` : item.owner;
                             return [
                                 `Conference-Division: ${item.conference} - ${item.division}`,
