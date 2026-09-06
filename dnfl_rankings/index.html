@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>DNFL Power Ranking Matrix</title>
-    <!-- Corrected Chart.js v4 and PapaParse CDN libraries -->
+    <title>2026 DNFL Power Rankings</title>
+    <!-- Load Chart.js v4 and PapaParse CDN libraries -->
     <script src="ttps://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
     <style>
@@ -69,11 +69,11 @@
 <div class="chart-container">
     <div class="controls">
         <div class="filter-group">
-            <label for="weekSelector">Timeline</label>
+            <label for="weekSelector">Week:</label>
             <select id="weekSelector" onchange="loadWeeklyData()"></select>
         </div>
         <div class="filter-group">
-            <label for="confFilter">Conference Filter</label>
+            <label for="confFilter">Conference:</label>
             <select id="confFilter" onchange="applyConferenceFilter()">
                 <option value="All">All Conferences</option>
                 <option value="Cameron Crazies">Cameron Crazies</option>
@@ -138,27 +138,15 @@ function loadWeeklyData() {
         dynamicTyping: true,
         skipEmptyLines: true,
         complete: function(results) {
-            masterData = results.data.map(row => {
-                // Strip out trailing whitespaces from the raw conference name
-                const rawConference = row['Conference'] ? String(row['Conference']).trim() : 'Other';
-                
-                // Safely parse and split the "Conference - Division" column
-                let divisionName = '';
-                if (row['Conference - Division']) {
-                    const parts = String(row['Conference - Division']).split('-');
-                    divisionName = parts.length > 1 ? parts[1].trim() : String(row['Conference - Division']).trim();
-                }
-
-                return {
-                    franchise: row['Franchise'] || 'Unknown Team',
-                    conference: rawConference,
-                    division: divisionName,
-                    owner: row['Owner Name'] || 'N/A',
-                    coOwner: row['Co-Owner Name'] || '',
-                    grade: parseFloat(row['Overall Grade'] || 0),
-                    projectedRecord: row['Projected W-L'] || 'N/A'
-                };
-            });
+            masterData = results.data.map(row => ({
+                franchise: row['Franchise'] || 'Unknown Team',
+                conference: row['Conference'] || 'Other',
+                division: row['Division'] || '',
+                owner: row['Primary Owner'] || row['Owner'] || 'N/A',
+                coOwner: row['Secondary Owner'] || row['Co-Owner'] || '',
+                grade: parseFloat(row['Overall Grade'] || row['Grade'] || 0),
+                projectedRecord: row['Projected Record'] || 'N/A'
+            }));
 
             applyConferenceFilter();
         },
@@ -238,7 +226,7 @@ function renderChart(records) {
 
                             const owners = item.coOwner ? `${item.owner}, ${item.coOwner}` : item.owner;
                             return [
-                                `Conference-Division: ${item.conference} - ${item.division}`,
+                                `Conference-Division: ${item.division}`,
                                 `Owners: ${owners}`,
                                 `Overall Grade: ${item.grade}`,
                                 `Projected Record: ${item.projectedRecord}`
