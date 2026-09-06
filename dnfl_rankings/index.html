@@ -141,11 +141,12 @@ function loadWeeklyData() {
             masterData = results.data.map(row => ({
                 franchise: row['Franchise'] || 'Unknown Team',
                 conference: row['Conference'] || 'Other',
-                division: row['Division'] || '',
-                owner: row['Primary Owner'] || row['Owner'] || 'N/A',
-                coOwner: row['Secondary Owner'] || row['Co-Owner'] || '',
+                division: row['Conferenc - Division'] || '',
+                owner: row['Owner Name'] || row['Owner'] || 'N/A',
+                coOwner: row['Co-Owner Name'] || row['Co-Owner'] || '',
                 grade: parseFloat(row['Overall Grade'] || row['Grade'] || 0),
-                projectedRecord: row['Projected Record'] || 'N/A'
+                projectedRecord: row['Projected W-L'] || 'N/A',
+                rank: row['Rank'] || 'N/A',
             }));
 
             applyConferenceFilter();
@@ -229,7 +230,8 @@ function renderChart(records) {
                                 `Conference-Division: ${item.division}`,
                                 `Owners: ${owners}`,
                                 `Overall Grade: ${item.grade}`,
-                                `Projected Record: ${item.projectedRecord}`
+                                `Projected Record: ${item.projectedRecord}`,
+                                `Rank: ${item.rank}`,
                             ];
                         }
                     }
