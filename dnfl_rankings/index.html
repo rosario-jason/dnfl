@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>v5.04 2026 DNFL Power Rankings</title>
+    <title>v5.05 2026 DNFL Power Rankings</title>
     <!-- Load Chart.js v4 and PapaParse CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
@@ -25,13 +25,11 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
                 box-sizing: border-box;
         }
-
         .chart-container h1 {
             color: #121212;
             font-size: 1.2rem;
             text-align: center;
         }
-
         .controls {
             display: flex;
             align-items: center;
@@ -78,8 +76,6 @@
             position: relative;
             width: 100%;
         }
-        
-        /* 📊 Data Table Grid Styling */
         .table-wrapper {
             width: 95%;
             max-width: 1000px;
@@ -111,7 +107,6 @@
             border-bottom: 1px solid #333;
             color: #121212;
         }
-
         tr:nth-child(even) {
             background-color: #FAFAFA;
         }
@@ -119,7 +114,6 @@
          tr:hover {
             background-color: #FDE68A;
         }
-
         .rank-badge {
             font-weight: bold;
             color: #ffffff;
@@ -129,17 +123,10 @@
             text-align: center;
             min-width: 1.1rem; /* Keeps rank badges uniform uniform if ranks hit double digits */
         }
-
-        /* 🕹️ Visibility Toggle Button Layout Rules */
         .section-header-row {
             display: flex;
             width: 100%;
             margin-bottom: 0.75rem;
-        }
-        .section-title-text {
-            font-size: 1.25rem;
-            font-weight: bold;
-            margin: 0;
         }
         .visibility-toggle-btn {
             font-size: 0.7rem;
@@ -205,11 +192,8 @@
 </div>
 
 <!-- 📋 Dynamic Synchronized Data Table Wrapper -->
-<!-- 🕹️ Table Header + Toggle Control (Matches width card baseline) -->
-
-<!-- Ensure your table wrapper container has this exact ID -->
 <div id="tableWrapperContainer" class="table-wrapper">
-    <div style="margin: 1.5rem auto 0.5rem 1rem; box-sizing: border-box;">
+    <div style="margin: 1.5rem auto 0.5rem 1.5rem; box-sizing: border-box;">
         <div class="section-header-row">
             <button id="tableToggleBtn" class="visibility-toggle-btn" onclick="toggleElementVisibility('table')">Hide Table</button>
         </div>
