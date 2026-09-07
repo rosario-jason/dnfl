@@ -1,37 +1,37 @@
-Rank,Overall Grade,Projected W-L,Franchise,Owner Name,Co-Owner Name,Conference,Conference - Division
-1,94.1,11-1,InWinceAbles 2.0,Vince Hsieh,,Blue Devils,Blue Devils - North
-2,86.6,10-2,FreeBallers,James Freeman,,K-Ville,K-Ville - South
-3,85.8,9-3,Bombers,Jason Rosario,,K-Ville,K-Ville - North
-4,83.7,8-4,McLean's McTeam,Jenny McLean,,K-Ville,K-Ville - South
-5,79.5,9-3,Honeybadgers,Deepak Prabhakar,Sasi Reddy (GM),Cameron Crazies,Cameron Crazies - South
-5,79.5,8-4,Dingoes,Dinush Kurera,,K-Ville,K-Ville - South
-7,78.5,8-4,Bessel's Vessels,Rich Bessel,,Cameron Crazies,Cameron Crazies - South
-8,78.1,9-3,Chugifer Returns,Jennifer Bentley,,Blue Devils,Blue Devils - North
-9,78.0,9-3,Rollover,Aaron Schumm,,Blue Devils,Blue Devils - South
-10,77.1,8-4,Harbaugh’s Heros,Kyle Watson,,Cameron Crazies,Cameron Crazies - North
-11,76.0,8-4,Booger's Gas-passers,Jeff Berger,,Blue Devils,Blue Devils - South
-12,75.8,7-5,Biltong & Kimchi,Jacus de Beer,So-Yeon Jeong,Blue Devils,Blue Devils - South
-13,75.7,7-5,PAIN TRAIN,Rob Fuqua,,Blue Devils,Blue Devils - North
-13,75.7,7-5,Norseman Cometh,Weldon Bell,,Cameron Crazies,Cameron Crazies - North
-15,75.5,7-5,Gold Standard,Ben Golding,,K-Ville,K-Ville - North
-16,74.9,7-5,Brett's Bets,Brett Wehmann,,Cameron Crazies,Cameron Crazies - North
-17,74.7,5-7,Funky Cold Medina,Joe Beaudoin,,Blue Devils,Blue Devils - North
-18,73.6,6-6,Bend It Like Bendeck,Brad Bendeck,,Cameron Crazies,Cameron Crazies - North
-19,72.8,6-6,Zippy's Speedsters,Jim Vint,,Cameron Crazies,Cameron Crazies - North
-20,72.4,6-6,Ankit's a Rookie No More!,Ankit Singhal,,Cameron Crazies,Cameron Crazies - South
-21,72.3,5-7,Team Hatherley Corkery,Christine Hatherley Corkery,,Cameron Crazies,Cameron Crazies - South
-22,71.7,6-6,Skol Krushers,Tom Tate,,K-Ville,K-Ville - North
-23,71.0,4-8,Water (and Electric) Boy Ferrell,Jason Ferrell,,Cameron Crazies,Cameron Crazies - South
-24,70.8,4-8,Team West,Matt West,,Blue Devils,Blue Devils - North
-25,70.0,6-6,Kappler's Team,Rick Kappler,,K-Ville,K-Ville - South
-26,69.7,4-8,Atlanta Fantasy Football Team,Verlin Henderson,Cary Lawler,Blue Devils,Blue Devils - South
-27,69.1,3-9,O Canada,Evan Bryman,,Cameron Crazies,Cameron Crazies - North
-28,69.0,3-9,Draft Dodgers,Paul DiMarco,,Cameron Crazies,Cameron Crazies - South
-29,68.7,5-7,Wendt's Motown Masher,Mike Wendt,,K-Ville,K-Ville - North
-30,68.2,3-9,Chia Kung Fu Fighters,Chia Kung,,Blue Devils,Blue Devils - South
-31,67.3,3-9,Inappropriate Comment,Rob McLaughlin,,Blue Devils,Blue Devils - North
-32,65.6,2-10,Sailor's Delight,Giancarlo Rossi,,Blue Devils,Blue Devils - South
-33,65.1,5-7,Wyld Stallyns,Chris Zaloumis,,K-Ville,K-Ville - North
-34,64.5,4-8,Nashville,Nikki Nash,,K-Ville,K-Ville - South
-35,63.9,3-9,Talented Mr Riley,Ben Riley,,K-Ville,K-Ville - North
-36,62.4,1-11,Phat Sackers,Steve Hirsh,,K-Ville,K-Ville - South
+Rank,Overall Grade,Projected W-L,Franchise,Owner Name,Co-Owner Name,Conference,Conference - Division,QB Grade,QB Rank,RB Grade,RB Rank,WR Grade,WR Rank,TE Grade,TE Rank,Rank Comments
+1,94.1,11-1,InWinceAbles 2.0,Vince Hsieh,,Blue Devils ,Blue Devils - North,72.7,20,78.0,18,98.5,1,90.4,4,"Vince's squad reigns at Rank 1 with a 94.1 Overall Grade thanks to an elite, league-best WR grade (98.5, Rank 1) and keeping TE Brock Bowers (90.4, Rank 4). However, their RB grade of 78.0 (Rank 18) suggests Saquon Barkley is going to have to carry the ball, the water bottles, and this entire team on his back."
+2,86.6,10-2,FreeBallers,James Freeman,,K-Ville ,K-Ville - South,95.0,2,87.3,6,77.2,16,77.5,11,"Freeman drafted absolute powerhouses like Josh Allen and Jahmyr Gibbs, landing a stellar 95.0 QB grade (Rank 2). Too bad they completely forgot wide receivers exist, scoring a mediocre 77.2 WR grade (Rank 16)—their receivers are basically glorified cardio specialists."
+3,85.8,9-3,Bombers,Jason Rosario,,K-Ville ,K-Ville - North,77.9,8,86.0,8,88.0,4,76.2,15,"The Bomber's put together an offensive juggernaut, boasting a strong 86.0 RB grade (Rank 8) and 88.0 WR grade (Rank 4). The only joke here is keeping Chuba Hubbard and Bhayshul Tuten, apparently planning for a mid-season fantasy collapse."
+4,83.7,8-4,McLean's McTeam,Jenny McLean,,K-Ville ,K-Ville - South,72.5,21,99.0,1,63.5,34,94.0,1,"Jenny McLean's roster has a monstrous, league-best 99.0 RB grade (Rank 1) and 94.0 TE grade (Rank 1). Unfortunately, her bottom-dwelling 63.5 WR grade (Rank 34) is a historical draft-day disaster that should probably be investigated for fantasy negligence."
+5,79.5,8-4,Dingoes,Dinush Kurera,,K-Ville ,K-Ville - South,60.5,36,83.3,13,84.4,7,81.2,8,"Deepak & Sasi secured a solid RB grade (83.3, Rank 13) and elite WR grade (84.4, Rank 7). But with a last-place 60.5 QB grade (Rank 36), they are starting Sam Darnold and Baker Mayfield, meaning they're essentially praying for a weekly miracle."
+5,79.5,9-3,Honeybadgers,Deepak Prabhakar,Sasi Reddy (GM),Cameron Crazies ,Cameron Crazies - South,78.9,5,88.3,4,72.1,23,81.2,9,Dinush's team is carried by an elite 88.3 RB grade (Rank 4) thanks to keeper De'Von Achane. But their weak 72.1 WR grade (Rank 23) suggests their wideouts will spend more time blocking than actually catching passes.
+7,78.5,8-4,Bessel's Vessels,Rich Bessel,,Cameron Crazies ,Cameron Crazies - South,71.6,25,85.2,10,80.6,12,71.9,27,"Bessel has a strong foundation with Jahmyr Gibbs and Drake London, earning an 80.6 WR grade (Rank 12). But a mediocre 71.6 QB grade (Rank 25) means Patrick Mahomes is apparently expected to pass the ball directly to himself."
+8,78.1,9-3,Chugifer Returns,Jennifer Bentley,,Blue Devils ,Blue Devils - North,73.1,17,70.8,25,87.2,5,81.2,7,"Chugifer drafted a top-tier WR duo of Ja'Marr Chase and AJ Brown (87.2 WR grade, Rank 5). But their running game is in reverse with a bottom-tier 70.8 RB grade (Rank 25), meaning they'll be running the ball backwards most weeks."
+9,78.0,9-3,Rollover,Aaron Schumm,,Blue Devils ,Blue Devils - South,61.3,35,78.1,17,88.3,3,77.2,12,"Schumm's WR room is absolutely elite, boasting an 88.3 WR grade (Rank 3) with Puka Nacua and Malik Nabers. But with a poor 61.3 QB grade (Rank 35), Aaron is relying on Bryce Young as his keeper, which is a fantasy tragedy waiting to unfold."
+10,77.1,8-4,Harbaugh’s Heros,Kyle Watson,,Cameron Crazies ,Cameron Crazies - North,69.5,30,96.4,2,68.5,28,73.3,18,Watson's team boasts an impressive 96.4 RB grade (Rank 2) led by Christian McCaffrey. But their bottom-tier 68.5 WR grade (Rank 28) means Kyle's pass-catchers will be doing a lot of running with very little rewarding.
+11,76.0,8-4,Booger's Gas-passers,Jeff Berger,,Blue Devils ,Blue Devils - South,67.7,32,82.3,14,80.8,11,72.8,22,"Berger's team has a powerful backfield with Breece Hall, securing a strong 82.3 RB grade (Rank 14). However, a poor 67.7 QB grade (Rank 32) is a complete blowout, proving that this draft was mostly full of hot air."
+12,75.8,7-5,Biltong & Kimchi,Jacus de Beer,So-Yeon Jeong,Blue Devils ,Blue Devils - South,78.6,6,88.2,5,68.2,29,72.6,24,Jacus and So-Yeon secured Jahmyr Gibbs and Kyren Williams for a strong 88.2 RB grade (Rank 5). But their bottom-tier 68.2 WR grade (Rank 29) suggests their wide receiver room is thinner and more fragile than dry biltong.
+13,75.7,7-5,Norseman Cometh,Weldon Bell,,Cameron Crazies ,Cameron Crazies - North,76.8,12,84.5,12,76.6,18,66.7,34,"Fuqua's roster has a strong 84.5 RB grade (Rank 12) with De'Von Achane. But with a 76.6 WR grade (Rank 18) and a bottom-dwelling 66.7 TE grade (Rank 34), the only 'pain' this train is delivering is to Rob's own sanity."
+13,75.7,7-5,PAIN TRAIN,Rob Fuqua,,Blue Devils ,Blue Devils - North,74.5,14,86.7,7,71.6,24,76.7,14,"Weldon's team is coming along nicely with a solid 86.7 RB grade (Rank 7) with De'Von Achane and Ashton Jeanty. Unfortunately, a mediocre 71.6 WR grade (Rank 24) means this Norseman is coming with absolutely zero passing threat."
+15,75.5,7-5,Gold Standard,Ben Golding,,K-Ville ,K-Ville - North,79.6,4,84.7,11,71.3,25,73.3,18,Golding got a solid draft grade from Nico Collins and Malik Nabers. But a bottom-tier 71.3 WR grade (Rank 25) in the conference ratings proves that Ben's 'Gold Standard' is actually just gold-plated plastic.
+16,74.9,7-5,Brett's Bets,Brett Wehmann,,Cameron Crazies ,Cameron Crazies - North,78.6,6,62.3,35,88.5,2,76.9,13,Brett built a dominant 88.5 WR grade (Rank 2) featuring Ja'Marr Chase. But a near-worst 62.3 RB grade (Rank 35) suggests Brett bet the house on receivers and left his running back room completely bankrupt.
+17,74.7,5-7,Funky Cold Medina,Joe Beaudoin,,Blue Devils ,Blue Devils - North,72.4,22,92.8,3,67.0,30,72.8,23,"Joe has a strong 92.8 RB grade (Rank 3) led by Christian McCaffrey and Ashton Jeanty. But with a horrific 67.0 WR grade (Rank 30), Ashton Jeanty might have to catch his own handoffs to move the chains."
+18,73.6,6-6,Bend It Like Bendeck,Brad Bendeck,,Cameron Crazies ,Cameron Crazies - North,66.1,34,85.3,9,64.6,32,93.2,3,"Bendeck secured a solid 85.3 RB grade (Rank 9) and a top-tier 93.2 TE grade (Rank 3). Unfortunately, their bottom-tier 66.1 QB grade (Rank 34) and 64.6 WR grade (Rank 32) means their passing game is more broken than bent."
+19,72.8,6-6,Zippy's Speedsters,Jim Vint,,Cameron Crazies ,Cameron Crazies - North,72.8,19,67.0,29,87.1,6,72.8,21,"Vint's WR room is flying high with a strong 87.1 WR grade (Rank 6) thanks to Puka Nacua. However, a low 67.0 RB grade (Rank 29) means these speedsters are going absolutely nowhere fast on the ground."
+20,72.4,6-6,Ankit's a Rookie No More!,Ankit Singhal,,Cameron Crazies ,Cameron Crazies - South,91.4,3,81.3,16,65.7,31,73.0,20,Ankit landed Josh Allen for an elite 91.4 QB grade (Rank 3). But a horrific 65.7 WR grade (Rank 31) proves that 'rookie no more' doesn't mean Ankit has learned how to draft a decent wide receiver.
+21,72.3,5-7,Team Hatherley Corkery,Christine Hatherley Corkery,,Cameron Crazies ,Cameron Crazies - South,77.6,9,82.3,15,69.4,27,72.2,26,"Christine drafted Bijan Robinson and AJ Brown to salvage some star power. But with a mediocre 82.3 RB grade (Rank 15) and a terrible 69.4 WR grade (Rank 27), their depth is thinner than the paper this draft grade is printed on."
+22,71.7,6-6,Skol Krushers,Tom Tate,,K-Ville ,K-Ville - North,69.8,29,72.7,23,81.1,10,71.9,27,"Tate put together a solid WR group (81.1 WR grade, Rank 10). Unfortunately, their bottom-tier 72.7 RB grade (Rank 23) suggests these 'Krushers' are mostly crushing their own playoff hopes."
+23,71.0,4-8,Water (and Electric) Boy Ferrell,Jason Ferrell,,Cameron Crazies ,Cameron Crazies - South,76.4,13,69.1,27,84.2,8,67.7,33,"Ferrell's WR room has a shocking 84.2 WR grade (Rank 8) with Amon-Ra St. Brown. But with a 76.4 QB grade (Rank 13) and a low 67.7 TE grade (Rank 33), their power grid is constantly blacking out."
+24,70.8,4-8,Team West,Matt West,,Blue Devils ,Blue Devils - North,77.3,11,75.0,22,72.3,22,74.0,16,Matt West has a respectable QB grade of 77.3 (Rank 11). But a low 72.3 WR grade (Rank 22) means Nico Collins has to do everything while the rest of his receivers watch from the sidelines.
+25,70.0,6-6,Kappler's Team,Rick Kappler,,K-Ville ,K-Ville - South,73.5,16,65.0,31,82.5,9,72.5,25,"Kappler secured a solid WR grade of 82.5 (Rank 9). But a near-bottom 65.0 RB grade (Rank 31) is a total trainwreck, showing that Kenneth Walker can't run far enough to escape this draft grade."
+26,69.7,4-8,Atlanta Fantasy Football Team,Verlin Henderson,Cary Lawler,Blue Devils ,Blue Devils - South,71.7,24,62.7,34,75.5,20,94.0,1,Verlin and Cary got a league-best 94.0 TE grade (Rank 1) with Trey McBride. But a near-last 62.7 RB grade (Rank 34) means their backfield is as empty as Atlanta's stadium in the fourth quarter.
+27,69.1,3-9,O Canada,Evan Bryman,,Cameron Crazies ,Cameron Crazies - North,73.0,18,63.2,33,74.8,21,90.4,4,"Evan has an elite TE keeper in Brock Bowers (90.4 TE grade, Rank 4). But a low 63.2 RB grade (Rank 33) suggests they should stick to hockey because their football team can't run the ball."
+28,69.0,3-9,Draft Dodgers,Paul DiMarco,,Cameron Crazies ,Cameron Crazies - South,74.0,15,64.6,32,79.9,13,70.3,30,DiMarco drafted CeeDee Lamb and Justin Jefferson but finished with a near-bottom 64.6 RB grade (Rank 32)—which is so historically bad they literally dodged the entire running back position.
+29,68.7,5-7,Wendt's Motown Masher,Mike Wendt,,K-Ville ,K-Ville - North,77.6,9,66.9,30,75.7,19,73.9,17,Wendt's WR grade of 75.7 (Rank 19) is a decent start. But a near-worst 66.9 RB grade (Rank 30) means their 'masher' is mostly getting mashed on the ground.
+30,68.2,3-9,Chia Kung Fu Fighters,Chia Kung,,Blue Devils ,Blue Devils - South,71.6,25,70.4,26,78.2,15,70.3,30,Chia's WR grade of 78.2 (Rank 15) is respectable. But a low 70.4 RB grade (Rank 26) suggests their fighters are mostly fighting for survival in the cellar.
+31,67.3,3-9,Inappropriate Comment,Rob McLaughlin,,Blue Devils ,Blue Devils - North,69.3,31,76.2,20,69.6,26,80.0,10,McLaughlin's RB grade of 76.2 (Rank 20) is respectable. But a poor QB grade of 69.3 (Rank 31) and WR grade of 69.6 (Rank 26) makes this entire draft a very inappropriate performance.
+32,65.6,2-10,Sailor's Delight,Giancarlo Rossi,,Blue Devils ,Blue Devils - South,96.5,1,77.4,19,63.2,35,60.0,36,"Giancarlo has a top-ranked 96.5 QB grade (Rank 1) with Josh Allen and Lamar Jackson. But with a horrific 63.2 WR grade (Rank 35) and dead-last 60.0 TE grade (Rank 36), they have two premium arms and absolutely nobody to throw to."
+33,65.1,5-7,Wyld Stallyns,Chris Zaloumis,,K-Ville ,K-Ville - North,70.6,28,71.4,24,61.5,36,90.4,4,Zaloumis got a solid 90.4 TE grade (Rank 4) with Brock Bowers. But their dead-last 61.5 WR grade (Rank 36) is a wild ride into the absolute abyss of wide receiver irrelevance.
+34,64.5,4-8,Nashville,Nikki Nash,,K-Ville ,K-Ville - South,71.8,23,62.0,36,79.3,14,70.4,29,Nikki has a decent WR grade of 79.3 (Rank 14). But a last-place 62.0 RB grade (Rank 36) and a poor 71.8 QB grade (Rank 23) means this country song is mostly about a tragic fantasy football season.
+35,63.9,3-9,Talented Mr Riley,Ben Riley,,K-Ville ,K-Ville - North,71.3,27,67.3,28,76.6,17,64.9,35,"Riley kept Quentin Johnston. Unfortunately, their mediocre 76.6 WR grade (Rank 17) and 67.3 RB grade (Rank 28) suggest the 'talent' is mostly in the franchise name rather than the roster."
+36,62.4,1-11,Phat Sackers,Steve Hirsh,,K-Ville ,K-Ville - South,66.3,33,75.7,21,63.6,33,70.3,30,Steve finished last with a poor 63.6 WR grade (Rank 33) and a 75.7 RB grade (Rank 21)—easily the 'phattest' draft failure in the entire league.
