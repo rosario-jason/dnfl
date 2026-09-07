@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>v5.06 2026 DNFL Power Rankings</title>
+    <title>v5.07 2026 DNFL Power Rankings</title>
     <!-- Load Chart.js v4 and PapaParse CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
@@ -210,7 +210,7 @@
 
 <!-- Ensure your table wrapper container has this exact ID -->
 <div id="tableWrapperContainer" class="table-wrapper">
-    <div style="margin: 1.5rem auto 0.5rem auto; box-sizing: border-box;">
+    <div style="margin: 1.5rem auto 0.5rem 1rem; box-sizing: border-box;">
         <div class="section-header-row">
             <button id="tableToggleBtn" class="visibility-toggle-btn" onclick="toggleElementVisibility('table')">Hide Table</button>
         </div>
@@ -380,7 +380,8 @@ function renderChartAndTable(records) {
                     display: true,
                     text: displaySubtitle, 
                     color: '#121212',
-                    font: { size: 1.0 * rootFontSize, weight: 'bold' },
+                    text-transform: uppercase,
+                    font: { size: 0.7 * rootFontSize, weight: 'bold' },
                     padding: { bottom: 15 }
                 },
                 legend: { display: false },
@@ -419,7 +420,7 @@ function renderChartAndTable(records) {
                     min: 50, max: 100,
                     grid: { color: 'rgba(255, 255, 255, 0.1)' },
                     ticks: { color: '#121212', font: { size: Math.round(0.813 * rootFontSize) } },
-                    title: { display: true, text: 'Power Rank Grade', text-transform: 'uppercase'; color: '#121212', font: { size: 12 }, padding: 15 }
+                    title: { display: true, text: 'Power Rank Grade', text-transform: 'uppercase', color: '#121212', font: { size: 12 }, padding: 15 }
                 },
                 y: {
                     grid: { display: false },
