@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>v1 2026 DNFL Power Rankings</title>
+    <title>v3 2026 DNFL Power Rankings</title>
     <!-- Load Chart.js v4 and PapaParse CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
@@ -77,6 +77,47 @@
             width: 100%;
         }
         
+        /* 📊 Data Table Grid Styling */
+        .table-wrapper {
+            margin-top: 2rem;
+            overflow-x: auto;
+            border-radius: 8px;
+            border: 1px solid #444;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.938rem;
+        }
+        th {
+            background-color: #f5f5f5;
+            color: #00E676;
+            padding: 12px 15px;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.813rem;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid #444;
+        }
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #333;
+            color: #dddddd;
+        }
+        tr:hover {
+            background-color: #FDE68A;
+        }
+        tr:nth-child(even) {
+            background-color: #FAFAFA;
+        }
+        .rank-badge {
+            font-weight: bold;
+            color: #ffffff;
+            background: #333;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -118,6 +159,25 @@
     <div class="chart-wrapper">
         <canvas id="powerRankingChart"></canvas>
     </div>
+</div>
+
+<!-- 📋 Dynamic Synchronized Data Table Wrapper -->
+<div class="table-wrapper">
+    <table id="dnflDataTable">
+        <thead>
+            <tr>
+                <th style="width: 8%;">Rank</th>
+                <th style="width: 20%;">Franchise</th>
+                <th style="width: 20%;">Owners</th>
+                <th style="width: 8%;">Overall Grade</th>
+                <th style="width: 8%;">Projected W-L</th>
+                <th style="width: 36%;">Rank Comments</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <!-- JavaScript handles programmatic row injection here -->
+        </tbody>
+    </table>
 </div>
 
 <script>
@@ -162,7 +222,7 @@ function initDashboard() {
 
 function loadWeeklyData() {
     const selectedWeekFile = document.getElementById('weekSelector').value;
-    const filePath = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/data/data_${selectedWeekFile}.csv`;
+    const filePath = 'data/data_' + selectedWeekFile + '.csv';
 
     Papa.parse(filePath, {
         download: true,
@@ -170,38 +230,67 @@ function loadWeeklyData() {
         dynamicTyping: true,
         skipEmptyLines: true,
         complete: function(results) {
-            masterData = results.data.map(row => ({
-                franchise: row['Franchise'] || 'Unknown Team',
-                conference: row['Conference'] || 'Other',
-                division: row['Conference - Division'] || '',
-                owner: row['Owner Name'] || row['Owner'] || 'N/A',
-                coOwner: row['Co-Owner Name'] || row['Co-Owner'] || '',
-                grade: parseFloat(row['Overall Grade'] || row['Grade'] || 0),
-                projectedRecord: row['Projected W-L'] || 'N/A',
-                rank: row['Rank'] || 'N/A'
-            }));
+            masterData = results.data.map(row => {
+                const rawConference = row['Conference'] ? String(row['Conference']).trim() : 'Other';
+                const divisionName = row['Conference - Division'] ? String(row['Conference - Division']).trim() : 'N/A';
+
+                return {
+                    rank: parseInt(row['Rank'] || 0),
+                    franchise: row['Franchise'] ? String(row['Franchise']).trim() : 'Unknown Team',
+                    conference: row['Conference'] || 'Other',
+                    division: row['Conference - Division'] || '',
+                    owner: row['Owner Name'] || 'N/A',
+                    coOwner: row['Co-Owner Name'] || '',
+                    grade: parseFloat(row['Overall Grade'] || 0),
+                    projectedRecord: row['Projected W-L'] || 'N/A',
+                    comments: row['Rank Comments'] || 'No comment provided.' // Ingests your new column target
+                };
+            });
 
             applyConferenceFilter();
         },
         error: function(err) {
-            console.error("Data error: ", err);
-            alert(`Error reading file. Ensure data_${selectedWeekFile}.csv is inside your data/ folder.`);
+            console.error("Data fetch error: ", err);
         }
     });
 }
 
-function renderChart(records) {
-    // Sort highest to lowest grade for display logic
-    const sorted = [...records].sort((a, b) => b.grade - a.grade);
+function renderChartAndTable(records) {
+    // 1. Sort records by Rank chronologically (ascending order: 1 to 36)
+    const sortedData = [...records].sort((a, b) => a.rank - b.rank);
 
-    const labels = sorted.map(r => r.franchise);
-    const dataValues = sorted.map(r => r.grade);
-    const backgroundColors = sorted.map(r => conferenceColors[r.conference] || 'rgba(201, 203, 207, 0.85)');
-    const borderColors = sorted.map(r => conferenceBorders[r.conference] || 'rgb(201, 203, 207)');
+    // 2. BUILD THE GRID DATA TABLE INTERACTIVE ROWS
+    const tableBody = document.getElementById('tableBody');
+    tableBody.innerHTML = ''; // Wipe past filter items completely
+
+    sortedData.forEach(item => {
+        const row = document.createElement('tr');
+        const completeOwners = item.coOwner ? `${item.owner}, ${item.coOwner}` : item.owner;
+
+        row.innerHTML = `
+            <td><span class="rank-badge">${item.rank}</span></td>
+            <td style="font-weight: 600; color: #fff;">${item.franchise}</td>
+            <td>${completeOwners}</td>
+            <td style="font-weight: 600; color: #00E676;">${item.grade.toFixed(1)}</td>
+            <td>${item.projectedRecord}</td>
+            <td style="font-size: 0.875rem; color: #bbb; font-style: italic;">${item.comments}</td>
+        `;
+        tableBody.appendChild(row);
+    });
+
+    // 3. BUILD THE VISUAL BAR CHART TIMELINE
+    const chartSorted = [...records].sort((a, b) => b.grade - a.grade);
+
+    const labels = chartSorted.map(r => r.franchise);
+    const dataValues = chartSorted.map(r => r.grade);
+    const backgroundColors = chartSorted.map(r => conferenceColors[r.conference] || 'rgba(201, 203, 207, 0.85)');
+    const borderColors = chartSorted.map(r => conferenceBorders[r.conference] || 'rgb(201, 203, 207)');
 
     const weekDropdown = document.getElementById('weekSelector');
-    const displaySubtitle = weekDropdown.options[weekDropdown.selectedIndex].text + " Ranking";
+    const displaySubtitle = weekDropdown.options[weekDropdown.selectedIndex] ? 
+                            weekDropdown.options[weekDropdown.selectedIndex].text + " Ranking" : "Ranking";
 
+    const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
     const ctx = document.getElementById('powerRankingChart').getContext('2d');
 
     if (chartInstance) { chartInstance.destroy(); }
@@ -220,7 +309,7 @@ function renderChart(records) {
             }]
         },
         options: {
-            indexAxis: 'y', // Explicitly horizontal
+            indexAxis: 'y', 
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
@@ -229,7 +318,7 @@ function renderChart(records) {
                     display: true,
                     text: displaySubtitle, 
                     color: '#121212',
-                    font: { size: 18, weight: 'bold' },
+                    font: { size: 1.0 * rootFontSize, weight: 'bold' },
                     padding: { bottom: 15 }
                 },
                 legend: { display: false },
@@ -243,17 +332,14 @@ function renderChart(records) {
                     borderWidth: 1,
                     padding: 12,
                     enabled: true,
+                    titleFont: { size: 1.0 * rootFontSize, weight: 'bold' },
+                    bodyFont: { size: 0.875 * rootFontSize },
                     callbacks: {
-                        title: function(context) { 
-                            return context[0].label; 
-                        },
+                        title: function(context) { return context.label; },
                         label: function(context) {
                             const franchiseName = context.label;
-                            // Find precise record from sorted source data
-                            const item = sorted.find(r => r.franchise === franchiseName);
-                            
+                            const item = chartSorted.find(r => r.franchise === franchiseName);
                             if (!item) return 'No data found';
-
                             const owners = item.coOwner ? `${item.owner}, ${item.coOwner}` : item.owner;
                             return [
                                 `${item.division}`,
@@ -270,13 +356,12 @@ function renderChart(records) {
                 x: {
                     min: 50, max: 100,
                     grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    ticks: { color: '#121212' },
+                    ticks: { color: '#121212', font: { size: Math.round(0.813 * rootFontSize) } }
                     title: { display: true, text: 'Power Rank Grade', color: '#121212', font: { size: 14 }, padding: 15 }
                 },
                 y: {
                     grid: { display: false },
-                    ticks: { align: 'center', color: '#121212', font: { size: 14 } },
-                    autoSkip: false
+                    ticks: { align: 'center', color: '#121212', font: { size: Math.round(0.813 * rootFontSize) } }
                 }
             }
         }
@@ -294,14 +379,13 @@ function applyConferenceFilter() {
         filtered = masterData.filter(d => d.conference.trim().toLowerCase() === selected.toLowerCase());
     }
 
-    // 🧮 Dynamic Height Scaler: Multiplies matching row count by 32px 
-    // Adds an extra 100px cushion to give room for the title, subtitle, and axis text layouts.
     const calculatedHeight = (filtered.length * 32) + 100;
     wrapper.style.height = calculatedHeight + 'px';
 
-    // Pass the correctly sized data subset to your renderer pipeline
-    renderChart(filtered);
+    // Dispatches synchronized update to both the grid list and graphic canvas
+    renderChartAndTable(filtered);
 }
+
 
 window.onload = initDashboard;
 </script>
