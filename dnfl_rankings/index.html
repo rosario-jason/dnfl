@@ -2,15 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>GH 2026 DNFL Power Rankings</title>
+    <title>V2 2026 DNFL Power Rankings</title>
     <!-- Load Chart.js v4 and PapaParse CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
     <style>
         body {
             font-family: Roboto, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+            background-color: #eeeeee;
+            color: #121212;
             margin: 0;
             padding: 1.5rem;
             font-size: 1.063rem;
@@ -18,7 +18,7 @@
         .chart-container {
             max-width: 900px;
             margin: 0 auto;
-            background: #1e1e1e;
+            background: #ffffff;
             padding: 1.5rem;
             border-radius: 12px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
@@ -30,7 +30,7 @@
             margin-bottom: 1.25rem;
             flex-wrap: wrap;
             gap: 1.25rem;
-            background: #262626;
+            background: #ffffff;
             padding: 0.938rem;
             border-radius: 8px;
         }
@@ -41,13 +41,13 @@
         }
         .filter-group label {
             font-size: 0.875rem;
-            color: #aaa;
+            color: #121212;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         select {
-            background: #121212;
-            color: #ffffff;
+            background: #ffffff;
+            color: #121212;
             border: 1px solid #444;
             padding: 8px 12px;
             border-radius: 6px;
@@ -219,21 +219,21 @@ function renderChart(records) {
                 title: {
                     display: true,
                     text: 'DNFL Power Ranking',
-                    color: '#ffffff',
+                    color: '#121212',
                     font: { size: 18, weight: 'bold' }
                 },
                 subtitle: {
                     display: true,
                     text: displaySubtitle, 
-                    color: '#ffffff',
+                    color: '#121212',
                     font: { size: 16, style: 'italic' },
                     padding: { bottom: 15 }
                 },
                 legend: { display: false },
                 tooltip: {
-                    backgroundColor: 'rgba(20, 20, 20, 0.95)',
-                    titleColor: '#ffffff',
-                    bodyColor: '#dddddd',
+                    backgroundColor: '#eeeeee',
+                    titleColor: '#121212',
+                    bodyColor: '#121212',
                     titleFont: { size: 14 },
                     bodyFont: { size: 14 },
                     borderColor: '#444',
@@ -267,12 +267,12 @@ function renderChart(records) {
                 x: {
                     min: 50, max: 100,
                     grid: { color: 'rgba(255, 255, 255, 0.1)' },
-                    ticks: { color: '#ffffff' },
-                    title: { display: true, text: 'Power Rank Grade', color: '#ffffff', font: { size: 14 }, padding: 15 }
+                    ticks: { color: '#121212' },
+                    title: { display: true, text: 'Power Rank Grade', color: '#121212', font: { size: 14 }, padding: 15 }
                 },
                 y: {
                     grid: { display: false },
-                    ticks: { align: 'center', color: '#ffffff', font: { size: 14 } },
+                    ticks: { align: 'center', color: '#121212', font: { size: 14 } },
                     autoSkip: false
                 }
             }
