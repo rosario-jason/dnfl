@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>v3.6 2026 DNFL Power Rankings</title>
+    <title>v3.8 2026 DNFL Power Rankings</title>
     <!-- Load Chart.js v4 and PapaParse CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
@@ -17,11 +17,13 @@
         }
         .chart-container {
             width: 90%;
-            margin: 0 auto;
+            max-width: 1000px;
+            margin: 0 auto 2rem auto;
             background: #ffffff;
             padding: 1.5rem;
             border-radius: 12px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+                box-sizing: border-box;
         }
 
         .chart-container h1 {
@@ -80,12 +82,13 @@
         /* 📊 Data Table Grid Styling */
         .table-wrapper {
             width: 100%;
+            max-width: 1000px;
             margin: 0 auto;
-            margin-top: 2rem;
             background: #ffffff;
             overflow-x: auto;
             border-radius: 12px;
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            box-sizing: border-box; 
         }
         table {
             width: 100%;
@@ -172,11 +175,11 @@
     <table id="dnflDataTable">
         <thead>
             <tr>
-                <th style="width: 10%;">Rank</th>
-                <th style="width: 15%;">Franchise</th>
-                <th style="width: 15%;">Owners</th>
-                <th style="text-align: center; width: 10%;">Grade</th>
-                <th style="text-align: center; width: 10%;">Proj. W-L</th>
+                <th style="width: 8%;">Rank</th>
+                <th style="width: 18%;">Franchise</th>
+                <th style="width: 18%;">Owners</th>
+                <th style="text-align: center; width: 8%;">Grade</th>
+                <th style="text-align: center; width: 8%;">Proj. W-L</th>
                 <th style="width: 40%;">Rank Comments</th>
             </tr>
         </thead>
