@@ -91,6 +91,22 @@
         </div>
     </div>
 
+    <!-- 📊 Responsive HTML Legend Module for Conference Color Mapping -->
+    <div style="display: flex; gap: 20px; justify-content: flex-start; margin: 15px 0; background: #1e1e1e; padding: 12px 15px; border-radius: 8px; border: 1px solid #333; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+            <span style="display: inline-block; width: 18px; height: 18px; background: rgba(54, 162, 235, 0.85); border: 1px solid rgb(54, 162, 235); border-radius: 4px;"></span>
+            <span>Cameron Crazies</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+            <span style="display: inline-block; width: 18px; height: 18px; background: rgba(255, 99, 132, 0.85); border: 1px solid rgb(255, 99, 132); border-radius: 4px;"></span>
+            <span>K-Ville</span>
+        </div>
+        <div style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+            <span style="display: inline-block; width: 18px; height: 18px; background: rgba(75, 192, 192, 0.85); border: 1px solid rgb(75, 192, 192); border-radius: 4px;"></span>
+            <span>Blue Devils</span>
+        </div>
+    </div>
+    
     <div class="chart-wrapper">
         <canvas id="powerRankingChart"></canvas>
     </div>
@@ -213,7 +229,7 @@ function renderChart(records) {
                     font: { size: 16, style: 'italic' },
                     padding: { bottom: 15 }
                 },
-                legend: { display: true, position: 'top', labels: { font: {size: 12 } } },
+                legend: { display: false },
                 tooltip: {
                     backgroundColor: 'rgba(20, 20, 20, 0.95)',
                     titleColor: '#ffffff',
