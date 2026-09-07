@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>v3.26 2026 DNFL Power Rankings</title>
+    <title>v5.01 2026 DNFL Power Rankings</title>
     <!-- Load Chart.js v4 and PapaParse CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
@@ -130,6 +130,32 @@
             min-width: 1.1rem; /* Keeps rank badges uniform uniform if ranks hit double digits */
         }
 
+        /* 🕹️ Visibility Toggle Button Layout Rules */
+        .section-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 0.75rem;
+        }
+        .section-title-text {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin: 0;
+        }
+        .visibility-toggle-btn {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #00539B;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 4px 8px;
+            user-select: none;
+        }
+        .visibility-toggle-btn:hover {
+            color: #eeeeee;
+        }
     </style>
 </head>
 <body>
@@ -168,13 +194,29 @@
         </div>
     </div>
     
-    <div class="chart-wrapper">
+    <!-- 🕹️ Chart Header + Toggle Control -->
+    <div class="section-header-row">
+        <h3 class="section-title-text">Visual Breakdown Analytics</h3>
+        <button id="chartToggleBtn" class="visibility-toggle-btn" onclick="toggleElementVisibility('chart')">−</button>
+    </div>
+
+    <div id="chartWrapperContainer" class="chart-wrapper">
         <canvas id="powerRankingChart"></canvas>
     </div>
+
 </div>
 
 <!-- 📋 Dynamic Synchronized Data Table Wrapper -->
-<div class="table-wrapper">
+<!-- 🕹️ Table Header + Toggle Control (Matches width card baseline) -->
+<div style="width: 90%; max-width: 1000px; margin: 1.5rem auto 0.5rem auto; box-sizing: border-box;">
+    <div class="section-header-row">
+        <h3 class="section-title-text">DNFL Franchise Leaderboard</h3>
+        <button id="tableToggleBtn" class="visibility-toggle-btn" onclick="toggleElementVisibility('table')">−</button>
+    </div>
+</div>
+
+<!-- Ensure your table wrapper container has this exact ID -->
+<div id="tableWrapperContainer" class="table-wrapper">
     <table id="dnflDataTable">
         <thead>
             <tr>
@@ -392,7 +434,7 @@ function renderChartAndTable(records) {
 
 function applyConferenceFilter() {
     const selected = document.getElementById('confFilter').value;
-    const wrapper = document.querySelector('.chart-wrapper');
+    const wrapper = document.getElementById('chartWrapperContainer');
     
     let filtered;
     if (selected === 'All') {
@@ -401,13 +443,44 @@ function applyConferenceFilter() {
         filtered = masterData.filter(d => d.conference.trim().toLowerCase() === selected.toLowerCase());
     }
 
-    const calculatedHeight = (filtered.length * 32) + 100;
-    wrapper.style.height = calculatedHeight + 'px';
+    // 🧮 Dynamic 32px Height Allocation Formula per visible row 
+    // Only apply if the chart container is currently expanded/visible
+    if (wrapper.style.display !== 'none') {
+        const calculatedHeight = (filtered.length * 32) + 100;
+        wrapper.style.height = calculatedHeight + 'px';
+    }
 
     // Dispatches synchronized update to both the grid list and graphic canvas
     renderChartAndTable(filtered);
 }
 
+// 🟢 Visibility Toggle Control Engine
+function toggleElementVisibility(sectionType) {
+    if (sectionType === 'chart') {
+        const wrapper = document.getElementById('chartWrapperContainer');
+        const button = document.getElementById('chartToggleBtn');
+        
+        if (wrapper.style.display === 'none') {
+            wrapper.style.display = 'block';
+            button.textContent = '−';
+            applyConferenceFilter(); // Recomputes height canvas mapping calculations
+        } else {
+            wrapper.style.display = 'none';
+            button.textContent = '+';
+        }
+    } else if (sectionType === 'table') {
+        const wrapper = document.getElementById('tableWrapperContainer');
+        const button = document.getElementById('tableToggleBtn');
+        
+        if (wrapper.style.display === 'none') {
+            wrapper.style.display = 'block';
+            button.textContent = '−';
+        } else {
+            wrapper.style.display = 'none';
+            button.textContent = '+';
+        }
+    }
+}
 
 window.onload = initDashboard;
 </script>
