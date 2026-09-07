@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>2026 DNFL Power Rankings</title>
+    <title>v3.9 2026 DNFL Power Rankings</title>
     <!-- Load Chart.js v4 and PapaParse CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
@@ -123,10 +123,13 @@
         .rank-badge {
             font-weight: bold;
             color: #ffffff;
-            background: #333;
             padding: 3px 8px;
             border-radius: 4px;
+            display: inline-block;
+            text-align: center;
+            min-width: 1.25rem; /* Keeps rank badges uniform uniform if ranks hit double digits */
         }
+
     </style>
 </head>
 <body>
@@ -276,8 +279,18 @@ function renderChartAndTable(records) {
         const row = document.createElement('tr');
         const completeOwners = item.coOwner ? `${item.owner}, ${item.coOwner}` : item.owner;
 
+        // 🟢 Dynamic Color Lookup: Grab color from dictionary using the trimmed conference name
+        const confKey = String(item.conference).trim();
+        const badgeColor = conferenceColors[confKey] || '#333333'; // Defaults to dark gray if unmatched
+        const borderStyle = conferenceBorders[confKey] || '#444444';
+
         row.innerHTML = `
-            <td><span class="rank-badge">${item.rank}</span></td>
+            <td>
+                <!-- Inline style dynamically injects the conference color -->
+                <span class="rank-badge" style="background-color: ${badgeColor}; border: 1px solid ${borderStyle}; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">
+                    ${item.rank}
+                </span>
+            </td>
             <td style="font-weight: 600; ">${item.franchise}</td>
             <td>${completeOwners}</td>
             <td style="text-align: center; font-weight: 600; ">${item.grade.toFixed(1)}</td>
