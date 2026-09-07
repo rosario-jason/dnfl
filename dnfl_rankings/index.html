@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>v5.04 2026 DNFL Power Rankings</title>
+    <title>v5.05 2026 DNFL Power Rankings</title>
     <!-- Load Chart.js v4 and PapaParse CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
@@ -209,15 +209,13 @@
 
 <!-- Ensure your table wrapper container has this exact ID -->
 <div id="tableWrapperContainer" class="table-wrapper">
-    <div style="width: 90%; max-width: 1000px; margin: 1.5rem auto 0.5rem auto; box-sizing: border-box;">
-        <div class="section-header-row">
-            <button id="tableToggleBtn" class="visibility-toggle-btn" onclick="toggleElementVisibility('table')">Hide Table</button>
-        </div>
+    <div class="section-header-row">
+        <button id="tableToggleBtn" class="visibility-toggle-btn" onclick="toggleElementVisibility('table')">Hide Table</button>
     </div>
     <table id="dnflDataTable">
         <thead>
             <tr>
-                <th style="width: 7%;">Ovr Rank</th>
+                <th style="width: 7%;">Rank</th>
                 <th style="width: 18%;">Franchise</th>
                 <th style="width: 18%;">Owners</th>
                 <th style="text-align: center; width: 7%;">Grade</th>
