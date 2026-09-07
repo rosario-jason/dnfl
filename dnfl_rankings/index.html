@@ -154,7 +154,7 @@ function initDashboard() {
 
 function loadWeeklyData() {
     const selectedWeekFile = document.getElementById('weekSelector').value;
-    const filePath = `data/data_${selectedWeekFile}.csv`;
+    const filePath = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/data/data_${selectedWeekFile}.csv`;
 
     Papa.parse(filePath, {
         download: true,
