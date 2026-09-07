@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>v3 2026 DNFL Power Rankings</title>
+    <title>v3NEW 2026 DNFL Power Rankings</title>
     <!-- Load Chart.js v4 and PapaParse CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
@@ -16,7 +16,7 @@
             font-size: 1rem;
         }
         .chart-container {
-            max-width: 900px;
+            width: 90%;
             margin: 0 auto;
             background: #ffffff;
             padding: 1.5rem;
@@ -85,32 +85,35 @@
             border: 1px solid #444;
         }
         table {
-            width: 100%;
+            width: 90%;
             border-collapse: collapse;
             text-align: left;
             font-size: 0.938rem;
         }
         th {
             background-color: #f5f5f5;
-            color: #00E676;
+            color: #121212;
             padding: 12px 15px;
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 0.813rem;
+            font-size: 0.6rem;
             letter-spacing: 0.5px;
             border-bottom: 2px solid #444;
         }
         td {
             padding: 12px 15px;
             border-bottom: 1px solid #333;
-            color: #dddddd;
+            color: #121212;
         }
-        tr:hover {
-            background-color: #FDE68A;
-        }
+
         tr:nth-child(even) {
             background-color: #FAFAFA;
         }
+
+         tr:hover {
+            background-color: #FDE68A;
+        }
+
         .rank-badge {
             font-weight: bold;
             color: #ffffff;
@@ -269,11 +272,11 @@ function renderChartAndTable(records) {
 
         row.innerHTML = `
             <td><span class="rank-badge">${item.rank}</span></td>
-            <td style="font-weight: 600; color: #fff;">${item.franchise}</td>
+            <td style="font-weight: 600; color: #121212;">${item.franchise}</td>
             <td>${completeOwners}</td>
-            <td style="font-weight: 600; color: #00E676;">${item.grade.toFixed(1)}</td>
+            <td style="font-weight: 600; color: #121212;">${item.grade.toFixed(1)}</td>
             <td>${item.projectedRecord}</td>
-            <td style="font-size: 0.875rem; color: #bbb; font-style: italic;">${item.comments}</td>
+            <td style="font-size: 0.875rem; color: #121212; font-style: italic;">${item.comments}</td>
         `;
         tableBody.appendChild(row);
     });
