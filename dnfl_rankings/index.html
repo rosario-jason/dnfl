@@ -68,15 +68,6 @@
         .chart-wrapper {
             position: relative;
             width: 100%;
-            min-height: 200px;
-            max-height: 400px;
-            /* Optional: use height: 400px if you want it to scale dynamically within bounds */
-            height: 100vh; 
-        }
-        
-        .chart-wrapper canvas {
-            width: 100% !important;
-            height: 100% !important;
         }
         
     </style>
@@ -275,12 +266,22 @@ function renderChart(records) {
 
 function applyConferenceFilter() {
     const selected = document.getElementById('confFilter').value;
+    const wrapper = document.querySelector('.chart-wrapper');
+    
+    let filtered;
     if (selected === 'All') {
-        renderChart(masterData);
+        filtered = masterData;
     } else {
-        const filtered = masterData.filter(d => d.conference.trim().toLowerCase() === selected.toLowerCase());
-        renderChart(filtered);
+        filtered = masterData.filter(d => d.conference.trim().toLowerCase() === selected.toLowerCase());
     }
+
+    // 🧮 Dynamic Height Scaler: Multiplies matching row count by 32px 
+    // Adds an extra 100px cushion to give room for the title, subtitle, and axis text layouts.
+    const calculatedHeight = (filtered.length * 32) + 100;
+    wrapper.style.height = calculatedHeight + 'px';
+
+    // Pass the correctly sized data subset to your renderer pipeline
+    renderChart(filtered);
 }
 
 window.onload = initDashboard;
