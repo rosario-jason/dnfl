@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>v3.1 2026 DNFL Power Rankings</title>
+    <title>v3.2 2026 DNFL Power Rankings</title>
     <!-- Load Chart.js v4 and PapaParse CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
@@ -80,6 +80,7 @@
         /* 📊 Data Table Grid Styling */
         .table-wrapper {
             width: 90%;
+            margin: 0 auto;
             margin-top: 2rem;
             overflow-x: auto;
             border-radius: 8px;
@@ -89,7 +90,7 @@
             width: 100%;
             border-collapse: collapse;
             text-align: left;
-            font-size: 0.938rem;
+            font-size: 0.8rem;
         }
         th {
             background-color: #f5f5f5;
@@ -103,7 +104,6 @@
         }
         td {
             padding: 12px 15px;
-            font-size: 0.7rem;
             border-bottom: 1px solid #333;
             color: #121212;
         }
@@ -174,8 +174,8 @@
                 <th style="width: 10%;">Rank</th>
                 <th style="width: 15%;">Franchise</th>
                 <th style="width: 15%;">Owners</th>
-                <th style="width: 10%;">Overall Grade</th>
-                <th style="width: 10%;">Projected W-L</th>
+                <th style="text-align: center; width: 10%;">Grade</th>
+                <th style="text-align: center; width: 10%;">Proj. W-L</th>
                 <th style="width: 40%;">Rank Comments</th>
             </tr>
         </thead>
@@ -276,8 +276,8 @@ function renderChartAndTable(records) {
             <td><span class="rank-badge">${item.rank}</span></td>
             <td style="font-weight: 600; ">${item.franchise}</td>
             <td>${completeOwners}</td>
-            <td style="font-weight: 600; ">${item.grade.toFixed(1)}</td>
-            <td>${item.projectedRecord}</td>
+            <td style="text-align: center; font-weight: 600; ">${item.grade.toFixed(1)}</td>
+            <td style="text-align: center;">${item.projectedRecord}</td>
             <td>${item.comments}</td>
         `;
         tableBody.appendChild(row);
