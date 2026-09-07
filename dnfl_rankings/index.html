@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>v5.01 2026 DNFL Power Rankings</title>
+    <title>v5.02 2026 DNFL Power Rankings</title>
     <!-- Load Chart.js v4 and PapaParse CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
@@ -196,8 +196,7 @@
     
     <!-- 🕹️ Chart Header + Toggle Control -->
     <div class="section-header-row">
-        <h3 class="section-title-text">Visual Breakdown Analytics</h3>
-        <button id="chartToggleBtn" class="visibility-toggle-btn" onclick="toggleElementVisibility('chart')">−</button>
+        <button id="chartToggleBtn" class="visibility-toggle-btn" onclick="toggleElementVisibility('chart')">Hide Chart</button>
     </div>
 
     <div id="chartWrapperContainer" class="chart-wrapper">
@@ -208,15 +207,14 @@
 
 <!-- 📋 Dynamic Synchronized Data Table Wrapper -->
 <!-- 🕹️ Table Header + Toggle Control (Matches width card baseline) -->
-<div style="width: 90%; max-width: 1000px; margin: 1.5rem auto 0.5rem auto; box-sizing: border-box;">
-    <div class="section-header-row">
-        <h3 class="section-title-text">DNFL Franchise Leaderboard</h3>
-        <button id="tableToggleBtn" class="visibility-toggle-btn" onclick="toggleElementVisibility('table')">−</button>
-    </div>
-</div>
 
 <!-- Ensure your table wrapper container has this exact ID -->
 <div id="tableWrapperContainer" class="table-wrapper">
+    <div style="width: 90%; max-width: 1000px; margin: 1.5rem auto 0.5rem auto; box-sizing: border-box;">
+        <div class="section-header-row">
+            <button id="tableToggleBtn" class="visibility-toggle-btn" onclick="toggleElementVisibility('table')">Hide Table</button>
+        </div>
+    </div>
     <table id="dnflDataTable">
         <thead>
             <tr>
@@ -462,22 +460,22 @@ function toggleElementVisibility(sectionType) {
         
         if (wrapper.style.display === 'none') {
             wrapper.style.display = 'block';
-            button.textContent = '−';
+            button.textContent = 'Hide Chart';
             applyConferenceFilter(); // Recomputes height canvas mapping calculations
         } else {
             wrapper.style.display = 'none';
-            button.textContent = '+';
+            button.textContent = 'Show Chart';
         }
     } else if (sectionType === 'table') {
-        const wrapper = document.getElementById('tableWrapperContainer');
+        const wrapper = document.getElementById('dnflDataTable');
         const button = document.getElementById('tableToggleBtn');
         
         if (wrapper.style.display === 'none') {
             wrapper.style.display = 'block';
-            button.textContent = '−';
+            button.textContent = 'Hide Table';
         } else {
             wrapper.style.display = 'none';
-            button.textContent = '+';
+            button.textContent = 'Show Table';
         }
     }
 }
