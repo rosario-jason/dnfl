@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>v5.05 2026 DNFL Power Rankings</title>
+    <title>v5.06 2026 DNFL Power Rankings</title>
     <!-- Load Chart.js v4 and PapaParse CDN libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
@@ -201,7 +201,7 @@
     <table id="dnflDataTable">
         <thead>
             <tr>
-                <th style="width: 7%;">Ovr Rank</th>
+                <th style="width: 7%;">Rank</th>
                 <th style="width: 18%;">Franchise</th>
                 <th style="width: 18%;">Owners</th>
                 <th style="text-align: center; width: 7%;">Grade</th>
@@ -361,9 +361,10 @@ function renderChartAndTable(records) {
                 title: { display: false },
                 subtitle: {
                     display: true,
-                    text: displaySubtitle, 
+                    text: displaySubtitle,
+                    text-transform: uppercase;
                     color: '#121212',
-                    font: { size: 1.0 * rootFontSize, weight: 'bold' },
+                    font: { size: 0.7 * rootFontSize, weight: 'bold' },
                     padding: { bottom: 15 }
                 },
                 legend: { display: false },
