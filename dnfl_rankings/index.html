@@ -25,11 +25,6 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
                 box-sizing: border-box;
         }
-        .chart-container h1 {
-            color: #121212;
-            font-size: 1.2rem;
-            text-align: center;
-        }
         .controls {
             display: flex;
             align-items: center;
@@ -86,42 +81,43 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
             box-sizing: border-box; 
         }
-        table {
+        #dnflDataTable {
             width: 100%;
             border-collapse: collapse;
             text-align: left;
             font-size: 0.8rem;
         }
-        th {
+        #dnflDataTable th {
             background-color: #ffffff;
             color: #121212;
             padding: 12px 15px;
             font-weight: 600;
             text-transform: uppercase;
+            text-align: left;
             font-size: 0.7rem;
             letter-spacing: 0.5px;
             border-bottom: 2px solid #444;
         }
-        td {
+        #dnflDataTable td {
             padding: 12px 15px;
             border-bottom: 1px solid #333;
             color: #121212;
         }
-        tr:nth-child(even) {
+        #dnflDataTable tr:nth-child(even) {
             background-color: #FAFAFA;
         }
 
-         tr:hover {
+        #dnflDataTable tr:hover {
             background-color: #FDE68A;
         }
-        .rank-badge {
+        #dnflDataTable .rank-badge {
             font-weight: bold;
             color: #ffffff;
             padding: 3px 3px;
             border-radius: 4px;
             display: inline-block;
             text-align: center;
-            min-width: 1.1rem; /* Keeps rank badges uniform uniform if ranks hit double digits */
+            min-width: 1.5rem; /* Keeps rank badges uniform uniform if ranks hit double digits */
         }
         .section-header-row {
             display: flex;
@@ -147,7 +143,6 @@
 <body>
 
 <div class="chart-container">
-    <h1>DNFL Power Rankings</h1>
     <div class="controls">
         <div class="filter-group">
             <label for="weekSelector">Ranking Week:</label>
@@ -257,7 +252,7 @@ function initDashboard() {
 
 function loadWeeklyData() {
     const selectedWeekFile = document.getElementById('weekSelector').value;
-    const filePath = 'data/data_' + selectedWeekFile + '.csv';
+    const filePath = 'https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/data/data_' + selectedWeekFile + '.csv';
 
     Papa.parse(filePath, {
         download: true,
