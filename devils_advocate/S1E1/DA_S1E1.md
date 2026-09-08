@@ -1,5 +1,6 @@
-# Devil's Advocate: Season 1 Episode Transcript
-## DNFL 2026 Season Premiere - Welcome to the New DNFL!
+# Devil's Advocate
+## Season 1, Episode 1 - Welcome to the New DNFL!
+*September 8, 2026*
 
 **[K-Z]**: Imagine an experiment where you uh you basically clone the universe three times over just to see which timeline produces the ultimate survivor,
 
