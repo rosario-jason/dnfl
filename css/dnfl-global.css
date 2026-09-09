@@ -1,0 +1,225 @@
+/* --------------------------
+   DNFL Global Stylesheet
+----------------------------- */
+
+/* --------------------------------------
+   DNFL Global Container Styles
+--------------------------------------- */
+.dnfl-module-container {
+    width: 95%;
+    max-width: 1000px;
+    margin: 0 auto 2rem auto;
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+}
+
+/* --------------------------------------
+   DNFL Global Control Styles
+--------------------------------------- */
+.dnfl-controls {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background: #ffffff;
+    padding: 0.938rem;
+    border-radius: 8px;
+}
+.dnfl-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+.dnfl-filter-group label {
+    font-size: 0.875rem;
+    color: #121212;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.dnfl-select {
+    background: #ffffff;
+    color: #121212;
+    border: 1px solid #444;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 1rem;
+    min-width: 160px;
+}
+.dnfl-select:focus {
+    outline: none;
+    border-color: #36a2eb;
+}
+.dnfl-visibility-toggle-btn {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: #0577B1;
+    text-transform: uppercase;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    user-select: none;
+}
+.dnfl-visibility-toggle-btn:hover {
+    color: #aaa;
+}
+.dnfl-section-header-row {
+    display: flex;
+    width: 100%;
+    margin-bottom: 0.75rem;
+}
+
+/* --------------------------------------
+   DNFL Podcast Specific Styles
+--------------------------------------- */
+.dnfl-podcast-banner {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    border: 1px solid #333;
+}
+.dnfl-media-player-block {
+    background: #262626;
+    padding: 1.25rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+    border: 1px solid #444;
+}
+.dnfl-audio {
+    width: 100%;
+    margin-top: 0.5rem;
+} 
+.dnfl-transcript-wrapper {
+    width: 95%;
+    background: #ffffff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border: 1px solid #333;
+    max-height: 500px;
+    overflow-y: auto;
+    line-height: 1.6;
+    margin: 0.75rem auto 0 auto;
+    font-size: 0.85rem;
+}
+.dnfl-transcript-wrapper h1, .dnfl-transcript-wrapper h2 { 
+    color: #121212; 
+    margin-top: 0; 
+    font-size: 1rem; 
+}
+.dnfl-transcript-wrapper strong { color: #121212; }
+.dnfl-transcript-wrapper em { color: #0577B1; font-style: italic; }
+
+/* --------------------------------------
+   DNFL Power Rankings Specific Styles
+--------------------------------------- */
+.dnfl-chart-wrapper {
+    position: relative;
+    min-height: 500px;
+    max-height: 1000px;
+    height: 100vh; 
+    width: 100%;
+}
+.dnfl-table-wrapper {
+    width: 95%;
+    max-width: 1000px;
+    margin: 0 auto;
+    background: #ffffff;
+    overflow-x: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box; 
+}
+#dnfl_dataTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.8rem;
+}
+#dnfl_dataTable th {
+    background-color: #ffffff;
+    color: #121212;
+    padding: 12px 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: left;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #444;
+}
+#dnfl_dataTable td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #333;
+    color: #121212;
+}
+#dnfl_dataTable tr:nth-child(even) {
+    background-color: #FAFAFA;
+}
+#dnfl_dataTable tr:hover {
+    background-color: #FDE68A;
+}
+#dnfl_dataTable .dnfl-rank-badge {
+    font-weight: bold;
+    color: #ffffff;
+    padding: 3px 3px;
+    border-radius: 4px;
+    display: inline-block;
+    text-align: center;
+    min-width: 1.5rem;
+}
+
+
+/* ------------------------------------
+   MFL Style Updates for DNFL
+--------------------------------------- */
+
+/* --- MFL Menu --- */
+.myfantasyleague_menu {
+    border-bottom: 0;
+    border-top: 0;
+    background: var(--accent) !important;
+    box-shadow: 0;
+    height: 2.5rem;
+    position: sticky;
+    top: 0
+}
+
+/* --- Franchise Icons --- */
+.franchiseicon {
+    min-width: var(--ficon-min-width) !important;  /* DNFL UPDATE - NEW */
+    max-width: var(--ficon-max-width) !important;  /* DNFL UPDATE - NEW */
+    width: var(--ficon-width) !important;  /* DNFL UPDATE - NEW */
+    min-height: var(--ficon-min-height) !important;  /* DNFL UPDATE - NEW */
+    max-height: var(--ficon-max-height) !important;  /* DNFL UPDATE - NEW */
+    height: var(--ficon-height) !important;  /* DNFL UPDATE - NEW */
+    aspect-ratio: var(--ficon-aspect-ratio) !important;  /* DNFL UPDATE - NEW */
+    object-fit: var(--ficon-object-fit) !important;  /* DNFL UPDATE - NEW */
+    border-radius: var(--ficon-border-radius) !important;  /* DNFL UPDATE - NEW */
+    border: var(--ficon-border) !important; /* DNFL UPDATE - NEW */
+}
+
+/* --- Franchise Logos --- */
+.franchiselogo {
+    max-height: 25rem !important;  /* DNFL UPDATE - NEW */
+    width: auto !important;          /* Allows width to scale proportionally */
+    object-fit: contain !important;  /* Prevents distortion by maintaining aspect ratio */ 
+    display: block;
+    margin-left: auto;
+    margin-right: auto;  
+}
+
+/* ------------------------------------
+   MFL Scripts Updates for DNFL
+--------------------------------------- */
+
+/* --- Color Variable --- */
+:root {
+/* Duke Color Palette */
+--accent: #00539B; /* Duke Royal Blue */
+}
