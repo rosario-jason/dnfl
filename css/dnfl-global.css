@@ -192,14 +192,9 @@
 
 /* --- Franchise Icons --- */
 .franchiseicon {
-    min-width: 3rem !important;
-    max-width: 3rem !important;
-    width: 3rem !important;
-    min-height: 3rem !important;
     max-height: 3rem !important;
-    height: 3rem !important;
-    aspect-ratio: 1/1 !important;
-    object-fit: cover !important;
+    width: auto !important;          /* Allows width to scale proportionally */
+    object-fit: contain !important; /* Prevents distortion by maintaining aspect ratio */
     border-radius: 25% !important;
     border: .063rem solid #222 !important;
 }
@@ -218,8 +213,7 @@
    MFL Scripts Updates for DNFL
 --------------------------------------- */
 
-/* --- Color Variable --- */
-:root {
-/* Duke Color Palette */
---accent: #000; /* Duke Royal Blue */
+/* --- Skin Colors --- */
+.dnfl {
+    --accent: #000;
 }
