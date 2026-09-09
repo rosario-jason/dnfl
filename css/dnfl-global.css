@@ -192,10 +192,14 @@
 
 /* --- Franchise Icons --- */
 .franchiseicon {
-    max-height: 3rem !important;
-    width: auto !important;          /* Allows width to scale proportionally */
-    object-fit: contain !important; /* Prevents distortion by maintaining aspect ratio */
-    border-radius: 25% !important;
+    min-width: 4rem !important;
+    max-width: 4rem !important;
+    width: 4rem !important;
+    min-height: 4rem !important;
+    max-height: 4rem !important;
+    height: 4rem !important;
+    aspect-ratio: 1/1 !important;
+    object-fit: cover !important;
     border: .063rem solid #222 !important;
 }
 
@@ -204,7 +208,7 @@
     max-height: 25rem !important;
     width: auto !important;          /* Allows width to scale proportionally */
     object-fit: contain !important;  /* Prevents distortion by maintaining aspect ratio */ 
-    display: block;
+    display: flex;
     margin-left: auto;
     margin-right: auto;  
 }
@@ -215,5 +219,5 @@
 
 /* --- Skin Colors --- */
 .dnfl {
-    --accent: #000;
+    --accent: #0577B1;  /* Duke Shale Blue */ 
 }
