@@ -190,6 +190,17 @@
     top: 0
 }
 
+/* --- Mobile Wrap Corners --- */
+.mobile-wrap,
+.settings-mobile-wrap,
+#options_45 #container-wrap table.report,
+#body_live_scoring_summary #live_scoring_summary table.scoresummary table,
+#body_live_scoring_summary #live_scoring_summary table.teamscoresummary table,
+#body_live_scoring_summary #live_scoring_summary table[width="90%"],
+#body_live_scoring_summary #live_scoring_summary span.reportnavigation+table {
+    border-radius: 12px !important;
+}
+
 /* --- Franchise Icons --- */
 .franchiseicon {
     min-width: 4rem !important;
@@ -201,7 +212,7 @@
     aspect-ratio: 1/1 !important;
     object-fit: cover !important;
     border-radius: 25% !important;
-    border: 0;
+    border: 0 !important;
 }
 
 /* --- Franchise Logos --- */
@@ -212,6 +223,18 @@
     display: flex;
     margin-left: auto;
     margin-right: auto;  
+}
+
+/* --- Captions --- */
+.homepagecolumn .homepagemodule caption,
+caption,
+#commissioner_setup table.two_column_layout th {
+    font-size: 1.1rem; 
+    text-align: left;
+    background: none;
+    padding: .5rem .313rem;
+    line-height: 100%;
+    text-transform: capitalize;
 }
 
 /* ------------------------------------
