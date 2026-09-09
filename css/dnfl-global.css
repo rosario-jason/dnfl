@@ -192,21 +192,21 @@
 
 /* --- Franchise Icons --- */
 .franchiseicon {
-    min-width: var(--ficon-min-width) !important;  /* DNFL UPDATE - NEW */
-    max-width: var(--ficon-max-width) !important;  /* DNFL UPDATE - NEW */
-    width: var(--ficon-width) !important;  /* DNFL UPDATE - NEW */
-    min-height: var(--ficon-min-height) !important;  /* DNFL UPDATE - NEW */
-    max-height: var(--ficon-max-height) !important;  /* DNFL UPDATE - NEW */
-    height: var(--ficon-height) !important;  /* DNFL UPDATE - NEW */
-    aspect-ratio: var(--ficon-aspect-ratio) !important;  /* DNFL UPDATE - NEW */
-    object-fit: var(--ficon-object-fit) !important;  /* DNFL UPDATE - NEW */
-    border-radius: var(--ficon-border-radius) !important;  /* DNFL UPDATE - NEW */
-    border: var(--ficon-border) !important; /* DNFL UPDATE - NEW */
+    min-width: 3rem !important;
+    max-width: 3rem !important;
+    width: 3rem !important;
+    min-height: 3rem !important;
+    max-height: 3rem !important;
+    height: 3rem !important;
+    aspect-ratio: 1/1 !important;
+    object-fit: cover !important;
+    border-radius: 25% !important;
+    border: .063rem solid #222 !important;
 }
 
 /* --- Franchise Logos --- */
 .franchiselogo {
-    max-height: 25rem !important;  /* DNFL UPDATE - NEW */
+    max-height: 25rem !important;
     width: auto !important;          /* Allows width to scale proportionally */
     object-fit: contain !important;  /* Prevents distortion by maintaining aspect ratio */ 
     display: block;
