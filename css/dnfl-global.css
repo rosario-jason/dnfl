@@ -200,7 +200,7 @@
     height: 4rem !important;
     aspect-ratio: 1/1 !important;
     object-fit: cover !important;
-    border: .063rem solid #222 !important;
+    border-radius: 25%;
 }
 
 /* --- Franchise Logos --- */
