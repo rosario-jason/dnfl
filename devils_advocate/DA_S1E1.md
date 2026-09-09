@@ -52,7 +52,7 @@
 
 **[K-Z]**: Which fundamentally changes the risk models for roster construction. But really, every single move made in this 2026 season, every draft pick, every waiver wire add, is actually just setting the stage for the true endgame.
 
-**[Sanford]**: The seven relegation format.
+**[Sanford]**: The 2027 relegation format.
 
 **[K-Z]**: Precisely. Following this year, the final standings will dictate a massive split into a 24 team Premier League and a 12 team Bedeviled league. And this perfectly architectures a path for future expansion to 48 or more teams.
 
