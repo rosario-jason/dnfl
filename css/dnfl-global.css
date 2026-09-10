@@ -196,7 +196,7 @@
 }
 
 /* Hover state overrides specifically for the standings module */
-.dnfl-standings-table tbody tr:not(.dnfl-division-header):hover {
+.dnfl-standings-table tbody tr:not(.dnfl-division-header):not(.dnfl-my-team):hover {
     background-color: #b6e2ff !important; /* Blue background color on hover */
     transition: background-color 0.2s ease;
 }
