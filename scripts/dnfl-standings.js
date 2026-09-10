@@ -1,4 +1,4 @@
-// dnfl-standings.js v2.06
+// dnfl-standings.js v2.07
 (function() { 
     console.log("[DNFL Standings] - Component file injected. Initiating matrix alignment...");
 
@@ -6,7 +6,6 @@
     const maxRetries = 50; // Allows up to 5 seconds for the HTML stub to render
 
     async function initializeStandings() {
-        // 1. Look for the EXACT ID from the HTML stub
         const container = document.getElementById("dnfl-standings-container");
         
         if (!container) {
@@ -20,7 +19,6 @@
         }
 
         try {
-            // 2. Fetch the Data
             const [standingsResponse, leagueResponse] = await Promise.all([
                 DNFLClient.fetchData("leagueStandings"),
                 DNFLClient.fetchData("league")
@@ -102,7 +100,6 @@ function renderDnflCustomStandings(standingsData, leagueData) {
         const divLeaders = {}; 
 
         conferences.forEach(conf => {
-            // Find teams matching this conference OR matching a division in this conference
             const confTeams = leagueDetails
                 .filter(f => (f.conference === conf.id) || (divToConfMap[f.division] === conf.id))
                 .map(profile => {
@@ -142,36 +139,29 @@ function renderDnflCustomStandings(standingsData, leagueData) {
             const confDivisions = divisions.filter(div => div.conference === conf.id);
             const totalConfTeams = leagueDetails.filter(f => (f.conference === conf.id) || (divToConfMap[f.division] === conf.id)).length;
             
-            // Dynamically map the wrapper ID using MFL's native conf.id
+            // Generic conference wrapper ID
             const wrapperId = `dnfl_conf_${conf.id}_standings`;
 
-            // ========================================================
-            // REQUIRED LINES 1-5 (ABOVE STANDINGS CONTAINER)
-            // ========================================================
             allTablesHtml += `
                 <div id="${wrapperId}" class="mobile-wrap" style="margin-bottom: 2rem;">
-                    <table class="homepagemodule report" cellspacing="1" align="center" style="margin-bottom: 0;">
+                    <table class="homepagemodule report" cellspacing="1" align="center">
                         <caption>${conf.name} Standings</caption>
                     </table>
                     <div class="toggle_tabs">
-            `;
-
-            // ========================================================
-            // INNER STANDINGS TABLE / CONTAINER
-            // ========================================================
-            allTablesHtml += `
-                        <table class="dnfl-standings-table" style="width: 100%; border-collapse: collapse;">
-                            <thead>
-                                <tr>
-                                    <th style="width: 10%; text-align: center;">Seed</th>
-                                    <th style="width: 40%; text-align: left;">Franchise</th>
-                                    <th class="dnfl-hide-mobile" style="text-align: center;">PF</th>
-                                    <th class="dnfl-hide-mobile" style="text-align: center;">PA</th>
-                                    <th style="text-align: center;">Record</th>
-                                    <th class="dnfl-hide-mobile" style="text-align: center;">BBID $</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                        <!-- Dedicated container inheriting global module styling -->
+                        <div class="dnfl-module-container" style="overflow-x: auto;">
+                            <table class="dnfl-standings-table" style="width: 100%; border-collapse: collapse;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10%; text-align: center;">Seed</th>
+                                        <th style="width: 40%; text-align: left;">Franchise</th>
+                                        <th class="dnfl-hide-mobile" style="text-align: center;">PF</th>
+                                        <th class="dnfl-hide-mobile" style="text-align: center;">PA</th>
+                                        <th style="text-align: center;">Record</th>
+                                        <th class="dnfl-hide-mobile" style="text-align: center;">BBID $</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
             `;
 
             confDivisions.forEach(div => {
@@ -180,7 +170,7 @@ function renderDnflCustomStandings(standingsData, leagueData) {
                         <td colspan="6" style="background-color: #f3f4f6; border-bottom: 2px solid #444; padding: 10px 15px;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
                                 <h3 style="margin: 0; font-size: 1rem; color: #121212;">${div.name}</h3>
-                                <button id="dnfl-btn-div-${div.id}" class="dnfl-visibility-toggle-btn" onclick="toggleDnflDivision('${div.id}')">Hide</button>
+                                <button id="dnfl-btn-div-${div.id}" class="dnfl-visibility-toggle-btn visibility-toggle-btn" onclick="toggleDnflDivision('${div.id}')">Hide</button>
                             </div>
                         </td>
                     </tr>
@@ -242,14 +232,12 @@ function renderDnflCustomStandings(standingsData, leagueData) {
                 });
             });
 
-            // ========================================================
-            // REQUIRED LINES 6-7 (BELOW STANDINGS CONTAINER)
-            // ========================================================
             allTablesHtml += `
-                            </tbody>
-                        </table>
-                    </div>  <!-- close toggle_tabs div -->
-                </div>  <!-- close mobile-wrap div -->
+                                </tbody>
+                            </table>
+                        </div> <!-- close dnfl-module-container div -->
+                    </div> <!-- close toggle_tabs div -->
+                </div> <!-- close mobile-wrap div -->
             `;
         });
 
