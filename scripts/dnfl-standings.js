@@ -1,4 +1,4 @@
-// dnfl-standings.js v2.01
+// dnfl-standings.js v2.02
 (async function() { 
     console.log("[DNFL Standings] - Component file injected. Initiating matrix alignment...");
 
@@ -65,11 +65,10 @@ function renderDnflCustomStandings(standingsData, leagueData) {
         const loggedInFranchise = window.franchise_id || null; 
 
         // 1. CALCULATE SEEDS BY CONFERENCE
-        const teamSeeds = {}; // Map of franchise.id -> seed
-        const divLeaders = {}; // Map of division.id -> franchise.id
+        const teamSeeds = {}; 
+        const divLeaders = {}; 
 
         conferences.forEach(conf => {
-            // Get all teams in this conference and attach their stats
             const confTeams = leagueDetails
                 .filter(f => f.conference === conf.id)
                 .map(profile => {
@@ -79,7 +78,6 @@ function renderDnflCustomStandings(standingsData, leagueData) {
                     };
                 });
 
-            // Sort dynamically: 1. Win Pct (DESC), 2. Points For (DESC)
             confTeams.sort((a, b) => {
                 const pctA = getWinPct(a.stats);
                 const pctB = getWinPct(b.stats);
@@ -90,17 +88,15 @@ function renderDnflCustomStandings(standingsData, leagueData) {
                 return pfB - pfA;
             });
 
-            // Assign Conference Seeds (1 to N)
             confTeams.forEach((team, index) => {
                 teamSeeds[team.profile.id] = index + 1;
             });
             
-            // Find Division Leaders
             const confDivisions = divisions.filter(d => d.conference === conf.id);
             confDivisions.forEach(div => {
                 const teamsInDiv = confTeams.filter(t => t.profile.division === div.id);
                 if (teamsInDiv.length > 0) {
-                    divLeaders[div.id] = teamsInDiv[0].profile.id; // Team with highest conf rank in the div
+                    divLeaders[div.id] = teamsInDiv[0].profile.id;
                 }
             });
         });
@@ -130,7 +126,6 @@ function renderDnflCustomStandings(standingsData, leagueData) {
             `;
 
             confDivisions.forEach(div => {
-                // Division Header Row with Toggle Button
                 allTablesHtml += `
                     <tr class="dnfl-division-header">
                         <td colspan="6" style="background-color: #f3f4f6; border-bottom: 2px solid #444; padding: 10px 15px;">
@@ -142,9 +137,13 @@ function renderDnflCustomStandings(standingsData, leagueData) {
                     </tr>
                 `;
 
-                // Gather and sort teams belonging to this division by their calculated seed
                 let divisionProfiles = leagueDetails.filter(f => f.division === div.id);
-                divisionProfiles.sort((a, b) => teamSeeds[a.id] - teamSeeds[b.id]);
+                // Safe sort accounting for potential undefined seeds
+                divisionProfiles.sort((a, b) => {
+                    const seedA = teamSeeds[a.id] || 999;
+                    const seedB = teamSeeds[b.id] || 999;
+                    return seedA - seedB;
+                });
 
                 divisionProfiles.forEach(profile => {
                     const stats = standingsFranchises.find(t => t.id === profile.id) || {};
@@ -158,17 +157,16 @@ function renderDnflCustomStandings(standingsData, leagueData) {
                     const pa = stats.pa || "0";
                     const record = `${stats.h2hw || 0}-${stats.h2hl || 0}-${stats.h2ht || 0}`;
 
-                    const seed = teamSeeds[profile.id];
+                    // Update: Fallback to "-" if the seed is undefined
+                    const seed = teamSeeds[profile.id] || "-";
                     let seedIcon = '';
                     
-                    // Visual Indicators
-                    if (profile.id === divLeaders[div.id]) {
+                    if (seed !== "-" && profile.id === divLeaders[div.id]) {
                         seedIcon = `<i class="fa-solid fa-crown" style="color: #3b82f6; margin-left: 5px;" title="Clinched 1st in Division"></i>`;
-                    } else if (seed >= totalConfTeams - 1) {
+                    } else if (seed !== "-" && seed >= totalConfTeams - 1) {
                         seedIcon = `<i class="fa-solid fa-circle-down" style="color: #ef4444; margin-left: 5px;" title="Bottom 2 Seed"></i>`;
                     }
 
-                    // Highlight user's franchise
                     const rowClass = (profile.id === loggedInFranchise) ? 'dnfl-my-team dnfl-div-row-' + div.id : 'dnfl-div-row-' + div.id;
                     const targetHref = `https://${activeHost}/${targetYear}/options?L=${leagueId}&F=${profile.id}&O=01`;
 
@@ -179,8 +177,9 @@ function renderDnflCustomStandings(standingsData, leagueData) {
                             </td>
                             <td>
                                 <div style="display: flex; align-items: center; gap: 12px;">
+                                    <!-- Update: Removed inline styles, relying exclusively on class="franchiseicon" -->
                                     <a href="${targetHref}">
-                                        <img src="${logoUrl}" alt="${teamName}" class="franchiseicon" style="min-width: 3rem !important; width: 3rem !important; height: 3rem !important;">
+                                        <img src="${logoUrl}" alt="${teamName}" class="franchiseicon" id="franchiseicon_${profile.id}" />
                                     </a>
                                     <div style="display: flex; flex-direction: column;">
                                         <a href="${targetHref}" style="font-weight: 700; color: #121212; text-decoration: none;">${teamName}</a>
