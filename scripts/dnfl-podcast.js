@@ -2,7 +2,7 @@
    DNFL Devil's Advocate Podcast Audio Player Logic
    ========================================================================== */
 
-let currentMflYear = '';
+let podcastMFLYear = '';
 
 /* 🟢 MASTER CHRONOLOGICAL PLAYLIST LOG
    Instructions for adding new episodes:
@@ -17,7 +17,7 @@ const playlistLog = [
 ];
 
 function initPodcastDashboard(mflYear) {
-    currentMflYear = mflYear;
+    podcastMFLYear = mflYear;
     
     const selector = document.getElementById('dnfl_episodeSelector');
     selector.innerHTML = ''; 
@@ -42,12 +42,12 @@ function loadEpisodeData(fileId, displayTitle) {
 
     label.textContent = `Now Playing: ${displayTitle}`;
     
-    source.src = `https://dnfl.live/devils_advocate/${currentMflYear}/${fileId}.m4a`;
+    source.src = `https://dnfl.live/devils_advocate/${podcastMFLYear}/${fileId}.m4a`;
     player.load(); 
 
     transcriptBox.innerHTML = `<p style="color: #aaa; font-style: italic;">Loading transcript file stream for ${fileId}...</p>`;
 
-    const transcriptUrl = `https://dnfl.live/devils_advocate/${currentMflYear}/${fileId}.md`;
+    const transcriptUrl = `https://dnfl.live/devils_advocate/${podcastMFLYear}/${fileId}.md`;
     fetch(transcriptUrl)
         .then(response => {
             if (!response.ok) throw new Error("CORS file stream verify exception.");

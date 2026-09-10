@@ -2,7 +2,7 @@
    DNFL Power Rankings Chart & Data Table Logic
    ========================================================================== */
 
-let currentMflYear = '';
+let rankingsMFLYear = '';
 let masterData = [];
 let chartInstance = null;
 
@@ -31,7 +31,7 @@ const conferenceBorders = {
 };
 
 function initDashboard(mflYear) {
-    currentMflYear = mflYear;
+    rankingsMFLYear = mflYear;
     
     const selector = document.getElementById('dnfl_weekSelector');
     selector.innerHTML = ''; 
@@ -51,7 +51,7 @@ function initDashboard(mflYear) {
 function loadWeeklyData() {
     const selectedWeekFile = document.getElementById('dnfl_weekSelector').value;
     
-    const filePath = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/${currentMflYear}/data_${selectedWeekFile}.csv`;
+    const filePath = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/${rankingsMFLYear}/data_${selectedWeekFile}.csv`;
 
     Papa.parse(filePath, {
         download: true,
