@@ -1,4 +1,4 @@
-// dnfl-standings.js v2.02
+// dnfl-standings.js v2.03
 (async function() { 
     console.log("[DNFL Standings] - Component file injected. Initiating matrix alignment...");
 
@@ -50,6 +50,7 @@ function renderDnflCustomStandings(standingsData, leagueData) {
     if (!container) return;
 
     try {
+        // Map native MFL data[cite: 4]
         const standingsFranchises = standingsData.leagueStandings.franchise;
         const leagueDetails = leagueData.league.franchises.franchise;
         const conferences = leagueData.league.conferences?.conference;
@@ -110,12 +111,13 @@ function renderDnflCustomStandings(standingsData, leagueData) {
 
             allTablesHtml += `
                 <div class="mobile-wrapper dnfl-table-wrapper" style="margin-bottom: 2rem;">
-                    <table class="dnfl-standings-table" style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <table class="dnfl-standings-table" style="width: 100%; border-collapse: collapse;">
                         <caption><span>${conf.name} Standings</span></caption>
                         <thead>
                             <tr>
-                                <th style="width: 10%;">Seed</th>
-                                <th style="width: 40%;">Franchise</th>
+                                <!-- Updated: Seed th centered, Franchise th left-aligned -->
+                                <th style="width: 10%; text-align: center;">Seed</th>
+                                <th style="width: 40%; text-align: left;">Franchise</th>
                                 <th class="dnfl-hide-mobile" style="text-align: center;">PF</th>
                                 <th class="dnfl-hide-mobile" style="text-align: center;">PA</th>
                                 <th style="text-align: center;">Record</th>
@@ -138,7 +140,6 @@ function renderDnflCustomStandings(standingsData, leagueData) {
                 `;
 
                 let divisionProfiles = leagueDetails.filter(f => f.division === div.id);
-                // Safe sort accounting for potential undefined seeds
                 divisionProfiles.sort((a, b) => {
                     const seedA = teamSeeds[a.id] || 999;
                     const seedB = teamSeeds[b.id] || 999;
@@ -149,7 +150,8 @@ function renderDnflCustomStandings(standingsData, leagueData) {
                     const stats = standingsFranchises.find(t => t.id === profile.id) || {};
                     const teamName = profile.name || "Franchise " + profile.id;
                     const ownerName = profile.owner_name || "Owner";
-                    const logoUrl = profile.icon ? profile.icon.toString().trim() : "https://dnfl.live/images/ficon-dnfl.png";
+                    // Fallback logo engine[cite: 4]
+                    const logoUrl = profile.icon ? profile.icon.toString().trim() : "https://dnfl.live/images/ficon-dnfl.png"; 
                     
                     const rawBbid = parseFloat(profile.bbidBalance || 0);
                     const bbidFormatted = "$" + rawBbid.toFixed(2);
@@ -157,7 +159,6 @@ function renderDnflCustomStandings(standingsData, leagueData) {
                     const pa = stats.pa || "0";
                     const record = `${stats.h2hw || 0}-${stats.h2hl || 0}-${stats.h2ht || 0}`;
 
-                    // Update: Fallback to "-" if the seed is undefined
                     const seed = teamSeeds[profile.id] || "-";
                     let seedIcon = '';
                     
@@ -172,12 +173,12 @@ function renderDnflCustomStandings(standingsData, leagueData) {
 
                     allTablesHtml += `
                         <tr class="${rowClass}">
-                            <td style="font-weight: bold; font-size: 1.1rem;">
+                            <!-- Updated: Seed td centered -->
+                            <td style="font-weight: bold; font-size: 1.1rem; text-align: center;">
                                 ${seed} ${seedIcon}
                             </td>
                             <td>
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <!-- Update: Removed inline styles, relying exclusively on class="franchiseicon" -->
+                                <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
                                     <a href="${targetHref}">
                                         <img src="${logoUrl}" alt="${teamName}" class="franchiseicon" id="franchiseicon_${profile.id}" />
                                     </a>
