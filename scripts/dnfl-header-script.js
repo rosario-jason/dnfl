@@ -1,4 +1,4 @@
-// dnfl-header-script.js v1.1
+// dnfl-header-script.js v1.2
 (function() {
     // ==========================================
     // 1. MASTER SCRIPT REGISTRY
@@ -6,7 +6,7 @@
     // ==========================================
     const SCRIPTS_TO_LOAD = [
         "dnfl-api-client.js?v1.01",
-        "dnfl-standings.js?v3.0"
+        "dnfl-standings.js?v4.0"
     ];
 
     // ==========================================
