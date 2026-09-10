@@ -1,4 +1,4 @@
-// dnfl-standings.js v2.07
+// dnfl-standings.js v2.08
 (function() { 
     console.log("[DNFL Standings] - Component file injected. Initiating matrix alignment...");
 
@@ -31,7 +31,8 @@
             }
         } catch (error) {
             console.error("DNFL Standings Error:", error);
-            container.innerHTML = `<div class="reportwrapper"><p>Error loading standings.</p></div>`;
+            // Replace the entire container with the error message
+            container.outerHTML = `<div class="reportwrapper"><p>Error loading standings.</p></div>`;
         }
     }
 
@@ -241,10 +242,12 @@ function renderDnflCustomStandings(standingsData, leagueData) {
             `;
         });
 
-        container.innerHTML = allTablesHtml;
+        // UPDATE: Replaces the container entirely instead of injecting inside it!
+        container.outerHTML = allTablesHtml;
 
     } catch (error) {
         console.error("HTML Structural Matrix Generation Failed:", error);
-        container.innerHTML = `<div class="reportwrapper"><p>Standings module could not compile structural data matrix configuration parameters.</p></div>`;
+        // Replace the container with the error wrapper
+        container.outerHTML = `<div class="reportwrapper"><p>Standings module could not compile structural data matrix configuration parameters.</p></div>`;
     }
 }
