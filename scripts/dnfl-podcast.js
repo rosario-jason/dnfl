@@ -13,7 +13,7 @@ let podcastMFLYear = '';
    5. Note: Always use a comma to separate entries, but do NOT put a comma after the very last entry.
    The engine will automatically select and load the final item in this list as the default. */
 const playlistLog = [
-    { fileId: "DA_S1E1", title: "S1E1 - Kicking Off the 2026 DNFL Season!" }
+    { fileId: "DA_S1E1", title: "S1E1 - No Bling... No Ring" }
 ];
 
 function initPodcastDashboard(mflYear) {
