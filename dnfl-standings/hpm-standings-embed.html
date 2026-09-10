@@ -3,7 +3,42 @@
 <!-- FontAwesome (Required for Crown and Circle-Down icons) -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- Standings Module Injection Anchor -->
-<div id="dnfl-standings-container">
-    <p style="text-align: center; padding: 2rem; color: #121212; font-weight: 600;">Loading DNFL League Standings...</p>
+<div id="dnfl_standings" class="mobile-wrap">
+    <table class="homepagemodule report" cellspacing="1" align="center">
+        <caption><span>DNFL League Standings</span></caption>
+    </table>
+    <div class="toggle_tabs">
+        <div class="dnfl-module-container" style="overflow-x: auto;">
+            
+            <!-- Filter Controls -->
+            <div class="dnfl-controls" style="margin-bottom: 1.5rem;">
+                <div class="dnfl-filter-group">
+                    <label for="dnfl_standings_confFilter">Conference:</label>
+                    <select id="dnfl_standings_confFilter" class="dnfl-select" onchange="window.updateDnflStandingsView()"></select>
+                </div>
+            </div>
+
+            <!-- Standings Table -->
+            <table class="dnfl-standings-table" style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr>
+                        <th style="width: 10%; text-align: left;">Seed</th>
+                        <th style="width: 40%; text-align: left;">Franchise</th>
+                        <th class="dnfl-hide-mobile" style="text-align: center;">PF</th>
+                        <th class="dnfl-hide-mobile" style="text-align: center;">PA</th>
+                        <th style="text-align: center;">Record</th>
+                        <th class="dnfl-hide-mobile" style="text-align: center;">BBID $</th>
+                    </tr>
+                </thead>
+                <tbody id="dnfl-standings-tbody">
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2.5rem; font-weight: 600; color: #121212;">
+                            Loading DNFL League Standings...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
 </div>
