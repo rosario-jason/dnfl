@@ -1,4 +1,4 @@
-// dnfl-header-script.js v1.07
+// dnfl-header-script.js v1.1
 (function() {
     // ==========================================
     // 1. MASTER SCRIPT REGISTRY

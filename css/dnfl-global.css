@@ -201,6 +201,11 @@
     transition: background-color 0.2s ease;
 }
 
+/* Even colored rows */
+.dnfl-standings-table tbody tr.dnfl-row-even:not(.dnfl-my-team) {
+    background-color: #FAFAFA;
+}
+
 /* Highlight row for logged-in user's team */
 .dnfl-standings-table tr.dnfl-my-team {
     background-color: #FDE68A !important; /* Yellow background */
