@@ -1,4 +1,4 @@
-// dnfl-standings.js v2.03
+// dnfl-standings.js v2.04
 (async function() { 
     console.log("[DNFL Standings] - Component file injected. Initiating matrix alignment...");
 
@@ -50,7 +50,6 @@ function renderDnflCustomStandings(standingsData, leagueData) {
     if (!container) return;
 
     try {
-        // Map native MFL data[cite: 4]
         const standingsFranchises = standingsData.leagueStandings.franchise;
         const leagueDetails = leagueData.league.franchises.franchise;
         const conferences = leagueData.league.conferences?.conference;
@@ -108,23 +107,28 @@ function renderDnflCustomStandings(standingsData, leagueData) {
         conferences.forEach(conf => {
             const confDivisions = divisions.filter(div => div.conference === conf.id);
             const totalConfTeams = leagueDetails.filter(f => f.conference === conf.id).length;
+            
+            // NEW: Dynamically map the wrapper ID using MFL's native conf.id variable (e.g. "00", "01")
+            const wrapperId = `dnfl_conf_${conf.id}_standings`;
 
             allTablesHtml += `
-                <div class="mobile-wrapper dnfl-table-wrapper" style="margin-bottom: 2rem;">
-                    <table class="dnfl-standings-table" style="width: 100%; border-collapse: collapse;">
+                <div id="${wrapperId}" class="mobile-wrap" style="margin-bottom: 2rem;">
+                    <table class="homepagemodule report" cellspacing="1" align="center" style="margin-bottom: 0;">
                         <caption><span>${conf.name} Standings</span></caption>
-                        <thead>
-                            <tr>
-                                <!-- Updated: Seed th centered, Franchise th left-aligned -->
-                                <th style="width: 10%; text-align: center;">Seed</th>
-                                <th style="width: 40%; text-align: left;">Franchise</th>
-                                <th class="dnfl-hide-mobile" style="text-align: center;">PF</th>
-                                <th class="dnfl-hide-mobile" style="text-align: center;">PA</th>
-                                <th style="text-align: center;">Record</th>
-                                <th class="dnfl-hide-mobile" style="text-align: center;">BBID $</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+                    </table>
+                    <div class="toggle_tabs">
+                        <table class="dnfl-standings-table" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%; text-align: center;">Seed</th>
+                                    <th style="width: 40%; text-align: left;">Franchise</th>
+                                    <th class="dnfl-hide-mobile" style="text-align: center;">PF</th>
+                                    <th class="dnfl-hide-mobile" style="text-align: center;">PA</th>
+                                    <th style="text-align: center;">Record</th>
+                                    <th class="dnfl-hide-mobile" style="text-align: center;">BBID $</th>
+                                </tr>
+                            </thead>
+                            <tbody>
             `;
 
             confDivisions.forEach(div => {
@@ -150,7 +154,6 @@ function renderDnflCustomStandings(standingsData, leagueData) {
                     const stats = standingsFranchises.find(t => t.id === profile.id) || {};
                     const teamName = profile.name || "Franchise " + profile.id;
                     const ownerName = profile.owner_name || "Owner";
-                    // Fallback logo engine[cite: 4]
                     const logoUrl = profile.icon ? profile.icon.toString().trim() : "https://dnfl.live/images/ficon-dnfl.png"; 
                     
                     const rawBbid = parseFloat(profile.bbidBalance || 0);
@@ -173,7 +176,6 @@ function renderDnflCustomStandings(standingsData, leagueData) {
 
                     allTablesHtml += `
                         <tr class="${rowClass}">
-                            <!-- Updated: Seed td centered -->
                             <td style="font-weight: bold; font-size: 1.1rem; text-align: center;">
                                 ${seed} ${seedIcon}
                             </td>
@@ -198,8 +200,9 @@ function renderDnflCustomStandings(standingsData, leagueData) {
             });
 
             allTablesHtml += `
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div> 
                 </div>
             `;
         });
