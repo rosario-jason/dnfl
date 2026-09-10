@@ -1,17 +1,47 @@
-// dnfl-standings.js v2.04
-(async function() { 
+// dnfl-standings.js v2.05
+(function() { 
     console.log("[DNFL Standings] - Component file injected. Initiating matrix alignment...");
 
-    const [standingsResponse, leagueResponse] = await Promise.all([
-        DNFLClient.fetchData("leagueStandings"),
-        DNFLClient.fetchData("league")
-    ]);
+    let retryCount = 0;
+    const maxRetries = 50; // Allows up to 5 seconds for the HTML stub to render
 
-    if (standingsResponse && leagueResponse) {
-        renderDnflCustomStandings(standingsResponse, leagueResponse);
+    async function initializeStandings() {
+        // 1. Look for the EXACT ID from the HTML stub
+        const container = document.getElementById("dnfl-standings-container");
+        
+        if (!container) {
+            if (retryCount < maxRetries) {
+                retryCount++;
+                setTimeout(initializeStandings, 100);
+            } else {
+                console.error("DNFL Standings: Could not find HTML container <div id='dnfl-standings-container'>.");
+            }
+            return; // Exit silently if container is missing so it can retry
+        }
+
+        try {
+            // 2. Fetch the Data
+            const [standingsResponse, leagueResponse] = await Promise.all([
+                DNFLClient.fetchData("leagueStandings"),
+                DNFLClient.fetchData("league")
+            ]);
+
+            if (standingsResponse && leagueResponse) {
+                renderDnflCustomStandings(standingsResponse, leagueResponse);
+            } else {
+                throw new Error("Failed to gather necessary cached data streams.");
+            }
+        } catch (error) {
+            console.error("DNFL Standings Error:", error);
+            container.innerHTML = `<div class="reportwrapper"><p>Error loading standings.</p></div>`;
+        }
+    }
+
+    // Wait for the DOM to be fully loaded before running the fetch and render sequence
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeStandings);
     } else {
-        console.error("DNFL Standings Error: Failed to gather necessary cached data streams.");
-        document.getElementById("dnfl-standings-container").innerHTML = `<p>Error loading standings.</p>`;
+        initializeStandings();
     }
 })();
 
@@ -108,7 +138,7 @@ function renderDnflCustomStandings(standingsData, leagueData) {
             const confDivisions = divisions.filter(div => div.conference === conf.id);
             const totalConfTeams = leagueDetails.filter(f => f.conference === conf.id).length;
             
-            // NEW: Dynamically map the wrapper ID using MFL's native conf.id variable (e.g. "00", "01")
+            // Dynamically map the wrapper ID using MFL's native conf.id
             const wrapperId = `dnfl_conf_${conf.id}_standings`;
 
             allTablesHtml += `
