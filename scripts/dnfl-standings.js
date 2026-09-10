@@ -1,4 +1,4 @@
-// dnfl-standings.js v2.05
+// dnfl-standings.js v2.06
 (function() { 
     console.log("[DNFL Standings] - Component file injected. Initiating matrix alignment...");
 
@@ -16,7 +16,7 @@
             } else {
                 console.error("DNFL Standings: Could not find HTML container <div id='dnfl-standings-container'>.");
             }
-            return; // Exit silently if container is missing so it can retry
+            return;
         }
 
         try {
@@ -37,7 +37,6 @@
         }
     }
 
-    // Wait for the DOM to be fully loaded before running the fetch and render sequence
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initializeStandings);
     } else {
@@ -94,13 +93,18 @@ function renderDnflCustomStandings(standingsData, leagueData) {
         const activeHost = window.location.hostname || "myfantasyleague.com";
         const loggedInFranchise = window.franchise_id || null; 
 
+        // Map division IDs to conference IDs as a fallback safety net
+        const divToConfMap = {};
+        divisions.forEach(d => divToConfMap[d.id] = d.conference);
+
         // 1. CALCULATE SEEDS BY CONFERENCE
         const teamSeeds = {}; 
         const divLeaders = {}; 
 
         conferences.forEach(conf => {
+            // Find teams matching this conference OR matching a division in this conference
             const confTeams = leagueDetails
-                .filter(f => f.conference === conf.id)
+                .filter(f => (f.conference === conf.id) || (divToConfMap[f.division] === conf.id))
                 .map(profile => {
                     return {
                         profile: profile,
@@ -136,17 +140,26 @@ function renderDnflCustomStandings(standingsData, leagueData) {
 
         conferences.forEach(conf => {
             const confDivisions = divisions.filter(div => div.conference === conf.id);
-            const totalConfTeams = leagueDetails.filter(f => f.conference === conf.id).length;
+            const totalConfTeams = leagueDetails.filter(f => (f.conference === conf.id) || (divToConfMap[f.division] === conf.id)).length;
             
             // Dynamically map the wrapper ID using MFL's native conf.id
             const wrapperId = `dnfl_conf_${conf.id}_standings`;
 
+            // ========================================================
+            // REQUIRED LINES 1-5 (ABOVE STANDINGS CONTAINER)
+            // ========================================================
             allTablesHtml += `
                 <div id="${wrapperId}" class="mobile-wrap" style="margin-bottom: 2rem;">
                     <table class="homepagemodule report" cellspacing="1" align="center" style="margin-bottom: 0;">
-                        <caption><span>${conf.name} Standings</span></caption>
+                        <caption>${conf.name} Standings</caption>
                     </table>
                     <div class="toggle_tabs">
+            `;
+
+            // ========================================================
+            // INNER STANDINGS TABLE / CONTAINER
+            // ========================================================
+            allTablesHtml += `
                         <table class="dnfl-standings-table" style="width: 100%; border-collapse: collapse;">
                             <thead>
                                 <tr>
@@ -229,11 +242,14 @@ function renderDnflCustomStandings(standingsData, leagueData) {
                 });
             });
 
+            // ========================================================
+            // REQUIRED LINES 6-7 (BELOW STANDINGS CONTAINER)
+            // ========================================================
             allTablesHtml += `
                             </tbody>
                         </table>
-                    </div> 
-                </div>
+                    </div>  <!-- close toggle_tabs div -->
+                </div>  <!-- close mobile-wrap div -->
             `;
         });
 
