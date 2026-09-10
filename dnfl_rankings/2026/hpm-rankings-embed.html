@@ -1,0 +1,84 @@
+<!-- DNFL Power Rankings -->
+
+<div id="myfantasyleague_tabs" class="mobile-wrap">
+   <table class="homepagemodule report" cellspacing="1" align="center">
+    <caption>DNFL Power Rankings</caption>
+  </table>
+
+  <div class="toggle_tabs"> 
+    <br/>
+    <!-- Dependencies & Global CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js"></script>
+
+    <div class="dnfl-module-container">
+        <div class="dnfl-controls">
+            <div class="dnfl-filter-group">
+                <label for="dnfl_weekSelector">Ranking Week:</label>
+                <select id="dnfl_weekSelector" class="dnfl-select" onchange="loadWeeklyData()"></select>
+            </div>
+            <div class="dnfl-filter-group">
+                <label for="dnfl_confFilter">Conference:</label>
+                <select id="dnfl_confFilter" class="dnfl-select" onchange="applyConferenceFilter()">
+                    <option value="All">All Conferences</option>
+                    <option value="Cameron Crazies">Cameron Crazies</option>
+                    <option value="K-Ville">K-Ville</option>
+                    <option value="Blue Devils">Blue Devils</option>
+                </select>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 20px; justify-content: flex-start; margin: 15px 0; background: #eeeeee; padding: 12px 15px; border-radius: 8px; border: 1px solid #333; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                <span style="display: inline-block; width: 18px; height: 18px; background: rgba(54, 162, 235, 0.85); border: 1px solid rgb(54, 162, 235); border-radius: 4px;"></span>
+                <span>Cameron Crazies</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                <span style="display: inline-block; width: 18px; height: 18px; background: rgba(255, 99, 132, 0.85); border: 1px solid rgb(255, 99, 132); border-radius: 4px;"></span>
+                <span>K-Ville</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px; font-size: 14px;">
+                <span style="display: inline-block; width: 18px; height: 18px; background: rgba(75, 192, 192, 0.85); border: 1px solid rgb(75, 192, 192); border-radius: 4px;"></span>
+                <span>Blue Devils</span>
+            </div>
+        </div>
+        
+        <div class="dnfl-section-header-row">
+            <button id="dnfl_chartToggleBtn" class="dnfl-visibility-toggle-btn" onclick="toggleElementVisibility('chart')">Hide Chart</button>
+        </div>
+
+        <div id="dnfl_chartWrapperContainer" class="dnfl-chart-wrapper">
+            <canvas id="dnfl_powerRankingChart"></canvas>
+        </div>
+    </div>
+
+    <div id="dnfl_tableWrapperContainer" class="dnfl-table-wrapper">
+        <div style="margin: 1.5rem auto 0.5rem 1.5rem; box-sizing: border-box;">
+            <div class="dnfl-section-header-row">
+                <button id="dnfl_tableToggleBtn" class="dnfl-visibility-toggle-btn" onclick="toggleElementVisibility('table')">Hide Table</button>
+            </div>
+        </div>
+        <table id="dnfl_dataTable">
+            <thead>
+                <tr>
+                    <th style="width: 7%;">Rank</th>
+                    <th style="width: 18%;">Franchise</th>
+                    <th style="width: 18%;">Owners</th>
+                    <th style="text-align: center; width: 7%;">Grade</th>
+                    <th style="text-align: center; width: 10%;">Proj W-L</th>
+                    <th style="width: 40%;">Rank Comments</th>
+                </tr>
+            </thead>
+            <tbody id="dnfl_tableBody"></tbody>
+        </table>
+    </div>
+
+    <!-- Initialization -->
+    <script src="https://cdn.jsdelivr.net/gh/rosario-jason/dnfl@main/scripts/dnfl-rankings.js"></script>
+    <script>
+        window.addEventListener('DOMContentLoaded', (event) => {
+            initDashboard('%YEAR%');
+        });
+    </script>
+  </div>
+</div>
