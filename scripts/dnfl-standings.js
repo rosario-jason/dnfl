@@ -1,4 +1,4 @@
-// dnfl-standings.js v5.0
+// dnfl-standings.js v5.01
 (function() { 
     console.log("[DNFL Standings] - Component file injected. Automated live layout activated.");
 
@@ -176,8 +176,10 @@
                 const ownerName = profile.owner_name || "Owner";
                 const logoUrl = profile.icon ? profile.icon.toString().trim() : "https://dnfl.live/images/ficon-dnfl.png"; 
                 
-                const rawBbid = parseFloat(profile.bbidBalance || 0);
+                // FIXED: Changed profile.bbidBalance to profile.bbidAvailableBalance to correctly pull from MFL API
+                const rawBbid = parseFloat(profile.bbidAvailableBalance || profile.bbidBalance || 0);
                 const bbidFormatted = "$" + rawBbid.toFixed(2);
+                
                 const pf = stats.pf || "0";
                 const pa = stats.pa || "0";
                 const record = `${stats.h2hw || 0}-${stats.h2hl || 0}-${stats.h2ht || 0}`;
