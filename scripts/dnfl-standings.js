@@ -104,7 +104,7 @@
             hasDivisionCrown: true,
             relegation: { enabled: false, type: 'conference', count: 0 },
             promotion: { enabled: false, count: 0 }
-        }
+        },
 
         // =====================================================================
         // DEFAULT FALLBACK (Applies to all past seasons 2006–2024)
