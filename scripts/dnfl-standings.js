@@ -1,6 +1,6 @@
-// dnfl-standings.js v8.1
+// dnfl-standings.js v9.0
 (function() { 
-    console.log("[DNFL Standings] - Component file injected. Generalized Scope Engine activated.");
+    console.log("[DNFL Standings] - Component file injected. League Playoff Scope Engine activated.");
 
     // =========================================================================
     // 📖 STANDINGS & SEEDING CONFIGURATION GUIDE (VARIABLE DICTIONARY)
@@ -10,15 +10,17 @@
     // -------------------------------------------------------------------------
     // 1. seedingScope: (String)
     //    Defines the boundary for the Seed column numbering (1 to N).
-    //    - 'conference' : Seeds 1 to N (total teams in the conference) within each conference.
-    //    - 'league'     : Seeds 1 to N (total teams across the entire league).
+    //    - 'conference' : Seeds 1 to N within each conference.
+    //    - 'league'     : Seeds 1 to N across the entire league. Also automatically
+    //                     adds a "Playoffs" option to the Conference Selector to view
+    //                     the full league ranked top-to-bottom without divisions.
     //
     // -------------------------------------------------------------------------
     // 2. seedingModel: (String)
     //    Determines the calculation formula applied to the Seed column.
     //    Models behave dynamically based on your seedingScope (e.g., if scope is 
     //    'league', it aggregates ALL Division Winners in the league into Tier 1).
-    //    (Note: Physical row display order always respects native MFL rank).
+    //    (Note: Physical row display order in conference view respects native MFL rank).
     //
     //    - 'tiered_div_finish_pf':
     //         * Tier 1: ALL Division Winners ranked by Total PF.
@@ -66,6 +68,18 @@
 
     const STANDINGS_RULES = {
         // =====================================================================
+        // HISTORICAL SEASONS: 2006 through 2025
+        // =====================================================================
+        '2006-2025': {
+            seedingScope: 'conference',
+            seedingModel: 'standard_div_winners_first',
+            playoffCutoff: 6,
+            hasDivisionCrown: true,
+            relegation: { enabled: false, type: 'conference', count: 0 },
+            promotion: { enabled: false, count: 0 }
+        },
+
+        // =====================================================================
         // CURRENT SEASON: 2026 (League-wide PF Tiered)
         // =====================================================================
         2026: {
@@ -78,9 +92,9 @@
         },
 
         // =====================================================================
-        // UPCOMING SEASON: 2027 (Multi-Tier Promotion / Relegation Structure)
+        // FUTURE / DEFAULT: 2027 AND BEYOND (Multi-Tier Promotion / Relegation)
         // =====================================================================
-        2027: {
+        default: {
             seedingScope: 'conference',
             seedingModel: 'standard_div_winners_first',
             playoffCutoff: 4,
@@ -92,18 +106,6 @@
                 '01': { relegation: { enabled: true, type: 'conference', count: 2 }, promotion: { enabled: false } },
                 '02': { relegation: { enabled: false }, promotion: { enabled: true, count: 4 } }
             }
-        },
-
-        // =====================================================================
-        // DEFAULT FALLBACK (Applies to all past seasons 2006–2025)
-        // =====================================================================
-        default: {
-            seedingScope: 'conference',
-            seedingModel: 'standard_div_winners_first',
-            playoffCutoff: 6,
-            hasDivisionCrown: true,
-            relegation: { enabled: false, type: 'conference', count: 0 },
-            promotion: { enabled: false, count: 0 }
         }
     };
 
@@ -122,12 +124,10 @@
     function getYearRules() {
         const yr = parseInt(targetYear);
 
-        // 1. Direct match (e.g., 2026)
         if (STANDINGS_RULES[yr]) {
             return STANDINGS_RULES[yr];
         }
 
-        // 2. Check for ranges ('2006-2025') or lists ('2006, 2007, 2008')
         for (const key in STANDINGS_RULES) {
             if (key.includes('-')) {
                 const [start, end] = key.split('-').map(s => parseInt(s.trim()));
@@ -143,7 +143,6 @@
             }
         }
 
-        // 3. Fallback to default
         return STANDINGS_RULES['default'];
     }
 
@@ -264,7 +263,7 @@
             });
         }
 
-        // 3. RUN THE CHOSEN MODEL ACROSS THE SCOPES (Dynamically scales 1 to N teams)
+        // 3. RUN THE CHOSEN MODEL ACROSS THE SCOPES
         if (rules.seedingModel === 'manual' && rules.manualSeeds) {
             teamSeeds = rules.manualSeeds;
         } else {
@@ -306,7 +305,7 @@
             });
         }
 
-        // 4. CONFERENCE-LEVEL RELEGATION & PROMOTION (Runs independently of seed model)
+        // 4. CONFERENCE-LEVEL RELEGATION & PROMOTION
         cachedConferences.forEach(conf => {
             const confRule = rules.conferenceOverrides?.[conf.id] || rules;
             const confTeams = cachedLeagueDetails.filter(f => (f.conference === conf.id) || (divToConfMap[f.division] === conf.id)).map(f => f.id);
@@ -329,6 +328,16 @@
         if (!confSelect) return;
 
         confSelect.innerHTML = ''; 
+        const rules = getYearRules();
+
+        // If seedingScope is 'league', add the Playoffs option
+        if (rules.seedingScope === 'league') {
+            const playoffOpt = document.createElement('option');
+            playoffOpt.value = 'playoffs';
+            playoffOpt.textContent = 'Playoffs';
+            confSelect.appendChild(playoffOpt);
+        }
+
         cachedConferences.forEach(conf => {
             const opt = document.createElement('option');
             opt.value = conf.id;
@@ -344,27 +353,119 @@
 
         if (!defaultConfId) {
             const fallbackConf = cachedConferences.find(c => c.name.toLowerCase().includes("cameron crazies"));
-            defaultConfId = fallbackConf ? fallbackConf.id : cachedConferences[0]?.id;
+            defaultConfId = fallbackConf ? fallbackConf.id : (rules.seedingScope === 'league' ? 'playoffs' : cachedConferences[0]?.id);
         }
         confSelect.value = defaultConfId;
+    }
+
+    // Helper to generate an individual team table row
+    function buildTeamRowHtml(profile, divId, rules, rowCounter) {
+        const stats = cachedStandingsFranchises.find(t => t.id === profile.id) || {};
+        const teamName = profile.name || "Franchise " + profile.id;
+        const ownerName = profile.owner_name || "Owner";
+        const logoUrl = profile.icon ? profile.icon.toString().trim() : "https://dnfl.live/images/ficon-dnfl.png"; 
+        
+        const rawBbid = parseFloat(profile.bbidAvailableBalance || profile.bbidBalance || 0);
+        const bbidFormatted = "$" + rawBbid.toFixed(2);
+        const pf = stats.pf || "0";
+        const pa = stats.pa || "0";
+        const record = `${stats.h2hw || 0}-${stats.h2hl || 0}-${stats.h2ht || 0}`;
+
+        const seed = teamSeeds[profile.id] || "-";
+        
+        // --- VISUAL BADGES ENGINE ---
+        let badgeIcons = '';
+
+        if (rules.hasDivisionCrown && profile.division && profile.id === divLeaders[profile.division]) {
+            badgeIcons += `<i class="fa-solid fa-crown" style="color: #3b82f6; margin-left: 5px;" title="Division Winner"></i>`;
+        }
+        if (seed !== "-" && rules.playoffCutoff && seed <= rules.playoffCutoff) {
+            badgeIcons += `<i class="fa-solid fa-trophy" style="color: #f59e0b; margin-left: 5px;" title="Playoff Seed #${seed}"></i>`;
+        }
+        if (relegatedTeamIds.has(profile.id)) {
+            badgeIcons += `<i class="fa-solid fa-circle-down" style="color: #ef4444; margin-left: 5px;" title="Relegation Zone"></i>`;
+        }
+        if (promotedTeamIds.has(profile.id)) {
+            badgeIcons += `<i class="fa-solid fa-circle-up" style="color: #10b981; margin-left: 5px;" title="Promotion Zone"></i>`;
+        }
+
+        const stripeClass = (rowCounter % 2 === 0) ? "dnfl-row-odd" : "dnfl-row-even";
+        const myTeamClass = (profile.id === loggedInFranchiseId) ? " dnfl-my-team" : "";
+        const divRowClass = divId ? ` dnfl-div-row-${divId}` : "";
+        const rowClass = `${stripeClass}${myTeamClass}${divRowClass}`;
+        const targetHref = `https://${activeHost}/${targetYear}/options?L=${leagueId}&F=${profile.id}&O=01`;
+
+        return `
+            <tr class="${rowClass}">
+                <td style="font-weight: bold; font-size: 1.1rem; text-align: left; white-space: nowrap;">
+                    ${seed} ${badgeIcons}
+                </td>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
+                        <a href="${targetHref}">
+                            <img src="${logoUrl}" alt="${teamName}" class="franchiseicon" id="franchiseicon_${profile.id}" />
+                        </a>
+                        <div style="display: flex; flex-direction: column;">
+                            <a href="${targetHref}" style="font-weight: 700; color: #121212; text-decoration: none;">${teamName}</a>
+                            <span style="font-size: 0.8rem; color: #555;">${ownerName}</span>
+                        </div>
+                    </div>
+                </td>
+                <td class="dnfl-hide-mobile" style="text-align: center;">${pf}</td>
+                <td class="dnfl-hide-mobile" style="text-align: center;">${pa}</td>
+                <td style="text-align: center; font-weight: 600;">${record}</td>
+                <td class="dnfl-hide-mobile" style="text-align: center;">${bbidFormatted}</td>
+            </tr>
+        `;
     }
 
     window.updateDnflStandingsView = function() {
         const select = document.getElementById("dnfl_standings_confFilter");
         const tbody = document.getElementById("dnfl-standings-tbody");
+        const caption = document.getElementById("dnfl-standings-caption");
         if (!select || !tbody) return;
 
-        const selectedConfId = select.value;
-        const conf = cachedConferences.find(c => c.id === selectedConfId);
+        const selectedValue = select.value;
+        const rules = getYearRules();
+        let tableHtml = '';
+        let rowCounter = 0;
+
+        // =====================================================================
+        // VIEW 1: PLAYOFFS (Full League 1 to N Top-to-Bottom)
+        // =====================================================================
+        if (selectedValue === 'playoffs') {
+            if (caption) {
+                caption.innerHTML = `<span>Playoff Standings</span>`;
+            }
+
+            // Sort all league teams strictly by seed: 1 to N
+            let allProfiles = [...cachedLeagueDetails];
+            allProfiles.sort((a, b) => {
+                const seedA = teamSeeds[a.id] || 999;
+                const seedB = teamSeeds[b.id] || 999;
+                return seedA - seedB;
+            });
+
+            allProfiles.forEach(profile => {
+                tableHtml += buildTeamRowHtml(profile, null, rules, rowCounter);
+                rowCounter++;
+            });
+
+            tbody.innerHTML = tableHtml;
+            return;
+        }
+
+        // =====================================================================
+        // VIEW 2: INDIVIDUAL CONFERENCE (Grouped by Divisions)
+        // =====================================================================
+        const conf = cachedConferences.find(c => c.id === selectedValue);
         if (!conf) return;
 
-        const rules = getYearRules();
-        const confDivisions = cachedDivisions.filter(div => div.conference === conf.id);
-        
-        let tableHtml = '';
-        let rowCounter = 0; 
+        if (caption) {
+            caption.innerHTML = `<span>${conf.name} Standings</span>`;
+        }
 
-        // Groups under a single header if a conference has no divisions (e.g. 2027 Tier 3)
+        const confDivisions = cachedDivisions.filter(div => div.conference === conf.id);
         const divisionsToRender = confDivisions.length > 0 ? confDivisions : [{ id: 'none', name: conf.name }];
 
         divisionsToRender.forEach(div => {
@@ -387,7 +488,7 @@
                 ? cachedLeagueDetails.filter(f => f.division === div.id)
                 : cachedLeagueDetails.filter(f => f.conference === conf.id);
 
-            // Row display ALWAYS respects MFL native ranking order
+            // Row display in conference view respects MFL native ranking order
             divisionProfiles.sort((a, b) => {
                 const idxA = cachedStandingsFranchises.findIndex(s => s.id === a.id);
                 const idxB = cachedStandingsFranchises.findIndex(s => s.id === b.id);
@@ -395,65 +496,8 @@
             });
 
             divisionProfiles.forEach(profile => {
-                const stats = cachedStandingsFranchises.find(t => t.id === profile.id) || {};
-                const teamName = profile.name || "Franchise " + profile.id;
-                const ownerName = profile.owner_name || "Owner";
-                const logoUrl = profile.icon ? profile.icon.toString().trim() : "https://dnfl.live/images/ficon-dnfl.png"; 
-                
-                const rawBbid = parseFloat(profile.bbidAvailableBalance || profile.bbidBalance || 0);
-                const bbidFormatted = "$" + rawBbid.toFixed(2);
-                const pf = stats.pf || "0";
-                const pa = stats.pa || "0";
-                const record = `${stats.h2hw || 0}-${stats.h2hl || 0}-${stats.h2ht || 0}`;
-
-                const seed = teamSeeds[profile.id] || "-";
-                
-                // --- VISUAL BADGES ENGINE ---
-                let badgeIcons = '';
-
-                if (rules.hasDivisionCrown && profile.id === divLeaders[div.id]) {
-                    badgeIcons += `<i class="fa-solid fa-crown" style="color: #3b82f6; margin-left: 5px;" title="Division Winner"></i>`;
-                }
-                if (seed !== "-" && rules.playoffCutoff && seed <= rules.playoffCutoff) {
-                    badgeIcons += `<i class="fa-solid fa-trophy" style="color: #f59e0b; margin-left: 5px;" title="Playoff Seed #${seed}"></i>`;
-                }
-                if (relegatedTeamIds.has(profile.id)) {
-                    badgeIcons += `<i class="fa-solid fa-circle-down" style="color: #ef4444; margin-left: 5px;" title="Relegation Zone"></i>`;
-                }
-                if (promotedTeamIds.has(profile.id)) {
-                    badgeIcons += `<i class="fa-solid fa-circle-up" style="color: #10b981; margin-left: 5px;" title="Promotion Zone"></i>`;
-                }
-
-                const stripeClass = (rowCounter % 2 === 0) ? "dnfl-row-odd" : "dnfl-row-even";
+                tableHtml += buildTeamRowHtml(profile, div.id, rules, rowCounter);
                 rowCounter++;
-
-                const myTeamClass = (profile.id === loggedInFranchiseId) ? " dnfl-my-team" : "";
-                const rowClass = `${stripeClass}${myTeamClass} dnfl-div-row-${div.id}`;
-                const targetHref = `https://${activeHost}/${targetYear}/options?L=${leagueId}&F=${profile.id}&O=01`;
-
-                tableHtml += `
-                    <tr class="${rowClass}">
-                        <!-- UPDATED: Seed td is now left-aligned -->
-                        <td style="font-weight: bold; font-size: 1.1rem; text-align: left; white-space: nowrap;">
-                            ${seed} ${badgeIcons}
-                        </td>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
-                                <a href="${targetHref}">
-                                    <img src="${logoUrl}" alt="${teamName}" class="franchiseicon" id="franchiseicon_${profile.id}" />
-                                </a>
-                                <div style="display: flex; flex-direction: column;">
-                                    <a href="${targetHref}" style="font-weight: 700; color: #121212; text-decoration: none;">${teamName}</a>
-                                    <span style="font-size: 0.8rem; color: #555;">${ownerName}</span>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="dnfl-hide-mobile" style="text-align: center;">${pf}</td>
-                        <td class="dnfl-hide-mobile" style="text-align: center;">${pa}</td>
-                        <td style="text-align: center; font-weight: 600;">${record}</td>
-                        <td class="dnfl-hide-mobile" style="text-align: center;">${bbidFormatted}</td>
-                    </tr>
-                `;
             });
         });
 
