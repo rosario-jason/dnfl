@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Official Rules Module Script v1.00
+   DNFL Official Rules Module Script v1.1
    Features: Dynamic Year Fetching, Markdown Parsing, PDF Rule Numbering,
              Collapsible Accordions, and Live MFL Scoring API Integration.
    ========================================================================== */
@@ -100,8 +100,8 @@ async function loadRulebookData(year) {
  * Fetch Rulebook Markdown File from GitHub/Domain
  */
 async function fetchMarkdownRulebook(year) {
-    const primaryUrl = `https://dnfl.live/dnfl-rules/dnfl-rules-${year}.md`;
-    const fallbackUrl = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl-rules/dnfl-rules-${year}.md`;
+    const primaryUrl = `https://dnfl.live/dnfl_rules/dnfl-rules-${year}.md`;
+    const fallbackUrl = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rules/dnfl-rules-${year}.md`;
 
     try {
         let response = await fetch(primaryUrl);
