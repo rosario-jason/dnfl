@@ -1,19 +1,18 @@
 /* ==========================================================================
-   DNFL Official Rules Module Script v1.4
-   Features: Dynamic Year Fetching, Markdown Parsing, PDF Rule Numbering,
-             Collapsible Accordions, and Live MFL Scoring API Integration.
+   DNFL Official Rules Module Script v1.5
+   Features: 3-Level Collapsible Accordions (#, ##, ###), PDF Rule Numbering,
+             Table Styling & Alignment Sync, Blockquote Alignment, and Live Scoring.
    ========================================================================== */
 (function() {
     let activeRulesYear = '';
     let currentRulesMarkdown = '';
     let isSubheadsVisible = false;
 
-    // Retry counter for API Client readiness
     let clientRetryCount = 0;
     const maxClientRetries = 30;
 
     /**
-     * Main Entry Point - Called by HPM Embed or Header Script
+     * Main Entry Point
      */
     async function initRulesDashboard(mflYear) {
         let targetYear = mflYear && mflYear !== '%YEAR%' ? mflYear : (window.current_year || null);
@@ -127,7 +126,7 @@
     }
 
     /**
-     * Render HTML Accordions & Inject Live MFL Scoring
+     * Render HTML Accordions (3 Levels: #, ##, ###) & Inject Live MFL Scoring
      */
     function renderRulebookDOM(markdownText, mflRulesData) {
         const container = document.getElementById('dnfl_rulesOutputContainer');
@@ -140,6 +139,7 @@
             processedMarkdown = processedMarkdown.replace('{{MFL_SCORING_TABLES}}', mflScoringHtml);
         }
 
+        // Split Level 1 Sections (# )
         const rawSections = processedMarkdown.split(/^# /m).filter(sec => sec.trim().length > 0);
 
         let htmlOutput = '';
@@ -149,6 +149,7 @@
             const mainTitle = lines[0].trim();
             const sectionBodyMarkdown = lines.slice(1).join('\n');
 
+            // Split Level 2 Subsections (## )
             const subSections = sectionBodyMarkdown.split(/^## /m).filter(sub => sub.trim().length > 0);
 
             htmlOutput += `
@@ -159,7 +160,7 @@
                     </div>
                     <div id="dnfl-rules-sec-body-${secIndex}" class="dnfl-rules-main-content" style="display: none;">`;
 
-            if (subSections.length === 0 || !subSections.includes('\n')) {
+            if (subSections.length === 0) {
                 const parsedContent = window.marked ? window.marked.parse(sectionBodyMarkdown) : sectionBodyMarkdown;
                 htmlOutput += `<div class="dnfl-rules-block">${parsedContent}</div>`;
             } else {
@@ -167,15 +168,47 @@
                     const subLines = subStr.trim().split('\n');
                     const subTitle = subLines[0].trim();
                     const subBodyMarkdown = subLines.slice(1).join('\n');
-                    const parsedSubContent = window.marked ? window.marked.parse(subBodyMarkdown) : subBodyMarkdown;
+
+                    // Split Level 3 Topics (### )
+                    const rawTopics = subBodyMarkdown.split(/^### /m);
 
                     htmlOutput += `
                         <div class="dnfl-rules-subsection">
                             <div class="dnfl-rules-subhead" onclick="window.toggleSubSection(${secIndex}, ${subIndex})">
                                 <span><i class="fas fa-caret-right dnfl-sub-icon"></i> ${subTitle}</span>
                             </div>
-                            <div id="dnfl-rules-sub-body-${secIndex}-${subIndex}" class="dnfl-rules-sub-content" style="display: none;">
-                                ${parsedSubContent}
+                            <div id="dnfl-rules-sub-body-${secIndex}-${subIndex}" class="dnfl-rules-sub-content" style="display: none;">`;
+
+                    if (rawTopics.length <= 1) {
+                        // Plain content without ### topics
+                        const parsedSubContent = window.marked ? window.marked.parse(subBodyMarkdown) : subBodyMarkdown;
+                        htmlOutput += parsedSubContent;
+                    } else {
+                        // Render lead text before first ### if present
+                        if (rawTopics[0].trim().length > 0) {
+                            htmlOutput += window.marked ? window.marked.parse(rawTopics[0]) : rawTopics[0];
+                        }
+
+                        // Render each Level 3 (###) Topic Accordion
+                        rawTopics.slice(1).forEach((topicStr, topicIndex) => {
+                            const topicLines = topicStr.trim().split('\n');
+                            const topicTitle = topicLines[0].trim();
+                            const topicBodyMarkdown = topicLines.slice(1).join('\n');
+                            const parsedTopicContent = window.marked ? window.marked.parse(topicBodyMarkdown) : topicBodyMarkdown;
+
+                            htmlOutput += `
+                                <div class="dnfl-rules-topicsection">
+                                    <div class="dnfl-rules-topichead" onclick="window.toggleTopic(${secIndex}, ${subIndex}, ${topicIndex})">
+                                        <span><i class="fas fa-angle-right dnfl-topic-icon"></i> ${topicTitle}</span>
+                                    </div>
+                                    <div id="dnfl-rules-topic-body-${secIndex}-${subIndex}-${topicIndex}" class="dnfl-rules-topic-content" style="display: none;">
+                                        ${parsedTopicContent}
+                                    </div>
+                                </div>`;
+                        });
+                    }
+
+                    htmlOutput += `
                             </div>
                         </div>`;
                 });
@@ -244,14 +277,32 @@
     }
 
     /**
-     * DOM Formatting Helper
+     * DOM Post-Processing & Alignment Synchronization
      */
     function formatParsedRuleElements() {
-        // Wrap tables in mobile container
         document.querySelectorAll('#dnfl_rulesOutputContainer table').forEach(tbl => {
-            if (!tbl.classList.contains('dnfl-rules-table')) {
-                tbl.classList.add('homepagemodule', 'report', 'dnfl-rules-table');
+            // Apply Standings table classes
+            tbl.classList.add('homepagemodule', 'report', 'dnfl-rules-table');
+
+            // Synchronize TH text alignment to match TD alignment for every column
+            const rows = tbl.querySelectorAll('tr');
+            if (rows.length > 0) {
+                const headerCells = tbl.querySelectorAll('th');
+                const firstDataRow = tbl.querySelector('tbody tr') || rows[1];
+                if (firstDataRow) {
+                    const dataCells = firstDataRow.querySelectorAll('td');
+                    headerCells.forEach((th, colIdx) => {
+                        if (dataCells[colIdx]) {
+                            const tdAlign = dataCells[colIdx].style.textAlign || getComputedStyle(dataCells[colIdx]).textAlign;
+                            if (tdAlign) {
+                                th.style.textAlign = tdAlign;
+                            }
+                        }
+                    });
+                }
             }
+
+            // Mobile wrapper
             if (!tbl.parentElement.classList.contains('mobile-wrap')) {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'mobile-wrap';
@@ -260,14 +311,14 @@
             }
         });
 
-        // Ensure all parsed headings inherit container override scope
+        // Ensure leftover unparsed headings align left
         document.querySelectorAll('#dnfl_rulesOutputContainer h1, #dnfl_rulesOutputContainer h2, #dnfl_rulesOutputContainer h3, #dnfl_rulesOutputContainer h4').forEach(h => {
             h.style.textAlign = 'left';
         });
     }
 
     /**
-     * Toggle Level 1 Accordion Section
+     * Toggle Level 1 Accordion Section (#)
      */
     function toggleSection(secIdx) {
         const body = document.getElementById(`dnfl-rules-sec-body-${secIdx}`);
@@ -284,7 +335,7 @@
     }
 
     /**
-     * Toggle Level 2 Accordion Subsection
+     * Toggle Level 2 Accordion Subsection (##)
      */
     function toggleSubSection(secIdx, subIdx) {
         const body = document.getElementById(`dnfl-rules-sub-body-${secIdx}-${subIdx}`);
@@ -301,31 +352,52 @@
     }
 
     /**
-     * Global Action: Toggle Subhead Visibility
+     * Toggle Level 3 Accordion Topic (###)
      */
-    function toggleSubheadMenus() {
-        isSubheadsVisible = !isSubheadsVisible;
-        document.querySelectorAll('.dnfl-rules-main-content').forEach(el => el.style.display = 'block');
-        document.querySelectorAll('.dnfl-rules-sub-content').forEach(el => el.style.display = isSubheadsVisible ? 'block' : 'none');
-        document.querySelectorAll('.dnfl-rules-icon').forEach(icon => icon.className = 'fas fa-chevron-down dnfl-rules-icon');
+    function toggleTopic(secIdx, subIdx, topicIdx) {
+        const body = document.getElementById(`dnfl-rules-topic-body-${secIdx}-${subIdx}-${topicIdx}`);
+        if (!body) return;
+        const icon = body.previousElementSibling.querySelector('.dnfl-topic-icon');
+
+        if (body.style.display === 'none') {
+            body.style.display = 'block';
+            if (icon) icon.className = 'fas fa-angle-down dnfl-topic-icon';
+        } else {
+            body.style.display = 'none';
+            if (icon) icon.className = 'fas fa-angle-right dnfl-topic-icon';
+        }
     }
 
     /**
-     * Global Action: Expand All
+     * Global Action: Toggle Subhead Visibilities
      */
-    function expandAllRules() {
+    function toggleSubheadMenus() {
+        isSubheadsVisible = !isSubheadsVisible;
         document.querySelectorAll('.dnfl-rules-main-content, .dnfl-rules-sub-content').forEach(el => el.style.display = 'block');
+        document.querySelectorAll('.dnfl-rules-topic-content').forEach(el => el.style.display = isSubheadsVisible ? 'block' : 'none');
         document.querySelectorAll('.dnfl-rules-icon').forEach(icon => icon.className = 'fas fa-chevron-down dnfl-rules-icon');
         document.querySelectorAll('.dnfl-sub-icon').forEach(icon => icon.className = 'fas fa-caret-down dnfl-sub-icon');
+        document.querySelectorAll('.dnfl-topic-icon').forEach(icon => icon.className = isSubheadsVisible ? 'fas fa-angle-down dnfl-topic-icon' : 'fas fa-angle-right dnfl-topic-icon');
+    }
+
+    /**
+     * Global Action: Expand All (Levels 1, 2, 3)
+     */
+    function expandAllRules() {
+        document.querySelectorAll('.dnfl-rules-main-content, .dnfl-rules-sub-content, .dnfl-rules-topic-content').forEach(el => el.style.display = 'block');
+        document.querySelectorAll('.dnfl-rules-icon').forEach(icon => icon.className = 'fas fa-chevron-down dnfl-rules-icon');
+        document.querySelectorAll('.dnfl-sub-icon').forEach(icon => icon.className = 'fas fa-caret-down dnfl-sub-icon');
+        document.querySelectorAll('.dnfl-topic-icon').forEach(icon => icon.className = 'fas fa-angle-down dnfl-topic-icon');
     }
 
     /**
      * Global Action: Collapse All
      */
     function collapseAllRules() {
-        document.querySelectorAll('.dnfl-rules-main-content, .dnfl-rules-sub-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.dnfl-rules-main-content, .dnfl-rules-sub-content, .dnfl-rules-topic-content').forEach(el => el.style.display = 'none');
         document.querySelectorAll('.dnfl-rules-icon').forEach(icon => icon.className = 'fas fa-chevron-right dnfl-rules-icon');
         document.querySelectorAll('.dnfl-sub-icon').forEach(icon => icon.className = 'fas fa-caret-right dnfl-sub-icon');
+        document.querySelectorAll('.dnfl-topic-icon').forEach(icon => icon.className = 'fas fa-angle-right dnfl-topic-icon');
     }
 
     // Bind public methods to window object
@@ -333,6 +405,7 @@
     window.changeRulesYear = changeRulesYear;
     window.toggleSection = toggleSection;
     window.toggleSubSection = toggleSubSection;
+    window.toggleTopic = toggleTopic;
     window.toggleSubheadMenus = toggleSubheadMenus;
     window.expandAllRules = expandAllRules;
     window.collapseAllRules = collapseAllRules;
