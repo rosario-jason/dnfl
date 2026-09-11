@@ -1,7 +1,7 @@
 /* ==========================================================================
-   DNFL Official Rules Module Script v1.06
+   DNFL Official Rules Module Script v1.07
    Features: Deterministic Control Buttons (Show Sub Menus, Expand All, Collapse All),
-             3-Level Accordions (#, ##, ###), PDF Numbering, Table Sync.
+             3-Level Accordions (#, ##, ###), PDF Numbering, Native Markdown Table Support.
    ========================================================================== */
 (function() {
     let activeRulesYear = '';
@@ -138,6 +138,7 @@
             processedMarkdown = processedMarkdown.replace('{{MFL_SCORING_TABLES}}', mflScoringHtml);
         }
 
+        // Split Level 1 Sections (# )
         const rawSections = processedMarkdown.split(/^# /m).filter(sec => sec.trim().length > 0);
 
         let htmlOutput = '';
@@ -147,6 +148,7 @@
             const mainTitle = lines[0].trim();
             const sectionBodyMarkdown = lines.slice(1).join('\n');
 
+            // Split Level 2 Subsections (## )
             const subSections = sectionBodyMarkdown.split(/^## /m).filter(sub => sub.trim().length > 0);
 
             htmlOutput += `
@@ -166,6 +168,7 @@
                     const subTitle = subLines[0].trim();
                     const subBodyMarkdown = subLines.slice(1).join('\n');
 
+                    // Split Level 3 Topics (### )
                     const rawTopics = subBodyMarkdown.split(/^### /m);
 
                     htmlOutput += `
@@ -270,28 +273,11 @@
     }
 
     /**
-     * DOM Post-Processing & Alignment Synchronization
+     * DOM Post-Processing & Layout Wrapping
      */
     function formatParsedRuleElements() {
         document.querySelectorAll('#dnfl_rulesOutputContainer table').forEach(tbl => {
             tbl.classList.add('homepagemodule', 'report', 'dnfl-rules-table');
-
-            const rows = tbl.querySelectorAll('tr');
-            if (rows.length > 0) {
-                const headerCells = tbl.querySelectorAll('th');
-                const firstDataRow = tbl.querySelector('tbody tr') || rows[1];
-                if (firstDataRow) {
-                    const dataCells = firstDataRow.querySelectorAll('td');
-                    headerCells.forEach((th, colIdx) => {
-                        if (dataCells[colIdx]) {
-                            const tdAlign = dataCells[colIdx].style.textAlign || getComputedStyle(dataCells[colIdx]).textAlign;
-                            if (tdAlign) {
-                                th.style.textAlign = tdAlign;
-                            }
-                        }
-                    });
-                }
-            }
 
             if (!tbl.parentElement.classList.contains('mobile-wrap')) {
                 const wrapper = document.createElement('div');

@@ -33,8 +33,9 @@
 
 ### B1. Payout Table
 
+| :--- | ---: | :--- | ---: |
 | Prize | Payout $ | Notes | Total $ |
-| :--- | :---: | :--- | :---: |
+| :--- | ---: | :--- | ---: |
 | Super Bowl Champion | 3,850 | 1 winner | 3,850 |
 | Super Bowl Runner-Up | 1,000 | 1 winner | 1,000 |
 | Last Team Standing | 200 | 3 winners, one per Conference | 600 |

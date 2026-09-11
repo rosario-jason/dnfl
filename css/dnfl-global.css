@@ -83,6 +83,20 @@
     box-sizing: border-box;
 }
 
+/* Reset MFL global centered & colored h1-h5 styles inside rules container */
+.dnfl-rules-wrapper h1,
+.dnfl-rules-wrapper h2,
+.dnfl-rules-wrapper h3,
+.dnfl-rules-wrapper h4,
+.dnfl-rules-wrapper h5 {
+    text-align: left !important;
+    margin: 14px 0 6px 0 !important;
+    font-family: inherit !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    background: none !important;
+}
+
 /* --- LEVEL 1 ACCORDION (# Section) --- */
 .dnfl-rules-tabhead {
     background-color: #f8fafc;
@@ -207,7 +221,7 @@
     margin-bottom: 8px !important;
 }
 
-/* > Indent: Aligned precisely with hanging list text */
+/* Blockquotes: Aligned flush with hanging text of numbered lists */
 .dnfl-rules-wrapper blockquote {
     margin: 10px 0 10px 1.75rem !important;
     padding: 8px 14px !important;
@@ -231,7 +245,7 @@
     overflow: hidden !important;
 }
 
-/* Table Header (Standings Style) */
+/* Table Header (Standings Navy Style) */
 .dnfl-rules-wrapper table.dnfl-rules-table th {
     background-color: #0f172a !important; /* Slate Navy */
     color: #ffffff !important;
@@ -241,6 +255,8 @@
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
     border-bottom: 2px solid #0577B1 !important;
+    /* Inherit alignment directly from marked.js inline style derived from Markdown colons */
+    text-align: inherit; 
 }
 
 /* Table Rows & Alternate Row Coloring */
