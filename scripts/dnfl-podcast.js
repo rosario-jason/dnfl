@@ -42,12 +42,12 @@ function loadEpisodeData(fileId, displayTitle) {
 
     label.textContent = `Now Playing: ${displayTitle}`;
     
-    source.src = `https://dnfl.live/devils_advocate/${podcastMFLYear}/${fileId}.m4a`;
+    source.src = `https://dnfl.live/dnfl_podcast/${podcastMFLYear}/${fileId}.m4a`;
     player.load(); 
 
     transcriptBox.innerHTML = `<p style="color: #aaa; font-style: italic;">Loading transcript file stream for ${fileId}...</p>`;
 
-    const transcriptUrl = `https://dnfl.live/devils_advocate/${podcastMFLYear}/${fileId}.md`;
+    const transcriptUrl = `https://dnfl.live/dnfl_podcast/${podcastMFLYear}/${fileId}.md`;
     fetch(transcriptUrl)
         .then(response => {
             if (!response.ok) throw new Error("CORS file stream verify exception.");
