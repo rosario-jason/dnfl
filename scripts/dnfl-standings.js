@@ -79,6 +79,22 @@
         },
 
         // =====================================================================
+        // TEST: 2024 (Multi-Tier Promotion / Relegation)
+        // =====================================================================
+        2024: {
+            seedingScope: 'conference',
+            seedingModel: 'standard_div_winners_first',
+            playoffCutoff: 6,
+            hasDivisionCrown: true,
+            relegation: { enabled: true, type: 'division', count: 1 },
+            promotion: { enabled: true, count: 4 },
+            conferenceOverrides: {
+                '00': { promotion: { enabled: false } },
+                '01': { seedingModel: 'mfl_native', playoffCutoff: 4, hasDivisionCrown: false, relegation: { enabled: false } }
+            }
+        },
+
+        // =====================================================================
         // 2025 SEASON: (Expansion to 28 teams, 7 playoff teams per conf)
         // =====================================================================
         2025: {
@@ -115,7 +131,7 @@
             conferenceOverrides: {
                 '00': { promotion: { enabled: false } },
                 '01': { promotion: { enabled: false } },
-                '02': { seedingModel: , playoffCutoff: 4, hasDivisionCrown: false, relegation: { enabled: false } }
+                '02': { seedingModel: 'mfl_native', playoffCutoff: 4, hasDivisionCrown: false, relegation: { enabled: false } }
             }
         }
     };
