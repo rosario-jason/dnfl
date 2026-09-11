@@ -245,18 +245,18 @@
     overflow: hidden !important;
 }
 
-/* Table Header (Standings Navy Style) */
+/* Table Header */
 .dnfl-rules-wrapper table.dnfl-rules-table th {
-    background-color: #0f172a !important; /* Slate Navy */
-    color: #ffffff !important;
-    font-weight: 700 !important;
-    padding: 10px 12px !important;
-    font-size: 0.82rem !important;
+    background-color: #ffffff !important;
+    color: #1e293b !important;
+    padding: 12px 15px !important;
+    font-weight: 600 !important;
     text-transform: uppercase !important;
+    font-size: 0.7rem !important;
     letter-spacing: 0.5px !important;
-    border-bottom: 2px solid #0577B1 !important;
+    border-bottom: 2px solid #444 !important;
     /* Inherit alignment directly from marked.js inline style derived from Markdown colons */
-    text-align: inherit; 
+    text-align: inherit !important; 
 }
 
 /* Table Rows & Alternate Row Coloring */
@@ -277,7 +277,7 @@
 /* Table Cells */
 .dnfl-rules-wrapper table.dnfl-rules-table td {
     padding: 9px 12px !important;
-    border-bottom: 1px solid #e2e8f0 !important;
+    border-bottom: 1px solid #e5e7eb !important;
     font-size: 0.88rem !important;
     color: #1e293b !important;
 }
@@ -377,7 +377,7 @@
 }
 #dnfl_dataTable td {
     padding: 12px 15px;
-    border-bottom: 1px solid #333;
+    border-bottom: 1px solid #e5e7eb;
     color: #121212;
 }
 #dnfl_dataTable tr:nth-child(even) {
