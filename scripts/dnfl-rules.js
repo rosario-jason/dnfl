@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Official Rules Module Script v1.2
+   DNFL Official Rules Module Script v1.3
    Features: Dynamic Year Fetching, Markdown Parsing, PDF Rule Numbering,
              Collapsible Accordions, and Live MFL Scoring API Integration.
    ========================================================================== */
@@ -120,6 +120,7 @@
      * Fetch Rulebook Markdown File from GitHub/Domain
      */
     async function fetchMarkdownRulebook(year) {
+        // Updated folder path to /dnfl_rules/
         const primaryUrl = `https://dnfl.live/dnfl_rules/dnfl-rules-${year}.md`;
         const fallbackUrl = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rules/dnfl-rules-${year}.md`;
 
@@ -154,7 +155,7 @@
 
         rawSections.forEach((secStr, secIndex) => {
             const lines = secStr.trim().split('\n');
-            const mainTitle = lines.trim();
+            const mainTitle = lines[0].trim(); // Fixed: Array indexing for string title
             const sectionBodyMarkdown = lines.slice(1).join('\n');
 
             const subSections = sectionBodyMarkdown.split(/^## /m).filter(sub => sub.trim().length > 0);
@@ -173,7 +174,7 @@
             } else {
                 subSections.forEach((subStr, subIndex) => {
                     const subLines = subStr.trim().split('\n');
-                    const subTitle = subLines.trim();
+                    const subTitle = subLines[0].trim(); // Fixed: Array indexing for string title
                     const subBodyMarkdown = subLines.slice(1).join('\n');
                     const parsedSubContent = window.marked ? window.marked.parse(subBodyMarkdown) : subBodyMarkdown;
 
@@ -330,7 +331,7 @@
         document.querySelectorAll('.dnfl-sub-icon').forEach(icon => icon.className = 'fas fa-caret-right dnfl-sub-icon');
     }
 
-    // Bind public methods to window object for inline HTML event handlers
+    // Bind public methods to window object
     window.initRulesDashboard = initRulesDashboard;
     window.changeRulesYear = changeRulesYear;
     window.toggleSection = toggleSection;
