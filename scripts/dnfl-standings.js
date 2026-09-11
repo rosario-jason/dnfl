@@ -182,7 +182,7 @@
         const isEndOfSeason = cachedCurrentWeek > cachedLastRegWeek;
 
         if (!hasSeasonStarted) {
-            disclaimerHtml = `<div style="font-style: italic; font-size: 0.75rem;">*Pre-season view. Seedings and icons will calculate once games begin.</div>`;
+            disclaimerHtml = `<div style="font-style: italic; font-size: 0.75rem;">*Pre-season view. Seedings and icons will calculate after Week 1 games complete.</div>`;
         } else if (isHistoric || isEndOfSeason) {
             disclaimerHtml = `<div style="font-style: italic; font-size: 0.75rem;">*Final Regular Season Seedings.</div>`;
         } else {
