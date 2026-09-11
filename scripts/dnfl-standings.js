@@ -1,6 +1,6 @@
-// dnfl-standings.js v9.0
+// dnfl-standings.js v9.1
 (function() { 
-    console.log("[DNFL Standings] - Component file injected. League Playoff Scope Engine activated.");
+    console.log("[DNFL Standings] - Component file injected. League Playoff Scope Engine with Preseason Inactive State activated.");
 
     // =========================================================================
     // 📖 STANDINGS & SEEDING CONFIGURATION GUIDE (VARIABLE DICTIONARY)
@@ -151,6 +151,7 @@
     let cachedDivisions = [];
     let cachedLeagueDetails = [];
     let cachedStandingsFranchises = [];
+    let hasSeasonStarted = false; // Flag to track if games/points exist
     
     let teamSeeds = {};
     let divLeaders = {};
@@ -204,6 +205,18 @@
         relegatedTeamIds.clear();
         promotedTeamIds.clear();
 
+        // 1. DATA CHECK: Verify if any actual games or points have been recorded
+        hasSeasonStarted = cachedStandingsFranchises.some(s => {
+            const games = parseInt(s.h2hw || 0) + parseInt(s.h2hl || 0) + parseInt(s.h2ht || 0);
+            const pf = parseFloat(s.pf || 0);
+            return games > 0 || pf > 0;
+        });
+
+        // If season has not started yet, do not assign seeds or badges
+        if (!hasSeasonStarted) {
+            return;
+        }
+
         const rules = getYearRules();
         const divToConfMap = {};
         cachedDivisions.forEach(d => divToConfMap[d.id] = d.conference);
@@ -221,7 +234,7 @@
             return getMflIndex(a) - getMflIndex(b);
         };
 
-        // 1. DETERMINE DIVISION LEADERS & RUNNERS-UP (Strictly via MFL Native Order)
+        // 2. DETERMINE DIVISION LEADERS & RUNNERS-UP
         cachedDivisions.forEach(div => {
             const teamsInDiv = cachedLeagueDetails.filter(f => f.division === div.id).map(f => f.id);
             teamsInDiv.sort((a, b) => getMflIndex(a) - getMflIndex(b));
@@ -237,7 +250,7 @@
             }
         });
 
-        // 2. DEFINE THE ACTIVE SCOPES (League-wide vs. Per-Conference)
+        // 3. DEFINE THE ACTIVE SCOPES (League-wide vs. Per-Conference)
         let scopesToProcess = [];
         
         if (rules.seedingScope === 'league') {
@@ -263,41 +276,35 @@
             });
         }
 
-        // 3. RUN THE CHOSEN MODEL ACROSS THE SCOPES
+        // 4. RUN THE CHOSEN MODEL ACROSS THE SCOPES
         if (rules.seedingModel === 'manual' && rules.manualSeeds) {
             teamSeeds = rules.manualSeeds;
         } else {
             scopesToProcess.forEach(scope => {
                 if (rules.seedingModel === 'tiered_div_finish_pf') {
-                    // Tier 1: Winners
                     const winners = scope.leaders;
                     winners.sort(sortByPfThenMfl);
                     winners.forEach((id, idx) => teamSeeds[id] = idx + 1);
 
-                    // Tier 2: Runners-up
                     const runners = scope.runnersUp;
                     runners.sort(sortByPfThenMfl);
                     runners.forEach((id, idx) => teamSeeds[id] = idx + 1 + winners.length);
 
-                    // Tier 3: Remaining Teams
                     const assigned = new Set([...winners, ...runners]);
                     const remaining = scope.teams.filter(id => !assigned.has(id));
                     remaining.sort(sortByPfThenMfl);
                     remaining.forEach((id, idx) => teamSeeds[id] = idx + 1 + winners.length + runners.length);
                 
                 } else if (rules.seedingModel === 'standard_div_winners_first') {
-                    // Tier 1: Winners (By MFL Rank)
                     const winners = scope.leaders;
                     winners.sort((a, b) => getMflIndex(a) - getMflIndex(b));
                     winners.forEach((id, idx) => teamSeeds[id] = idx + 1);
 
-                    // Tier 2: Remaining Teams (By MFL Rank)
                     const remaining = scope.teams.filter(id => !winners.includes(id));
                     remaining.sort((a, b) => getMflIndex(a) - getMflIndex(b));
                     remaining.forEach((id, idx) => teamSeeds[id] = idx + 1 + winners.length);
                 
                 } else if (rules.seedingModel === 'mfl_native') {
-                    // Tier 1: Entire Scope (By MFL Rank)
                     const allTeams = scope.teams.slice();
                     allTeams.sort((a, b) => getMflIndex(a) - getMflIndex(b));
                     allTeams.forEach((id, idx) => teamSeeds[id] = idx + 1);
@@ -305,7 +312,7 @@
             });
         }
 
-        // 4. CONFERENCE-LEVEL RELEGATION & PROMOTION
+        // 5. CONFERENCE-LEVEL RELEGATION & PROMOTION
         cachedConferences.forEach(conf => {
             const confRule = rules.conferenceOverrides?.[conf.id] || rules;
             const confTeams = cachedLeagueDetails.filter(f => (f.conference === conf.id) || (divToConfMap[f.division] === conf.id)).map(f => f.id);
@@ -330,7 +337,6 @@
         confSelect.innerHTML = ''; 
         const rules = getYearRules();
 
-        // If seedingScope is 'league', add the Playoffs option
         if (rules.seedingScope === 'league') {
             const playoffOpt = document.createElement('option');
             playoffOpt.value = 'playoffs';
@@ -371,22 +377,28 @@
         const pa = stats.pa || "0";
         const record = `${stats.h2hw || 0}-${stats.h2hl || 0}-${stats.h2ht || 0}`;
 
-        const seed = teamSeeds[profile.id] || "-";
-        
-        // --- VISUAL BADGES ENGINE ---
-        let badgeIcons = '';
+        // --- PRESEASON DISPLAY LOGIC ---
+        // If season hasn't started, output clean "-" with no icons
+        let seedCellContent = "-";
 
-        if (rules.hasDivisionCrown && profile.division && profile.id === divLeaders[profile.division]) {
-            badgeIcons += `<i class="fa-solid fa-crown" style="color: #3b82f6; margin-left: 5px;" title="Division Winner"></i>`;
-        }
-        if (seed !== "-" && rules.playoffCutoff && seed <= rules.playoffCutoff) {
-            badgeIcons += `<i class="fa-solid fa-trophy" style="color: #f59e0b; margin-left: 5px;" title="Playoff Seed #${seed}"></i>`;
-        }
-        if (relegatedTeamIds.has(profile.id)) {
-            badgeIcons += `<i class="fa-solid fa-circle-down" style="color: #ef4444; margin-left: 5px;" title="Relegation Zone"></i>`;
-        }
-        if (promotedTeamIds.has(profile.id)) {
-            badgeIcons += `<i class="fa-solid fa-circle-up" style="color: #10b981; margin-left: 5px;" title="Promotion Zone"></i>`;
+        if (hasSeasonStarted) {
+            const seed = teamSeeds[profile.id] || "-";
+            let badgeIcons = '';
+
+            if (rules.hasDivisionCrown && profile.division && profile.id === divLeaders[profile.division]) {
+                badgeIcons += `<i class="fa-solid fa-crown" style="color: #3b82f6; margin-left: 5px;" title="Division Winner"></i>`;
+            }
+            if (seed !== "-" && rules.playoffCutoff && seed <= rules.playoffCutoff) {
+                badgeIcons += `<i class="fa-solid fa-trophy" style="color: #f59e0b; margin-left: 5px;" title="Playoff Seed #${seed}"></i>`;
+            }
+            if (relegatedTeamIds.has(profile.id)) {
+                badgeIcons += `<i class="fa-solid fa-circle-down" style="color: #ef4444; margin-left: 5px;" title="Relegation Zone"></i>`;
+            }
+            if (promotedTeamIds.has(profile.id)) {
+                badgeIcons += `<i class="fa-solid fa-circle-up" style="color: #10b981; margin-left: 5px;" title="Promotion Zone"></i>`;
+            }
+
+            seedCellContent = `${seed} ${badgeIcons}`;
         }
 
         const stripeClass = (rowCounter % 2 === 0) ? "dnfl-row-odd" : "dnfl-row-even";
@@ -398,7 +410,7 @@
         return `
             <tr class="${rowClass}">
                 <td style="font-weight: bold; font-size: 1.1rem; text-align: left; white-space: nowrap;">
-                    ${seed} ${badgeIcons}
+                    ${seedCellContent}
                 </td>
                 <td>
                     <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
@@ -438,13 +450,22 @@
                 caption.innerHTML = `<span>Playoff Standings</span>`;
             }
 
-            // Sort all league teams strictly by seed: 1 to N
             let allProfiles = [...cachedLeagueDetails];
-            allProfiles.sort((a, b) => {
-                const seedA = teamSeeds[a.id] || 999;
-                const seedB = teamSeeds[b.id] || 999;
-                return seedA - seedB;
-            });
+
+            if (hasSeasonStarted) {
+                allProfiles.sort((a, b) => {
+                    const seedA = teamSeeds[a.id] || 999;
+                    const seedB = teamSeeds[b.id] || 999;
+                    return seedA - seedB;
+                });
+            } else {
+                // If games haven't started, sort by MFL native order
+                allProfiles.sort((a, b) => {
+                    const idxA = cachedStandingsFranchises.findIndex(s => s.id === a.id);
+                    const idxB = cachedStandingsFranchises.findIndex(s => s.id === b.id);
+                    return idxA - idxB;
+                });
+            }
 
             allProfiles.forEach(profile => {
                 tableHtml += buildTeamRowHtml(profile, null, rules, rowCounter);
@@ -488,7 +509,6 @@
                 ? cachedLeagueDetails.filter(f => f.division === div.id)
                 : cachedLeagueDetails.filter(f => f.conference === conf.id);
 
-            // Row display in conference view respects MFL native ranking order
             divisionProfiles.sort((a, b) => {
                 const idxA = cachedStandingsFranchises.findIndex(s => s.id === a.id);
                 const idxB = cachedStandingsFranchises.findIndex(s => s.id === b.id);
