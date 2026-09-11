@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Official Rules Module Script v1.08
+   DNFL Official Rules Module Script v1.09
    Features: Dynamic Year Fetching, Markdown Parsing, PDF Numbering,
              Collapsible Accordions (#, ##, ###), and Official MFL Scoring Rules.
    ========================================================================== */
@@ -145,7 +145,7 @@
 
         rawSections.forEach((secStr, secIndex) => {
             const lines = secStr.trim().split('\n');
-            const mainTitle = lines.trim();
+            const mainTitle = lines[0].trim(); // Fixed: Target first element string
             const sectionBodyMarkdown = lines.slice(1).join('\n');
 
             // Split Level 2 Subsections (## )
@@ -165,7 +165,7 @@
             } else {
                 subSections.forEach((subStr, subIndex) => {
                     const subLines = subStr.trim().split('\n');
-                    const subTitle = subLines.trim();
+                    const subTitle = subLines[0].trim(); // Fixed: Target first element string
                     const subBodyMarkdown = subLines.slice(1).join('\n');
 
                     // Split Level 3 Topics (### )
@@ -182,13 +182,14 @@
                         const parsedSubContent = window.marked ? window.marked.parse(subBodyMarkdown) : subBodyMarkdown;
                         htmlOutput += parsedSubContent;
                     } else {
-                        if (rawTopics.trim().length > 0) {
-                            htmlOutput += window.marked ? window.marked.parse(rawTopics) : rawTopics;
+                        // Check if lead text before first ### is present
+                        if (rawTopics[0].trim().length > 0) { // Fixed: Target rawTopics[0] string
+                            htmlOutput += window.marked ? window.marked.parse(rawTopics[0]) : rawTopics[0];
                         }
 
                         rawTopics.slice(1).forEach((topicStr, topicIndex) => {
                             const topicLines = topicStr.trim().split('\n');
-                            const topicTitle = topicLines.trim();
+                            const topicTitle = topicLines[0].trim(); // Fixed: Target first element string
                             const topicBodyMarkdown = topicLines.slice(1).join('\n');
                             const parsedTopicContent = window.marked ? window.marked.parse(topicBodyMarkdown) : topicBodyMarkdown;
 
