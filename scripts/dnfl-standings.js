@@ -1,8 +1,8 @@
-// dnfl-standings.js v11.1
+// dnfl-standings.js v11.2
 (function() { 
-    console.log("[DNFL Standings] - Component file injected. Dynamic Key & Disclaimer Engine activated.");
+    console.log("[DNFL Standings] - Component file injected. Deep Override Engine activated.");
 
-// =========================================================================
+    // =========================================================================
     // 📖 STANDINGS & SEEDING CONFIGURATION GUIDE (VARIABLE DICTIONARY)
     // =========================================================================
     // The engine checks if targetYear exists below. If not found, it uses 'default'.
@@ -65,9 +65,10 @@
     //    Applies specific rules to individual conferences by their 2-digit ID
     //    ('00', '01', '02'). Overrides any global season settings.
     // =========================================================================
+
     const STANDINGS_RULES = {
         // =====================================================================
-        // HISTORICAL SEASONS: 2006 through 2024 (6 playoff teams per conf)
+        // HISTORICAL SEASONS: 2006 through 2023 (6 playoff teams per conf)
         // =====================================================================
         '2006-2023': {
             seedingScope: 'conference',
@@ -119,7 +120,7 @@
         },
 
         // =====================================================================
-        // DEFAULT: 2024, 2027 AND BEYOND (Multi-Tier Promotion / Relegation)
+        // DEFAULT: 2027 AND BEYOND (Multi-Tier Promotion / Relegation)
         // =====================================================================
         default: {
             seedingScope: 'conference',
@@ -150,7 +151,6 @@
     // --- SMART YEAR RULES RESOLVER ---
     function getYearRules() {
         const yr = parseInt(targetYear);
-
         if (STANDINGS_RULES[yr]) return STANDINGS_RULES[yr];
 
         for (const key in STANDINGS_RULES) {
@@ -163,8 +163,25 @@
                 if (yearList.includes(yr)) return STANDINGS_RULES[key];
             }
         }
-
         return STANDINGS_RULES['default'];
+    }
+
+    // --- DEEP MERGE RESOLVER FOR CONFERENCES ---
+    function getConfRules(baseRules, confId) {
+        if (!confId || !baseRules.conferenceOverrides || !baseRules.conferenceOverrides[confId]) {
+            return baseRules;
+        }
+        const override = baseRules.conferenceOverrides[confId];
+        return {
+            ...baseRules,
+            ...override,
+            relegation: override.relegation !== undefined 
+                ? { ...baseRules.relegation, ...override.relegation } 
+                : baseRules.relegation,
+            promotion: override.promotion !== undefined 
+                ? { ...baseRules.promotion, ...override.promotion } 
+                : baseRules.promotion
+        };
     }
 
     // Global State Cache
@@ -172,18 +189,18 @@
     let cachedDivisions = [];
     let cachedLeagueDetails = [];
     let cachedStandingsFranchises = [];
-    
+
     // Dynamic Week Trackers
     let cachedLastRegWeek = 14;   
     let cachedCurrentWeek = 1;
     let hasSeasonStarted = false; 
-    
+
     let teamSeeds = {};
     let divLeaders = {};
     let divRunnerUps = {};
     let relegatedTeamIds = new Set();
     let promotedTeamIds = new Set();
-    
+
     let retryCount = 0;
     const maxRetries = 50; 
 
@@ -210,7 +227,6 @@
             cachedConferences = leagueResponse.league.conferences?.conference || [];
             cachedDivisions = leagueResponse.league.divisions?.division || [];
             
-            // Extract the dynamic weeks directly from MFL
             cachedLastRegWeek = parseInt(leagueResponse.league.lastRegularSeasonWeek || 14);
             cachedCurrentWeek = parseInt(leagueResponse.league.currentWk) || 1;
 
@@ -227,45 +243,30 @@
     // =========================================================================
     // 🧮 DYNAMIC KEY RENDERER
     // =========================================================================
-    function renderStandingsKey(rules) {
+    function renderStandingsKey(confRules) {
         const keyContainer = document.getElementById("dnfl-standings-key");
         if (!keyContainer) return;
 
-        // 1. Detect which icons are actively enabled for this year (including conference overrides)
-        let isRelegationActive = rules.relegation?.enabled;
-        let isPromotionActive = rules.promotion?.enabled;
-
-        if (rules.conferenceOverrides) {
-            Object.values(rules.conferenceOverrides).forEach(override => {
-                if (override.relegation?.enabled) isRelegationActive = true;
-                if (override.promotion?.enabled) isPromotionActive = true;
-            });
-        }
-
-        // 2. Build the icon row dynamically
         let iconHtml = `<div style="display: flex; gap: 15px; justify-content: flex-end; flex-wrap: wrap;">`;
         
-        if (rules.hasDivisionCrown) {
+        if (confRules.hasDivisionCrown) {
             iconHtml += `<span style="white-space: nowrap;"><i class="fa-solid fa-crown" style="color: #3b82f6;"></i> Div Winner</span>`;
         }
-        if (rules.playoffCutoff) {
+        if (confRules.playoffCutoff) {
             iconHtml += `<span style="white-space: nowrap;"><i class="fa-solid fa-trophy" style="color: #f59e0b;"></i> Playoffs</span>`;
         }
-        if (isPromotionActive) {
+        if (confRules.promotion?.enabled) {
             iconHtml += `<span style="white-space: nowrap;"><i class="fa-solid fa-circle-up" style="color: #10b981;"></i> Promotion</span>`;
         }
-        if (isRelegationActive) {
+        if (confRules.relegation?.enabled) {
             iconHtml += `<span style="white-space: nowrap;"><i class="fa-solid fa-circle-down" style="color: #ef4444;"></i> Relegation</span>`;
         }
         
         iconHtml += `</div>`;
 
-        // 3. Smart Disclaimer logic based on season activity state
         let disclaimerHtml = '';
         const currentYearNum = new Date().getFullYear();
         const parsedTargetYear = parseInt(targetYear);
-        
-        // A season is considered complete if we are viewing a past archive OR the current week has surpassed the final regular season week
         const isHistoric = parsedTargetYear < currentYearNum;
         const isEndOfSeason = cachedCurrentWeek > cachedLastRegWeek;
 
@@ -277,7 +278,6 @@
             disclaimerHtml = `<div style="font-style: italic; font-size: 0.75rem;">*Preliminary seedings as of Week ${cachedCurrentWeek} standings. Subject to change until Week ${cachedLastRegWeek}.</div>`;
         }
 
-        // 4. Inject compiled HTML
         keyContainer.innerHTML = iconHtml + disclaimerHtml;
     }
 
@@ -291,6 +291,8 @@
         relegatedTeamIds.clear();
         promotedTeamIds.clear();
 
+        const baseRules = getYearRules();
+
         hasSeasonStarted = cachedStandingsFranchises.some(s => {
             const games = parseInt(s.h2hw || 0) + parseInt(s.h2hl || 0) + parseInt(s.h2ht || 0);
             const pf = parseFloat(s.pf || 0);
@@ -299,7 +301,6 @@
 
         if (!hasSeasonStarted) return;
 
-        const rules = getYearRules();
         const divToConfMap = {};
         cachedDivisions.forEach(d => divToConfMap[d.id] = d.conference);
 
@@ -316,23 +317,26 @@
             return getMflIndex(a) - getMflIndex(b);
         };
 
+        // 1. DETERMINE DIVISION LEADERS & DIVISION RELEGATION
         cachedDivisions.forEach(div => {
+            const confRules = getConfRules(baseRules, div.conference);
             const teamsInDiv = cachedLeagueDetails.filter(f => f.division === div.id).map(f => f.id);
             teamsInDiv.sort((a, b) => getMflIndex(a) - getMflIndex(b));
 
             if (teamsInDiv.length > 0) divLeaders[div.id] = teamsInDiv[0];
             if (teamsInDiv.length > 1) divRunnerUps[div.id] = teamsInDiv[1];
 
-            if (rules.relegation?.enabled && rules.relegation.type === 'division') {
-                const bottomCount = rules.relegation.count || 1;
+            if (confRules.relegation?.enabled && confRules.relegation.type === 'division') {
+                const bottomCount = confRules.relegation.count || 1;
                 const bottomTeams = teamsInDiv.slice(-bottomCount);
                 bottomTeams.forEach(id => relegatedTeamIds.add(id));
             }
         });
 
+        // 2. DEFINE THE ACTIVE SCOPES (League-wide vs. Per-Conference)
         let scopesToProcess = [];
         
-        if (rules.seedingScope === 'league') {
+        if (baseRules.seedingScope === 'league') {
             scopesToProcess.push({
                 scopeId: 'league',
                 teams: cachedLeagueDetails.map(f => f.id),
@@ -355,11 +359,14 @@
             });
         }
 
-        if (rules.seedingModel === 'manual' && rules.manualSeeds) {
-            teamSeeds = rules.manualSeeds;
+        // 3. RUN THE SEEDING MODEL ACROSS SCOPES
+        if (baseRules.seedingModel === 'manual' && baseRules.manualSeeds) {
+            teamSeeds = baseRules.manualSeeds;
         } else {
             scopesToProcess.forEach(scope => {
-                if (rules.seedingModel === 'tiered_div_finish_pf') {
+                const confRules = scope.scopeId !== 'league' ? getConfRules(baseRules, scope.scopeId) : baseRules;
+
+                if (confRules.seedingModel === 'tiered_div_finish_pf') {
                     const winners = scope.leaders;
                     winners.sort(sortByPfThenMfl);
                     winners.forEach((id, idx) => teamSeeds[id] = idx + 1);
@@ -373,7 +380,7 @@
                     remaining.sort(sortByPfThenMfl);
                     remaining.forEach((id, idx) => teamSeeds[id] = idx + 1 + winners.length + runners.length);
                 
-                } else if (rules.seedingModel === 'standard_div_winners_first') {
+                } else if (confRules.seedingModel === 'standard_div_winners_first') {
                     const winners = scope.leaders;
                     winners.sort((a, b) => getMflIndex(a) - getMflIndex(b));
                     winners.forEach((id, idx) => teamSeeds[id] = idx + 1);
@@ -382,7 +389,7 @@
                     remaining.sort((a, b) => getMflIndex(a) - getMflIndex(b));
                     remaining.forEach((id, idx) => teamSeeds[id] = idx + 1 + winners.length);
                 
-                } else if (rules.seedingModel === 'mfl_native') {
+                } else if (confRules.seedingModel === 'mfl_native') {
                     const allTeams = scope.teams.slice();
                     allTeams.sort((a, b) => getMflIndex(a) - getMflIndex(b));
                     allTeams.forEach((id, idx) => teamSeeds[id] = idx + 1);
@@ -390,18 +397,19 @@
             });
         }
 
+        // 4. CONFERENCE-LEVEL RELEGATION & PROMOTION
         cachedConferences.forEach(conf => {
-            const confRule = rules.conferenceOverrides?.[conf.id] || rules;
+            const confRules = getConfRules(baseRules, conf.id);
             const confTeams = cachedLeagueDetails.filter(f => (f.conference === conf.id) || (divToConfMap[f.division] === conf.id)).map(f => f.id);
             
             confTeams.sort((a, b) => getMflIndex(a) - getMflIndex(b));
 
-            if (confRule.relegation?.enabled && confRule.relegation.type === 'conference') {
-                const count = confRule.relegation.count || 2;
+            if (confRules.relegation?.enabled && confRules.relegation.type === 'conference') {
+                const count = confRules.relegation.count || 2;
                 confTeams.slice(-count).forEach(id => relegatedTeamIds.add(id));
             }
-            if (confRule.promotion?.enabled) {
-                const count = confRule.promotion.count || 4;
+            if (confRules.promotion?.enabled) {
+                const count = confRules.promotion.count || 4;
                 confTeams.slice(0, count).forEach(id => promotedTeamIds.add(id));
             }
         });
@@ -441,7 +449,7 @@
         confSelect.value = defaultConfId;
     }
 
-    function buildTeamRowHtml(profile, divId, rules, rowCounter) {
+    function buildTeamRowHtml(profile, divId, confRules, rowCounter) {
         const stats = cachedStandingsFranchises.find(t => t.id === profile.id) || {};
         const teamName = profile.name || "Franchise " + profile.id;
         const ownerName = profile.owner_name || "Owner";
@@ -459,10 +467,10 @@
             const seed = teamSeeds[profile.id] || "-";
             let badgeIcons = '';
 
-            if (rules.hasDivisionCrown && profile.division && profile.id === divLeaders[profile.division]) {
+            if (confRules.hasDivisionCrown && profile.division && profile.id === divLeaders[profile.division]) {
                 badgeIcons += `<i class="fa-solid fa-crown" style="color: #3b82f6; margin-left: 5px;" title="Division Winner"></i>`;
             }
-            if (seed !== "-" && rules.playoffCutoff && seed <= rules.playoffCutoff) {
+            if (seed !== "-" && confRules.playoffCutoff && seed <= confRules.playoffCutoff) {
                 badgeIcons += `<i class="fa-solid fa-trophy" style="color: #f59e0b; margin-left: 5px;" title="Playoff Seed #${seed}"></i>`;
             }
             if (relegatedTeamIds.has(profile.id)) {
@@ -512,16 +520,16 @@
         if (!select || !tbody) return;
 
         const selectedValue = select.value;
-        const rules = getYearRules();
+        const globalRules = getYearRules();
         
-        // Execute the dynamic key render
-        renderStandingsKey(rules);
-
         let tableHtml = '';
         let rowCounter = 0;
 
         if (selectedValue === 'playoffs') {
             if (caption) caption.innerHTML = `<span>Playoff Standings</span>`;
+            
+            // For league-wide playoffs, use the base global rules
+            renderStandingsKey(globalRules);
 
             let allProfiles = [...cachedLeagueDetails];
 
@@ -540,7 +548,7 @@
             }
 
             allProfiles.forEach(profile => {
-                tableHtml += buildTeamRowHtml(profile, null, rules, rowCounter);
+                tableHtml += buildTeamRowHtml(profile, null, globalRules, rowCounter);
                 rowCounter++;
             });
 
@@ -550,6 +558,10 @@
 
         const conf = cachedConferences.find(c => c.id === selectedValue);
         if (!conf) return;
+
+        // Ensure we pass the fully merged conference overrides to the renderer
+        const confRules = getConfRules(globalRules, conf.id);
+        renderStandingsKey(confRules);
 
         if (caption) caption.innerHTML = `<span>${conf.name} Standings</span>`;
 
@@ -583,7 +595,7 @@
             });
 
             divisionProfiles.forEach(profile => {
-                tableHtml += buildTeamRowHtml(profile, div.id, rules, rowCounter);
+                tableHtml += buildTeamRowHtml(profile, div.id, confRules, rowCounter);
                 rowCounter++;
             });
         });
