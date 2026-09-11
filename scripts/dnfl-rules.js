@@ -100,8 +100,8 @@ async function loadRulebookData(year) {
  * Fetch Rulebook Markdown File from GitHub/Domain
  */
 async function fetchMarkdownRulebook(year) {
-    const primaryUrl = `https://dnfl.live/rules/dnfl-rules-${year}.md`;
-    const fallbackUrl = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/rules/dnfl-rules-${year}.md`;
+    const primaryUrl = `https://dnfl.live/dnfl-rules/dnfl-rules-${year}.md`;
+    const fallbackUrl = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl-rules/dnfl-rules-${year}.md`;
 
     try {
         let response = await fetch(primaryUrl);
