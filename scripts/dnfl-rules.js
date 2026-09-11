@@ -1,7 +1,8 @@
 /* ==========================================================================
    DNFL Official Rules Module Script v1.09
    Features: Dynamic Year Fetching, Markdown Parsing, PDF Numbering,
-             Collapsible Accordions (#, ##, ###), and Official MFL Scoring Rules.
+             Collapsible Accordions (#, ##, ###), Multi-Schema MFL Rules Parsing,
+             and Stale Cache Recovery.
    ========================================================================== */
 (function() {
     let activeRulesYear = '';
@@ -65,7 +66,14 @@
      */
     async function safeFetchMFLRules() {
         if (typeof window.DNFLClient !== 'undefined' && window.DNFLClient.fetchData) {
-            return await window.DNFLClient.fetchData("rules");
+            const data = await window.DNFLClient.fetchData("rules");
+            // If cache returned null/invalid record from earlier test, clear stale key
+            if (!data) {
+                const leagueId = window.league_id || 'GLOBAL';
+                const cacheKey = `dnfl_rules_L${leagueId}_Y${activeRulesYear}`;
+                localStorage.removeItem(cacheKey);
+            }
+            return data;
         }
         return null;
     }
@@ -138,17 +146,15 @@
             processedMarkdown = processedMarkdown.replace('{{MFL_SCORING_TABLES}}', mflScoringHtml);
         }
 
-        // Split Level 1 Sections (# )
         const rawSections = processedMarkdown.split(/^# /m).filter(sec => sec.trim().length > 0);
 
         let htmlOutput = '';
 
         rawSections.forEach((secStr, secIndex) => {
             const lines = secStr.trim().split('\n');
-            const mainTitle = lines[0].trim(); // Fixed: Target first element string
+            const mainTitle = lines.trim();
             const sectionBodyMarkdown = lines.slice(1).join('\n');
 
-            // Split Level 2 Subsections (## )
             const subSections = sectionBodyMarkdown.split(/^## /m).filter(sub => sub.trim().length > 0);
 
             htmlOutput += `
@@ -165,10 +171,9 @@
             } else {
                 subSections.forEach((subStr, subIndex) => {
                     const subLines = subStr.trim().split('\n');
-                    const subTitle = subLines[0].trim(); // Fixed: Target first element string
+                    const subTitle = subLines.trim();
                     const subBodyMarkdown = subLines.slice(1).join('\n');
 
-                    // Split Level 3 Topics (### )
                     const rawTopics = subBodyMarkdown.split(/^### /m);
 
                     htmlOutput += `
@@ -182,14 +187,13 @@
                         const parsedSubContent = window.marked ? window.marked.parse(subBodyMarkdown) : subBodyMarkdown;
                         htmlOutput += parsedSubContent;
                     } else {
-                        // Check if lead text before first ### is present
-                        if (rawTopics[0].trim().length > 0) { // Fixed: Target rawTopics[0] string
-                            htmlOutput += window.marked ? window.marked.parse(rawTopics[0]) : rawTopics[0];
+                        if (rawTopics.trim().length > 0) {
+                            htmlOutput += window.marked ? window.marked.parse(rawTopics) : rawTopics;
                         }
 
                         rawTopics.slice(1).forEach((topicStr, topicIndex) => {
                             const topicLines = topicStr.trim().split('\n');
-                            const topicTitle = topicLines[0].trim(); // Fixed: Target first element string
+                            const topicTitle = topicLines.trim();
                             const topicBodyMarkdown = topicLines.slice(1).join('\n');
                             const parsedTopicContent = window.marked ? window.marked.parse(topicBodyMarkdown) : topicBodyMarkdown;
 
@@ -222,14 +226,35 @@
 
     /**
      * Generate Official MFL Scoring Rules Tables HTML directly from MFL Rules API
+     * Handles all variations of MFL JSON schema exports
      */
     function generateMflScoringTablesHtml(mflRulesData) {
-        if (!mflRulesData || !mflRulesData.rules || !mflRulesData.rules.scoringRules) {
+        console.log("[DNFL Rules] MFL Rules Payload Object:", mflRulesData);
+
+        if (!mflRulesData) {
             return `<p style="font-style: italic; color: #777;">*Official league scoring rules loaded directly from MFL API when available.*</p>`;
         }
 
-        const rawRules = mflRulesData.rules.scoringRules.rule;
-        if (!rawRules) return '<p style="font-style: italic; color: #777;">No scoring rules found in API response.</p>';
+        // Deep property extraction across all MFL JSON schema variants
+        let rawRules = null;
+        if (mflRulesData.rules?.scoringRules?.rule) {
+            rawRules = mflRulesData.rules.scoringRules.rule;
+        } else if (mflRulesData.rules?.scoringRules?.scoringRule) {
+            rawRules = mflRulesData.rules.scoringRules.scoringRule;
+        } else if (mflRulesData.rules?.scoringRule) {
+            rawRules = mflRulesData.rules.scoringRule;
+        } else if (mflRulesData.rules?.rule) {
+            rawRules = mflRulesData.rules.rule;
+        } else if (mflRulesData.scoringRules?.rule) {
+            rawRules = mflRulesData.scoringRules.rule;
+        } else if (Array.isArray(mflRulesData.rules)) {
+            rawRules = mflRulesData.rules;
+        }
+
+        if (!rawRules) {
+            return `<p style="font-style: italic; color: #777;">*Official league scoring rules loaded directly from MFL API when available.*</p>`;
+        }
+
         const rulesList = Array.isArray(rawRules) ? rawRules : [rawRules];
 
         let offenseRules = [];
