@@ -14,6 +14,7 @@ const DNFLClient = {
     MFL_REQUEST_REGISTRY: [
         ['daily',    'league',           true,  ''],
         ['daily',    'leagueStandings',  true,  '&COLUMN_NAMES=1&ALL=1'],
+        ['daily',    'rules',            true,  ''],
     ],
 
     // 1. SIMULTANEOUS REQUEST TRACKER
