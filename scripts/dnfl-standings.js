@@ -1,15 +1,75 @@
-// dnfl-standings.js v11.0
+// dnfl-standings.js v11.1
 (function() { 
     console.log("[DNFL Standings] - Component file injected. Dynamic Key & Disclaimer Engine activated.");
 
-    // =========================================================================
+// =========================================================================
     // 📖 STANDINGS & SEEDING CONFIGURATION GUIDE (VARIABLE DICTIONARY)
+    // =========================================================================
+    // The engine checks if targetYear exists below. If not found, it uses 'default'.
+    //
+    // -------------------------------------------------------------------------
+    // 1. seedingScope: (String)
+    //    Defines the boundary for the Seed column numbering (1 to N).
+    //    - 'conference' : Seeds 1 to N within each conference.
+    //    - 'league'     : Seeds 1 to N across the entire league. Also automatically
+    //                     adds a "Playoffs" option to the Conference Selector to view
+    //                     the full league ranked top-to-bottom without divisions.
+    //
+    // -------------------------------------------------------------------------
+    // 2. seedingModel: (String)
+    //    Determines the calculation formula applied to the Seed column.
+    //    Models behave dynamically based on seedingScope (e.g., if scope is 
+    //    'league', it aggregates ALL Division Winners in the league into Tier 1).
+    //    (Note: Physical row display order in conference view respects native MFL rank).
+    //
+    //    - 'tiered_div_finish_pf':
+    //         * Tier 1: ALL Division Winners ranked by Total PF.
+    //         * Tier 2: ALL Division Runners-Up ranked by Total PF.
+    //         * Tier 3: All remaining teams ranked by Total PF.
+    //         * Ties broken by native MFL standings rank.
+    //    - 'standard_div_winners_first':
+    //         * ALL Division Winners get the top seeds.
+    //         * All remaining teams get the remaining seeds based on MFL's native rank.
+    //    - 'mfl_native':
+    //         * Seeds strictly mirror MFL's built-in standings order (1 to N).
+    //         * Inherits MFL Commissioner settings (e.g. if MFL splits by division).
+    //    - 'manual':
+    //         * Reads explicit custom seed overrides from a 'manualSeeds' object.
+    //
+    // -------------------------------------------------------------------------
+    // 3. playoffCutoff: (Number | null)
+    //    Controls the Gold Trophy (🏆) playoff qualification badge.
+    //    - *Dependent on seedingScope*: 
+    //      If scope is 'conference' and cutoff is 6, Top 6 PER conference get a trophy.
+    //      If scope is 'league' and cutoff is 16, Top 16 LEAGUE-WIDE get a trophy.
+    //    - Set to 0 or null to disable trophy badges.
+    //
+    // -------------------------------------------------------------------------
+    // 4. hasDivisionCrown: (Boolean)
+    //    Controls the Blue Crown (👑) badge for first place in each division.
+    //
+    // -------------------------------------------------------------------------
+    // 5. relegation: (Object)
+    //    Controls the Red Circle-Down (🔻) relegation badge.
+    //    - type    : 'division'   -> Bottom N teams in each division get badge.
+    //                'conference' -> Bottom N teams in the conference get badge.
+    //    - count   : Number of relegated teams per division/conference (e.g., 1 or 2).
+    //
+    // -------------------------------------------------------------------------
+    // 6. promotion: (Object)
+    //    Controls the Green Circle-Up (🔺) promotion badge.
+    //    - count   : Number of top teams that earn promotion (e.g., 4).
+    //
+    // -------------------------------------------------------------------------
+    // 7. conferenceOverrides: (Object | Optional)
+    //    Applies specific rules to individual conferences by their 2-digit ID
+    //    ('00', '01', '02'). Overrides any global season settings.
     // =========================================================================
     const STANDINGS_RULES = {
         // =====================================================================
-        // HISTORICAL SEASONS: 2006 through 2025
+        // HISTORICAL SEASONS: 2006 through 2024 (6 playoff teams per conf)
         // =====================================================================
-        '2006-2025': {
+        '2006-2023': {
             seedingScope: 'conference',
             seedingModel: 'standard_div_winners_first',
             playoffCutoff: 6,
@@ -19,7 +79,19 @@
         },
 
         // =====================================================================
-        // CURRENT SEASON: 2026 (League-wide PF Tiered)
+        // 2025 SEASON: (Expansion to 28 teams, 7 playoff teams per conf)
+        // =====================================================================
+        2025: {
+            seedingScope: 'conference',
+            seedingModel: 'standard_div_winners_first',
+            playoffCutoff: 7,
+            hasDivisionCrown: true,
+            relegation: { enabled: false, type: 'conference', count: 0 },
+            promotion: { enabled: false, count: 0 }
+        },
+
+        // =====================================================================
+        // 2026 SEASON: (League-wide PF Tiered, 16-team playoff, Relegation)
         // =====================================================================
         2026: {
             seedingScope: 'league',
@@ -31,19 +103,19 @@
         },
 
         // =====================================================================
-        // FUTURE / DEFAULT: 2027 AND BEYOND (Multi-Tier Promotion / Relegation)
+        // DEFAULT: 2024, 2027 AND BEYOND (Multi-Tier Promotion / Relegation)
         // =====================================================================
         default: {
             seedingScope: 'conference',
             seedingModel: 'standard_div_winners_first',
-            playoffCutoff: 4,
+            playoffCutoff: 6,
             hasDivisionCrown: true,
-            relegation: { enabled: false, type: 'conference', count: 0 },
-            promotion: { enabled: false, count: 0 },
+            relegation: { enabled: true, type: 'division', count: 1 },
+            promotion: { enabled: true, count: 4 },
             conferenceOverrides: {
-                '00': { relegation: { enabled: true, type: 'conference', count: 2 }, promotion: { enabled: false } },
-                '01': { relegation: { enabled: true, type: 'conference', count: 2 }, promotion: { enabled: false } },
-                '02': { relegation: { enabled: false }, promotion: { enabled: true, count: 4 } }
+                '00': { promotion: { enabled: false } },
+                '01': { promotion: { enabled: false } },
+                '02': { seedingModel: , playoffCutoff: 4, hasDivisionCrown: false, relegation: { enabled: false } }
             }
         }
     };
