@@ -262,7 +262,7 @@
 /* Table Rows & Alternate Row Coloring */
 .dnfl-rules-wrapper table.dnfl-rules-table tr:nth-child(even),
 .dnfl-rules-wrapper table.dnfl-rules-table tr.eventablerow {
-    background-color: #f8fafc !important;
+    background-color: #FAFAFA !important;
 }
 
 .dnfl-rules-wrapper table.dnfl-rules-table tr:nth-child(odd),
@@ -271,7 +271,7 @@
 }
 
 .dnfl-rules-wrapper table.dnfl-rules-table tr:hover {
-    background-color: #f1f5f9 !important;
+    background-color: #b6e2ff !important;
 }
 
 /* Table Cells */
@@ -384,7 +384,7 @@
     background-color: #FAFAFA;
 }
 #dnfl_dataTable tr:hover {
-    background-color: #FDE68A;
+    background-color: #b6e2ff;
 }
 #dnfl_dataTable .dnfl-rank-badge {
     font-weight: bold;
