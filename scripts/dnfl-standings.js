@@ -1,82 +1,37 @@
-// dnfl-standings.js v12.0
+// dnfl-standings.js v11.3
 (function() { 
-    console.log("[DNFL Standings] - Component file injected. Deep Override Engine activated.");
+    console.log("[DNFL Standings] - Component file injected. Deep Override Engine & Legacy Icon Piggyback activated.");
 
     // =========================================================================
     // 📖 STANDINGS & SEEDING CONFIGURATION GUIDE (VARIABLE DICTIONARY)
     // =========================================================================
-    // The engine checks if targetYear exists below. If not found, it uses 'default'.
-    //
-    // -------------------------------------------------------------------------
-    // 1. seedingScope: (String)
-    //    Defines the boundary for the Seed column numbering (1 to N).
-    //    - 'conference' : Seeds 1 to N within each conference.
-    //    - 'league'     : Seeds 1 to N across the entire league. Also automatically
-    //                     adds a "Playoffs" option to the Conference Selector to view
-    //                     the full league ranked top-to-bottom without divisions.
-    //
-    // -------------------------------------------------------------------------
-    // 2. seedingModel: (String)
-    //    Determines the calculation formula applied to the Seed column.
-    //    Models behave dynamically based on seedingScope (e.g., if scope is 
-    //    'league', it aggregates ALL Division Winners in the league into Tier 1).
-    //    (Note: Physical row display order in conference view respects native MFL rank).
-    //
-    //    - 'tiered_div_finish_pf':
-    //         * Tier 1: ALL Division Winners ranked by Total PF.
-    //         * Tier 2: ALL Division Runners-Up ranked by Total PF.
-    //         * Tier 3: All remaining teams ranked by Total PF.
-    //         * Ties broken by native MFL standings rank.
-    //    - 'standard_div_winners_first':
-    //         * ALL Division Winners get the top seeds.
-    //         * All remaining teams get the remaining seeds based on MFL's native rank.
-    //    - 'mfl_native':
-    //         * Seeds strictly mirror MFL's built-in standings order (1 to N).
-    //         * Inherits MFL Commissioner settings (e.g. if MFL splits by division).
-    //    - 'manual':
-    //         * Reads explicit custom seed overrides from a 'manualSeeds' object.
-    //
-    // -------------------------------------------------------------------------
-    // 3. playoffCutoff: (Number | null)
-    //    Controls the Gold Trophy (🏆) playoff qualification badge.
-    //    - *Dependent on seedingScope*: 
-    //      If scope is 'conference' and cutoff is 6, Top 6 PER conference get a trophy.
-    //      If scope is 'league' and cutoff is 16, Top 16 LEAGUE-WIDE get a trophy.
-    //    - Set to 0 or null to disable trophy badges.
-    //
-    // -------------------------------------------------------------------------
-    // 4. hasDivisionCrown: (Boolean)
-    //    Controls the Blue Crown (👑) badge for first place in each division.
-    //
-    // -------------------------------------------------------------------------
-    // 5. relegation: (Object)
-    //    Controls the Red Circle-Down (🔻) relegation badge.
-    //    - type    : 'division'   -> Bottom N teams in each division get badge.
-    //                'conference' -> Bottom N teams in the conference get badge.
-    //    - count   : Number of relegated teams per division/conference (e.g., 1 or 2).
-    //
-    // -------------------------------------------------------------------------
-    // 6. promotion: (Object)
-    //    Controls the Green Circle-Up (🔺) promotion badge.
-    //    - count   : Number of top teams that earn promotion (e.g., 4).
-    //
-    // -------------------------------------------------------------------------
-    // 7. conferenceOverrides: (Object | Optional)
-    //    Applies specific rules to individual conferences by their 2-digit ID
-    //    ('00', '01', '02'). Overrides any global season settings.
-    // =========================================================================
-
     const STANDINGS_RULES = {
         // =====================================================================
         // HISTORICAL SEASONS: 2006 through 2023 (6 playoff teams per conf)
         // =====================================================================
-        '2006-2024': {
+        '2006-2023': {
             seedingScope: 'conference',
             seedingModel: 'standard_div_winners_first',
             playoffCutoff: 6,
             hasDivisionCrown: true,
             relegation: { enabled: false, type: 'conference', count: 0 },
             promotion: { enabled: false, count: 0 }
+        },
+
+        // =====================================================================
+        // TEST: 2024 (Multi-Tier Promotion / Relegation)
+        // =====================================================================
+        2024: {
+            seedingScope: 'conference',
+            seedingModel: 'standard_div_winners_first',
+            playoffCutoff: 6,
+            hasDivisionCrown: true,
+            relegation: { enabled: true, type: 'division', count: 1 },
+            promotion: { enabled: true, count: 4 },
+            conferenceOverrides: {
+                '00': { promotion: { enabled: false } },
+                '01': { seedingModel: 'mfl_native', playoffCutoff: 4, hasDivisionCrown: false, relegation: { enabled: false } }
+            }
         },
 
         // =====================================================================
@@ -225,7 +180,7 @@
     }
 
     // =========================================================================
-    // 🧮 DYNAMIC KEY RENDERER
+    // 🧮 DYNAMIC KEY RENDERER (Updated with Legacy FA5 syntax)
     // =========================================================================
     function renderStandingsKey(confRules) {
         const keyContainer = document.getElementById("dnfl-standings-key");
@@ -234,16 +189,16 @@
         let iconHtml = `<div style="display: flex; gap: 15px; justify-content: flex-end; flex-wrap: wrap;">`;
         
         if (confRules.hasDivisionCrown) {
-            iconHtml += `<span style="white-space: nowrap;"><i class="fa-solid fa-crown" style="color: #3b82f6;"></i> Div Winner</span>`;
+            iconHtml += `<span style="white-space: nowrap;"><i class="fas fa-crown" style="color: #3b82f6;"></i> Div Winner</span>`;
         }
         if (confRules.playoffCutoff) {
-            iconHtml += `<span style="white-space: nowrap;"><i class="fa-solid fa-trophy" style="color: #f59e0b;"></i> Playoffs</span>`;
+            iconHtml += `<span style="white-space: nowrap;"><i class="fas fa-trophy" style="color: #f59e0b;"></i> Playoffs</span>`;
         }
         if (confRules.promotion?.enabled) {
-            iconHtml += `<span style="white-space: nowrap;"><i class="fa-solid fa-circle-up" style="color: #10b981;"></i> Promotion</span>`;
+            iconHtml += `<span style="white-space: nowrap;"><i class="fas fa-arrow-circle-up" style="color: #10b981;"></i> Promotion</span>`;
         }
         if (confRules.relegation?.enabled) {
-            iconHtml += `<span style="white-space: nowrap;"><i class="fa-solid fa-circle-down" style="color: #ef4444;"></i> Relegation</span>`;
+            iconHtml += `<span style="white-space: nowrap;"><i class="fas fa-arrow-circle-down" style="color: #ef4444;"></i> Relegation</span>`;
         }
         
         iconHtml += `</div>`;
@@ -301,7 +256,6 @@
             return getMflIndex(a) - getMflIndex(b);
         };
 
-        // 1. DETERMINE DIVISION LEADERS & DIVISION RELEGATION
         cachedDivisions.forEach(div => {
             const confRules = getConfRules(baseRules, div.conference);
             const teamsInDiv = cachedLeagueDetails.filter(f => f.division === div.id).map(f => f.id);
@@ -317,7 +271,6 @@
             }
         });
 
-        // 2. DEFINE THE ACTIVE SCOPES (League-wide vs. Per-Conference)
         let scopesToProcess = [];
         
         if (baseRules.seedingScope === 'league') {
@@ -343,7 +296,6 @@
             });
         }
 
-        // 3. RUN THE SEEDING MODEL ACROSS SCOPES
         if (baseRules.seedingModel === 'manual' && baseRules.manualSeeds) {
             teamSeeds = baseRules.manualSeeds;
         } else {
@@ -381,7 +333,6 @@
             });
         }
 
-        // 4. CONFERENCE-LEVEL RELEGATION & PROMOTION
         cachedConferences.forEach(conf => {
             const confRules = getConfRules(baseRules, conf.id);
             const confTeams = cachedLeagueDetails.filter(f => (f.conference === conf.id) || (divToConfMap[f.division] === conf.id)).map(f => f.id);
@@ -433,6 +384,9 @@
         confSelect.value = defaultConfId;
     }
 
+    // =========================================================================
+    // 🧮 ROW GENERATOR (Updated with Legacy FA5 syntax)
+    // =========================================================================
     function buildTeamRowHtml(profile, divId, confRules, rowCounter) {
         const stats = cachedStandingsFranchises.find(t => t.id === profile.id) || {};
         const teamName = profile.name || "Franchise " + profile.id;
@@ -452,16 +406,16 @@
             let badgeIcons = '';
 
             if (confRules.hasDivisionCrown && profile.division && profile.id === divLeaders[profile.division]) {
-                badgeIcons += `<i class="fa-solid fa-crown" style="color: #3b82f6; margin-left: 5px;" title="Division Winner"></i>`;
+                badgeIcons += `<i class="fas fa-crown" style="color: #3b82f6; margin-left: 5px;" title="Division Winner"></i>`;
             }
             if (seed !== "-" && confRules.playoffCutoff && seed <= confRules.playoffCutoff) {
-                badgeIcons += `<i class="fa-solid fa-trophy" style="color: #f59e0b; margin-left: 5px;" title="Playoff Seed #${seed}"></i>`;
+                badgeIcons += `<i class="fas fa-trophy" style="color: #f59e0b; margin-left: 5px;" title="Playoff Seed #${seed}"></i>`;
             }
             if (relegatedTeamIds.has(profile.id)) {
-                badgeIcons += `<i class="fa-solid fa-circle-down" style="color: #ef4444; margin-left: 5px;" title="Relegation Zone"></i>`;
+                badgeIcons += `<i class="fas fa-arrow-circle-down" style="color: #ef4444; margin-left: 5px;" title="Relegation Zone"></i>`;
             }
             if (promotedTeamIds.has(profile.id)) {
-                badgeIcons += `<i class="fa-solid fa-circle-up" style="color: #10b981; margin-left: 5px;" title="Promotion Zone"></i>`;
+                badgeIcons += `<i class="fas fa-arrow-circle-up" style="color: #10b981; margin-left: 5px;" title="Promotion Zone"></i>`;
             }
 
             seedCellContent = `${seed} ${badgeIcons}`;
@@ -512,7 +466,6 @@
         if (selectedValue === 'playoffs') {
             if (caption) caption.innerHTML = `<span>Playoff Standings</span>`;
             
-            // For league-wide playoffs, use the base global rules
             renderStandingsKey(globalRules);
 
             let allProfiles = [...cachedLeagueDetails];
@@ -543,7 +496,6 @@
         const conf = cachedConferences.find(c => c.id === selectedValue);
         if (!conf) return;
 
-        // Ensure we pass the fully merged conference overrides to the renderer
         const confRules = getConfRules(globalRules, conf.id);
         renderStandingsKey(confRules);
 
