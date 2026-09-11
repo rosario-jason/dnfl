@@ -1,4 +1,4 @@
-// dnfl-standings.js v10.0
+// dnfl-standings.js v11.0
 (function() { 
     console.log("[DNFL Standings] - Component file injected. Dynamic Key & Disclaimer Engine activated.");
 
@@ -84,7 +84,10 @@
     let cachedDivisions = [];
     let cachedLeagueDetails = [];
     let cachedStandingsFranchises = [];
-    let cachedLastRegWeek = 14;   // Default fallback; updated by MFL API payload
+    
+    // Dynamic Week Trackers
+    let cachedLastRegWeek = 14;   
+    let cachedCurrentWeek = 1;
     let hasSeasonStarted = false; 
     
     let teamSeeds = {};
@@ -119,8 +122,9 @@
             cachedConferences = leagueResponse.league.conferences?.conference || [];
             cachedDivisions = leagueResponse.league.divisions?.division || [];
             
-            // Extract the dynamic last week of the regular season directly from MFL
+            // Extract the dynamic weeks directly from MFL
             cachedLastRegWeek = parseInt(leagueResponse.league.lastRegularSeasonWeek || 14);
+            cachedCurrentWeek = parseInt(leagueResponse.league.currentWk) || 1;
 
             calculateSeedsAndBadges();
             setupDropdown();
@@ -170,10 +174,19 @@
 
         // 3. Smart Disclaimer logic based on season activity state
         let disclaimerHtml = '';
-        if (hasSeasonStarted) {
-            disclaimerHtml = `<div style="font-style: italic; font-size: 0.75rem;">*Preliminary seedings as of current standings. Subject to change until Week ${cachedLastRegWeek}.</div>`;
-        } else {
+        const currentYearNum = new Date().getFullYear();
+        const parsedTargetYear = parseInt(targetYear);
+        
+        // A season is considered complete if we are viewing a past archive OR the current week has surpassed the final regular season week
+        const isHistoric = parsedTargetYear < currentYearNum;
+        const isEndOfSeason = cachedCurrentWeek > cachedLastRegWeek;
+
+        if (!hasSeasonStarted) {
             disclaimerHtml = `<div style="font-style: italic; font-size: 0.75rem;">*Pre-season view. Seedings and icons will calculate once games begin.</div>`;
+        } else if (isHistoric || isEndOfSeason) {
+            disclaimerHtml = `<div style="font-style: italic; font-size: 0.75rem;">*Final Regular Season Seedings.</div>`;
+        } else {
+            disclaimerHtml = `<div style="font-style: italic; font-size: 0.75rem;">*Preliminary seedings as of Week ${cachedCurrentWeek} standings. Subject to change until Week ${cachedLastRegWeek}.</div>`;
         }
 
         // 4. Inject compiled HTML
