@@ -1,7 +1,7 @@
 /* ==========================================================================
-   DNFL Official Rules Module Script v1.07
-   Features: Deterministic Control Buttons (Show Sub Menus, Expand All, Collapse All),
-             3-Level Accordions (#, ##, ###), PDF Numbering, Native Markdown Table Support.
+   DNFL Official Rules Module Script v1.08
+   Features: Dynamic Year Fetching, Markdown Parsing, PDF Numbering,
+             Collapsible Accordions (#, ##, ###), and Official MFL Scoring Rules.
    ========================================================================== */
 (function() {
     let activeRulesYear = '';
@@ -79,7 +79,7 @@
 
         container.innerHTML = `
             <div style="text-align: center; padding: 2rem; color: #555;">
-                <i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Loading ${year} Rulebook & Live Scoring Rules...
+                <i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Loading ${year} Rulebook & Official Scoring Rules...
             </div>`;
 
         if (typeof window.DNFLClient === 'undefined' && clientRetryCount < maxClientRetries) {
@@ -125,7 +125,7 @@
     }
 
     /**
-     * Render HTML Accordions (3 Levels: #, ##, ###) & Inject Live MFL Scoring
+     * Render HTML Accordions (3 Levels: #, ##, ###) & Inject MFL Scoring Tables
      */
     function renderRulebookDOM(markdownText, mflRulesData) {
         const container = document.getElementById('dnfl_rulesOutputContainer');
@@ -145,7 +145,7 @@
 
         rawSections.forEach((secStr, secIndex) => {
             const lines = secStr.trim().split('\n');
-            const mainTitle = lines[0].trim();
+            const mainTitle = lines.trim();
             const sectionBodyMarkdown = lines.slice(1).join('\n');
 
             // Split Level 2 Subsections (## )
@@ -165,7 +165,7 @@
             } else {
                 subSections.forEach((subStr, subIndex) => {
                     const subLines = subStr.trim().split('\n');
-                    const subTitle = subLines[0].trim();
+                    const subTitle = subLines.trim();
                     const subBodyMarkdown = subLines.slice(1).join('\n');
 
                     // Split Level 3 Topics (### )
@@ -182,13 +182,13 @@
                         const parsedSubContent = window.marked ? window.marked.parse(subBodyMarkdown) : subBodyMarkdown;
                         htmlOutput += parsedSubContent;
                     } else {
-                        if (rawTopics[0].trim().length > 0) {
-                            htmlOutput += window.marked ? window.marked.parse(rawTopics[0]) : rawTopics[0];
+                        if (rawTopics.trim().length > 0) {
+                            htmlOutput += window.marked ? window.marked.parse(rawTopics) : rawTopics;
                         }
 
                         rawTopics.slice(1).forEach((topicStr, topicIndex) => {
                             const topicLines = topicStr.trim().split('\n');
-                            const topicTitle = topicLines[0].trim();
+                            const topicTitle = topicLines.trim();
                             const topicBodyMarkdown = topicLines.slice(1).join('\n');
                             const parsedTopicContent = window.marked ? window.marked.parse(topicBodyMarkdown) : topicBodyMarkdown;
 
@@ -220,15 +220,15 @@
     }
 
     /**
-     * Generate Live MFL Scoring Tables HTML directly from API
+     * Generate Official MFL Scoring Rules Tables HTML directly from MFL Rules API
      */
     function generateMflScoringTablesHtml(mflRulesData) {
         if (!mflRulesData || !mflRulesData.rules || !mflRulesData.rules.scoringRules) {
-            return `<p style="font-style: italic; color: #777;">*Live scoring table loaded directly from MFL API when available.*</p>`;
+            return `<p style="font-style: italic; color: #777;">*Official league scoring rules loaded directly from MFL API when available.*</p>`;
         }
 
         const rawRules = mflRulesData.rules.scoringRules.rule;
-        if (!rawRules) return '';
+        if (!rawRules) return '<p style="font-style: italic; color: #777;">No scoring rules found in API response.</p>';
         const rulesList = Array.isArray(rawRules) ? rawRules : [rawRules];
 
         let offenseRules = [];
@@ -239,15 +239,27 @@
             const pointsStr = r.points || '';
             const rangeStr = `${r.range || 'All'}`;
 
-            if (eventStr.toLowerCase().includes('def') || eventStr.toLowerCase().includes('tackle') || eventStr.toLowerCase().includes('sack') || eventStr.toLowerCase().includes('interception caught')) {
+            const lower = eventStr.toLowerCase();
+            const isDefense = lower.includes('def') || 
+                              lower.includes('tackle') || 
+                              lower.includes('sack') || 
+                              lower.includes('interception caught') ||
+                              lower.includes('points allowed') ||
+                              lower.includes('safet') ||
+                              lower.includes('fumble recovery') ||
+                              lower.includes('blocked');
+
+            if (isDefense) {
                 defenseRules.push({ event: eventStr, range: rangeStr, points: pointsStr });
             } else {
                 offenseRules.push({ event: eventStr, range: rangeStr, points: pointsStr });
             }
         });
 
-        const buildTable = (title, items) => `
-            <p><strong>${title} (Live MFL API Sync)</strong></p>
+        const buildTable = (title, items) => {
+            if (items.length === 0) return '';
+            return `
+            <p><strong>${title}</strong></p>
             <div class="mobile-wrap">
                 <table class="homepagemodule report dnfl-rules-table">
                     <thead>
@@ -268,6 +280,7 @@
                     </tbody>
                 </table>
             </div>`;
+        };
 
         return buildTable("Rules for QB, RB, WR, TE, PK", offenseRules) + buildTable("Rules for DEF", defenseRules);
     }
@@ -345,7 +358,6 @@
 
     /**
      * Action: Show Sub Menus
-     * Opens Section (#) and Subsection (##) headers, but collapses Topic (###) contents.
      */
     function showSubMenus() {
         document.querySelectorAll('.dnfl-rules-main-content, .dnfl-rules-sub-content').forEach(el => el.style.display = 'block');
@@ -357,7 +369,7 @@
     }
 
     /**
-     * Action: Expand All (Levels 1, 2, 3)
+     * Action: Expand All
      */
     function expandAllRules() {
         document.querySelectorAll('.dnfl-rules-main-content, .dnfl-rules-sub-content, .dnfl-rules-topic-content').forEach(el => el.style.display = 'block');
@@ -367,7 +379,7 @@
     }
 
     /**
-     * Action: Collapse All (Collapses down to Level 1 # tabheads only)
+     * Action: Collapse All
      */
     function collapseAllRules() {
         document.querySelectorAll('.dnfl-rules-main-content, .dnfl-rules-sub-content, .dnfl-rules-topic-content').forEach(el => el.style.display = 'none');
@@ -383,7 +395,7 @@
     window.toggleSubSection = toggleSubSection;
     window.toggleTopic = toggleTopic;
     window.showSubMenus = showSubMenus;
-    window.toggleSubheadMenus = showSubMenus; // Backward-compatibility alias
+    window.toggleSubheadMenus = showSubMenus;
     window.expandAllRules = expandAllRules;
     window.collapseAllRules = collapseAllRules;
 })();
