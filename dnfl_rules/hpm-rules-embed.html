@@ -9,19 +9,20 @@
     <br/>
     <!-- Markdown Parser Dependency (Marked.js) -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-    <div class="dnfl-module-container">   
+    
+    <div class="dnfl-module-container">
+        
         <!-- Controls Bar -->
         <div class="dnfl-controls" style="justify-content: space-between; align-items: center;">
             <div class="dnfl-filter-group" style="flex-direction: row; align-items: center; gap: 10px;">
                 <label for="dnfl_rulesYearSelector">Season:</label>
-                <select id="dnfl_rulesYearSelector" class="dnfl-select" onchange="changeRulesYear()"></select>
+                <select id="dnfl_rulesYearSelector" class="dnfl-select" onchange="window.changeRulesYear()"></select>
             </div>
 
             <div class="dnfl-rules-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button class="dnfl-visibility-toggle-btn" onclick="toggleSubheadMenus()">Show Sub Menus</button>
-                <button class="dnfl-visibility-toggle-btn" onclick="expandAllRules()">Expand All</button>
-                <button class="dnfl-visibility-toggle-btn" onclick="collapseAllRules()">Collapse All</button>
+                <button class="dnfl-visibility-toggle-btn" onclick="window.toggleSubheadMenus()">Show Sub Menus</button>
+                <button class="dnfl-visibility-toggle-btn" onclick="window.expandAllRules()">Expand All</button>
+                <button class="dnfl-visibility-toggle-btn" onclick="window.collapseAllRules()">Collapse All</button>
             </div>
         </div>
 
@@ -34,12 +35,18 @@
 
     </div>
 
-    <!-- Module Script Initialization -->
-    <script src="https://dnfl.live/scripts/dnfl-rules.js?v=1.00"></script>
+    <!-- Initialization Waiter -->
     <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            initRulesDashboard('%YEAR%');
-        });
+        (function checkInit() {
+            if (typeof window.initRulesDashboard === 'function') {
+                window.initRulesDashboard('%YEAR%');
+            } else {
+                setTimeout(checkInit, 50);
+            }
+        })();
     </script>
+
+
+
   </div>
 </div>
