@@ -1,4 +1,4 @@
-// dnfl-standings.js v8.0
+// dnfl-standings.js v8.1
 (function() { 
     console.log("[DNFL Standings] - Component file injected. Generalized Scope Engine activated.");
 
@@ -95,19 +95,7 @@
         },
 
         // =====================================================================
-        // 2025 Season
-        // =====================================================================
-        2025: {
-            seedingScope: 'conference',
-            seedingModel: 'standard_div_winners_first',
-            playoffCutoff: 7,
-            hasDivisionCrown: true,
-            relegation: { enabled: false, type: 'conference', count: 0 },
-            promotion: { enabled: false, count: 0 }
-        },
-
-        // =====================================================================
-        // DEFAULT FALLBACK (Applies to all past seasons 2006–2024)
+        // DEFAULT FALLBACK (Applies to all past seasons 2006–2025)
         // =====================================================================
         default: {
             seedingScope: 'conference',
@@ -130,8 +118,33 @@
     const leagueId = window.league_id || null;
     const loggedInFranchiseId = window.franchise_id || null;
 
+    // --- SMART YEAR RULES RESOLVER ---
     function getYearRules() {
-        return STANDINGS_RULES[targetYear] || STANDINGS_RULES['default'];
+        const yr = parseInt(targetYear);
+
+        // 1. Direct match (e.g., 2026)
+        if (STANDINGS_RULES[yr]) {
+            return STANDINGS_RULES[yr];
+        }
+
+        // 2. Check for ranges ('2006-2025') or lists ('2006, 2007, 2008')
+        for (const key in STANDINGS_RULES) {
+            if (key.includes('-')) {
+                const [start, end] = key.split('-').map(s => parseInt(s.trim()));
+                if (yr >= start && yr <= end) {
+                    return STANDINGS_RULES[key];
+                }
+            }
+            if (key.includes(',')) {
+                const yearList = key.split(',').map(s => parseInt(s.trim()));
+                if (yearList.includes(yr)) {
+                    return STANDINGS_RULES[key];
+                }
+            }
+        }
+
+        // 3. Fallback to default
+        return STANDINGS_RULES['default'];
     }
 
     // Global State Cache
@@ -420,7 +433,8 @@
 
                 tableHtml += `
                     <tr class="${rowClass}">
-                        <td style="font-weight: bold; font-size: 1.1rem; text-align: center; white-space: nowrap;">
+                        <!-- UPDATED: Seed td is now left-aligned -->
+                        <td style="font-weight: bold; font-size: 1.1rem; text-align: left; white-space: nowrap;">
                             ${seed} ${badgeIcons}
                         </td>
                         <td>
