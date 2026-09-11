@@ -33,7 +33,6 @@
 
 ### B1. Payout Table
 
-| :--- | ---: | :--- | ---: |
 | Prize | Payout $ | Notes | Total $ |
 | :--- | ---: | :--- | ---: |
 | Super Bowl Champion | 3,850 | 1 winner | 3,850 |
