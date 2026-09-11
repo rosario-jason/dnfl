@@ -83,6 +83,45 @@
     box-sizing: border-box;
 }
 
+/* Reset MFL global centered & colored h1-h5 styles inside rules container */
+.dnfl-rules-wrapper h1,
+.dnfl-rules-wrapper h2,
+.dnfl-rules-wrapper h3,
+.dnfl-rules-wrapper h4,
+.dnfl-rules-wrapper h5 {
+    text-align: left !important;
+    margin: 14px 0 6px 0 !important;
+    font-family: inherit !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    background: none !important;
+}
+
+/* Markdown ## Override (Level 2 Headings) */
+.dnfl-rules-wrapper h2 {
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    color: #0577B1 !important; /* DNFL Brand Blue */
+    border-bottom: 2px solid #cbd5e1 !important;
+    padding-bottom: 4px !important;
+}
+
+/* Markdown ### Override (Level 3 Headings - e.g. ### A1. Overview) */
+.dnfl-rules-wrapper h3 {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    color: #0f172a !important; /* Dark Navy/Slate */
+    border-bottom: none !important;
+    padding: 0 !important;
+}
+
+/* Markdown #### Override (Level 4 Headings) */
+.dnfl-rules-wrapper h4 {
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
+    color: #334155 !important;
+}
+
 /* Level 1 Accordion Header (Roman Numerals) */
 .dnfl-rules-tabhead {
     background-color: #f8fafc;

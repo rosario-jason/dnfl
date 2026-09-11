@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Official Rules Module Script v1.3
+   DNFL Official Rules Module Script v1.4
    Features: Dynamic Year Fetching, Markdown Parsing, PDF Rule Numbering,
              Collapsible Accordions, and Live MFL Scoring API Integration.
    ========================================================================== */
@@ -16,7 +16,6 @@
      * Main Entry Point - Called by HPM Embed or Header Script
      */
     async function initRulesDashboard(mflYear) {
-        // 1. Resolve active year context
         let targetYear = mflYear && mflYear !== '%YEAR%' ? mflYear : (window.current_year || null);
         if (!targetYear) {
             const pathSegments = window.location.pathname.split('/');
@@ -25,10 +24,7 @@
         }
         activeRulesYear = targetYear.toString();
 
-        // 2. Populate Season Dropdown
         setupRulesYearDropdown();
-
-        // 3. Load Rulebook and MFL Scoring Rules
         await loadRulebookData(activeRulesYear);
     }
 
@@ -88,7 +84,6 @@
                 <i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Loading ${year} Rulebook & Live Scoring Rules...
             </div>`;
 
-        // Check if DNFLClient is still loading sequentially via header script
         if (typeof window.DNFLClient === 'undefined' && clientRetryCount < maxClientRetries) {
             clientRetryCount++;
             setTimeout(() => loadRulebookData(year), 100);
@@ -96,15 +91,12 @@
         }
 
         try {
-            // Parallel fetch: Markdown rulebook file & MFL Live Scoring Rules
             const [markdownText, mflRulesData] = await Promise.all([
                 fetchMarkdownRulebook(year),
                 safeFetchMFLRules()
             ]);
 
             currentRulesMarkdown = markdownText;
-
-            // Render Markdown into Structured Accordion DOM
             renderRulebookDOM(markdownText, mflRulesData);
 
         } catch (error) {
@@ -120,7 +112,6 @@
      * Fetch Rulebook Markdown File from GitHub/Domain
      */
     async function fetchMarkdownRulebook(year) {
-        // Updated folder path to /dnfl_rules/
         const primaryUrl = `https://dnfl.live/dnfl_rules/dnfl-rules-${year}.md`;
         const fallbackUrl = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rules/dnfl-rules-${year}.md`;
 
@@ -155,7 +146,7 @@
 
         rawSections.forEach((secStr, secIndex) => {
             const lines = secStr.trim().split('\n');
-            const mainTitle = lines[0].trim(); // Fixed: Array indexing for string title
+            const mainTitle = lines[0].trim();
             const sectionBodyMarkdown = lines.slice(1).join('\n');
 
             const subSections = sectionBodyMarkdown.split(/^## /m).filter(sub => sub.trim().length > 0);
@@ -174,7 +165,7 @@
             } else {
                 subSections.forEach((subStr, subIndex) => {
                     const subLines = subStr.trim().split('\n');
-                    const subTitle = subLines[0].trim(); // Fixed: Array indexing for string title
+                    const subTitle = subLines[0].trim();
                     const subBodyMarkdown = subLines.slice(1).join('\n');
                     const parsedSubContent = window.marked ? window.marked.parse(subBodyMarkdown) : subBodyMarkdown;
 
@@ -256,6 +247,7 @@
      * DOM Formatting Helper
      */
     function formatParsedRuleElements() {
+        // Wrap tables in mobile container
         document.querySelectorAll('#dnfl_rulesOutputContainer table').forEach(tbl => {
             if (!tbl.classList.contains('dnfl-rules-table')) {
                 tbl.classList.add('homepagemodule', 'report', 'dnfl-rules-table');
@@ -266,6 +258,11 @@
                 tbl.parentNode.insertBefore(wrapper, tbl);
                 wrapper.appendChild(tbl);
             }
+        });
+
+        // Ensure all parsed headings inherit container override scope
+        document.querySelectorAll('#dnfl_rulesOutputContainer h1, #dnfl_rulesOutputContainer h2, #dnfl_rulesOutputContainer h3, #dnfl_rulesOutputContainer h4').forEach(h => {
+            h.style.textAlign = 'left';
         });
     }
 
