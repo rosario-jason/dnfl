@@ -1,16 +1,15 @@
-// dnfl-standings.js v4.01
+// dnfl-standings.js v5.0
 (function() { 
-    console.log("[DNFL Standings] - Component file injected. Interactive historical layout activated.");
+    console.log("[DNFL Standings] - Component file injected. Automated live layout activated.");
 
     // --- 1. GLOBAL CONTEXT ENGINE ---
-    // Safely extracts the year directly from the URL if MFL fails to provide it (Fixes archive fetches)
+    const activeHost = window.location.hostname || "myfantasyleague.com";
     let targetYear = window.current_year || null;
     if (!targetYear) {
         const pathSegments = window.location.pathname.split('/');
         const foundYear = pathSegments.find(segment => /^20\d{2}$/.test(segment));
         targetYear = foundYear ? foundYear : new Date().getFullYear();
     }
-    const activeHost = window.location.hostname || "myfantasyleague.com";
     const leagueId = window.league_id || null;
     const loggedInFranchiseId = window.franchise_id || null;
 
@@ -18,10 +17,7 @@
     let cachedConferences = [];
     let cachedDivisions = [];
     let cachedLeagueDetails = [];
-    
-    // Weekly Standings State & Cache Memory
-    let weeklyStandingsData = {}; 
-    let currentActiveWeekStats = [];
+    let cachedStandingsFranchises = [];
     
     let teamSeeds = {};
     let divLeaders = {};
@@ -40,114 +36,28 @@
         }
 
         try {
-            const leagueResponse = await DNFLClient.fetchData("league");
-            if (!leagueResponse) throw new Error("Missing structural configuration maps from MFL payload.");
+            // Let the API Client handle the heavy lifting (It already contains the URL Year extractors)
+            const [standingsResponse, leagueResponse] = await Promise.all([
+                DNFLClient.fetchData("leagueStandings"),
+                DNFLClient.fetchData("league")
+            ]);
 
+            if (!standingsResponse || !leagueResponse) throw new Error("Missing structural configuration maps from MFL payload.");
+
+            cachedStandingsFranchises = standingsResponse.leagueStandings.franchise;
             cachedLeagueDetails = leagueResponse.league.franchises.franchise;
             cachedConferences = leagueResponse.league.conferences?.conference;
             cachedDivisions = leagueResponse.league.divisions?.division;
 
-            setupDropdowns(leagueResponse.league);
-            await window.updateDnflStandingsData(); 
+            calculateSeeds();
+            setupDropdown();
+            window.updateDnflStandingsView(); 
 
         } catch (error) {
             console.error("DNFL Standings Error:", error);
             tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 2rem;">Error loading standings.</td></tr>`;
         }
     }
-
-    function setupDropdowns(leagueNode) {
-        // --- 1. Week Selector Setup ---
-        const weekSelect = document.getElementById("dnfl_standings_weekFilter");
-        if (weekSelect) {
-            weekSelect.innerHTML = '';
-            
-            const rawWk = parseInt(leagueNode.currentWk);
-            const lastRegWk = parseInt(leagueNode.lastRegularSeasonWeek || 14);
-            
-            // If it's an archived season (past year) OR MFL resets currentWk, default to the end of the regular season
-            let effectiveWk = rawWk;
-            if (!rawWk || rawWk < 1 || parseInt(targetYear) < new Date().getFullYear()) {
-                effectiveWk = lastRegWk;
-            }
-            
-            const maxVisibleWeek = Math.min(effectiveWk, lastRegWk);
-
-            for (let w = 1; w <= maxVisibleWeek; w++) {
-                const opt = document.createElement('option');
-                opt.value = w;
-                opt.textContent = "Week " + w;
-                weekSelect.appendChild(opt);
-            }
-            weekSelect.value = maxVisibleWeek;
-        }
-
-        // --- 2. Conference Selector Setup ---
-        const confSelect = document.getElementById("dnfl_standings_confFilter");
-        if (confSelect) {
-            confSelect.innerHTML = ''; 
-            cachedConferences.forEach(conf => {
-                const opt = document.createElement('option');
-                opt.value = conf.id;
-                opt.textContent = conf.name;
-                confSelect.appendChild(opt);
-            });
-
-            let defaultConfId = null;
-            if (loggedInFranchiseId) {
-                const franchise = cachedLeagueDetails.find(f => f.id === loggedInFranchiseId);
-                if (franchise) {
-                    defaultConfId = franchise.conference;
-                }
-            }
-
-            // Fallback (Safe for 2 or 3 conference structures)
-            if (!defaultConfId) {
-                const fallbackConf = cachedConferences.find(c => c.name.toLowerCase().includes("cameron crazies"));
-                defaultConfId = fallbackConf ? fallbackConf.id : cachedConferences[0].id;
-            }
-            confSelect.value = defaultConfId;
-        }
-    }
-
-    window.updateDnflStandingsData = async function() {
-        const tbody = document.getElementById("dnfl-standings-tbody");
-        const weekSelect = document.getElementById("dnfl_standings_weekFilter");
-        if (!weekSelect || !tbody) return;
-
-        const selectedWeek = weekSelect.value;
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 2.5rem; font-weight: 600; color: #121212;">Loading Week ${selectedWeek} Standings...</td></tr>`;
-
-        try {
-            if (!weeklyStandingsData[selectedWeek]) {
-                // Utilizes the newly extracted global targetYear to prevent API errors on archives
-                let mflUrl = `https://${activeHost}/${targetYear}/export?TYPE=leagueStandings&JSON=1&COLUMN_NAMES=1&ALL=1&W=${selectedWeek}`;
-                if (leagueId) mflUrl += `&L=${leagueId}`;
-
-                const apiKey = window.apiKey || new URLSearchParams(window.location.search).get('APIKEY');
-                if (apiKey) mflUrl += `&APIKEY=${apiKey}`;
-
-                const response = await fetch(mflUrl);
-                if (!response.ok) throw new Error("MFL Server rejected connection request.");
-                
-                const data = await response.json();
-                
-                if (!data || !data.leagueStandings || !data.leagueStandings.franchise) {
-                    throw new Error("Invalid payload returned from MFL for Week " + selectedWeek);
-                }
-                
-                weeklyStandingsData[selectedWeek] = data.leagueStandings.franchise;
-            }
-
-            currentActiveWeekStats = weeklyStandingsData[selectedWeek];
-            calculateSeeds();
-            window.updateDnflStandingsView();
-
-        } catch (error) {
-            console.error("DNFL Standings Data Error:", error);
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: #ef4444; padding: 2rem;">Error loading weekly standings.</td></tr>`;
-        }
-    };
 
     function getWinPct(stats) {
         const w = parseInt(stats.h2hw || 0);
@@ -170,7 +80,7 @@
                 .map(profile => {
                     return {
                         profile: profile,
-                        stats: currentActiveWeekStats.find(s => s.id === profile.id) || {}
+                        stats: cachedStandingsFranchises.find(s => s.id === profile.id) || {}
                     };
                 });
 
@@ -196,6 +106,34 @@
                 }
             });
         });
+    }
+
+    function setupDropdown() {
+        const confSelect = document.getElementById("dnfl_standings_confFilter");
+        if (!confSelect) return;
+
+        confSelect.innerHTML = ''; 
+        cachedConferences.forEach(conf => {
+            const opt = document.createElement('option');
+            opt.value = conf.id;
+            opt.textContent = conf.name;
+            confSelect.appendChild(opt);
+        });
+
+        let defaultConfId = null;
+        if (loggedInFranchiseId) {
+            const franchise = cachedLeagueDetails.find(f => f.id === loggedInFranchiseId);
+            if (franchise) {
+                defaultConfId = franchise.conference;
+            }
+        }
+
+        // Fallback
+        if (!defaultConfId) {
+            const fallbackConf = cachedConferences.find(c => c.name.toLowerCase().includes("cameron crazies"));
+            defaultConfId = fallbackConf ? fallbackConf.id : cachedConferences[0].id;
+        }
+        confSelect.value = defaultConfId;
     }
 
     window.updateDnflStandingsView = function() {
@@ -233,7 +171,7 @@
             });
 
             divisionProfiles.forEach(profile => {
-                const stats = currentActiveWeekStats.find(t => t.id === profile.id) || {};
+                const stats = cachedStandingsFranchises.find(t => t.id === profile.id) || {};
                 const teamName = profile.name || "Franchise " + profile.id;
                 const ownerName = profile.owner_name || "Owner";
                 const logoUrl = profile.icon ? profile.icon.toString().trim() : "https://dnfl.live/images/ficon-dnfl.png"; 
