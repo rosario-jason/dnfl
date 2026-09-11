@@ -7,8 +7,6 @@
 
   <div class="toggle_tabs"> 
     <br/>
-    <!-- Markdown Parser Dependency (Marked.js) -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <div class="dnfl-module-container">
         
@@ -20,7 +18,7 @@
             </div>
 
             <div class="dnfl-rules-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button class="dnfl-visibility-toggle-btn" onclick="window.toggleSubheadMenus()">Show Sub Menus</button>
+                <button class="dnfl-visibility-toggle-btn" onclick="window.showSubMenus()">Show Sub Menus</button>
                 <button class="dnfl-visibility-toggle-btn" onclick="window.expandAllRules()">Expand All</button>
                 <button class="dnfl-visibility-toggle-btn" onclick="window.collapseAllRules()">Collapse All</button>
             </div>
@@ -35,6 +33,9 @@
 
     </div>
 
+    <!-- Markdown Parser Dependency (Marked.js) -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
     <!-- Initialization Waiter -->
     <script>
         (function checkInit() {
@@ -45,8 +46,6 @@
             }
         })();
     </script>
-
-
 
   </div>
 </div>

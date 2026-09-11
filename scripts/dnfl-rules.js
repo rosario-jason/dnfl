@@ -1,12 +1,11 @@
 /* ==========================================================================
-   DNFL Official Rules Module Script v1.5
-   Features: 3-Level Collapsible Accordions (#, ##, ###), PDF Rule Numbering,
-             Table Styling & Alignment Sync, Blockquote Alignment, and Live Scoring.
+   DNFL Official Rules Module Script v1.06
+   Features: Deterministic Control Buttons (Show Sub Menus, Expand All, Collapse All),
+             3-Level Accordions (#, ##, ###), PDF Numbering, Table Sync.
    ========================================================================== */
 (function() {
     let activeRulesYear = '';
     let currentRulesMarkdown = '';
-    let isSubheadsVisible = false;
 
     let clientRetryCount = 0;
     const maxClientRetries = 30;
@@ -139,7 +138,6 @@
             processedMarkdown = processedMarkdown.replace('{{MFL_SCORING_TABLES}}', mflScoringHtml);
         }
 
-        // Split Level 1 Sections (# )
         const rawSections = processedMarkdown.split(/^# /m).filter(sec => sec.trim().length > 0);
 
         let htmlOutput = '';
@@ -149,7 +147,6 @@
             const mainTitle = lines[0].trim();
             const sectionBodyMarkdown = lines.slice(1).join('\n');
 
-            // Split Level 2 Subsections (## )
             const subSections = sectionBodyMarkdown.split(/^## /m).filter(sub => sub.trim().length > 0);
 
             htmlOutput += `
@@ -169,7 +166,6 @@
                     const subTitle = subLines[0].trim();
                     const subBodyMarkdown = subLines.slice(1).join('\n');
 
-                    // Split Level 3 Topics (### )
                     const rawTopics = subBodyMarkdown.split(/^### /m);
 
                     htmlOutput += `
@@ -180,16 +176,13 @@
                             <div id="dnfl-rules-sub-body-${secIndex}-${subIndex}" class="dnfl-rules-sub-content" style="display: none;">`;
 
                     if (rawTopics.length <= 1) {
-                        // Plain content without ### topics
                         const parsedSubContent = window.marked ? window.marked.parse(subBodyMarkdown) : subBodyMarkdown;
                         htmlOutput += parsedSubContent;
                     } else {
-                        // Render lead text before first ### if present
                         if (rawTopics[0].trim().length > 0) {
                             htmlOutput += window.marked ? window.marked.parse(rawTopics[0]) : rawTopics[0];
                         }
 
-                        // Render each Level 3 (###) Topic Accordion
                         rawTopics.slice(1).forEach((topicStr, topicIndex) => {
                             const topicLines = topicStr.trim().split('\n');
                             const topicTitle = topicLines[0].trim();
@@ -281,10 +274,8 @@
      */
     function formatParsedRuleElements() {
         document.querySelectorAll('#dnfl_rulesOutputContainer table').forEach(tbl => {
-            // Apply Standings table classes
             tbl.classList.add('homepagemodule', 'report', 'dnfl-rules-table');
 
-            // Synchronize TH text alignment to match TD alignment for every column
             const rows = tbl.querySelectorAll('tr');
             if (rows.length > 0) {
                 const headerCells = tbl.querySelectorAll('th');
@@ -302,7 +293,6 @@
                 }
             }
 
-            // Mobile wrapper
             if (!tbl.parentElement.classList.contains('mobile-wrap')) {
                 const wrapper = document.createElement('div');
                 wrapper.className = 'mobile-wrap';
@@ -311,7 +301,6 @@
             }
         });
 
-        // Ensure leftover unparsed headings align left
         document.querySelectorAll('#dnfl_rulesOutputContainer h1, #dnfl_rulesOutputContainer h2, #dnfl_rulesOutputContainer h3, #dnfl_rulesOutputContainer h4').forEach(h => {
             h.style.textAlign = 'left';
         });
@@ -369,19 +358,20 @@
     }
 
     /**
-     * Global Action: Toggle Subhead Visibilities
+     * Action: Show Sub Menus
+     * Opens Section (#) and Subsection (##) headers, but collapses Topic (###) contents.
      */
-    function toggleSubheadMenus() {
-        isSubheadsVisible = !isSubheadsVisible;
+    function showSubMenus() {
         document.querySelectorAll('.dnfl-rules-main-content, .dnfl-rules-sub-content').forEach(el => el.style.display = 'block');
-        document.querySelectorAll('.dnfl-rules-topic-content').forEach(el => el.style.display = isSubheadsVisible ? 'block' : 'none');
+        document.querySelectorAll('.dnfl-rules-topic-content').forEach(el => el.style.display = 'none');
+        
         document.querySelectorAll('.dnfl-rules-icon').forEach(icon => icon.className = 'fas fa-chevron-down dnfl-rules-icon');
         document.querySelectorAll('.dnfl-sub-icon').forEach(icon => icon.className = 'fas fa-caret-down dnfl-sub-icon');
-        document.querySelectorAll('.dnfl-topic-icon').forEach(icon => icon.className = isSubheadsVisible ? 'fas fa-angle-down dnfl-topic-icon' : 'fas fa-angle-right dnfl-topic-icon');
+        document.querySelectorAll('.dnfl-topic-icon').forEach(icon => icon.className = 'fas fa-angle-right dnfl-topic-icon');
     }
 
     /**
-     * Global Action: Expand All (Levels 1, 2, 3)
+     * Action: Expand All (Levels 1, 2, 3)
      */
     function expandAllRules() {
         document.querySelectorAll('.dnfl-rules-main-content, .dnfl-rules-sub-content, .dnfl-rules-topic-content').forEach(el => el.style.display = 'block');
@@ -391,7 +381,7 @@
     }
 
     /**
-     * Global Action: Collapse All
+     * Action: Collapse All (Collapses down to Level 1 # tabheads only)
      */
     function collapseAllRules() {
         document.querySelectorAll('.dnfl-rules-main-content, .dnfl-rules-sub-content, .dnfl-rules-topic-content').forEach(el => el.style.display = 'none');
@@ -406,7 +396,8 @@
     window.toggleSection = toggleSection;
     window.toggleSubSection = toggleSubSection;
     window.toggleTopic = toggleTopic;
-    window.toggleSubheadMenus = toggleSubheadMenus;
+    window.showSubMenus = showSubMenus;
+    window.toggleSubheadMenus = showSubMenus; // Backward-compatibility alias
     window.expandAllRules = expandAllRules;
     window.collapseAllRules = collapseAllRules;
 })();
