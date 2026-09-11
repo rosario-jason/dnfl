@@ -10,20 +10,29 @@
     <div class="toggle_tabs">
         <br>
 
-        <!-- FontAwesome (Required for Crown and Circle-Down icons) -->
+        <!-- FontAwesome (Required for Crown, Trophy, Down, and Up icons) -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-        <!-- 1. The Controls Container (Matches Power Rankings) -->
+        <!-- 1. The Controls Container -->
         <div class="dnfl-module-container" style="margin-bottom: 1rem;">
-            <div class="dnfl-controls" style="margin-bottom: 0;">
+            <!-- Overriding justify-content to push key to the right -->
+            <div class="dnfl-controls" style="margin-bottom: 0; justify-content: space-between; align-items: center;">
+                
+                <!-- Left Side: Dropdown -->
                 <div class="dnfl-filter-group">
                     <label for="dnfl_standings_confFilter">Conference:</label>
                     <select id="dnfl_standings_confFilter" class="dnfl-select" onchange="window.updateDnflStandingsView()"></select>
                 </div>
+
+                <!-- Right Side: Dynamic Key & Disclaimer -->
+                <div id="dnfl-standings-key" style="text-align: right; font-size: 0.8rem; color: #555; display: flex; flex-direction: column; gap: 4px;">
+                    <!-- Content injected dynamically by JS -->
+                </div>
+
             </div>
         </div>
 
-        <!-- 2. The Table Container (Matches Power Rankings) -->
+        <!-- 2. The Table Container -->
         <div class="dnfl-table-wrapper">
             <table class="dnfl-standings-table" style="width: 100%; border-collapse: collapse;">
                 <thead>
