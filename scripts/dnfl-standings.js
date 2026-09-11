@@ -1,4 +1,4 @@
-// dnfl-standings.js v11.2
+// dnfl-standings.js v12.0
 (function() { 
     console.log("[DNFL Standings] - Component file injected. Deep Override Engine activated.");
 
@@ -70,29 +70,13 @@
         // =====================================================================
         // HISTORICAL SEASONS: 2006 through 2023 (6 playoff teams per conf)
         // =====================================================================
-        '2006-2023': {
+        '2006-2024': {
             seedingScope: 'conference',
             seedingModel: 'standard_div_winners_first',
             playoffCutoff: 6,
             hasDivisionCrown: true,
             relegation: { enabled: false, type: 'conference', count: 0 },
             promotion: { enabled: false, count: 0 }
-        },
-
-        // =====================================================================
-        // TEST: 2024 (Multi-Tier Promotion / Relegation)
-        // =====================================================================
-        2024: {
-            seedingScope: 'conference',
-            seedingModel: 'standard_div_winners_first',
-            playoffCutoff: 6,
-            hasDivisionCrown: true,
-            relegation: { enabled: true, type: 'division', count: 1 },
-            promotion: { enabled: true, count: 4 },
-            conferenceOverrides: {
-                '00': { promotion: { enabled: false } },
-                '01': { seedingModel: 'mfl_native', playoffCutoff: 4, hasDivisionCrown: false, relegation: { enabled: false } }
-            }
         },
 
         // =====================================================================

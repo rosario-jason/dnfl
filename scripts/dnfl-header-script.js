@@ -6,7 +6,7 @@
     // ==========================================
     const SCRIPTS_TO_LOAD = [
         "dnfl-api-client.js?v1.01",
-        "dnfl-standings.js?v11.2"
+        "dnfl-standings.js?v12.0"
     ];
 
     // ==========================================
