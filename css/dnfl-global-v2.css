@@ -1,0 +1,700 @@
+/* --------------------------
+   DNFL Global Stylesheet
+----------------------------- */
+
+/* ==========================================================================
+   DNFL DESIGN TOKENS & GLOBAL CSS VARIABLES
+   ========================================================================== */
+:root, .dnfl {
+    /* ---------------- Primary Brand Palette ---------------- */
+    --accent: #0577B1;                  /* Duke Shale Blue (Preserved for MFL scripts compatibility) */
+    --dnfl-primary: #0577B1;            /* Duke Shale Blue */
+    --dnfl-primary-hover: #045e8c;      /* Deep Ocean Blue */
+    --dnfl-primary-light: #b6e2ff;      /* Ice Blue Tint */
+    
+    /* ---------------- Accent & Highlight Colors ---------------- */
+    --dnfl-accent-blue: #36a2eb;        /* Bright Sky Blue */
+    --dnfl-highlight-yellow: #fde68a;    /* Soft Canary Yellow */
+    --dnfl-highlight-yellow-hover: #fcd34d; /* Warm Gold / Sunflower */
+    --dnfl-alert-red: #ef4444;          /* Coral Red */
+    --dnfl-success-green: #10b981;      /* Emerald Green */
+    --dnfl-badge-blue: #3b82f6;         /* Cobalt Blue */
+    --dnfl-badge-amber: #f59e0b;        /* Dark Amber / Tangerine */
+
+    /* ---------------- Conference Branding Colors ---------------- */
+    --dnfl-conf-crazies-bg: rgba(54, 162, 235, 0.85);   /* Translucent Sky Blue (Cameron Crazies) */
+    --dnfl-conf-crazies-border: rgb(54, 162, 235);     /* Sky Blue Border */
+    --dnfl-conf-kville-bg: rgba(255, 99, 132, 0.85);    /* Translucent Rose Pink (K-Ville) */
+    --dnfl-conf-kville-border: rgb(255, 99, 132);      /* Rose Pink Border */
+    --dnfl-conf-bluedevils-bg: rgba(75, 192, 192, 0.85);/* Translucent Cyan/Teal (Blue Devils) */
+    --dnfl-conf-bluedevils-border: rgb(75, 192, 192);   /* Cyan/Teal Border */
+
+    /* ---------------- Neutral Palette ---------------- */
+    --dnfl-bg-card: #ffffff;            /* Pure White */
+    --dnfl-bg-alt: #fafafa;             /* Off-White / Light Snow */
+    --dnfl-bg-muted: #f8fafc;           /* Cool Slate Tint */
+    --dnfl-bg-dark: #262626;            /* Dark Charcoal */
+    --dnfl-bg-subhead: #f1f5f9;         /* Soft Slate Gray */
+    --dnfl-border-dark: #444444;        /* Dark Mineral Gray */
+    --dnfl-border-medium: #cbd5e1;      /* Light Slate Border */
+    --dnfl-border-light: #e5e7eb;       /* Soft Divider Gray */
+    --dnfl-border-subtle: #e2e8f0;      /* Ultra-Light Slate */
+    
+    /* ---------------- Typography Colors ---------------- */
+    --dnfl-text-main: #121212;          /* Obsidian Black */
+    --dnfl-text-heading: #0f172a;       /* Deep Midnight Slate */
+    --dnfl-text-subhead: #1e293b;       /* Dark Charcoal Slate */
+    --dnfl-text-subtle: #555555;        /* Medium Charcoal */
+    --dnfl-text-muted: #a3a3a3;         /* Muted Ash Gray */
+    --dnfl-text-quote: #475569;         /* Slate Blue-Gray */
+
+    /* ---------------- Layout & Components ---------------- */
+    --dnfl-radius-lg: 12px;
+    --dnfl-radius-md: 8px;
+    --dnfl-radius-sm: 4px;
+    --dnfl-shadow-card: 0 4px 16px rgba(0, 0, 0, 0.4);
+    --dnfl-shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --dnfl-transition-fast: 0.15s ease;
+    --dnfl-transition-smooth: 0.2s ease;
+}
+
+/* ==========================================================================
+   DNFL Global Styles
+   ========================================================================== */
+.dnfl-module-container {
+    width: 95%;
+    max-width: 1000px;
+    margin: 0 auto 2rem auto;
+    background-color: var(--dnfl-bg-card);
+    padding: 1.5rem;
+    border-radius: var(--dnfl-radius-lg);
+    box-shadow: var(--dnfl-shadow-card);
+    box-sizing: border-box;
+}
+
+/* Standardized Layout Toolbars & Control Bars */
+.dnfl-controls,
+.dnfl-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+    background-color: var(--dnfl-bg-card);
+    padding: 0.938rem;
+    border-radius: var(--dnfl-radius-md);
+}
+
+.dnfl-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.dnfl-filter-group label {
+    font-size: 0.875rem;
+    color: var(--dnfl-text-main);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.dnfl-select {
+    background-color: var(--dnfl-bg-card);
+    color: var(--dnfl-text-main);
+    border: 1px solid var(--dnfl-border-dark);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 1rem;
+    min-width: 160px;
+    transition: border-color var(--dnfl-transition-fast);
+}
+
+.dnfl-select:focus {
+    outline: none;
+    border-color: var(--dnfl-accent-blue);
+}
+
+.dnfl-visibility-toggle-btn {
+    font-size: 0.7rem;
+    font-weight: bold;
+    color: var(--dnfl-primary);
+    text-transform: uppercase;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 8px;
+    user-select: none;
+    transition: color var(--dnfl-transition-fast);
+}
+
+.dnfl-visibility-toggle-btn:hover {
+    color: var(--dnfl-text-muted);
+}
+
+.dnfl-section-header-row {
+    display: flex;
+    width: 100%;
+    margin-bottom: 0.75rem;
+}
+
+/* Shared Base Table Architecture */
+.dnfl-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    background-color: var(--dnfl-bg-card);
+}
+
+.dnfl-table th {
+    background-color: var(--dnfl-bg-card);
+    color: var(--dnfl-text-main);
+    padding: 12px 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--dnfl-border-dark);
+}
+
+.dnfl-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--dnfl-border-light);
+    color: var(--dnfl-text-main);
+}
+
+.dnfl-table tr:nth-child(even),
+.dnfl-table tr.dnfl-row-even {
+    background-color: var(--dnfl-bg-alt);
+}
+
+.dnfl-table tr:hover {
+    background-color: var(--dnfl-primary-light);
+}
+
+/* Universal Mobile Responsiveness Helper */
+@media (max-width: 768px) {
+    .dnfl-hide-mobile {
+        display: none !important;
+    }
+}
+
+/* ==========================================================================
+   DNFL Podcast Module Styles
+   ========================================================================== */
+.dnfl-podcast-banner {
+    width: 100%;
+    height: auto;
+    border-radius: var(--dnfl-radius-md);
+    margin-bottom: 0.5rem;
+    border: 1px solid var(--dnfl-border-dark);
+}
+
+.dnfl-media-player-block {
+    background-color: var(--dnfl-bg-dark);
+    padding: 1.25rem;
+    border-radius: var(--dnfl-radius-md);
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+    border: 1px solid var(--dnfl-border-dark);
+}
+
+.dnfl-now-playing-label {
+    font-size: 0.875rem;
+    color: var(--dnfl-bg-card);
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.dnfl-audio {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+.dnfl-transcript-wrapper {
+    width: 95%;
+    background-color: var(--dnfl-bg-card);
+    padding: 1.5rem;
+    border-radius: var(--dnfl-radius-md);
+    border: 1px solid var(--dnfl-border-dark);
+    max-height: 500px;
+    overflow-y: auto;
+    line-height: 1.6;
+    margin: 0.75rem auto 0 auto;
+    font-size: 0.85rem;
+    box-sizing: border-box;
+}
+
+.dnfl-transcript-wrapper h1, 
+.dnfl-transcript-wrapper h2 {
+    color: var(--dnfl-text-main);
+    margin-top: 0;
+    font-size: 1rem;
+}
+
+.dnfl-transcript-wrapper strong {
+    color: var(--dnfl-text-main);
+}
+
+.dnfl-transcript-wrapper em {
+    color: var(--dnfl-primary);
+    font-style: italic;
+}
+
+.dnfl-disclaimer-text {
+    font-size: 0.8rem;
+    font-style: italic;
+    text-align: center;
+    color: var(--dnfl-text-subtle);
+    margin-top: 1rem;
+}
+
+/* ==========================================================================
+   DNFL Rankings Module Styles
+   ========================================================================== */
+.dnfl-rankings-legend {
+    display: flex;
+    gap: 20px;
+    justify-content: flex-start;
+    margin: 15px 0;
+    background-color: var(--dnfl-bg-subhead);
+    padding: 12px 15px;
+    border-radius: var(--dnfl-radius-md);
+    border: 1px solid var(--dnfl-border-dark);
+    flex-wrap: wrap;
+}
+
+.dnfl-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: var(--dnfl-text-main);
+}
+
+.dnfl-legend-swatch {
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    border-radius: var(--dnfl-radius-sm);
+}
+
+.dnfl-legend-swatch.crazies {
+    background-color: var(--dnfl-conf-crazies-bg);
+    border: 1px solid var(--dnfl-conf-crazies-border);
+}
+
+.dnfl-legend-swatch.kville {
+    background-color: var(--dnfl-conf-kville-bg);
+    border: 1px solid var(--dnfl-conf-kville-border);
+}
+
+.dnfl-legend-swatch.bluedevils {
+    background-color: var(--dnfl-conf-bluedevils-bg);
+    border: 1px solid var(--dnfl-conf-bluedevils-border);
+}
+
+.dnfl-chart-wrapper {
+    position: relative;
+    min-height: 500px;
+    max-height: 1000px;
+    height: 100vh;
+    width: 100%;
+}
+
+.dnfl-table-wrapper {
+    width: 95%;
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: var(--dnfl-bg-card);
+    overflow-x: auto;
+    border-radius: var(--dnfl-radius-lg);
+    box-shadow: var(--dnfl-shadow-card);
+    box-sizing: border-box;
+}
+
+#dnfl_dataTable {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.8rem;
+}
+
+#dnfl_dataTable th {
+    background-color: var(--dnfl-bg-card);
+    color: var(--dnfl-text-main);
+    padding: 12px 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    text-align: left;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--dnfl-border-dark);
+}
+
+#dnfl_dataTable td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--dnfl-border-light);
+    color: var(--dnfl-text-main);
+}
+
+#dnfl_dataTable tr:nth-child(even) {
+    background-color: var(--dnfl-bg-alt);
+}
+
+#dnfl_dataTable tr:hover {
+    background-color: var(--dnfl-primary-light);
+}
+
+#dnfl_dataTable .dnfl-rank-badge {
+    font-weight: bold;
+    color: var(--dnfl-bg-card);
+    padding: 3px 3px;
+    border-radius: var(--dnfl-radius-sm);
+    display: inline-block;
+    text-align: center;
+    min-width: 1.5rem;
+}
+
+/* ==========================================================================
+   DNFL Rules Module Styles
+   ========================================================================== */
+.dnfl-rules-wrapper {
+    width: 100%;
+    margin-top: 1rem;
+    box-sizing: border-box;
+}
+
+.dnfl-rules-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--dnfl-text-heading);
+}
+
+.dnfl-rules-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* Reset MFL global centered & colored h1-h5 styles inside rules container */
+.dnfl-rules-wrapper h1,
+.dnfl-rules-wrapper h2,
+.dnfl-rules-wrapper h3,
+.dnfl-rules-wrapper h4,
+.dnfl-rules-wrapper h5 {
+    text-align: left !important;
+    margin: 14px 0 6px 0 !important;
+    font-family: inherit !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    background: none !important;
+}
+
+/* --- LEVEL 1 ACCORDION (# Section) --- */
+.dnfl-rules-tabhead {
+    background-color: var(--dnfl-bg-muted);
+    color: var(--dnfl-text-main);
+    padding: 14px 18px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    border: 1px solid var(--dnfl-border-medium);
+    border-radius: var(--dnfl-radius-md);
+    margin-top: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color var(--dnfl-transition-smooth), border-color var(--dnfl-transition-smooth);
+    user-select: none;
+}
+
+.dnfl-rules-tabhead:hover {
+    background-color: var(--dnfl-bg-subhead);
+    border-color: var(--dnfl-primary);
+    color: var(--dnfl-primary);
+}
+
+.dnfl-rules-icon {
+    margin-right: 8px;
+    color: var(--dnfl-primary);
+}
+
+.dnfl-rules-badge {
+    font-size: 0.75rem;
+    background-color: var(--dnfl-primary);
+    color: var(--dnfl-bg-card);
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.dnfl-rules-main-content {
+    padding: 12px 16px;
+    background-color: var(--dnfl-bg-card);
+    border: 1px solid var(--dnfl-border-subtle);
+    border-top: none;
+    border-bottom-left-radius: var(--dnfl-radius-md);
+    border-bottom-right-radius: var(--dnfl-radius-md);
+    margin-bottom: 12px;
+}
+
+/* --- LEVEL 2 ACCORDION (## Subsection) --- */
+.dnfl-rules-subhead {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--dnfl-primary);
+    padding: 10px 12px;
+    background-color: var(--dnfl-bg-subhead);
+    border-left: 4px solid var(--dnfl-primary);
+    border-radius: var(--dnfl-radius-sm);
+    margin-top: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color var(--dnfl-transition-fast);
+}
+
+.dnfl-rules-subhead:hover {
+    background-color: #e2e8f0;            /* Soft Neutral Gray */
+}
+
+.dnfl-sub-icon {
+    margin-right: 6px;
+}
+
+.dnfl-rules-sub-content {
+    padding: 10px 12px 12px 12px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--dnfl-text-subhead);
+}
+
+/* --- LEVEL 3 ACCORDION (### Topic) --- */
+.dnfl-rules-topichead {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--dnfl-text-heading);
+    padding: 8px 10px;
+    background-color: var(--dnfl-bg-muted);
+    border: 1px solid var(--dnfl-border-subtle);
+    border-radius: var(--dnfl-radius-sm);
+    margin-top: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color var(--dnfl-transition-fast);
+}
+
+.dnfl-rules-topichead:hover {
+    background-color: var(--dnfl-bg-subhead);
+    color: var(--dnfl-primary);
+}
+
+.dnfl-topic-icon {
+    margin-right: 6px;
+    color: var(--dnfl-primary);
+}
+
+.dnfl-rules-topic-content {
+    padding: 10px 14px;
+    background-color: var(--dnfl-bg-card);
+    border: 1px solid var(--dnfl-border-subtle);
+    border-top: none;
+    border-bottom-left-radius: var(--dnfl-radius-sm);
+    border-bottom-right-radius: var(--dnfl-radius-sm);
+    margin-bottom: 8px;
+}
+
+/* --- LISTS & HANGING INDENT ALIGNMENT --- */
+.dnfl-rules-wrapper ol {
+    margin-left: 1.25rem !important;
+    padding-left: 0.5rem !important;
+}
+
+.dnfl-rules-wrapper li {
+    margin-bottom: 8px !important;
+}
+
+/* Blockquotes: Aligned flush with hanging text of numbered lists */
+.dnfl-rules-wrapper blockquote {
+    margin: 10px 0 10px 1.75rem !important;
+    padding: 8px 14px !important;
+    background-color: var(--dnfl-bg-muted) !important;
+    border-left: 4px solid var(--dnfl-primary) !important;
+    color: var(--dnfl-text-quote) !important;
+    font-style: italic !important;
+    font-size: 0.88rem !important;
+    border-radius: 0 6px 6px 0 !important;
+}
+
+/* --- TABLES (MATCHING STANDINGS & RANKINGS STYLE) --- */
+.dnfl-rules-wrapper table.dnfl-rules-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    margin: 14px 0 !important;
+    background-color: var(--dnfl-bg-card) !important;
+    border: 1px solid var(--dnfl-border-medium) !important;
+    box-shadow: var(--dnfl-shadow-subtle) !important;
+    border-radius: 6px !important;
+    overflow: hidden !important;
+}
+
+.dnfl-rules-wrapper table.dnfl-rules-table th {
+    background-color: var(--dnfl-bg-card) !important;
+    color: var(--dnfl-text-subhead) !important;
+    padding: 12px 15px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 0.7rem !important;
+    letter-spacing: 0.5px !important;
+    border-bottom: 2px solid var(--dnfl-border-dark) !important;
+    text-align: inherit !important;
+}
+
+.dnfl-rules-wrapper table.dnfl-rules-table tr:nth-child(even),
+.dnfl-rules-wrapper table.dnfl-rules-table tr.eventablerow {
+    background-color: var(--dnfl-bg-alt) !important;
+}
+
+.dnfl-rules-wrapper table.dnfl-rules-table tr:nth-child(odd),
+.dnfl-rules-wrapper table.dnfl-rules-table tr.oddtablerow {
+    background-color: var(--dnfl-bg-card) !important;
+}
+
+.dnfl-rules-wrapper table.dnfl-rules-table tr:hover {
+    background-color: var(--dnfl-primary-light) !important;
+}
+
+.dnfl-rules-wrapper table.dnfl-rules-table td {
+    padding: 9px 12px !important;
+    border-bottom: 1px solid var(--dnfl-border-light) !important;
+    font-size: 0.88rem !important;
+    color: var(--dnfl-text-subhead) !important;
+}
+
+@media (max-width: 768px) {
+    .dnfl-rules-tabhead {
+        font-size: 0.95rem;
+        padding: 12px 14px;
+    }
+    .dnfl-rules-badge {
+        display: none;
+    }
+    .dnfl-rules-wrapper blockquote {
+        margin-left: 1rem !important;
+    }
+}
+
+/* ==========================================================================
+   DNFL Standing Module Styles
+   ========================================================================== */
+.dnfl-standings-table th {
+    background-color: var(--dnfl-bg-card);
+    color: var(--dnfl-text-main);
+    padding: 12px 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--dnfl-border-dark);
+}
+
+.dnfl-standings-table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--dnfl-border-light);
+    color: var(--dnfl-text-main);
+    vertical-align: middle;
+}
+
+.dnfl-standings-table tbody tr:not(.dnfl-division-header):not(.dnfl-my-team):hover {
+    background-color: var(--dnfl-primary-light) !important;
+    transition: background-color var(--dnfl-transition-smooth);
+}
+
+.dnfl-standings-table tbody tr.dnfl-row-even:not(.dnfl-my-team) {
+    background-color: var(--dnfl-bg-alt);
+}
+
+.dnfl-standings-table tr.dnfl-my-team {
+    background-color: var(--dnfl-highlight-yellow) !important;
+}
+
+.dnfl-standings-table tr.dnfl-my-team:hover {
+    background-color: var(--dnfl-highlight-yellow-hover) !important;
+}
+
+#dnfl-standings-key {
+    text-align: right;
+    font-size: 0.8rem;
+    color: var(--dnfl-text-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+/* ==========================================================================
+   MFL Style Updates for DNFL
+   ========================================================================== */
+.myfantasyleague_menu {
+    border-bottom: 0;
+    border-top: 0;
+    background: var(--accent) !important;
+    box-shadow: none;
+    height: 2.5rem;
+    position: sticky;
+    top: 0;
+}
+
+.mobile-wrap,
+.settings-mobile-wrap,
+#options_45 #container-wrap table.report,
+#body_live_scoring_summary #live_scoring_summary table.scoresummary table,
+#body_live_scoring_summary #live_scoring_summary table.teamscoresummary table,
+#body_live_scoring_summary #live_scoring_summary table[width="90%"],
+#body_live_scoring_summary #live_scoring_summary span.reportnavigation+table {
+    border-radius: var(--dnfl-radius-lg) !important;
+}
+
+.franchiseicon {
+    min-width: 4rem !important;
+    max-width: 4rem !important;
+    width: 4rem !important;
+    min-height: 4rem !important;
+    max-height: 4rem !important;
+    height: 4rem !important;
+    aspect-ratio: 1/1 !important;
+    object-fit: cover !important;
+    border-radius: 25% !important;
+    border: 0 !important;
+}
+
+.franchiselogo {
+    max-height: 25rem !important;
+    width: auto !important;
+    object-fit: contain !important;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.homepagecolumn .homepagemodule caption,
+caption,
+#commissioner_setup table.two_column_layout th {
+    font-size: 1.1rem;
+    text-align: left;
+    background: none;
+    padding: .5rem .313rem;
+    line-height: 100%;
+    text-transform: capitalize;
+}
+
+/* ==========================================================================
+   MFL Scripts Style Updates for DNFL
+   ========================================================================== */
+.dnfl {
+    --accent: #0577B1;  /* Duke Shale Blue */
+}
