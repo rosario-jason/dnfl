@@ -1,51 +1,1701 @@
 <!-- DNFL Rules -->
 
 <div id="dnfl_rules" class="mobile-wrap">
-   <table class="homepagemodule report" cellspacing="1" align="center">
-    <caption>DNFL Official Rulebook</caption>
+  <table class="homepagemodule report" cellspacing="1" align="center">
+    <caption>
+      DNFL Official Rulebook
+    </caption>
   </table>
 
-  <div class="toggle_tabs"> 
-    <br/>
-    
+  <div class="toggle_tabs">
+    <br />
+
+    <!-- DNFL RULES SCRIPTS -->
+    <script>
+    // Toggle individual accordion headers (Section, Subsection, or Topic)
+    function toggleElement(headerEl) {
+        const content = headerEl.nextElementSibling;
+        const icon = headerEl.querySelector('i');
+        if (!content) return;
+        
+        if (content.style.display === 'none' || content.style.display === '') {
+            content.style.display = 'block';
+            if (icon) {
+                if (icon.classList.contains('dnfl-rules-icon')) icon.className = 'fas fa-chevron-down dnfl-rules-icon';
+                if (icon.classList.contains('dnfl-sub-icon')) icon.className = 'fas fa-caret-down dnfl-sub-icon';
+                if (icon.classList.contains('dnfl-topic-icon')) icon.className = 'fas fa-angle-down dnfl-topic-icon';
+            }
+        } else {
+            content.style.display = 'none';
+            if (icon) {
+                if (icon.classList.contains('dnfl-rules-icon')) icon.className = 'fas fa-chevron-right dnfl-rules-icon';
+                if (icon.classList.contains('dnfl-sub-icon')) icon.className = 'fas fa-caret-right dnfl-sub-icon';
+                if (icon.classList.contains('dnfl-topic-icon')) icon.className = 'fas fa-angle-right dnfl-topic-icon';
+            }
+        }
+    }
+
+    // Control Bar Action: Show Sub Menus
+    function showSubMenus() {
+        document.querySelectorAll('.dnfl-rules-main-content, .dnfl-rules-sub-content').forEach(el => el.style.display = 'block');
+        document.querySelectorAll('.dnfl-rules-topic-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.dnfl-rules-icon').forEach(icon => icon.className = 'fas fa-chevron-down dnfl-rules-icon');
+        document.querySelectorAll('.dnfl-sub-icon').forEach(icon => icon.className = 'fas fa-caret-down dnfl-sub-icon');
+        document.querySelectorAll('.dnfl-topic-icon').forEach(icon => icon.className = 'fas fa-angle-right dnfl-topic-icon');
+    }
+
+    // Control Bar Action: Expand All
+    function expandAllRules() {
+        document.querySelectorAll('.dnfl-rules-main-content, .dnfl-rules-sub-content, .dnfl-rules-topic-content').forEach(el => el.style.display = 'block');
+        document.querySelectorAll('.dnfl-rules-icon').forEach(icon => icon.className = 'fas fa-chevron-down dnfl-rules-icon');
+        document.querySelectorAll('.dnfl-sub-icon').forEach(icon => icon.className = 'fas fa-caret-down dnfl-sub-icon');
+        document.querySelectorAll('.dnfl-topic-icon').forEach(icon => icon.className = 'fas fa-angle-down dnfl-topic-icon');
+    }
+
+    // Control Bar Action: Collapse All
+    function collapseAllRules() {
+        document.querySelectorAll('.dnfl-rules-main-content, .dnfl-rules-sub-content, .dnfl-rules-topic-content').forEach(el => el.style.display = 'none');
+        document.querySelectorAll('.dnfl-rules-icon').forEach(icon => icon.className = 'fas fa-chevron-right dnfl-rules-icon');
+        document.querySelectorAll('.dnfl-sub-icon').forEach(icon => icon.className = 'fas fa-caret-right dnfl-sub-icon');
+        document.querySelectorAll('.dnfl-topic-icon').forEach(icon => icon.className = 'fas fa-angle-right dnfl-topic-icon');
+    }
+    </script>
+
+    <!-- DNFL RULES MODULE -->
     <div class="dnfl-module-container">
         
         <!-- Controls Bar -->
         <div class="dnfl-controls" style="justify-content: space-between; align-items: center;">
-            <div class="dnfl-filter-group" style="flex-direction: row; align-items: center; gap: 10px;">
-                <label for="dnfl_rulesYearSelector">Season:</label>
-                <select id="dnfl_rulesYearSelector" class="dnfl-select" onchange="window.changeRulesYear()"></select>
+            <div class="dnfl-rules-title" style="font-size: 1.15rem; font-weight: 700; color: #0f172a;">
+                %YEAR% DNFL Official Rulebook
             </div>
-
             <div class="dnfl-rules-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button class="dnfl-visibility-toggle-btn" onclick="window.showSubMenus()">Show Sub Menus</button>
-                <button class="dnfl-visibility-toggle-btn" onclick="window.expandAllRules()">Expand All</button>
-                <button class="dnfl-visibility-toggle-btn" onclick="window.collapseAllRules()">Collapse All</button>
+                <button class="dnfl-visibility-toggle-btn" onclick="showSubMenus()">Show Sub Menus</button>
+                <button class="dnfl-visibility-toggle-btn" onclick="expandAllRules()">Expand All</button>
+                <button class="dnfl-visibility-toggle-btn" onclick="collapseAllRules()">Collapse All</button>
             </div>
         </div>
 
-        <!-- Rulebook Output Wrapper -->
-        <div id="dnfl_rulesOutputContainer" class="dnfl-rules-wrapper">
-            <div style="text-align: center; padding: 2.5rem; color: #555; font-weight: 600;">
-                <i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Loading DNFL Official Rulebook...
+        <!-- Rulebook Body Container -->
+        <div class="dnfl-rules-wrapper">
+
+        <!-- SECTION I: GENERAL -->
+        <div class="dnfl-rules-section">
+            <div class="dnfl-rules-tabhead" onclick="toggleElement(this)">
+                <span><i class="fas fa-chevron-right dnfl-rules-icon"></i> I. GENERAL</span>
+                <span class="dnfl-rules-badge">Section 1</span>
+            </div>
+            <div class="dnfl-rules-main-content" style="display: none;">
+                
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> A) Welcome</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A1. Overview</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Welcome to the Duke Networking Fantasy League (DNFL)</li>
+                                    <li class="subtext">This rulebook describes the DNFL league bylays, including league structure, league rules and expectations of league owners</li>
+                                    <li class="subtext">
+                                        The rulebook is organized so users can easily navigate to and reference specific rules as necessary
+                                        <p><span style="font-style: italic">For example, Rule II.A1.01 references the rule which defines the league entry fee amount</span></p>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A2. Last Update - July 27, 2026</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Updating rulebook in 2026 due to league expansion to 36 teams.</li>
+                                    <li class="subtext">The Rule Book below outlines the rules for 2026-27 season which comprises a Super League with 3 conferences of 12 teams each competing in a single bracket to crown the DNFL champion.</li>
+                                    <li class="subtext">For 2027-28 season and beyond we will be moving to a Relegation Structure with 2 Leagues: 1 Premier League of 24 Teams, 1 Relegation League of 12 Teams. This new structure is outlined in the last section of the Rule Book (Rule Section VIII.F: OTHER - Future Relegation Structure).</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> B) League Management</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B1. Commissioners</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">The DNFL League is managed by a team of three commissioners: Evan Bryman, Rob Fuqua, and Jason Rosario</li>
+                                    <li class="subtext">Any questions or clarifications regarding rules or regulations should be directed to the three commissioners</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
+        <!-- SECTION II: ACCOUNTING -->
+        <div class="dnfl-rules-section">
+            <div class="dnfl-rules-tabhead" onclick="toggleElement(this)">
+                <span><i class="fas fa-chevron-right dnfl-rules-icon"></i> II. ACCOUNTING</span>
+                <span class="dnfl-rules-badge">Section 2</span>
+            </div>
+            <div class="dnfl-rules-main-content" style="display: none;">
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> A) Entry Fees</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A1. Entry Fees</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">The league entry fee is $250 per team</li>
+                                    <li class="subtext">All payments must be payed via PayPal to ebryman@yahoo.com</li>
+                                    <li class="subtext">All entry fees are to be paid before the draft is started</li>
+                                    <li class="subtext">With 36 teams each paying $250, our league starting balance for each season will be $9,000</li>
+                                    <li class="subtext">Administrative fees for hosting the league are approximately $250 per season, bringing the total purse to approximately $8,750</li>
+                                    <li class="subtext">All prize money will be dispensed via PayPal one week after the Superbowl</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> B) Payouts</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B1. Payout Table</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <div class="dnfl-rules-table-wrapper mobile-wrap">
+                                    <table class="homepagemodule report dnfl-rules-table" id="rulestable">
+                                        <caption><span>Prizes and Payouts </span></caption>
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align: left">Prize </th>
+                                                <th style="width:10%;text-align:right">Payout $</th>
+                                                <th style="text-align: left; padding-left:20px;">Notes </th>
+                                                <th style="width:10%;text-align:right">Total $ </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="oddtablerow">
+                                                <td style="text-align: left"> Super Bowl Champion </td>
+                                                <td style="text-align:right">3,850 </td>
+                                                <td style="text-align: left; padding-left:20px;">1 winner</td>
+                                                <td style="text-align:right">3,850 </td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td style="text-align: left">Super Bowl Runner-Up </td>
+                                                <td style="text-align:right">1,000 </td>
+                                                <td style="text-align: left; padding-left:20px;">1 winner</td>
+                                                <td style="text-align:right">1,000 </td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td style="text-align: left">Last Team Standing </td>
+                                                <td style="text-align:right">200 </td>
+                                                <td style="text-align: left; padding-left:20px;">3 winners, one per Conference</td>
+                                                <td style="text-align:right">600 </td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td style="text-align: left">Conference Playoff Runner-Ups </td>
+                                                <td style="text-align:right">200 </td>
+                                                <td style="text-align: left; padding-left:20px;">3 winners, one per Conference</td>
+                                                <td style="text-align:right">600 </td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td style="text-align: left">Division Winners</td>
+                                                <td style="text-align:right">150 </td>
+                                                <td style="text-align: left; padding-left:20px;">6 winners, one per Division</td>
+                                                <td style="text-align:right">900 </td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td style="text-align:left">Weekly High Scorers</td>
+                                                <td style="text-align:right">50 </td>
+                                                <td style="text-align: left; padding-left:20px;">36 winners, one per Conference each week (Weeks 1-12)</td>
+                                                <td style="text-align:right">1,800 </td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td style="text-align:left"><b>Total</b> </td>
+                                                <td> </td>
+                                                <td> </td>
+                                                <td style="text-align:right"><b>8,750 </b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p><span style="font-style:italic">Note: If the administrative fees are less than $250, any additional $ will be added to the total prize winnings of the Super Bowl Champion. If fees are more than $250 then the championship prize is reduced slightly.</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SECTION III: LEAGUE -->
+        <div class="dnfl-rules-section">
+            <div class="dnfl-rules-tabhead" onclick="toggleElement(this)">
+                <span><i class="fas fa-chevron-right dnfl-rules-icon"></i> III. LEAGUE</span>
+                <span class="dnfl-rules-badge">Section 3</span>
+            </div>
+            <div class="dnfl-rules-main-content" style="display: none;">
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> A) Conference & Division Assignments</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A1. Conferences & Divisions</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">This is a 3 Conference league: Each Conferences has 2 Divisions; Each Division has 6 teams</li>
+                                    <li class="subtext">Every 3 years teams will be re-distributed across the Divisions (this rule was first implemented in 2018)</li>
+                                    <li class="subtext">Upcoming realignment years are: 2027 - 2030 - 2033 - 2035</li>
+                                    <p><span style="font-style:italic">Note: There is also an alignment in 2026 due to the expansion to 36 teams.</span></p>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A2. Team Assignment Rules</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <p><span style="font-style:italic">Note: The Team Assignment Rules below define the assignment process for the 2026 season based on the expansion to 36 teams and restructuring to 3 Conferences. These assignment rules will be revisited prior to the 2027 season based on the new Relegation Structure of the league that will be in affect at that time.</span></p>
+                                    <li class="subtext">The returning 28 teams will be placed across the 3 Conferences based on final standings, using a snake placement approach to distribute teams into the 6 Divisions as evenly as possible.</li>
+                                    <li class="subtext">The commissioners will try to ensure all keepers for returning teams are honored and may adjust team Conference assignment accordingly.</li>
+                                    <li class="subtext">The 8 new expansion teams will be placed randomly across the 6 Divisions.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> B) Standings</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B1. Standings</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Standings are determined for each Division by overall wins vs losses</li>
+                                    <li class="subtext">If 2 or more teams have the same win/loss records, total points accumulated is used as the tie-breaker</li>
+                                    <li class="subtext">If 2 or more teams have the same record and same total points, the regular season head-to-head records are used as the tie-breaker</li>
+                                    <li class="subtext">If a tiebreaker is needed for any situation that is not explicitly stated in the rules, a commissioner from the non-interested Conference will flip a coin to break the tie</li>
+                                    <li class="subtext">The final standings after 12 weeks of play will determine who competes in the Playoffs.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> C) Rosters</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> C1. Rosters</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Each team can carry 16 players</li>
+                                    <li class="subtext">There is neither an Injured Reserve (IR) bench nor Taxi Squad</li>
+                                    <li class="subtext">Injured players may be kept on a roster, but will occupy one of the 16 roster spots</li>
+                                    <li class="subtext">At all times each team must have a complete 16 player roster, containing at least enough players in each position to submit a valid starting lineup</li>
+                                    <li class="subtext">There are no limits to how many players at each position a team may own</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> D) Lineups</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> D1. Starting lineups</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">1 QB</li>
+                                    <li class="subtext">2 RB</li>
+                                    <li class="subtext">2 WR</li>
+                                    <li class="subtext">1 TE</li>
+                                    <li class="subtext">1 FLEX (RB/WR/TE)</li>
+                                    <li class="subtext">1 PK</li>
+                                    <li class="subtext">1 DEF</li>
+                                    <li class="subtext">TOTAL OF 9 STARTERS</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> D2. Lineup Rules</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">A starting lineup that does not consist of the above (too many or too few in any position) will be considered illegal and will result in a forfeit</li>
+                                    <li class="subtext">Starting a player who is on a bye-week is legal, however the player will score zero points that week</li>
+                                    <li class="subtext">Starting lineups may be made at any time before a player's game has started</li>
+                                    <li class="subtext">Players whose games have started will be locked for that week</li>
+                                    <li class="subtext">If a lineup is not submitted by the deadline, the team's starting lineup from the previous week will be used (In Week 1, not submitting a lineup will result in a forfeit)</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> E) Schedules</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> E1. Regular Season</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Regular season play will take place during Weeks 1-12 of the NFL season</li>
+                                    <li class="subtext">Each team will play one head-to-head game each week (each team plays 12 regular season games)</li>
+                                    <li class="subtext">Each team will play each of their 11 Conference opponents once during the regular season, between Weeks 1-6 and 8-12 of the season</li>
+                                    <li class="subtext">Inter-Conference games will be played in Week 7, matching teams from different Conferences based on their draft order.</li>
+                                    <p><span style="font-style:italic">Note: Week 7 Inter-Conference matchups may feature games where teams have the same players in their starting lineups</span></p>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> E2. Post-Season</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Post-season play will take place during Weeks 13-16 of the NFL season</li>
+                                    <li class="subtext">The Championship Bracket will include 16 teams in total, composed of the top performing regular season teams from each the three Conferences (see Championships for more details)</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> F) Draft</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> F1. Draft Format</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">There will be 16 rounds in the draft</li>
+                                    <li class="subtext">Pick order will snake - the odd-numbered rounds will be 1 to 12, then 12 to 1 in the even numbered rounds</li>
+                                    <li class="subtext">Each year the draft will be held on either the third or fourth Saturday of August (final date and time to be determined by the commissioners)</li>
+                                    <li class="subtext">Draft picks may be traded (see Transactions/Trades for more details)</li>
+                                    <li class="subtext">The draft will be a live online draft</li>
+                                    <li class="subtext">Draft Timer is set to 1 minute 30 seconds - meaning each owner will have 90 seconds to make their pick</li>
+                                    <li class="subtext">If the Draft Timer expires, the system will automatically pick a player for the owner based on the highest-ranked available player on the owner's "My Draft List" player rankings, or ADP rankings if an owner has not set up a Draft List. The league commissioner may then pause the draft and pick a player or make corrections</li>
+                                    <li class="subtext">Keeper picks will be entered by the commissioner in the appropriate slot on the draft board before the draft begins</li>
+                                    <li class="subtext">If an owner misses a pick or selects the wrong player, for whatever circumstances, the owner must immediately notify the commissioners with the error and their desired change - the commissioners will determine if a correction is warranted and will make changes as necessary</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> F2. Draft Order</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <p><span style="font-style:italic">Note: The Draft Order below has been updated due to the expansion to 36 teams.</span></p>
+                                    <li class="subtext">Expansion teams will get the first picks in each conference. The Commissioners will randomly assign the draft order for these expansion teams, ensuring they receive the First, Second, or Third draft picks in their Conference.</li>
+                                    <li class="subtext">The draft order for the returning 28 teams will be based on the final standings from last season, including the results of the Playoffs - with the top performing teams receiving the later draft picks in their newly assigned Conference, and the worst performing teams receiving earlier draft picks.</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> G) Supplemental Draft Picks</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> G1. Supplemental Picks</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Supplemental draft picks are awarded to team owners who accomplish one or more of the life events defined below</li>
+                                    <li class="subtext">Teams with multiple owners must select a primary owner; only life events for this primary owner wll be eligible for supplemental draft pick awards (the primary owner cannot change from year to year)</li>
+                                    <li class="subtext">Life events must occur between August 1st of the prior year and July 31st of the current year to be eligible for the current draft</li>
+                                    <li class="subtext">Supplemental picks are awarded in exchange of another draft pick of the owner's choice</li>
+                                    <li class="subtext">
+                                        When requesting a supplemental pick, an owner must communicate to the commissioners which draft pick the team wishes to exchange
+                                        <p><span style="font-style: italic">Example:</span><br>An owner may choose to exchange their 16th round pick as it is the last pick of their draft, or they may choose to exchange an earlier draft pick so they can use their later draft picks to select potential keepers</p>
+                                    </li>
+                                    <li class="subtext">Failure to declare which picks to exchange will result in the commissioners exchanging the team's last available draft pick(s)</li>
+                                    <li class="subtext">Supplemental picks for life events must be requested by owners at least two weeks prior to the draft, and owners must make themselves available to provide proof as necessary to the commissioners to validate the award</li>
+                                    <li class="subtext">Supplemental picks are added to the end of the draft round; therefore, a draft round could have more than 14 selections</li>
+                                    <li class="subtext">A committee of DNFL Owners will review the Life Event and Supplemental Draft Pick Awards each season and propose changes for league vote (See Voting and Rule Changes: VIII.E)</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> G2. Life Events and Supplemental Draft Pick Awards</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">10th Round Pick — Rewarded for getting married, having a child, or celebrating a decade birthday (e.g. 40th, 50th, 60th, etc.)</li>
+                                    <li class="subtext">8th Round Pick — Rewarded for an owner's personal promotion, new job, IPO/sale of a company in which they own a stake, or retirement</li>
+                                    <li class="subtext">6th Round Pick — Rewarded for getting a Duke alumnus a new job</li>
+                                    <li class="subtext">4th Round Pick — Rewarded for getting any other CCMBA'07 classmate a new job</li>
+                                    <li class="subtext">2nd Round Pick — Rewarded for getting a DNFL owner a new job</li>
+                                    <li class="subtext">Two 1st Round Picks — Rewarded when an owner becomes the CEO/CFO of a Fortune 500 company or head coach of the Duke Basketball team (Note: This owner must choose a draft day destination and pay everyone's expenses to fly to the next draft)</li>
+                                </ol>
+                                <p class="subindent"><span style="font-style: italic">Note: Getting someone a new job is defined as an owner's referral or personal contacts being the initial point of entry or providing material help</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SECTION IV: SCORING -->
+        <div class="dnfl-rules-section">
+            <div class="dnfl-rules-tabhead" onclick="toggleElement(this)">
+                <span><i class="fas fa-chevron-right dnfl-rules-icon"></i> IV. SCORING</span>
+                <span class="dnfl-rules-badge">Section 4</span>
+            </div>
+            <div class="dnfl-rules-main-content" style="display: none;">
+                
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> A) Individual Players</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A1. Offense Scoring Rules Table</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <div class="dnfl-rules-table-wrapper mobile-wrap">
+                                    <table class="homepagemodule report dnfl-rules-table" id="rulestable">
+                                        <caption><span>Rules for QB, RB, WR, TE, PK </span></caption>
+                                        <thead>
+                                            <tr>
+                                                <th class="event" style="text-align: left">Event</th>
+                                                <th class="range" style="text-align: center">Range (Low-High)</th>
+                                                <th class="points" style="text-align: right">Points</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Number of Passing TDs</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">4 points each</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Passing Yards</td>
+                                                <td class="range" style="text-align: center">0-299</td>
+                                                <td class="points" style="text-align: right">0 points for 0, and then 0.04 points for every 1 thereafter</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Passing Yards</td>
+                                                <td class="range" style="text-align: center">300-599</td>
+                                                <td class="points" style="text-align: right">14 points for 300, and then 0.04 points for every 1 thereafter</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Passing Yards</td>
+                                                <td class="range" style="text-align: center">600-999</td>
+                                                <td class="points" style="text-align: right">28 points for 600, and then 0.04 points for every 1 thereafter</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Pass Interceptions Thrown</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">-1 point each</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Passing 2 Pointers</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">2 points each</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Number of Rushing TDs</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">6 points each</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Rushing Yards</td>
+                                                <td class="range" style="text-align: center">0-99</td>
+                                                <td class="points" style="text-align: right">0 points for 0, and then 0.10 point for every 1 thereafter</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Rushing Yards</td>
+                                                <td class="range" style="text-align: center">100-199</td>
+                                                <td class="points" style="text-align: right">12 points for 100, and then 0.10 point for every 1 thereafter</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Rushing Yards</td>
+                                                <td class="range" style="text-align: center">200-999</td>
+                                                <td class="points" style="text-align: right">24 points for 200, and then 0.10 point for every 1 thereafter</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Rushing 2 Pointers</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">2 points each</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Number of Receiving TDs</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">6 points each</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Receiving Yards</td>
+                                                <td class="range" style="text-align: center">0-99</td>
+                                                <td class="points" style="text-align: right">0 points for 0, and then 0.10 point for every 1 thereafter</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Receiving Yards</td>
+                                                <td class="range" style="text-align: center">100-199</td>
+                                                <td class="points" style="text-align: right">12 points for 100, and then 0.10 point for every 1 thereafter</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Receiving Yards</td>
+                                                <td class="range" style="text-align: center">200-999</td>
+                                                <td class="points" style="text-align: right">24 points for 200, and then 0.10 point for every 1 thereafter</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Receptions</td>
+                                                <td class="range" style="text-align: center">0-99</td>
+                                                <td class="points" style="text-align: right">1 point each</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Receiving 2 Pointers</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">2 points each</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Length of Field Goal Made</td>
+                                                <td class="range" style="text-align: center">0-39</td>
+                                                <td class="points" style="text-align: right">3</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Length of Field Goal Made</td>
+                                                <td class="range" style="text-align: center">40-49</td>
+                                                <td class="points" style="text-align: right">4</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Length of Field Goal Made</td>
+                                                <td class="range" style="text-align: center">50-59</td>
+                                                <td class="points" style="text-align: right">5</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Length of Field Goal Made</td>
+                                                <td class="range" style="text-align: center">60-99</td>
+                                                <td class="points" style="text-align: right">6</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Extra Points</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">1 point each</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Number of Punt Return TDs</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">6 points each</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Number of Kickoff Return TDs</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">6 points each</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Fumbles Lost (to Opponent)</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">-1 point each</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> B) Team Defense</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B1. Defense Scoring Rules Table</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <div class="dnfl-rules-table-wrapper mobile-wrap">
+                                    <table class="homepagemodule report dnfl-rules-table" id="rulestable">
+                                        <caption><span>Rules for Def </span></caption>
+                                        <thead>
+                                            <tr>
+                                                <th class="event" style="text-align: left">Event</th>
+                                                <th class="range" style="text-align: center">Range (Low-High)</th>
+                                                <th class="points" style="text-align: right">Points</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Number of Punt Return TDs</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">6 points each</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Number of Kickoff Return TDs</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">6 points each</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Number of Defensive Fumble Recovery TDs</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">4 points each</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Fumble Recoveries (from Opponent)</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">2 points each</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Number of Interception Return TDs</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">4 points each</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Interceptions Caught</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">2 points each</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Number of Blocked Field Goal TDs</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">4 points each</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Blocked Field Goals</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">2 points each</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Number of Blocked Punt TDs</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">4 points each</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Blocked Punts</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">2 points each</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Sacked a QB</td>
+                                                <td class="range" style="text-align: center">0-25</td>
+                                                <td class="points" style="text-align: right">1 point each</td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td class="event" style="text-align: left">Safeties</td>
+                                                <td class="range" style="text-align: center">0-10</td>
+                                                <td class="points" style="text-align: right">2 points each</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Total Points Allowed</td>
+                                                <td class="range" style="text-align: center">0-0</td>
+                                                <td class="points" style="text-align: right">10</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Total Points Allowed</td>
+                                                <td class="range" style="text-align: center">1-6</td>
+                                                <td class="points" style="text-align: right">6</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Total Points Allowed</td>
+                                                <td class="range" style="text-align: center">7-13</td>
+                                                <td class="points" style="text-align: right">4</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Total Points Allowed</td>
+                                                <td class="range" style="text-align: center">14-19</td>
+                                                <td class="points" style="text-align: right">2</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Total Points Allowed</td>
+                                                <td class="range" style="text-align: center">20-26</td>
+                                                <td class="points" style="text-align: right">0</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Total Points Allowed</td>
+                                                <td class="range" style="text-align: center">27-35</td>
+                                                <td class="points" style="text-align: right">-2</td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td class="event" style="text-align: left">Total Points Allowed</td>
+                                                <td class="range" style="text-align: center">36-999</td>
+                                                <td class="points" style="text-align: right">-4</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p><span style="font-style:italic">Note: If the administrative fees are less than $200, any additional $ will be added to the total prize winnings of the Super Bowl Champion. If fees are more than $200 then the championship prize is reduced slightly.</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SECTION V: TRANSACTIONS -->
+        <div class="dnfl-rules-section">
+            <div class="dnfl-rules-tabhead" onclick="toggleElement(this)">
+                <span><i class="fas fa-chevron-right dnfl-rules-icon"></i> V. TRANSACTIONS</span>
+                <span class="dnfl-rules-badge">Section 5</span>
+            </div>
+            <div class="dnfl-rules-main-content" style="display: none;">
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> A) Waivers (Add/Drop)</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A1. General Waiver Information</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">All Free Agents (FAs) are locked at the start of the week and are available for Blind Bid (BBID) waiver requests</li>
+                                    <li class="subtext">BBID waiver requests are then processed, and any FAs not added via BBID are unlocked and made available for First Come First Serve (FCFS) waivers</li>
+                                    <li class="subtext">Players dropped from rosters during BBID processing become locked FAs and are available for waivers in the next BBID waiver period</li>
+                                    <li class="subtext">Owners must always drop a player from their roster to add an FA (for both BBID and FCFS waivers)</li>
+                                    <li class="subtext">Owners may not drop a player without adding an FA (this ensures teams always have a full roster of 16 players)</li>
+                                    <li class="subtext">There is no limit on the number of FAs that a team can add each week or over the course of the season</li>
+                                    <li class="subtext">The first BBID waiver period begins after the draft is completed and is processed on the Wednesday before Week 1 of the season</li>
+                                    <li class="subtext">All BBID and FCFS waivers end after the DNFL Superbowl (Week 16)</li>
+                                    <li class="subtext">Teams eliminated from post-season play are not allowed to add FAs or drop players</li>
+                                    <li class="subtext">All FAs are locked during the off-season (no add/drops allowed)</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A2. BBID $</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Each team will begin the season with $100 of BBID money (this is not real money and has no impact on league accounting)</li>
+                                    <li class="subtext">The minimum bid amount for an FA is $0, bids can be increased in increments of $1</li>
+                                    <li class="subtext">The maximum bid amount for an FA is a team's remaining BBID balance (up to $100)</li>
+                                    <li class="subtext">If an owner's BBID balance is $0, the owner can still submit BBID bids for FAs in the hopes of getting an FA for $0</li>
+                                    <li class="subtext">BBID $ are valid only for the current season, unused BBID $ do not no carry over to the following season</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A3. BBID Waivers</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">BBID waiver period begins each week on Sunday at 1pm ET</li>
+                                    <li class="subtext">BBID waivers are processed each week on Wednesday at 12pm ET</li>
+                                    <li class="subtext">During BBID owners submit bids for FAs, which include the FA to add, a player to drop, and a bid amount</li>
+                                    <li class="subtext">All BBID bids are "blind" bids, meaning that owners cannot see the bids that other owners have submitted</li>
+                                    <li class="subtext">When BBIDs are processed, the system awards each FA to the owner with the highest bid for that FA</li>
+                                    <li class="subtext">If 2 or more owners happen to place the same bid for the same player, the team who has the worst win/loss record will get priority and win the bid, if win/loss record does not break the tie, the team with the fewest total points will with the bid</li>
+                                    <li class="subtext">Owners can enter up to 8 bids each BBID waiver period</li>
+                                    <li class="subtext">
+                                        When submitting a bid, owners are allowed to list alternative FAs to pick up in the case that an owners' first choices are not available
+                                        <p><span style="font-style: italic">Example 1:</span><br>An owner can submit a bid to drop Player Z, and add FA A for $3, and can list FAs B, C, and D as 1st, 2nd and 3rd alternatives to A in the same bid group - if FAs A and B are awarded to other owners the owner be awarded FA C in exchange for Player Z and a BBID fee of $3 (this example would be considered as 1 of the 8 bids allowed)</p>
+                                        <p><span style="font-style: italic">Example 2:</span><br>If an owner wants to bid different amounts for each of the FAs (A, B, C and D) the owner should submit multiple bid groups, requesting to add each FA in a separate bid group, but selecting the same Player Z to drop in every bid - they can then submit different bid amounts for each of these bids and the system will rank the bids by the highest to lowest bid $ and process based on bid amount and player availability (this example would be considered as 4 of the 8 bids allowed - a bid for each FA)</p>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A4. FCFS Waivers</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">FCFS will run each week after BBID has processed (Wednesday at 12pm ET)</li>
+                                    <li class="subtext">FCFS will end each week on Sunday at 1pm ET</li>
+                                    <li class="subtext">FAs are locked at kickoff of their games and will no longer be available that week for FCFS waivers</li>
+                                    <li class="subtext">There is a $2 fee against a team's BBID balance for each FCFS transaction</li>
+                                    <li class="subtext">If an owner's BBID balance is less than $2, the owner cannot make FCFS waivers, and must wait until the next BBID waiver period</li>
+                                    <li class="subtext">All FCFS transactions must include an FA to add and a player to drop</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> B) Trades</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B1. Trade Deadlines</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Trade Deadline Week 9: special deadline for trades of players drafted in the first 3 rounds (this prevents late season firesales of top talent players who are ineligible as keepers the following year)</li>
+                                    <li class="subtext">Trade Deadline Week 11: standard deadline for trades of all other players and/or future draft picks</li>
+                                    <li class="subtext">Trade must be processed prior to kick-off of the first game of the deadline week</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B2. Trade Processing</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Trades must be proposed and accepted via the website</li>
+                                    <li class="subtext">Trades are only final once proposed and accepted through the website (trade agreements via other communications such as email or phone calls are not binding)</li>
+                                    <li class="subtext">If for any reason an owner accidentally accepts a trade offer in error, the owner has 5 minutes from the time of the transaction to send an email about the error to the commissioners and the other owner involved in the trade (if the email is stamped within 5 minutes of the transaction, the commissioners will reverse the trade, otherwise all trades are final)</li>
+                                    <li class="subtext">All trades are reviewed by the commissioners prior to processing to ensure that trades with players or draft picks not eligible to be traded (i.e. players drafted in rounds 1-3 after the Week 9 deadline) are not processed</li>
+                                    <li class="subtext">In-season trades will be reviewed by the commissioners and processed within 48 hours (this means that trades must be accepted by both parties 48 hours before kick-off of that week's games to guarantee that the players can be included in the teams' lineups)</li>
+                                    <li class="subtext">An owner cannot void or withdraw a trade after it has been accepted through the website, even if the trade is still under commissioners review</li>
+                                    <li class="subtext">Owners are responsible for their own due diligence in reviewing trade proposals (an owner cannot request for a trade to be revoked or voided because they were unaware at the time they accepted a trade of a player's injury or status)</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B3. Trading BBID $</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">BBID $ can be included in trades</li>
+                                    <li class="subtext">Owners can trade up to $30 in BBID $ during a season</li>
+                                    <li class="subtext">Only current season BBID $ can be traded, and the receiving team a can only use these funds in the current season</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B4. Trading Draft Picks</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Future draft picks (3rd round or later) for the following season can be traded</li>
+                                    <li class="subtext">Trades involving draft picks must involve an equal number of draft picks exchanged between teams to ensure all teams maintain a total of 16 draft picks</li>
+                                    <li class="subtext">A maximum of two future draft picks per team can be included in any single trade</li>
+                                    <li class="subtext">A team can only trade a total of 3 future draft picks during the season</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B5. Trading Conditional Draft Picks</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">
+                                        Trades may include conditional draft picks based on clearly defined player performance
+                                        <p><span style="font-style: italic">Example:</span><br>Team A trades Player A and their 16th round pick to Team B for Player B and Team B's 7th round pick, with a condition that if Player A scores 5 or more touchdowns for Team B during the rest of the season then Team B will send their 5th round pick to Team A instead of their 7th round pick</p>
+                                        <p>Note, in the example above Team B would send their 7th round pick at the time of the trade and would not be able to include their 5th round pick in any other trades, as it would need to be available in case the conditions are met</p>
+                                    </li>
+                                    <li class="subtext">Conditions should be included in the comments section of the trade and must be included in the offer proposed and accepted via the website to be valid and enforcable</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B6. Illegal Trades</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Trades cannot include monetary payments or shares of past or future DNFL awards</li>
+                                    <li class="subtext">Trades cannot include the rights for 'player to be named at a later date'</li>
+                                    <li class="subtext">Trades cannot include options or rights to take back a traded player or receive a different player at a later date</li>
+                                    <li class="subtext">Commissioners can veto a trade if any of the above conditions are true or there is other proof of collusion</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B7. Off-Season Trades</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Off-season trades are allowed (off-season is defined as the dates between the previous season's Superbowl and the following season's draft day)</li>
+                                    <li class="subtext">Off-season trades can include future draft picks, supplemental draft picks, and/or players that were drafted in the previous year's draft in round 4 or later</li>
+                                    <li class="subtext">
+                                        The trade limit of 3 draft picks during a season continues through the off-season
+                                        <p><span style="font-style: italic">Example:</span><br>If a team traded two draft picks during the season, they can only trade one more draft pick in the following off-season</p>
+                                    </li>
+                                    <li class="subtext">The commissioners review period for most of the off-season is 14 days</li>
+                                    <li class="subtext">Four weeks prior to the draft the review period will return to the same in-season 48-hour review period</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SECTION VI: CHAMPIONSHIPS -->
+        <div class="dnfl-rules-section">
+            <div class="dnfl-rules-tabhead" onclick="toggleElement(this)">
+                <span><i class="fas fa-chevron-right dnfl-rules-icon"></i> VI. CHAMPIONSHIPS</span>
+                <span class="dnfl-rules-badge">Section 6</span>
+            </div>
+            <div class="dnfl-rules-main-content" style="display: none;">
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> A) Last Team Standing</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A1. Last Team Standing Overview</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">The Last Team Standing (LTS) competition is a survivor elimination pool</li>
+                                    <li class="subtext">Each Conference has its own LTS competition, with one team from each Conference crowned the Last Team Standing</li>
+                                    <li class="subtext">This competition takes place during Weeks 2-12 of the DNFL season</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A2. LTS Elimination</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">The team scoring the fewest points in Week 2 is eliminated from the LTS competition</li>
+                                    <li class="subtext">In Week 3, the team scoring the fewest points of the 11 remaining LTS-eligible teams is eliminated</li>
+                                    <li class="subtext">This continues through Week 12 of the season, with one team eliminated each week, until we have a single team left... the Last Team Standing</li>
+                                    <li class="subtext">If in any given week, more than one remaining LTS-eligible team ties for the low score of the week, the team with the the fewest total year-to-date points is eliminated</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> B) Post-Season Seeding</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B1. Seeding Overview</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">The top 16 teams across the three conferences will be seeded for the Championship Playoff.</li>
+                                    <li class="subtext">Seeding will be based on Final Standings in each Conference Division, as well as Total Points Scored.</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B2. Seeds</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">The Division Winners from each Conference (2 per conference) will earn seeds 1-6. The seeding of these teams will be determined by Total Points Scored.</li>
+                                    <li class="subtext">The Division Runner-Ups from each Conference (2 per conference) will earn seeds 7-12 seeds. The seeding of these teams will be determined by Total Points Scored.</li>
+                                    <li class="subtext">The final four seeds (13-16) will be awarded to the remaining teams with the highest Total Points Scored. (Note that these final four seeds could be awarded to teams from one or more of the conferences).</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> C) Championship Playoffs</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> C1. Championship Bracket Overview</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">There is a single Championship Bracket for the Playoffs in Weeks 13-16</li>
+                                    <li class="subtext">The winner of the Championship Bracket will be crowned the DNFL Super Bowl Champion in Week 16</li>
+                                    <li class="subtext">The top 16 seeds across all Conferences will participate in the Championship Bracket</li>
+                                    <li class="subtext">No teams will be awarded bye weeks</li>
+                                    <li class="subtext">The winner of each game advances to the next round</li>
+                                    <li class="subtext">Partial points for yards are used to break ties (0.1pt per rushing yard, 0.1 pt per receiving yard, 0.04pts per passing yard) - the sum of these partial points for each teams starting QB, RBs, WRs, and TEs is calculated, with the team with the most partial points advancing</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> C2. Schedule</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <p><span style="font-style:italic; text-decoration: underline;">Week 13 — First Round</span></p>
+                                    <li class="subtext">Game 1: Seed #16 vs Seed #1</li>
+                                    <li class="subtext">Game 2: Seed #15 vs Seed #2</li>
+                                    <li class="subtext">Game 3: Seed #14 vs Seed #3</li>
+                                    <li class="subtext">Game 4: Seed #13 vs Seed #4</li>
+                                    <li class="subtext">Game 5: Seed #12 vs Seed #5</li>
+                                    <li class="subtext">Game 6: Seed #11 vs Seed #6</li>
+                                    <li class="subtext">Game 7: Seed #10 vs Seed #7</li>
+                                    <li class="subtext">Game 8: Seed #9 vs Seed #8</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Week 14 — Second Round</span></p>
+                                    <li class="subtext">Game 9: Winner of Game 8 vs Winner of Game 1</li>
+                                    <li class="subtext">Game 10: Winner of Game 7 vs Winner of Game 2</li>
+                                    <li class="subtext">Game 11: Winner of Game 6 vs Winner of Game 3</li>
+                                    <li class="subtext">Game 12: Winner of Game 5 vs Winner of Game 4</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Week 15 — Championship Semifinals</span></p>
+                                    <li class="subtext">Game 13: Winner of Game 12 vs Winner of Game 9</li>
+                                    <li class="subtext">Game 14: Winner of Game 11 vs Winner of Game 10</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Week 16 — DNFL Super Bowl</span></p>
+                                    <li class="subtext">Game 15: Winner of Game 14 vs Winner of Game 13</li>
+                                </ol>
+                                <p class="subindent"><span style="font-style:italic">The winner of Game 15 is the DNFL Super Bowl Champion<br>As the all playoff games could feature an Inter-Conference matchup, it is possible that two teams will have the same players in their starting lineups for the game</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SECTION VII: KEEPERS -->
+        <div class="dnfl-rules-section">
+            <div class="dnfl-rules-tabhead" onclick="toggleElement(this)">
+                <span><i class="fas fa-chevron-right dnfl-rules-icon"></i> VII. KEEPERS</span>
+                <span class="dnfl-rules-badge">Section 7</span>
+            </div>
+            <div class="dnfl-rules-main-content" style="display: none;">
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> A) Overview</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A1. Keeper Overview</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <p><span style="font-style:italic">Note: The Keeper Rules below are in effect for the start of the 2026-27 season. The number of keepers allowed in future seasons after the new Relegation Structure has been put in place may change. See Future Relegation Structure Keeper Rules Section VIII.F7 for more information.</span></p>
+                                    <li class="subtext">Each team can keep up to four players from the previous year</li>
+                                    <li class="subtext">For each player a team keeps, they will forfeit a draft pick</li>
+                                    <li class="subtext">Any players not kept are released from team rosters and are eligible to be drafted</li>
+                                    <li class="subtext">Not all players are eligible to be keepers (see Keeper Eligibility below)</li>
+                                    <li class="subtext">Keepers can be kept for several seasons, as long as they remain eligible as keepers (see Keeper Eligibility below)</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> B) Eligibility Requirements</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B1. Players Eligible to Be Kept</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">The player must currently be on the team's roster</li>
+                                    <li class="subtext">The player must have been drafted the previous year, and must have been picked in the third round or later</li>
+                                    <li class="subtext">The player cannot have been an FA at any time the previous year (i.e. players acquired via waivers are not eligible)</li>
+                                    <li class="subtext">A player acquired via a trade may be eligible, as long as the eligibility rules above have been met</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> C) Cost to Keep Players</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> C1. Forfeiting Draft Picks for Keepers</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">
+                                        To keep a player, the team must forfeit a draft pick 2 rounds earlier than the player was drafted the previous year
+                                        <p><span style="font-style: italic">Example:</span><br>If an owner wishes to keep a player that was drafted in the 3rd round the previous year, the owner would need to forfeit their 1st round pick in this year's draft</p>
+                                    </li>
+                                    <li class="subtext">Supplemental draft picks awarded for life events can be used to keep players, however the supplemental pick must be 3 rounds earlier than the player was drafted the previous year</li>
+                                    <li class="subtext">
+                                        If a team does not have a draft pick in the round in which they must be forfeit a pick to keep a player (i.e. they traded that pick away), the team may choose to forfeit any draft pick that is 3 or more rounds earlier than the player was drafted the previous year
+                                        <p><span style="font-style: italic">Example:</span><br>If a player can be kept with an 8th round pick, but the team does not have an 8th round pick, the team can forfeit a 7th round or earlier pick to keep the player</p>
+                                    </li>
+                                    <li class="subtext">
+                                        If a team has more than one draft pick in the round in which they must forfeit a pick (e.g. additional pick acquired via trade) the team must first forfeit a draft pick that is equivalent to or earlier than their original pick in the round
+                                        <p><span style="font-style: italic">Example 1:</span><br>If a team has three picks in round 9: pick 9.03 (original), pick 9.08 (via trade), and pick 9.13 (life event); they must use pick 9.03 to keep the player - if they wish to keep a second player by forfeiting a round 9 pick, they can then use pick 9.08 - the supplemental pick (9.13) can only be used for a player requiring a 10th round or later draft pick forfeiture</p>
+                                        <p><span style="font-style: italic">Example 2:</span><br>If a team has two picks in round 7: pick 7.09 (original) and pick 7.04 (via trade; they can choose to use either pick 7.04 or 7.09 to keep the player - if they wish to keep a second player by forfeiting a round 7 pick, they can then use the other pick</p>
+                                    </li>
+                                    <li class="subtext">
+                                        If a team wishes to keep two or more players who require the team to forfeit draft picks in the same round, the team may choose to forfeit one player with the pick from that round and may choose to forfeit any draft pick draft pick from earlier rounds for the additional players
+                                        <p><span style="font-style: italic">Example:</span><br>If both players can be kept with a 5th round pick, the team can forfeit their 5th round pick for one player, and a 4th round or earlier pick for the other players</p>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> D) Keeper Processing</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> D1. Selecting and Processing Keepers</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">The deadline for selecting keepers and notifying the commissioners is two weeks prior to the draft</li>
+                                    <li class="subtext">Failure to meet this deadline will result in all players on the team's roster being released and made eligible for the draft</li>
+                                    <li class="subtext">The commissioners will distribute a list of eligible keepers to league owners at least 4 weeks prior to the draft</li>
+                                    <li class="subtext">In the case where 2 teams elect to keep the same player (this can only occur in years with Conference re-alignment) the team which drafted the player with a later draft pick the previous year may elect to keep the player or opt to take an extra draft pick commensurate with the lost player's ADP position as determined by <a href="https://fantasy.espn.com/football/livedraftresults" target="_blank">ESPN Live Draft Trends</a> player rank (e.g. if the player is the 34th ranked player in ESPN's Live Draft Trends, the team would get the 34th pick in the draft)</li>
+                                    <li class="subtext">The second team electing to keep the same player would then receive the alternative option (either the keeper or the extra draft pick as described above)</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SECTION VIII: OTHER -->
+        <div class="dnfl-rules-section">
+            <div class="dnfl-rules-tabhead" onclick="toggleElement(this)">
+                <span><i class="fas fa-chevron-right dnfl-rules-icon"></i> VIII. OTHER</span>
+                <span class="dnfl-rules-badge">Section 8</span>
+            </div>
+            <div class="dnfl-rules-main-content" style="display: none;">
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> A) Team Ownership</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A1. Joint Ownership</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Teams may be jointly owned with a classmate, however a principal owner must be named</li>
+                                    <li class="subtext">Principal owners will have final decision-making power in the event of disputes between joint owners</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> A2. League Participation</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Team owners are expected to check into the league board periodically during the off-season to confirm that they wish to remain in the league, discuss and vote on any rule changes, and any other issues that might occur</li>
+                                    <li class="subtext">Owners must decide if they will participate and must pay league entry fee on time each year; Failure to meet the deadline may result in the team being transferred to an individual on the team ownership waiting list</li>
+                                    <li class="subtext">If an owner does not confirm their status in the league, e-mails will be sent to their registered e-mail account - if there is no response two weeks prior to the draft, the owner may be dropped by the commissioner, and a replacement owner will be invited to join the league</li>
+                                    <li class="subtext">If an owner elects to withdraw during the season, the owner must work with the commissioners to find an interim manager for the team</li>
+                                    <li class="subtext">A refund for the league entry fee will only be provided in the case of an emergency (example: severe illness, re-location to a desert island without internet)</li>
+                                    <li class="subtext">All other withdrawals from the league will result in a forfeiture fees paid (if applicable) for the current year</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> B) Transfer of Team Ownership</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B1. New Ownership</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">If a team's withdrawal is permanent, the commissioners will look to fill the vacancy with a new owner</li>
+                                    <li class="subtext">Priority for new ownership will be given to CCMBA'07 classmates or Duke alumni</li>
+                                    <li class="subtext">As necessary a waitlist for team ownership will be kept if there are several individuals looking to join the league</li>
+                                    <li class="subtext">If the original owner comes forward to reclaim the team, the issue will be put to a vote of the league and must be approved by over half of the members</li>
+                                    <li class="subtext">In the time between seizure and securing a new owner the three commissioners will jointly manage the team</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> B2. Transfer of Team Assets</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">In the case that a new owner takes ownership of a team, the new owner will take custody of all assets of the team, including players, draft picks and BBID balance (BBID $ only apply if ownership occurs mid-season)</li>
+                                    <li class="subtext">In the case that a new owner is inheriting a team that participated in trades involving draft picks the previous year, the new ownership may receive supplemental or replacement draft picks at the discretion of the commissioners to compensate them for any significant draft pick deficiencies</li>
+                                    <li class="subtext">The new owner will have the option to keep up to 4 players, per standard keeper rules</li>
+                                    <li class="subtext">The new owner may select to choose 2 of those keepers from the pool of keeper-eligible players which other teams in their Conference did not elect to keep, standard draft pick forfeiture rules will apply</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> C) Team Management</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> C1. Management Expectations</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Team owners are expected to submit a valid weekly lineup - if any team fails to comply, the commissioners will request by email that the owner submits their lineups, so the integrity of the league is not compromised and no opponent gains and unfair advantage</li>
+                                    <li class="subtext">Owners that fail to submit a lineup for any week/owners that start players on bye/absentee owners will have their lineups auto set by the commissioner using the Fantasy Sharks recommended lineups - this will be done by the commissioner once it is realized that an owner is inactive or fails to submit a lineup</li>
+                                    <li class="subtext">Teams not responding to repeated lineup requests may be removed and the commissioner will call upon the league for an immediate majority vote on how to handle the team for the remainder of the season</li>
+                                    <li class="subtext">Tanking games (losing intentionally) to improve next season's draft order is not allowed- if an owner is deemed to be starting an intentionally inferior lineup the commissioner from the non-interested Conference will choose a starting lineup for that owner (before, or within 15 minutes of game start time) and e-mail all owners involved so that there is a clear time stamp and explanation</li>
+                                    <li class="subtext">Starting a player on bye-week, or an injured player, is not considered tanking unless there is a pattern of intentional substitution</li>
+                                    <li class="subtext">
+                                        Failure-to-Manage-Clause: If an owner fails to make a change to their lineup/roster for four consecutive weeks and has lost three or more of those games then a commissioner from the opposing Conference will take over that owner's team (until the owner begins active management again) to make waiver and lineup decisions
+                                        <p><span style="font-style:italic">This will be done to limit the impact of scheduling luck on regular season records.</span></p>
+                                        <p><span style="font-style:italic">For example: it would be a terrible outcome if one team made the playoffs only because they got an easy/undeserved win against an absent-owner late in the season while the team that just missed the playoffs had earlier in the season lost to the absent-owner before that owner went absent</span></p>
+                                    </li>
+                                    <li class="subtext">If the Failure-to-Manage Clause is enacted that team will not be allowed to make the playoffs or win weekly prizes</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> D) Team Expulsion</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> D1. Expulsion from DNFL League</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">An owner may be expelled from the league if the commissioners believe there is clear proof of collusion</li>
+                                    <li class="subtext">
+                                        An owner can be expelled by a league majority vote of the other owners (19 or more owners)
+                                        <p><span style="font-style:italic">Note: this would only occur in extreme cases where owners truly piss off the majority of DNFL owners, but we all love each other, so this should never happen</span></p>
+                                    </li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> E) Voting and Rule Changes</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> E1. Issue Resolution & Rule Changes</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <li class="subtext">Any issues or conflicts that arise during the season that are not specifically covered in these bylaws will be put to a vote of the league members - all issues or conflicts must be approved by a majority vote (19 or more owners)</li>
+                                    <li class="subtext">Bylaw changes may be proposed by any league member; these proposed changes will be put to a vote by all members of the league</li>
+                                    <li class="subtext">All proposals must be approved by the commissioners, or by a majority vote of the league (19 of the 36 members) to become a part of the bylaws. The commissioners will determine whether a league vote is necessary</li>
+                                    <li class="subtext">Rule changes will only be made during the off-season, between the time after the DNFL Super Bowl and the start of the Draft for next season</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dnfl-rules-subsection">
+                    <div class="dnfl-rules-subhead" onclick="toggleElement(this)">
+                        <span><i class="fas fa-caret-right dnfl-sub-icon"></i> F) Future Relegation Structure</span>
+                    </div>
+                    <div class="dnfl-rules-sub-content" style="display: none;">
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> F1. League Structure with Relegation</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <p><span style="font-style:italic; text-decoration: underline;">Overview</span></p>
+                                    <li class="subtext">The DNFL will convert to a new Relegation Structure for the 2027-28 DNFL Season.</li>
+                                    <li class="subtext">The new Relegation Structure will have 2 leagues, a Championship League (Premier League), and a Relegation League (Bedeviled League)</li>
+                                    <li class="subtext">The transition to the Relegation Structure is intended to maintain competitive fairness across the league, with the Premier League restricted to top performing teams, while the less performing teams are relegated to the Bedeviled League where they can be competitive and contend for the right for promotion to the Premier League.</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Premier League Structure</span></p>
+                                    <li class="subtext">The Premier League will comprise the top 24 teams from the DNFL</li>
+                                    <li class="subtext">The Premier League will have 2 Conferences: Each Conferences has 2 Divisions; Each Division has 6 teams</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Bedeviled League Structure</span></p>
+                                    <li class="subtext">The Bedeviled League will comprise the bottom 12 (relegated) teams from the DNFL</li>
+                                    <li class="subtext">The Bedeviled League will have 1 Conference of 12 teams with no Divisions</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> F2. Initial Team Assignment</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <p><span style="font-style:italic; text-decoration: underline;">Overview</span></p>
+                                    <li class="subtext">After the 2026-27 season, 12 teams from the DNFL will be relegated to the newly formed Bedeviled League</li>
+                                    <li class="subtext">The remaining 24 teams will be placed in the newly formed Premier League</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Premier League Team Assignment</span></p>
+                                    <li class="subtext">The top 4 teams from each Division based on final regular season standings (24 teams in total) will be placed in the Premier League</li>
+                                    <li class="subtext">The 24 teams will be placed across the 2 Conferences of the Premier League based on final standings, using a snake placement approach to distribute teams into the 4 Divisions as evenly as possible.</li>
+                                    <li class="subtext">The commissioners will try to ensure all keepers for teams are honored and may adjust team Conference assignment accordingly.</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Bedeviled League Team Assignment</span></p>
+                                    <li class="subtext">The bottom 2 teams from each Division based on final regular season standings (12 teams in total) will be placed in the Bedeviled League</li>
+                                    <li class="subtext">As there are no Divisions in the Bedeviled League, there is no need for any additional assignment protocols</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> F3. Annual Relegation & Promotion</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <p><span style="font-style:italic; text-decoration: underline;">Overview</span></p>
+                                    <li class="subtext">Each year 4 teams will be relegated from the Premier League to the Bedeviled League</li>
+                                    <li class="subtext">Each year 4 teams will be promoted from the Bedeviled League to the Premier League</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Premier League Relegation</span></p>
+                                    <li class="subtext">The last place team from each Premier League Division based on final regular season standings (4 teams in total) will be relegated to the Bedeviled League</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Bedeviled League Promotion</span></p>
+                                    <li class="subtext">The top 4 teams in the Bedeviled League based on final regular season standings will be promoted to the Premier League</li>
+                                    <li class="subtext">These four teams will be randomly assigned to each Premier League Division - one team per Division, replacing the spots vacated by the relegated teams</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> F4. Accounting & Payouts</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <p><span style="font-style:italic; text-decoration: underline;">Overview</span></p>
+                                    <li class="subtext">Accounting for the Premier League and Bedeviled League will be kept separate</li>
+                                    <li class="subtext">Each league will have its own entry fee and will have separate payout structures</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Premier League Accounting</span></p>
+                                    <li class="subtext">The entry fee for the Premier League teams will be $250 per team</li>
+                                    <li class="subtext">With 24 teams each paying $250, the Premier League starting balance for each season will be $6,000</li>
+                                    <li class="subtext">Administrative fees for the league are $200 per season, bringing the total purse to approximately $5,800</li>
+                                    <li class="subtext">Payouts for the Premier League are as follows:</li>
+                                </ol>
+                                <br>
+                                <div class="dnfl-rules-table-wrapper mobile-wrap">
+                                    <table class="homepagemodule report dnfl-rules-table" id="rulestable">
+                                        <caption><span>Premier League Payouts </span></caption>
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align: left">Prize </th>
+                                                <th style="width:10%;text-align:right">Payout $</th>
+                                                <th style="text-align: left; padding-left:20px;">Notes </th>
+                                                <th style="width:10%;text-align:right">Total $ </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="oddtablerow">
+                                                <td style="text-align: left"> Superbowl Champion </td>
+                                                <td style="text-align:right">3,000 </td>
+                                                <td style="text-align: left; padding-left:20px;">1 winner</td>
+                                                <td style="text-align:right">3,000 </td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td style="text-align: left">Superbowl Runner-Up </td>
+                                                <td style="text-align:right">500 </td>
+                                                <td style="text-align: left; padding-left:20px;">1 winner</td>
+                                                <td style="text-align:right">500 </td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td style="text-align: left">Last Team Standing </td>
+                                                <td style="text-align:right">200 </td>
+                                                <td style="text-align: left; padding-left:20px;">2 winners, one per Conference</td>
+                                                <td style="text-align:right">400 </td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td style="text-align: left">Conference Playoff Runner-Ups </td>
+                                                <td style="text-align:right">150 </td>
+                                                <td style="text-align: left; padding-left:20px;">2 winners, one per Conference</td>
+                                                <td style="text-align:right">300 </td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td style="text-align: left">Division Winners</td>
+                                                <td style="text-align:right">100 </td>
+                                                <td style="text-align: left; padding-left:20px;">4 winners, one per Division</td>
+                                                <td style="text-align:right">400 </td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td style="text-align:left">Weekly High Scorers</td>
+                                                <td style="text-align:right">50 </td>
+                                                <td style="text-align: left; padding-left:20px;">24 winners, one per Conference each week (Weeks 1-12)</td>
+                                                <td style="text-align:right">1,200 </td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td style="text-align:left"><b>Total</b> </td>
+                                                <td> </td>
+                                                <td> </td>
+                                                <td style="text-align:right"><b>5,800 </b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p><span style="font-style:italic">Note: If the administrative fees are less than $200, any additional $ will be added to the total prize winnings of the Super Bowl Champion. If fees are more than $200 then the championship prize is reduced slightly.</span></p>
+
+                                <ol class="subnum">
+                                    <p><span style="font-style:italic; text-decoration: underline;">Bedeviled League Accounting</span></p>
+                                    <li class="subtext">The entry fee for the Bedeviled League teams will be $100 per team</li>
+                                    <li class="subtext">With 12 teams each paying $100, the Premier League starting balance for each season will be $1,200</li>
+                                    <li class="subtext">Administrative fees for the league are $50 per season, bringing the total purse to approximately $1,150</li>
+                                    <li class="subtext">Payouts for the Bedeviled League are as follows:</li>
+                                </ol>
+                                <br>
+                                <div class="dnfl-rules-table-wrapper mobile-wrap">
+                                    <table class="homepagemodule report dnfl-rules-table" id="rulestable">
+                                        <caption><span>Bedeviled League Payouts </span></caption>
+                                        <thead>
+                                            <tr>
+                                                <th style="text-align: left">Prize </th>
+                                                <th style="width:10%;text-align:right">Payout $</th>
+                                                <th style="text-align: left; padding-left:20px;">Notes </th>
+                                                <th style="width:10%;text-align:right">Total $ </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="oddtablerow">
+                                                <td style="text-align: left">First Place </td>
+                                                <td style="text-align:right">600</td>
+                                                <td style="text-align: left; padding-left:20px;">1 winner</td>
+                                                <td style="text-align:right">600 </td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td style="text-align: left">Second Place </td>
+                                                <td style="text-align:right">250 </td>
+                                                <td style="text-align: left; padding-left:20px;">1 winner</td>
+                                                <td style="text-align:right">250 </td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td style="text-align: left">Third & Fourth Places</td>
+                                                <td style="text-align:right">100 </td>
+                                                <td style="text-align: left; padding-left:20px;">2 winners</td>
+                                                <td style="text-align:right">200 </td>
+                                            </tr>
+                                            <tr class="eventablerow">
+                                                <td style="text-align: left">Last Team Standing </td>
+                                                <td style="text-align:right">100 </td>
+                                                <td style="text-align: left; padding-left:20px;">1 winner</td>
+                                                <td style="text-align:right">100 </td>
+                                            </tr>
+                                            <tr class="oddtablerow">
+                                                <td style="text-align:left"><b>Total</b> </td>
+                                                <td> </td>
+                                                <td> </td>
+                                                <td style="text-align:right"><b>1,150 </b></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <p><span style="font-style:italic">Note: If the administrative fees are less than $50, any additional $ will be added to the total prize winnings of the First Place team. If fees are more than $50 then the First Place prize is reduced slightly.</span></p>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> F5. Draft</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <p><span style="font-style:italic; text-decoration: underline;">Overview</span></p>
+                                    <li class="subtext">The draft rules will generally follow the draft rules as defined above in section III.F</li>
+                                    <li class="subtext">Exceptions are noted below</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Premier League Draft</span></p>
+                                    <li class="subtext">The top two draft spots (Picks 1 and 2) in each Conference will be awarded to the teams newly promoted to the Premier League from the Bedeviled League</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Bedeviled League Draft</span></p>
+                                    <li class="subtext">The draft order for the Bedeviled League will be set randomly by the website</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> F6. Trades</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <p><span style="font-style:italic; text-decoration: underline;">Overview</span></p>
+                                    <li class="subtext">The trade rules will generally follow the trade rules as defined above in section V.B</li>
+                                    <li class="subtext">Exceptions are noted below</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Premier League Trades</span></p>
+                                    <li class="subtext">Trades of Future Draft Picks are allowed in the Premier League</li>
+                                    <li class="subtext">
+                                        Any Future Draft Picks acquired or traded away the previous season, even if traded to / from a relegated team, will be honored
+                                        <p><span style="font-style:italic;">For example: Team A traded a 3rd round pick to Team B, and Team B is then relegated, Team A still forfeits its 3rd round pick.</span></p>
+                                        <p><span style="font-style:italic;">Note: If the trade also involves a player that Team A wants to keep the following season, there are additional penalties - see keeper rules below.</span></p>
+                                    </li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Bedeviled League Trades</span></p>
+                                    <li class="subtext">Trades of Future Draft Picks will not be allowed in the Bedeviled League</li>
+                                    <li class="subtext">Any team that is relegated from the Premier League to the Bedeviled League will forfeit any Future Draft Picks it acquired through trades while in the Premier League the previous season</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> F7. Keepers</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <p><span style="font-style:italic; text-decoration: underline;">Overview</span></p>
+                                    <li class="subtext">The keeper rules will generally follow the keeper rules as defined above in section VII</li>
+                                    <li class="subtext">Exceptions are noted below</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Premier League Keepers</span></p>
+                                    <li class="subtext">
+                                        Each team can keep up to 2 players from the previous year (this is reduced from the 4 keepers allowed in previous seasons)
+                                        <p><span style="font-style:italic;">The intent of this rule change is to maintain the spirit of the traditional keeper rules while also ensuring that teams promoted to the Premier League are not at a significant disadvantage.</span></p>
+                                    </li>
+                                    <li class="subtext">
+                                        A player acquired via a trade the previous season from a team that is relegated will have additional costs to be kept. In addition to the forfeiture of a draft pick 2 rounds earlier than the player was drafted the previous year, the team will also forfeit a draft pick two rounds earlier than the pick they originally traded for the player.
+                                        <p><span style="font-style:italic;">For example: Team A traded a 3rd round pick and "Player Avg. Joe" to Team B for "TOP Player" and a 16th round pick. Let's assume "TOP Player" was drafted that year with the 6th round pick by Team B. Team B is then relegated. Team A will need to forfeit their 4th round pick per standard keeper rules to keep "TOP Player", but - IN ADDITION - will forfeit their 1st round pick instead of their 3rd round pick that was traded.</span></p>
+                                        <p><span style="font-style:italic;">Note: Team B will surrender the right to keep any players and will have their draft picks reset due to relegation.</span></p>
+                                        <p><span style="font-style:italic;">The intent of this rule is to deter predatory trades between top performing teams and poor performing teams that are at risk to be relegated.</span></p>
+                                    </li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Bedeviled League Keepers</span></p>
+                                    <li class="subtext">Keepers will not be allowed in the Bedeviled League</li>
+                                    <li class="subtext">Any team that is relegated from the Premier League to the Bedeviled League will forfeit any Keeper Players</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-rules-topicsection">
+                            <div class="dnfl-rules-topichead" onclick="toggleElement(this)">
+                                <span><i class="fas fa-angle-right dnfl-topic-icon"></i> F8. Playoffs</span>
+                            </div>
+                            <div class="dnfl-rules-topic-content" style="display: none;">
+                                <ol class="subnum">
+                                    <p><span style="font-style:italic; text-decoration: underline;">Overview</span></p>
+                                    <li class="subtext">The Premier League and Bedeviled League will have separate, distinct playoffs</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Premier League Playoffs</span></p>
+                                    <li class="subtext">Each Conference in the Premier League will have a Champions Bracket in Weeks 13-15</li>
+                                    <li class="subtext">The winner of each Conference's Champions Bracket will meet in the DNFL Super Bowl in Week 16</li>
+                                    <li class="subtext">The top 6 seeds from each Conference will participate in the Champions Brackets</li>
+                                    <li class="subtext">The top 2 seeds from each Conference will have a bye week in the first round</li>
+
+                                    <p><span style="font-style:italic; text-decoration: underline;">Bedeviled League Playoffs</span></p>
+                                    <li class="subtext">The Bedeviled League will have a single 4 team Bedeviled Playoff in Weeks 13-14</li>
+                                    <li class="subtext">The top 4 seeds from the league will participate in the Bedeviled Playoff bracket</li>
+                                    <li class="subtext">The 4 teams participating in the playoff will be the same 4 teams that are promoted to the Premier League the following season</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        <!-- End of Rulebook Body Container -->
     </div>
-
-    <!-- Markdown Parser Dependency (Marked.js) -->
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-    <!-- Initialization Waiter -->
-    <script>
-        (function checkInit() {
-            if (typeof window.initRulesDashboard === 'function') {
-                window.initRulesDashboard('%YEAR%');
-            } else {
-                setTimeout(checkInit, 50);
-            }
-        })();
-    </script>
+    <!-- End of DNFL Rule Module Container -->
 
   </div>
+  <!-- End of Toggle Tabs -->
 </div>
