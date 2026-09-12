@@ -62,7 +62,8 @@
          * @returns {Promise<any>}
          */
         async fetchData(MflRequestType) {
-            const config = this.MFL_REQUEST_REGISTRY.find(row => row[6] === MflRequestType);
+            // FIX: Search by index 1 of each registry row array
+            const config = this.MFL_REQUEST_REGISTRY.find(row => row[1] === MflRequestType);
             
             if (!config) {
                 console.error(`DNFL Client Error: Request type [${MflRequestType}] not defined in registry.`);
