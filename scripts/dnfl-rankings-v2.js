@@ -32,7 +32,17 @@
      * @param {string|number} mflYear 
      */
     function init(mflYear) {
+        // Auto-resolve year if omitted or if raw template tag is passed
+        if (!mflYear || mflYear === '%YEAR%') {
+            mflYear = window.current_year;
+            if (!mflYear) {
+                const pathSegments = window.location.pathname.split('/');
+                const foundYear = pathSegments.find(segment => /^20\d{2}$/.test(segment));
+                mflYear = foundYear ? foundYear : new Date().getFullYear();
+            }
+        }
         rankingsMFLYear = mflYear;
+
         const selector = document.getElementById('dnfl_weekSelector');
         if (!selector) return;
 
@@ -278,4 +288,17 @@
         applyConferenceFilter: applyConferenceFilter,
         toggleElementVisibility: toggleElementVisibility
     };
+
+    // Auto-initialize if DOM element exists
+    function autoInit() {
+        if (document.getElementById('dnfl_weekSelector')) {
+            init();
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', autoInit);
+    } else {
+        autoInit();
+    }
 })();

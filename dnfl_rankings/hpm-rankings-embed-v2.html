@@ -69,13 +69,19 @@
         </table>
     </div>
 
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            if (window.DNFL && window.DNFL.Rankings) {
-                window.DNFL.Rankings.init('%YEAR%');
-            }
-        });
-    </script>
+<script>
+    (function initRankingsModule() {
+        if (window.DNFL && window.DNFL.Rankings) {
+            window.DNFL.Rankings.init('%YEAR%');
+        } else {
+            window.addEventListener('dnflFrameworkReady', function() {
+                if (window.DNFL && window.DNFL.Rankings) {
+                    window.DNFL.Rankings.init('%YEAR%');
+                }
+            });
+        }
+    })();
+</script>
 
   </div>
 </div>

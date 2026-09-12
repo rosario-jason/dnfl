@@ -40,13 +40,19 @@
         </p>
     </div>
 
-    <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            if (window.DNFL && window.DNFL.Podcast) {
-                window.DNFL.Podcast.init('%YEAR%');
-            }
-        });
-    </script>
+<script>
+    (function initPodcastModule() {
+        if (window.DNFL && window.DNFL.Podcast) {
+            window.DNFL.Podcast.init('%YEAR%');
+        } else {
+            window.addEventListener('dnflFrameworkReady', function() {
+                if (window.DNFL && window.DNFL.Podcast) {
+                    window.DNFL.Podcast.init('%YEAR%');
+                }
+            });
+        }
+    })();
+</script>
 
   </div>
 </div>
