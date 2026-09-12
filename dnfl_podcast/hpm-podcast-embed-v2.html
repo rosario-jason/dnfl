@@ -1,0 +1,52 @@
+<!-- DNFL Podcast Module - Devil's Advocate -->
+
+<div id="dnfl_podcast" class="mobile-wrap">
+   <table class="homepagemodule report" cellspacing="1" align="center">
+    <caption>Devil's Advocate Podcast</caption>
+  </table>
+
+  <div class="toggle_tabs"> 
+    <br/>
+
+    <div class="dnfl-module-container">
+        <img src="https://dnfl.live/dnfl_podcast/devils_advocate_logo.png" alt="Devil's Advocate Banner" class="dnfl-podcast-banner">
+        
+        <div class="dnfl-controls">
+            <div class="dnfl-filter-group">
+                <label for="dnfl_episodeSelector">Select Episode:</label>
+                <select id="dnfl_episodeSelector" class="dnfl-select" onchange="DNFL.Podcast.changeEpisode()"></select>
+            </div>
+        </div>
+
+        <div class="dnfl-media-player-block">
+            <label id="dnfl_nowPlayingLabel" class="dnfl-now-playing-label">
+                Loading episode details...
+            </label>
+            
+            <button id="dnfl_transcriptToggleBtn" class="dnfl-visibility-toggle-btn" onclick="DNFL.Podcast.toggleTranscript()">[ Show Transcript ]</button>
+            
+            <audio id="dnfl_podcastAudioPlayer" class="dnfl-audio" controls>
+                <source id="dnfl_audioSource" src="" type="audio/mp4">
+                Your browser does not support the audio element.
+            </audio>
+
+            <div id="dnfl_transcriptContainer" class="dnfl-transcript-wrapper" style="display: none;">
+                <p class="dnfl-disclaimer-text">Loading automated transcript file stream...</p>
+            </div>
+        </div>
+
+        <p class="dnfl-disclaimer-text">
+            The Devil's Advocate podcast is generated entirely using artificial intelligence for entertainment and informational purposes only. The analysis, player projections, and dialogue are synthesized by AI and should not be taken as factual guarantees or professional advice. Check your waivers, verify your stats, and play at your own risk.
+        </p>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.DNFL && window.DNFL.Podcast) {
+                window.DNFL.Podcast.init('%YEAR%');
+            }
+        });
+    </script>
+
+  </div>
+</div>

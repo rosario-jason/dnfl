@@ -1,0 +1,81 @@
+<!-- DNFL Power Rankings -->
+
+<div id="dnfl_rankings" class="mobile-wrap">
+  <table class="homepagemodule report" cellspacing="1" align="center">
+    <caption>DNFL Power Rankings</caption>
+  </table>
+  <div class="toggle_tabs"> 
+    <br/>
+
+    <div class="dnfl-module-container">
+        <div class="dnfl-controls">
+            <div class="dnfl-filter-group">
+                <label for="dnfl_weekSelector">Ranking Week:</label>
+                <select id="dnfl_weekSelector" class="dnfl-select" onchange="DNFL.Rankings.loadWeeklyData()"></select>
+            </div>
+            <div class="dnfl-filter-group">
+                <label for="dnfl_confFilter">Conference:</label>
+                <select id="dnfl_confFilter" class="dnfl-select" onchange="DNFL.Rankings.applyConferenceFilter()">
+                    <option value="All">All Conferences</option>
+                    <option value="Cameron Crazies">Cameron Crazies</option>
+                    <option value="K-Ville">K-Ville</option>
+                    <option value="Blue Devils">Blue Devils</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="dnfl-rankings-legend">
+            <div class="dnfl-legend-item">
+                <span class="dnfl-legend-swatch crazies"></span>
+                <span>Cameron Crazies</span>
+            </div>
+            <div class="dnfl-legend-item">
+                <span class="dnfl-legend-swatch kville"></span>
+                <span>K-Ville</span>
+            </div>
+            <div class="dnfl-legend-item">
+                <span class="dnfl-legend-swatch bluedevils"></span>
+                <span>Blue Devils</span>
+            </div>
+        </div>
+        
+        <div class="dnfl-section-header-row">
+            <button id="dnfl_chartToggleBtn" class="dnfl-visibility-toggle-btn" onclick="DNFL.Rankings.toggleElementVisibility('chart')">Hide Chart</button>
+        </div>
+
+        <div id="dnfl_chartWrapperContainer" class="dnfl-chart-wrapper">
+            <canvas id="dnfl_powerRankingChart"></canvas>
+        </div>
+    </div>
+
+    <div id="dnfl_tableWrapperContainer" class="dnfl-table-wrapper">
+        <div class="dnfl-toolbar">
+            <div class="dnfl-section-header-row">
+                <button id="dnfl_tableToggleBtn" class="dnfl-visibility-toggle-btn" onclick="DNFL.Rankings.toggleElementVisibility('table')">Hide Table</button>
+            </div>
+        </div>
+        <table id="dnfl_dataTable">
+            <thead>
+                <tr>
+                    <th style="width: 7%;">Rank</th>
+                    <th style="width: 18%;">Franchise</th>
+                    <th style="width: 18%;">Owners</th>
+                    <th style="text-align: center; width: 7%;">Grade</th>
+                    <th style="text-align: center; width: 10%;">Proj W-L</th>
+                    <th style="width: 40%;">Rank Comments</th>
+                </tr>
+            </thead>
+            <tbody id="dnfl_tableBody"></tbody>
+        </table>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            if (window.DNFL && window.DNFL.Rankings) {
+                window.DNFL.Rankings.init('%YEAR%');
+            }
+        });
+    </script>
+
+  </div>
+</div>
