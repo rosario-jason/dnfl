@@ -525,9 +525,16 @@
     padding-left: 0.5rem !important;
 }
 
-.dnfl-rules-wrapper li {
+/* Standardize list item spacing across all Rulebook sections */
+.dnfl-rules-wrapper li,
+.dnfl-rules-topic-content li {
     margin-bottom: 8px !important;
 }
+
+.dnfl-rules-wrapper li:last-child {
+    margin-bottom: 0 !important;
+}
+
 
 /* Blockquotes: Aligned flush with hanging text of numbered lists */
 .dnfl-rules-wrapper blockquote {
