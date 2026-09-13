@@ -386,8 +386,10 @@
         
         const rawBbid = parseFloat(profile.bbidAvailableBalance || profile.bbidBalance || 0);
         const bbidFormatted = "$" + rawBbid.toFixed(2);
-        const pf = stats.pf || "0";
-        const pa = stats.pa || "0";
+        const rawPf = parseFloat(stats.pf || 0);
+        const rawPa = parseFloat(stats.pa || 0);
+        const pf = rawPf.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        const pa = rawPa.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const record = `${stats.h2hw || 0}-${stats.h2hl || 0}-${stats.h2ht || 0}`;
 
         let seedCellContent = `<span class="dnfl-rank-circle">-</span>`;
