@@ -7,8 +7,7 @@
     // Establish Global DNFL Namespace
     window.DNFL = window.DNFL || {};
 
-    // Update rules in the standings_rules.json file
-    // Standings & Seeding rules fetched dynamically from standings_rules.json
+    // Standings & Seeding Configuration (Loaded dynamically from standings_rules.json)
     let STANDINGS_RULES = {};
 
     // Global Context Engine Variables
@@ -43,14 +42,16 @@
     const maxRetries = 50; 
 
     /**
-     * Resolves rule set for target season year
+     * Resolves rule set for target season year from STANDINGS_RULES
      */
     function getYearRules() {
         const yr = parseInt(targetYear);
         if (STANDINGS_RULES[yr]) return STANDINGS_RULES[yr];
 
         for (const key in STANDINGS_RULES) {
-            if (key.startsWith('_')) continue; // Skip metadata keys like _instructions
+            // Skip metadata/instructions blocks (e.g., _instructions, _comment, __README)
+            if (key.startsWith('_')) continue;
+
             if (key.includes('-')) {
                 const [start, end] = key.split('-').map(s => parseInt(s.trim()));
                 if (yr >= start && yr <= end) return STANDINGS_RULES[key];
@@ -84,7 +85,7 @@
     }
 
     /**
-     * Initializes standings data fetch, rules configuration, and DOM setup
+     * Initializes standings data fetch, dynamic rules JSON, and DOM setup
      */
     async function init() {
         const tbody = document.getElementById("dnfl-standings-tbody");
@@ -112,7 +113,6 @@
                 throw new Error("Missing structural configuration maps from MFL payload.");
             }
 
-            // Parse rules JSON or use safe fallback
             if (rawRulesJson) {
                 try {
                     STANDINGS_RULES = JSON.parse(rawRulesJson);
@@ -121,7 +121,7 @@
                 }
             }
 
-            // Ensure fallback default exists if fetch failed
+            // Fallback default rules safety check
             if (!STANDINGS_RULES || !STANDINGS_RULES['default']) {
                 STANDINGS_RULES = {
                     'default': {
@@ -154,25 +154,25 @@
     }
 
     /**
-     * Renders legend keys and disclaimers using CSS variables
+     * Renders legend keys and disclaimers using CSS utility classes
      */
     function renderStandingsKey(confRules) {
         const keyContainer = document.getElementById("dnfl-standings-key");
         if (!keyContainer) return;
 
-        let iconHtml = `<div style="display: flex; gap: 15px; justify-content: flex-end; flex-wrap: wrap;">`;
+        let iconHtml = `<div class="dnfl-key-icon-group">`;
         
         if (confRules.hasDivisionCrown) {
-            iconHtml += `<span style="white-space: nowrap;"><i class="fas fa-crown" style="color: var(--dnfl-badge-blue);"></i> Div Winner</span>`;
+            iconHtml += `<span class="dnfl-key-item"><i class="fas fa-crown" style="color: var(--dnfl-badge-blue);"></i> Div Winner</span>`;
         }
         if (confRules.playoffCutoff) {
-            iconHtml += `<span style="white-space: nowrap;"><i class="fas fa-trophy" style="color: var(--dnfl-badge-amber);"></i> Playoffs</span>`;
+            iconHtml += `<span class="dnfl-key-item"><i class="fas fa-trophy" style="color: var(--dnfl-badge-amber);"></i> Playoffs</span>`;
         }
         if (confRules.promotion?.enabled) {
-            iconHtml += `<span style="white-space: nowrap;"><i class="fas fa-arrow-circle-up" style="color: var(--dnfl-success-green);"></i> Promotion</span>`;
+            iconHtml += `<span class="dnfl-key-item"><i class="fas fa-arrow-circle-up" style="color: var(--dnfl-success-green);"></i> Promotion</span>`;
         }
         if (confRules.relegation?.enabled) {
-            iconHtml += `<span style="white-space: nowrap;"><i class="fas fa-arrow-circle-down" style="color: var(--dnfl-alert-red);"></i> Relegation</span>`;
+            iconHtml += `<span class="dnfl-key-item"><i class="fas fa-arrow-circle-down" style="color: var(--dnfl-alert-red);"></i> Relegation</span>`;
         }
         
         iconHtml += `</div>`;
@@ -184,11 +184,11 @@
         const isEndOfSeason = cachedCurrentWeek > cachedLastRegWeek;
 
         if (!hasSeasonStarted) {
-            disclaimerHtml = `<div style="font-style: italic; font-size: 0.75rem;">*Pre-season view. Seedings and icons will calculate after Week 1 games complete.</div>`;
+            disclaimerHtml = `<div class="dnfl-disclaimer-note">*Pre-season view. Seedings and icons will calculate after Week 1 games complete.</div>`;
         } else if (isHistoric || isEndOfSeason) {
-            disclaimerHtml = `<div style="font-style: italic; font-size: 0.75rem;">*Final Regular Season Seedings.</div>`;
+            disclaimerHtml = `<div class="dnfl-disclaimer-note">*Final Regular Season Seedings.</div>`;
         } else {
-            disclaimerHtml = `<div style="font-style: italic; font-size: 0.75rem;">*Preliminary seedings as of Week ${cachedCurrentWeek} standings. Subject to change until Week ${cachedLastRegWeek}.</div>`;
+            disclaimerHtml = `<div class="dnfl-disclaimer-note">*Preliminary seedings as of Week ${cachedCurrentWeek} standings. Subject to change until Week ${cachedLastRegWeek}.</div>`;
         }
 
         keyContainer.innerHTML = iconHtml + disclaimerHtml;
@@ -235,7 +235,7 @@
             const teamsInDiv = cachedLeagueDetails.filter(f => f.division === div.id).map(f => f.id);
             teamsInDiv.sort((a, b) => getMflIndex(a) - getMflIndex(b));
 
-            if (teamsInDiv.length > 0) divLeaders[div.id] = teamsInDiv[0];
+            if (teamsInDiv.length > 0) divLeaders[div.id] = teamsInDiv;
             if (teamsInDiv.length > 1) divRunnerUps[div.id] = teamsInDiv[1];
 
             if (confRules.relegation?.enabled && confRules.relegation.type === 'division') {
@@ -356,13 +356,13 @@
 
         if (!defaultConfId) {
             const fallbackConf = cachedConferences.find(c => c.name.toLowerCase().includes("cameron crazies"));
-            defaultConfId = fallbackConf ? fallbackConf.id : (rules.seedingScope === 'league' ? 'playoffs' : cachedConferences[0]?.id);
+            defaultConfId = fallbackConf ? fallbackConf.id : (rules.seedingScope === 'league' ? 'playoffs' : cachedConferences?.id);
         }
         confSelect.value = defaultConfId;
     }
 
     /**
-     * Builds HTML table row string for individual franchise
+     * Builds individual team table row HTML string using global CSS classes
      */
     function buildTeamRowHtml(profile, divId, confRules, rowCounter) {
         const stats = cachedStandingsFranchises.find(t => t.id === profile.id) || {};
@@ -490,9 +490,9 @@
             if (hasRealDivision) {
                 tableHtml += `
                     <tr class="dnfl-division-header">
-                        <td colspan="6" style="background-color: var(--dnfl-bg-subhead); border-bottom: 2px solid var(--dnfl-border-dark); padding: 10px 15px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <h3 style="margin: 0; font-size: 1rem; color: var(--dnfl-text-main);">${div.name}</h3>
+                        <td colspan="6" class="dnfl-division-header-cell">
+                            <div class="dnfl-division-header-content">
+                                <h3>${div.name}</h3>
                                 <button id="dnfl-btn-div-${div.id}" class="dnfl-visibility-toggle-btn visibility-toggle-btn" onclick="DNFL.Standings.toggleDivision('${div.id}')">Hide</button>
                             </div>
                         </td>
