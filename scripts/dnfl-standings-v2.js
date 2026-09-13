@@ -42,6 +42,15 @@
     const maxRetries = 50; 
 
     /**
+     * Helper to normalize ID values (e.g. "0", 0, "00") into standard 2-digit format
+     */
+    function norm(val) {
+        if (val === null || val === undefined) return '';
+        const s = String(val).trim();
+        return s.length === 1 && /^\d$/.test(s) ? '0' + s : s;
+    }
+
+    /**
      * Resolves rule set for target season year from STANDINGS_RULES
      */
     function getYearRules() {
@@ -68,10 +77,11 @@
      * Deep merge resolver for conference-specific overrides
      */
     function getConfRules(baseRules, confId) {
-        if (!confId || !baseRules.conferenceOverrides || !baseRules.conferenceOverrides[confId]) {
+        const normConfId = norm(confId);
+        if (!normConfId || !baseRules.conferenceOverrides || !baseRules.conferenceOverrides[normConfId]) {
             return baseRules;
         }
-        const override = baseRules.conferenceOverrides[confId];
+        const override = baseRules.conferenceOverrides[normConfId];
         return {
             ...baseRules,
             ...override,
@@ -195,7 +205,7 @@
     }
 
     /**
-     * Seeding & Qualification Engine
+     * Seeding & Qualification Engine with ID Normalization
      */
     function calculateSeedsAndBadges() {
         teamSeeds = {};
@@ -215,12 +225,12 @@
         if (!hasSeasonStarted) return;
 
         const divToConfMap = {};
-        cachedDivisions.forEach(d => divToConfMap[d.id] = d.conference);
+        cachedDivisions.forEach(d => divToConfMap[norm(d.id)] = norm(d.conference));
 
-        const getMflIndex = (id) => cachedStandingsFranchises.findIndex(s => s.id === id);
+        const getMflIndex = (id) => cachedStandingsFranchises.findIndex(s => norm(s.id) === norm(id));
         
         const getPf = (id) => {
-            const s = cachedStandingsFranchises.find(item => item.id === id);
+            const s = cachedStandingsFranchises.find(item => norm(item.id) === norm(id));
             return parseFloat(s?.pf || 0);
         };
 
@@ -231,12 +241,14 @@
         };
 
         cachedDivisions.forEach(div => {
-            const confRules = getConfRules(baseRules, div.conference);
-            const teamsInDiv = cachedLeagueDetails.filter(f => f.division === div.id).map(f => f.id);
+            const divIdNorm = norm(div.id);
+            const confIdNorm = norm(div.conference);
+            const confRules = getConfRules(baseRules, confIdNorm);
+            const teamsInDiv = cachedLeagueDetails.filter(f => norm(f.division) === divIdNorm).map(f => f.id);
             teamsInDiv.sort((a, b) => getMflIndex(a) - getMflIndex(b));
 
-            if (teamsInDiv.length > 0) divLeaders[div.id] = teamsInDiv;
-            if (teamsInDiv.length > 1) divRunnerUps[div.id] = teamsInDiv[1];
+            if (teamsInDiv.length > 0) divLeaders[divIdNorm] = teamsInDiv[0];
+            if (teamsInDiv.length > 1) divRunnerUps[divIdNorm] = teamsInDiv[1];
 
             if (confRules.relegation?.enabled && confRules.relegation.type === 'division') {
                 const bottomCount = confRules.relegation.count || 1;
@@ -256,13 +268,14 @@
             });
         } else {
             cachedConferences.forEach(conf => {
-                const confTeams = cachedLeagueDetails.filter(f => (f.conference === conf.id) || (divToConfMap[f.division] === conf.id)).map(f => f.id);
-                const confDivs = cachedDivisions.filter(d => d.conference === conf.id).map(d => d.id);
+                const confIdNorm = norm(conf.id);
+                const confTeams = cachedLeagueDetails.filter(f => (norm(f.conference) === confIdNorm) || (divToConfMap[norm(f.division)] === confIdNorm)).map(f => f.id);
+                const confDivs = cachedDivisions.filter(d => norm(d.conference) === confIdNorm).map(d => norm(d.id));
                 const confLeaders = confDivs.map(dId => divLeaders[dId]).filter(id => id !== undefined);
                 const confRunners = confDivs.map(dId => divRunnerUps[dId]).filter(id => id !== undefined);
                 
                 scopesToProcess.push({
-                    scopeId: conf.id,
+                    scopeId: confIdNorm,
                     teams: confTeams,
                     leaders: confLeaders,
                     runnersUp: confRunners
@@ -308,8 +321,9 @@
         }
 
         cachedConferences.forEach(conf => {
-            const confRules = getConfRules(baseRules, conf.id);
-            const confTeams = cachedLeagueDetails.filter(f => (f.conference === conf.id) || (divToConfMap[f.division] === conf.id)).map(f => f.id);
+            const confIdNorm = norm(conf.id);
+            const confRules = getConfRules(baseRules, confIdNorm);
+            const confTeams = cachedLeagueDetails.filter(f => (norm(f.conference) === confIdNorm) || (divToConfMap[norm(f.division)] === confIdNorm)).map(f => f.id);
             
             confTeams.sort((a, b) => getMflIndex(a) - getMflIndex(b));
 
@@ -343,20 +357,20 @@
 
         cachedConferences.forEach(conf => {
             const opt = document.createElement('option');
-            opt.value = conf.id;
+            opt.value = norm(conf.id);
             opt.textContent = conf.name;
             confSelect.appendChild(opt);
         });
 
         let defaultConfId = null;
         if (loggedInFranchiseId) {
-            const franchise = cachedLeagueDetails.find(f => f.id === loggedInFranchiseId);
-            if (franchise) defaultConfId = franchise.conference;
+            const franchise = cachedLeagueDetails.find(f => norm(f.id) === norm(loggedInFranchiseId));
+            if (franchise) defaultConfId = norm(franchise.conference);
         }
 
         if (!defaultConfId) {
             const fallbackConf = cachedConferences.find(c => c.name.toLowerCase().includes("cameron crazies"));
-            defaultConfId = fallbackConf ? fallbackConf.id : (rules.seedingScope === 'league' ? 'playoffs' : cachedConferences?.id);
+            defaultConfId = fallbackConf ? norm(fallbackConf.id) : (rules.seedingScope === 'league' ? 'playoffs' : norm(cachedConferences[0]?.id));
         }
         confSelect.value = defaultConfId;
     }
@@ -365,7 +379,7 @@
      * Builds individual team table row HTML string using global CSS classes
      */
     function buildTeamRowHtml(profile, divId, confRules, rowCounter) {
-        const stats = cachedStandingsFranchises.find(t => t.id === profile.id) || {};
+        const stats = cachedStandingsFranchises.find(t => norm(t.id) === norm(profile.id)) || {};
         const teamName = profile.name || "Franchise " + profile.id;
         const ownerName = profile.owner_name || "Owner";
         const logoUrl = profile.icon ? profile.icon.toString().trim() : "https://dnfl.live/images/ficon-dnfl.png"; 
@@ -382,7 +396,8 @@
             const seed = teamSeeds[profile.id] || "-";
             let badgeIcons = '';
 
-            if (confRules.hasDivisionCrown && profile.division && profile.id === divLeaders[profile.division]) {
+            const isDivWinner = profile.division && profile.id === divLeaders[norm(profile.division)];
+            if (confRules.hasDivisionCrown && isDivWinner) {
                 badgeIcons += `<i class="fas fa-crown" style="color: var(--dnfl-badge-blue); margin-left: 5px;" title="Division Winner"></i>`;
             }
             if (seed !== "-" && confRules.playoffCutoff && seed <= confRules.playoffCutoff) {
@@ -399,7 +414,7 @@
         }
 
         const stripeClass = (rowCounter % 2 === 0) ? "dnfl-row-odd" : "dnfl-row-even";
-        const myTeamClass = (profile.id === loggedInFranchiseId) ? " dnfl-my-team" : "";
+        const myTeamClass = (norm(profile.id) === norm(loggedInFranchiseId)) ? " dnfl-my-team" : "";
         const divRowClass = divId ? ` dnfl-div-row-${divId}` : "";
         const rowClass = `${stripeClass}${myTeamClass}${divRowClass}`;
         const targetHref = `https://${activeHost}/${targetYear}/options?L=${leagueId}&F=${profile.id}&O=01`;
@@ -458,8 +473,8 @@
                 });
             } else {
                 allProfiles.sort((a, b) => {
-                    const idxA = cachedStandingsFranchises.findIndex(s => s.id === a.id);
-                    const idxB = cachedStandingsFranchises.findIndex(s => s.id === b.id);
+                    const idxA = cachedStandingsFranchises.findIndex(s => norm(s.id) === norm(a.id));
+                    const idxB = cachedStandingsFranchises.findIndex(s => norm(s.id) === norm(b.id));
                     return idxA - idxB;
                 });
             }
@@ -473,15 +488,15 @@
             return;
         }
 
-        const conf = cachedConferences.find(c => c.id === selectedValue);
+        const conf = cachedConferences.find(c => norm(c.id) === norm(selectedValue));
         if (!conf) return;
 
-        const confRules = getConfRules(globalRules, conf.id);
+        const confRules = getConfRules(globalRules, norm(conf.id));
         renderStandingsKey(confRules);
 
         if (caption) caption.innerHTML = `<span>${conf.name} Standings</span>`;
 
-        const confDivisions = cachedDivisions.filter(div => div.conference === conf.id);
+        const confDivisions = cachedDivisions.filter(div => norm(div.conference) === norm(conf.id));
         const divisionsToRender = confDivisions.length > 0 ? confDivisions : [{ id: 'none', name: conf.name }];
 
         divisionsToRender.forEach(div => {
@@ -501,12 +516,12 @@
             }
 
             let divisionProfiles = hasRealDivision 
-                ? cachedLeagueDetails.filter(f => f.division === div.id)
-                : cachedLeagueDetails.filter(f => f.conference === conf.id);
+                ? cachedLeagueDetails.filter(f => norm(f.division) === norm(div.id))
+                : cachedLeagueDetails.filter(f => norm(f.conference) === norm(conf.id));
 
             divisionProfiles.sort((a, b) => {
-                const idxA = cachedStandingsFranchises.findIndex(s => s.id === a.id);
-                const idxB = cachedStandingsFranchises.findIndex(s => s.id === b.id);
+                const idxA = cachedStandingsFranchises.findIndex(s => norm(s.id) === norm(a.id));
+                const idxB = cachedStandingsFranchises.findIndex(s => norm(s.id) === norm(b.id));
                 return idxA - idxB;
             });
 
