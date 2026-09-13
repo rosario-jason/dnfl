@@ -10,10 +10,7 @@
     let rankingsMFLYear = '';
     let masterData = [];
     let chartInstance = null;
-
-    const publishedWeeks = [
-        { id: "00_pre-season", display: "Pre-Season" }
-    ];
+    let publishedWeeks = [];
 
     const conferenceColors = {
         'Cameron Crazies': 'rgba(54, 162, 235, 0.85)',
@@ -31,7 +28,7 @@
      * Initializes the rankings dashboard for a specific season year
      * @param {string|number} mflYear 
      */
-    function init(mflYear) {
+    async function init(mflYear) {
         // Auto-resolve year if omitted or if raw template tag is passed
         if (!mflYear || mflYear === '%YEAR%') {
             mflYear = window.current_year;
@@ -45,6 +42,16 @@
 
         const selector = document.getElementById('dnfl_weekSelector');
         if (!selector) return;
+
+        // Dynamically fetch published weeks list for the active season year from GitHub
+        const weeksUrl = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/${rankingsMFLYear}/weeks.json`;
+        try {
+            const rawJson = await DNFLClient.fetchRawText(weeksUrl);
+            publishedWeeks = JSON.parse(rawJson);
+        } catch (err) {
+            console.warn("[DNFL Rankings] Could not load weeks.json, using fallback week.", err);
+            publishedWeeks = [{ id: "00_pre-season", display: "Pre-Season" }];
+        }
 
         selector.innerHTML = ''; 
 

@@ -8,16 +8,13 @@
     window.DNFL = window.DNFL || {};
 
     let podcastMFLYear = '';
-
-    const playlistLog = [
-        { fileId: "DA_S1E1", title: "S1E1 - No Bling... No Ring" }
-    ];
+    let playlistLog = [];
 
     /**
      * Initializes the podcast dashboard for a specific season year
      * @param {string|number} mflYear 
      */
-    function init(mflYear) {
+    async function init(mflYear) {
         // Auto-resolve year if omitted or if raw template tag is passed
         if (!mflYear || mflYear === '%YEAR%') {
             mflYear = window.current_year;
@@ -31,6 +28,16 @@
 
         const selector = document.getElementById('dnfl_episodeSelector');
         if (!selector) return;
+
+        // Dynamically fetch episodes log for the active season year
+        const episodesUrl = `https://dnfl.live/dnfl_podcast/${podcastMFLYear}/episodes.json`;
+        try {
+            const rawJson = await DNFLClient.fetchRawText(episodesUrl);
+            playlistLog = JSON.parse(rawJson);
+        } catch (err) {
+            console.warn("[DNFL Podcast] Could not load episodes.json, using fallback episode.", err);
+            playlistLog = [{ fileId: "DA_S1E1", title: "S1E1 - No Bling... No Ring" }];
+        }
 
         selector.innerHTML = ''; 
 
