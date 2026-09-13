@@ -7,55 +7,9 @@
     // Establish Global DNFL Namespace
     window.DNFL = window.DNFL || {};
 
-    // =========================================================================
-    // 📖 STANDINGS & SEEDING CONFIGURATION GUIDE (VARIABLE DICTIONARY)
-    // =========================================================================
-    const STANDINGS_RULES = {
-        // HISTORICAL SEASONS: 2006 through 2024
-        '2006-2024': {
-            seedingScope: 'conference',
-            seedingModel: 'standard_div_winners_first',
-            playoffCutoff: 6,
-            hasDivisionCrown: true,
-            relegation: { enabled: false, type: 'conference', count: 0 },
-            promotion: { enabled: false, count: 0 }
-        },
-
-        // 2025 SEASON: Expansion to 28 teams
-        2025: {
-            seedingScope: 'conference',
-            seedingModel: 'standard_div_winners_first',
-            playoffCutoff: 7,
-            hasDivisionCrown: true,
-            relegation: { enabled: false, type: 'conference', count: 0 },
-            promotion: { enabled: false, count: 0 }
-        },
-
-        // 2026 SEASON: 36 teams, 16-team playoff
-        2026: {
-            seedingScope: 'league',
-            seedingModel: 'tiered_div_finish_pf',
-            playoffCutoff: 16,
-            hasDivisionCrown: true,
-            relegation: { enabled: true, type: 'division', count: 1 },
-            promotion: { enabled: false, count: 0 }
-        },
-
-        // DEFAULT: 2027 AND BEYOND (Multi-Tier Promotion / Relegation)
-        default: {
-            seedingScope: 'conference',
-            seedingModel: 'standard_div_winners_first',
-            playoffCutoff: 6,
-            hasDivisionCrown: true,
-            relegation: { enabled: true, type: 'division', count: 1 },
-            promotion: { enabled: true, count: 4 },
-            conferenceOverrides: {
-                '00': { promotion: { enabled: false } },
-                '01': { promotion: { enabled: false } },
-                '02': { seedingModel: 'mfl_native', playoffCutoff: 4, hasDivisionCrown: false, relegation: { enabled: false } }
-            }
-        }
-    };
+    // Update rules in the standings_rules.json file
+    // Standings & Seeding rules fetched dynamically from standings_rules.json
+    let STANDINGS_RULES = {};
 
     // Global Context Engine Variables
     const activeHost = window.location.hostname || "myfantasyleague.com";
@@ -96,6 +50,7 @@
         if (STANDINGS_RULES[yr]) return STANDINGS_RULES[yr];
 
         for (const key in STANDINGS_RULES) {
+            if (key.startsWith('_')) continue; // Skip metadata keys like _instructions
             if (key.includes('-')) {
                 const [start, end] = key.split('-').map(s => parseInt(s.trim()));
                 if (yr >= start && yr <= end) return STANDINGS_RULES[key];
@@ -105,7 +60,7 @@
                 if (yearList.includes(yr)) return STANDINGS_RULES[key];
             }
         }
-        return STANDINGS_RULES['default'];
+        return STANDINGS_RULES['default'] || {};
     }
 
     /**
@@ -129,7 +84,7 @@
     }
 
     /**
-     * Initializes standings data fetch and DOM setup
+     * Initializes standings data fetch, rules configuration, and DOM setup
      */
     async function init() {
         const tbody = document.getElementById("dnfl-standings-tbody");
@@ -142,12 +97,43 @@
         }
 
         try {
-            const [standingsResponse, leagueResponse] = await Promise.all([
+            const rulesUrl = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_standings/standings_rules.json`;
+
+            const [standingsResponse, leagueResponse, rawRulesJson] = await Promise.all([
                 DNFLClient.fetchData("leagueStandings"),
-                DNFLClient.fetchData("league")
+                DNFLClient.fetchData("league"),
+                DNFLClient.fetchRawText(rulesUrl).catch(err => {
+                    console.warn("[DNFL Standings] Could not load standings_rules.json, using fallback rules.", err);
+                    return null;
+                })
             ]);
 
-            if (!standingsResponse || !leagueResponse) throw new Error("Missing structural configuration maps from MFL payload.");
+            if (!standingsResponse || !leagueResponse) {
+                throw new Error("Missing structural configuration maps from MFL payload.");
+            }
+
+            // Parse rules JSON or use safe fallback
+            if (rawRulesJson) {
+                try {
+                    STANDINGS_RULES = JSON.parse(rawRulesJson);
+                } catch (e) {
+                    console.error("[DNFL Standings] Corrupted standings_rules.json format. Fallback engaged.", e);
+                }
+            }
+
+            // Ensure fallback default exists if fetch failed
+            if (!STANDINGS_RULES || !STANDINGS_RULES['default']) {
+                STANDINGS_RULES = {
+                    'default': {
+                        seedingScope: 'conference',
+                        seedingModel: 'standard_div_winners_first',
+                        playoffCutoff: 6,
+                        hasDivisionCrown: true,
+                        relegation: { enabled: true, type: 'division', count: 1 },
+                        promotion: { enabled: true, count: 4 }
+                    }
+                };
+            }
 
             cachedStandingsFranchises = standingsResponse.leagueStandings.franchise;
             cachedLeagueDetails = leagueResponse.league.franchises.franchise;
@@ -249,7 +235,7 @@
             const teamsInDiv = cachedLeagueDetails.filter(f => f.division === div.id).map(f => f.id);
             teamsInDiv.sort((a, b) => getMflIndex(a) - getMflIndex(b));
 
-            if (teamsInDiv.length > 0) divLeaders[div.id] = teamsInDiv;
+            if (teamsInDiv.length > 0) divLeaders[div.id] = teamsInDiv[0];
             if (teamsInDiv.length > 1) divRunnerUps[div.id] = teamsInDiv[1];
 
             if (confRules.relegation?.enabled && confRules.relegation.type === 'division') {
@@ -370,7 +356,7 @@
 
         if (!defaultConfId) {
             const fallbackConf = cachedConferences.find(c => c.name.toLowerCase().includes("cameron crazies"));
-            defaultConfId = fallbackConf ? fallbackConf.id : (rules.seedingScope === 'league' ? 'playoffs' : cachedConferences?.id);
+            defaultConfId = fallbackConf ? fallbackConf.id : (rules.seedingScope === 'league' ? 'playoffs' : cachedConferences[0]?.id);
         }
         confSelect.value = defaultConfId;
     }

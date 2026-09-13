@@ -1,0 +1,62 @@
+{
+  "__README": [
+    "===================================================================",
+    " DNFL STANDINGS & SEEDING CONFIGURATION GUIDE",
+    "===================================================================",
+    " FIELDS EXPLANATION:",
+    "   - seedingScope    : 'conference' (seed per conf) or 'league' (seed super league)",
+    "   - seedingModel    : 'standard_div_winners_first', 'tiered_div_finish_pf', 'mfl_native', or 'manual'",
+    "   - playoffCutoff   : Number of teams per conference/league making playoffs (Trophy badge)",
+    "   - hasDivisionCrown: true/false (Crown badge for division leaders)",
+    "   - relegation      : { 'enabled': true/false, 'type': 'division'|'conference', 'count': N }",
+    "   - promotion       : { 'enabled': true/false, 'count': N }",
+    "   - conferenceOverrides: Optional per-conference rules for multi-tier leagues (e.g. '00', '01')",
+    "==================================================================="
+  ],
+
+  "2006-2024": {
+    "seedingScope": "conference",
+    "seedingModel": "standard_div_winners_first",
+    "playoffCutoff": 6,
+    "hasDivisionCrown": true,
+    "relegation": { "enabled": false, "type": "conference", "count": 0 },
+    "promotion": { "enabled": false, "count": 0 }
+  },
+
+  "2025": {
+    "seedingScope": "conference",
+    "seedingModel": "standard_div_winners_first",
+    "playoffCutoff": 7,
+    "hasDivisionCrown": true,
+    "relegation": { "enabled": false, "type": "conference", "count": 0 },
+    "promotion": { "enabled": false, "count": 0 }
+  },
+
+  "2026": {
+    "seedingScope": "league",
+    "seedingModel": "tiered_div_finish_pf",
+    "playoffCutoff": 16,
+    "hasDivisionCrown": true,
+    "relegation": { "enabled": true, "type": "division", "count": 1 },
+    "promotion": { "enabled": false, "count": 0 }
+  },
+
+  "default": {
+    "seedingScope": "conference",
+    "seedingModel": "standard_div_winners_first",
+    "playoffCutoff": 6,
+    "hasDivisionCrown": true,
+    "relegation": { "enabled": true, "type": "division", "count": 1 },
+    "promotion": { "enabled": true, "count": 4 },
+    "conferenceOverrides": {
+      "00": { "promotion": { "enabled": false } },
+      "01": { "promotion": { "enabled": false } },
+      "02": {
+        "seedingModel": "mfl_native",
+        "playoffCutoff": 4,
+        "hasDivisionCrown": false,
+        "relegation": { "enabled": false }
+      }
+    }
+  }
+}
