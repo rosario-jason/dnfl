@@ -38,9 +38,6 @@
     let relegatedTeamIds = new Set();
     let promotedTeamIds = new Set();
 
-    let retryCount = 0;
-    const maxRetries = 50; 
-
     /**
      * Helper to normalize ID values (e.g. "0", 0, "00") into standard 2-digit format
      */
@@ -49,6 +46,9 @@
         const s = String(val).trim();
         return s.length === 1 && /^\d$/.test(s) ? '0' + s : s;
     }
+
+    let retryCount = 0;
+    const maxRetries = 50; 
 
     /**
      * Resolves rule set for target season year from STANDINGS_RULES
@@ -370,13 +370,13 @@
 
         if (!defaultConfId) {
             const fallbackConf = cachedConferences.find(c => c.name.toLowerCase().includes("cameron crazies"));
-            defaultConfId = fallbackConf ? norm(fallbackConf.id) : (rules.seedingScope === 'league' ? 'playoffs' : norm(cachedConferences[0]?.id));
+            defaultConfId = fallbackConf ? norm(fallbackConf.id) : (rules.seedingScope === 'league' ? 'playoffs' : norm(cachedConferences?.id));
         }
         confSelect.value = defaultConfId;
     }
 
     /**
-     * Builds individual team table row HTML string using global CSS classes
+     * Builds individual team table row HTML string using global CSS classes and formatted PF/PA numbers
      */
     function buildTeamRowHtml(profile, divId, confRules, rowCounter) {
         const stats = cachedStandingsFranchises.find(t => norm(t.id) === norm(profile.id)) || {};
@@ -386,6 +386,8 @@
         
         const rawBbid = parseFloat(profile.bbidAvailableBalance || profile.bbidBalance || 0);
         const bbidFormatted = "$" + rawBbid.toFixed(2);
+        
+        // Number formatting for Points For (PF) and Points Against (PA)
         const rawPf = parseFloat(stats.pf || 0);
         const rawPa = parseFloat(stats.pa || 0);
         const pf = rawPf.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
