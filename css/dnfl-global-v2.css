@@ -116,6 +116,16 @@
     border-color: var(--dnfl-accent-blue);
 }
 
+/* Push button groups or action blocks to the right side of flex toolbars */
+.dnfl-buttons-right,
+.dnfl-actions-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
 .dnfl-visibility-toggle-btn {
     font-size: 0.7rem;
     font-weight: bold;
