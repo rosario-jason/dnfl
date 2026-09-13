@@ -376,7 +376,7 @@
         const pa = stats.pa || "0";
         const record = `${stats.h2hw || 0}-${stats.h2hl || 0}-${stats.h2ht || 0}`;
 
-        let seedCellContent = "-";
+        let seedCellContent = `<span class="dnfl-rank-circle">-</span>`;
 
         if (hasSeasonStarted) {
             const seed = teamSeeds[profile.id] || "-";
@@ -395,7 +395,7 @@
                 badgeIcons += `<i class="fas fa-arrow-circle-up" style="color: var(--dnfl-success-green); margin-left: 5px;" title="Promotion Zone"></i>`;
             }
 
-            seedCellContent = `${seed} ${badgeIcons}`;
+            seedCellContent = `<span class="dnfl-rank-circle">${seed}</span>${badgeIcons}`;
         }
 
         const stripeClass = (rowCounter % 2 === 0) ? "dnfl-row-odd" : "dnfl-row-even";
@@ -406,7 +406,7 @@
 
         return `
             <tr class="${rowClass}">
-                <td style="font-weight: bold; font-size: 1.1rem; text-align: left; white-space: nowrap;">
+                <td style="text-align: left; white-space: nowrap;">
                     ${seedCellContent}
                 </td>
                 <td>
@@ -415,15 +415,15 @@
                             <img src="${logoUrl}" alt="${teamName}" class="franchiseicon" id="franchiseicon_${profile.id}" />
                         </a>
                         <div style="display: flex; flex-direction: column;">
-                            <a href="${targetHref}" style="font-weight: 700; color: var(--dnfl-text-main); text-decoration: none;">${teamName}</a>
-                            <span style="font-size: 0.8rem; color: var(--dnfl-text-subtle);">${ownerName}</span>
+                            <a href="${targetHref}" class="dnfl-team-name">${teamName}</a>
+                            <span class="dnfl-owner-name">${ownerName}</span>
                         </div>
                     </div>
                 </td>
-                <td class="dnfl-hide-mobile" style="text-align: center;">${pf}</td>
-                <td class="dnfl-hide-mobile" style="text-align: center;">${pa}</td>
-                <td style="text-align: center; font-weight: 600;">${record}</td>
-                <td class="dnfl-hide-mobile" style="text-align: center;">${bbidFormatted}</td>
+                <td class="dnfl-hide-mobile dnfl-standings-pf">${pf}</td>
+                <td class="dnfl-hide-mobile dnfl-standings-pa">${pa}</td>
+                <td style="text-align: center;"><span class="dnfl-record-badge">${record}</span></td>
+                <td class="dnfl-hide-mobile dnfl-standings-bbid">${bbidFormatted}</td>
             </tr>
         `;
     }

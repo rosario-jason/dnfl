@@ -660,6 +660,74 @@
     gap: 4px;
 }
 
+/* Circular Gray Rank Badge */
+.dnfl-rank-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: var(--dnfl-bg-subhead);
+    color: var(--dnfl-text-main);
+    font-weight: 700;
+    font-size: 0.95rem;
+    border: 1px solid var(--dnfl-border-medium);
+}
+
+/* Franchise Name Link */
+.dnfl-team-name {
+    font-weight: 700;
+    color: var(--dnfl-text-main);
+    text-decoration: none;
+}
+.dnfl-team-name:hover {
+    color: var(--dnfl-primary);
+    text-decoration: underline;
+}
+
+/* Owner / Co-Owner Subtext */
+.dnfl-owner-name {
+    font-size: 0.8rem;
+    color: var(--dnfl-text-subtle);
+}
+
+/* Points For (PF) Cell */
+.dnfl-standings-pf {
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--dnfl-success-green);
+}
+
+/* Points Against (PA) Cell */
+.dnfl-standings-pa {
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: var(--dnfl-alert-red);
+}
+
+/* Win-Loss-Tie (W-L-T) Blue Pill Badge */
+.dnfl-record-badge {
+    display: inline-block;
+    min-width: 85px;
+    text-align: center;
+    padding: 3px 8px;
+    border-radius: 12px;
+    background-color: var(--dnfl-badge-blue);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+/* BBID Balance Cell */
+.dnfl-standings-bbid {
+    text-align: center;
+    font-weight: 600;
+    color: var(--dnfl-text-main);
+}
+
 /* ==========================================================================
    MFL Style Updates for DNFL
    ========================================================================== */

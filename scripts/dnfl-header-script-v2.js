@@ -1,4 +1,3 @@
-// dnfl-header-script-v2.js v1.0
 /* ==========================================================================
    DNFL Central Framework Header Loader & Dependency Manager
    ========================================================================== */
@@ -9,7 +8,7 @@
     window.DNFL = window.DNFL || {};
 
     // 2. FRAMEWORK VERSION (Increment this to bust browser cache globally)
-    const FRAMEWORK_VERSION = "2.02";
+    const FRAMEWORK_VERSION = "2.03";
     const BASE_URL = "https://dnfl.live/scripts/";
 
     /* 3. MASTER CHRONOLOGICAL SCRIPT REGISTRY
