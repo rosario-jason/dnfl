@@ -15,23 +15,23 @@
     /* ---------------- Accent & Highlight Colors ---------------- */
     --dnfl-accent-blue: #36a2eb;        /* Bright Sky Blue */
     --dnfl-highlight-yellow: #fde68a;    /* Soft Canary Yellow */
-    --dnfl-highlight-yellow-hover: #fcd34d; /* Warm Gold / Sunflower */
+    --dnfl-highlight-yellow-hover: #fcd34d; /* Warm Gold */
     --dnfl-alert-red: #ef4444;          /* Coral Red */
     --dnfl-success-green: #10b981;      /* Emerald Green */
     --dnfl-badge-blue: #3b82f6;         /* Cobalt Blue */
-    --dnfl-badge-amber: #f59e0b;        /* Dark Amber / Tangerine */
+    --dnfl-badge-amber: #f59e0b;        /* Dark Amber */
 
     /* ---------------- Conference Branding Colors ---------------- */
     --dnfl-conf-crazies-bg: rgba(54, 162, 235, 0.85);   /* Translucent Sky Blue (Cameron Crazies) */
     --dnfl-conf-crazies-border: rgb(54, 162, 235);     /* Sky Blue Border */
     --dnfl-conf-kville-bg: rgba(255, 99, 132, 0.85);    /* Translucent Rose Pink (K-Ville) */
     --dnfl-conf-kville-border: rgb(255, 99, 132);      /* Rose Pink Border */
-    --dnfl-conf-bluedevils-bg: rgba(75, 192, 192, 0.85);/* Translucent Cyan/Teal (Blue Devils) */
-    --dnfl-conf-bluedevils-border: rgb(75, 192, 192);   /* Cyan/Teal Border */
+    --dnfl-conf-bluedevils-bg: rgba(75, 192, 192, 0.85);/* Translucent Cyan (Blue Devils) */
+    --dnfl-conf-bluedevils-border: rgb(75, 192, 192);   /* Cyan Border */
 
     /* ---------------- Neutral Palette ---------------- */
     --dnfl-bg-card: #ffffff;            /* Pure White */
-    --dnfl-bg-alt: #fafafa;             /* Off-White / Light Snow */
+    --dnfl-bg-alt: #fafafa;             /* Off-White */
     --dnfl-bg-muted: #f8fafc;           /* Cool Slate Tint */
     --dnfl-bg-dark: #262626;            /* Dark Charcoal */
     --dnfl-bg-subhead: #f1f5f9;         /* Soft Slate Gray */
@@ -470,7 +470,7 @@
 }
 
 .dnfl-rules-subhead:hover {
-    background-color: #e2e8f0;            /* Soft Neutral Gray */
+    background-color: var(--dnfl-border-subtle);
 }
 
 .dnfl-sub-icon {
@@ -556,7 +556,7 @@
     background-color: var(--dnfl-bg-card) !important;
     border: 1px solid var(--dnfl-border-medium) !important;
     box-shadow: var(--dnfl-shadow-subtle) !important;
-    border-radius: 6px !important;
+    border-radius: var(--dnfl-radius-md) !important;
     overflow: hidden !important;
 }
 
