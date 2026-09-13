@@ -117,7 +117,7 @@
 
         tableBody.innerHTML = '';
 
-        sortedData.forEach(item => {
+        sortedData.forEach((item, index) => {
             const row = document.createElement('tr');
             const completeOwners = item.coOwner ? `${item.owner}, ${item.coOwner}` : item.owner;
 
@@ -125,16 +125,19 @@
             const badgeColor = conferenceColors[confKey] || 'var(--dnfl-border-dark)'; 
             const borderStyle = conferenceBorders[confKey] || 'var(--dnfl-border-dark)';
 
+            // Table rank badge strictly displays sequential 1..N rank for the rendered dataset
+            const displayRank = index + 1;
+
             row.innerHTML = `
                 <td>
                     <span class="dnfl-rank-badge" style="background-color: ${badgeColor}; border: 1px solid ${borderStyle};">
-                        ${item.rank}
+                        ${displayRank}
                     </span>
                 </td>
-                <td style="font-weight: 600;">${item.franchise}</td>
+                <td>${item.franchise}</td>
                 <td>${completeOwners}</td>
-                <td style="text-align: center; font-weight: 600;">${item.grade.toFixed(1)}</td>
-                <td style="text-align: center;">${item.projectedRecord}</td>
+                <td>${item.grade.toFixed(1)}</td>
+                <td>${item.projectedRecord}</td>
                 <td>${item.comments}</td>
             `;
             tableBody.appendChild(row);

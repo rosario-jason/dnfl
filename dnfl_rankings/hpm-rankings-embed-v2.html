@@ -8,9 +8,10 @@
     <br/>
 
     <div class="dnfl-module-container">
+        <!-- Controls Toolbar -->
         <div class="dnfl-controls">
             <div class="dnfl-filter-group">
-                <label for="dnfl_weekSelector">Ranking Week:</label>
+                <label for="dnfl_weekSelector">Week:</label>
                 <select id="dnfl_weekSelector" class="dnfl-select" onchange="DNFL.Rankings.loadWeeklyData()"></select>
             </div>
             <div class="dnfl-filter-group">
@@ -24,6 +25,7 @@
             </div>
         </div>
 
+        <!-- Conference Swatch Legend -->
         <div class="dnfl-rankings-legend">
             <div class="dnfl-legend-item">
                 <span class="dnfl-legend-swatch crazies"></span>
@@ -39,49 +41,38 @@
             </div>
         </div>
         
+        <!-- Chart Section Header & Toggle -->
         <div class="dnfl-section-header-row">
             <button id="dnfl_chartToggleBtn" class="dnfl-visibility-toggle-btn" onclick="DNFL.Rankings.toggleElementVisibility('chart')">Hide Chart</button>
         </div>
 
+        <!-- Chart Canvas Container -->
         <div id="dnfl_chartWrapperContainer" class="dnfl-chart-wrapper">
             <canvas id="dnfl_powerRankingChart"></canvas>
         </div>
     </div>
 
+    <!-- Detailed Data Table Container -->
     <div id="dnfl_tableWrapperContainer" class="dnfl-table-wrapper">
         <div class="dnfl-toolbar">
             <div class="dnfl-section-header-row">
                 <button id="dnfl_tableToggleBtn" class="dnfl-visibility-toggle-btn" onclick="DNFL.Rankings.toggleElementVisibility('table')">Hide Table</button>
             </div>
         </div>
-        <table id="dnfl_dataTable">
+        <table id="dnfl_dataTable" class="dnfl-table">
             <thead>
                 <tr>
-                    <th style="width: 7%;">Rank</th>
-                    <th style="width: 18%;">Franchise</th>
-                    <th style="width: 18%;">Owners</th>
-                    <th style="text-align: center; width: 7%;">Grade</th>
-                    <th style="text-align: center; width: 10%;">Proj W-L</th>
-                    <th style="width: 40%;">Rank Comments</th>
+                    <th>Rank</th>
+                    <th>Franchise</th>
+                    <th>Owners</th>
+                    <th>Grade</th>
+                    <th>Proj W-L</th>
+                    <th>Rank Comments</th>
                 </tr>
             </thead>
             <tbody id="dnfl_tableBody"></tbody>
         </table>
     </div>
-
-<script>
-    (function initRankingsModule() {
-        if (window.DNFL && window.DNFL.Rankings) {
-            window.DNFL.Rankings.init('%YEAR%');
-        } else {
-            window.addEventListener('dnflFrameworkReady', function() {
-                if (window.DNFL && window.DNFL.Rankings) {
-                    window.DNFL.Rankings.init('%YEAR%');
-                }
-            });
-        }
-    })();
-</script>
 
   </div>
 </div>
