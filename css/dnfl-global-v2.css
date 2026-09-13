@@ -677,35 +677,38 @@
 
 /* Franchise Name Link */
 .dnfl-team-name {
-    font-weight: 700;
-    color: var(--dnfl-text-main);
-    text-decoration: none;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    color: var(--dnfl-text-main) !important;
+    text-decoration: none !important;
 }
 .dnfl-team-name:hover {
-    color: var(--dnfl-primary);
-    text-decoration: underline;
+    color: var(--dnfl-primary) !important;
+    text-decoration: underline !important;
 }
 
 /* Owner / Co-Owner Subtext */
 .dnfl-owner-name {
-    font-size: 0.8rem;
-    color: var(--dnfl-text-subtle);
+    font-size: 0.8rem !important;
+    color: var(--dnfl-text-subtle) !important;
 }
 
-/* Points For (PF) Cell */
+/* Points For (PF) Cell - Green */
+.dnfl-standings-table td.dnfl-standings-pf,
 .dnfl-standings-pf {
-    text-align: center;
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: var(--dnfl-success-green);
+    text-align: center !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    color: var(--dnfl-success-green) !important;
 }
 
-/* Points Against (PA) Cell */
-.dnfl-standings-pa {
-    text-align: center;
-    font-weight: 700;
-    font-size: 0.95rem;
-    color: var(--dnfl-alert-red);
+/* Points Against (PA) Cell - Red */
+.dnfl-standings-pa,
+.dnfl-standings-table td.dnfl-standings-pa {
+    text-align: center !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    color: var(--dnfl-alert-red) !important;
 }
 
 /* Win-Loss-Tie (W-L-T) Blue Pill Badge */
@@ -715,17 +718,18 @@
     text-align: center;
     padding: 3px 8px;
     border-radius: 12px;
-    background-color: var(--dnfl-badge-blue);
-    color: #ffffff;
-    font-weight: 700;
-    font-size: 0.85rem;
+    background-color: var(--dnfl-badge-blue) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
 }
 
 /* BBID Balance Cell */
+.dnfl-standings-table td.dnfl-standings-bbid,
 .dnfl-standings-bbid {
-    text-align: center;
-    font-weight: 600;
-    color: var(--dnfl-text-main);
+    text-align: center !important;
+    font-size: 0.8rem !important;
+    color: var(--dnfl-text-main) !important;
 }
 
 /* ==========================================================================
