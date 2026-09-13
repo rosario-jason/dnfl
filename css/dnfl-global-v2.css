@@ -593,6 +593,26 @@
     color: var(--dnfl-text-subhead) !important;
 }
 
+/* 1. Reduce default top margin on table wrappers */
+.dnfl-rules-table-wrapper {
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+/* 2. Tighten gap when a table directly follows a list or paragraph */
+.dnfl-rules-topic-content ol + .dnfl-rules-table-wrapper,
+.dnfl-rules-topic-content ul + .dnfl-rules-table-wrapper,
+.dnfl-rules-topic-content p + .dnfl-rules-table-wrapper,
+.dnfl-rules-topic-content br + .dnfl-rules-table-wrapper {
+    margin-top: 0.25rem;
+}
+
+/* 3. Remove excess margin from the last list item directly above a table */
+.dnfl-rules-topic-content ol {
+    margin-bottom: 0.5rem;
+}
+
+
 @media (max-width: 768px) {
     .dnfl-rules-tabhead {
         font-size: 0.95rem;
