@@ -43,12 +43,71 @@
     const maxRetries = 50; 
 
     /**
-     * Helper to normalize ID values (e.g. "0", 0, "00") into standard 2-digit format
+     * Helper to normalize 2-digit ID values (e.g. "0", 0, "00")
      */
     function norm(val) {
         if (val === null || val === undefined) return '';
         const s = String(val).trim();
         return s.length === 1 && /^\d$/.test(s) ? '0' + s : s;
+    }
+
+    /**
+     * Helper to normalize 4-digit franchise IDs (e.g. "5", 5, "0005")
+     */
+    function normFranchiseId(val) {
+        if (val === null || val === undefined) return '';
+        const s = String(val).trim();
+        if (!s || s === '0000') return '';
+        return s.padStart(4, '0');
+    }
+
+    /**
+     * Helper to safely convert MFL payload values into Arrays
+     */
+    function toArray(val) {
+        if (!val) return [];
+        return Array.isArray(val) ? val : [val];
+    }
+
+    /**
+     * Dynamically detects the logged-in franchise ID across all MFL environments
+     */
+    function getLoggedInFranchiseId() {
+        let fid = window.franchise_id || window.mflFranchiseId || window.login_franchise_id || window.current_franchise_id;
+        
+        if (!fid && window.location && window.location.search) {
+            const urlParams = new URLSearchParams(window.location.search);
+            fid = urlParams.get('F') || urlParams.get('FRANCHISE_ID') || urlParams.get('f');
+        }
+
+        if (!fid && document.cookie) {
+            const cookieMatch = document.cookie.match(/(?:MFL_USER_ID|MFL_FRANCHISE_ID|franchise_id)=([^;]+)/i);
+            if (cookieMatch && cookieMatch[1]) {
+                const rawCookieVal = decodeURIComponent(cookieMatch[1]);
+                const idMatch = rawCookieVal.match(/(?:u%3D|u=)?(\d{4})/i);
+                if (idMatch && idMatch[1]) {
+                    fid = idMatch[1];
+                }
+            }
+        }
+
+        if (!fid) {
+            const myTeamLink = document.querySelector('a[href*="O=01"], a[href*="O=02"], a[href*="F="]');
+            if (myTeamLink && myTeamLink.href) {
+                const hrefMatch = myTeamLink.href.match(/[?&]F=(\d{4})/i);
+                if (hrefMatch && hrefMatch[1]) {
+                    fid = hrefMatch[1];
+                }
+            }
+        }
+
+        if (!fid) {
+            const inputEl = document.querySelector('input[name="FRANCHISE_ID"], select[name="FRANCHISE_ID"]');
+            if (inputEl) fid = inputEl.value;
+        }
+
+        const normalized = normFranchiseId(fid);
+        return (normalized && normalized !== '0000') ? normalized : null;
     }
 
     /**
@@ -151,10 +210,10 @@
                 };
             }
 
-            cachedStandingsFranchises = standingsResponse.leagueStandings.franchise;
-            cachedLeagueDetails = leagueResponse.league.franchises.franchise;
-            cachedConferences = leagueResponse.league.conferences?.conference || [];
-            cachedDivisions = leagueResponse.league.divisions?.division || [];
+            cachedStandingsFranchises = toArray(standingsResponse.leagueStandings?.franchise);
+            cachedLeagueDetails = toArray(leagueResponse.league?.franchises?.franchise);
+            cachedConferences = toArray(leagueResponse.league?.conferences?.conference);
+            cachedDivisions = toArray(leagueResponse.league?.divisions?.division);
             
             cachedLastRegWeek = parseInt(leagueResponse.league.lastRegularSeasonWeek || 14);
             cachedCurrentWeek = parseInt(leagueResponse.league.currentWk) || 1;
@@ -233,10 +292,10 @@
         const divToConfMap = {};
         cachedDivisions.forEach(d => divToConfMap[norm(d.id)] = norm(d.conference));
 
-        const getMflIndex = (id) => cachedStandingsFranchises.findIndex(s => norm(s.id) === norm(id));
+        const getMflIndex = (id) => cachedStandingsFranchises.findIndex(s => normFranchiseId(s.id) === normFranchiseId(id));
         
         const getPf = (id) => {
-            const s = cachedStandingsFranchises.find(item => norm(item.id) === norm(id));
+            const s = cachedStandingsFranchises.find(item => normFranchiseId(item.id) === normFranchiseId(id));
             return parseFloat(s?.pf || 0);
         };
 
@@ -368,24 +427,32 @@
             confSelect.appendChild(opt);
         });
 
-        // Build Division ID -> Conference ID lookup map for robust resolution
-        const divToConfMap = {};
-        cachedDivisions.forEach(d => divToConfMap[norm(d.id)] = norm(d.conference));
-
-        // Resolve current logged-in franchise ID dynamically at execution time
-        const activeFranchiseId = window.franchise_id || loggedInFranchiseId;
-
+        const activeFranchiseId = getLoggedInFranchiseId();
         let defaultConfId = null;
-        if (activeFranchiseId && activeFranchiseId !== "0000") {
-            const franchise = cachedLeagueDetails.find(f => norm(f.id) === norm(activeFranchiseId));
-            if (franchise) {
-                // Fall back to mapping division -> conference if franchise.conference is missing in MFL API payload
-                defaultConfId = norm(franchise.conference) || divToConfMap[norm(franchise.division)];
+
+        if (activeFranchiseId) {
+            const userFranchise = cachedLeagueDetails.find(f => normFranchiseId(f.id) === activeFranchiseId);
+            if (userFranchise) {
+                if (userFranchise.conference) {
+                    defaultConfId = norm(userFranchise.conference);
+                }
+                if (!defaultConfId && userFranchise.division) {
+                    const divNorm = norm(userFranchise.division);
+                    const matchingDiv = cachedDivisions.find(d => norm(d.id) === divNorm);
+                    if (matchingDiv && matchingDiv.conference) {
+                        defaultConfId = norm(matchingDiv.conference);
+                    }
+                }
             }
         }
 
-        if (!defaultConfId) {
-            const fallbackConf = cachedConferences.find(c => c.name.toLowerCase().includes("cameron crazies"));
+        let validOption = null;
+        if (defaultConfId) {
+            validOption = Array.from(confSelect.options).find(opt => opt.value === defaultConfId);
+        }
+
+        if (!validOption) {
+            const fallbackConf = cachedConferences.find(c => c.name && c.name.toLowerCase().includes("cameron crazies"));
             defaultConfId = fallbackConf ? norm(fallbackConf.id) : (rules.seedingScope === 'league' ? 'playoffs' : norm(cachedConferences[0]?.id));
         }
 
@@ -396,7 +463,7 @@
      * Builds individual team table row HTML string using global CSS classes and formatted PF/PA numbers
      */
     function buildTeamRowHtml(profile, divId, confRules, rowCounter) {
-        const stats = cachedStandingsFranchises.find(t => norm(t.id) === norm(profile.id)) || {};
+        const stats = cachedStandingsFranchises.find(t => normFranchiseId(t.id) === normFranchiseId(profile.id)) || {};
         const teamName = profile.name || "Franchise " + profile.id;
         const ownerName = profile.owner_name || "Owner";
         const logoUrl = profile.icon ? profile.icon.toString().trim() : "https://dnfl.live/images/ficon-dnfl.png"; 
@@ -435,8 +502,8 @@
         }
 
         const stripeClass = (rowCounter % 2 === 0) ? "dnfl-row-odd" : "dnfl-row-even";
-        const activeFranchiseId = window.franchise_id || loggedInFranchiseId;
-        const myTeamClass = (norm(profile.id) === norm(activeFranchiseId)) ? " dnfl-my-team" : "";
+        const activeFranchiseId = getLoggedInFranchiseId();
+        const myTeamClass = (activeFranchiseId && normFranchiseId(profile.id) === activeFranchiseId) ? " dnfl-my-team" : "";
         const divRowClass = divId ? ` dnfl-div-row-${divId}` : "";
         const rowClass = `${stripeClass}${myTeamClass}${divRowClass}`;
         const targetHref = `https://${activeHost}/${targetYear}/options?L=${leagueId}&F=${profile.id}&O=01`;
@@ -495,8 +562,8 @@
                 });
             } else {
                 allProfiles.sort((a, b) => {
-                    const idxA = cachedStandingsFranchises.findIndex(s => norm(s.id) === norm(a.id));
-                    const idxB = cachedStandingsFranchises.findIndex(s => norm(s.id) === norm(b.id));
+                    const idxA = cachedStandingsFranchises.findIndex(s => normFranchiseId(s.id) === normFranchiseId(a.id));
+                    const idxB = cachedStandingsFranchises.findIndex(s => normFranchiseId(s.id) === normFranchiseId(b.id));
                     return idxA - idxB;
                 });
             }
@@ -542,8 +609,8 @@
                 : cachedLeagueDetails.filter(f => norm(f.conference) === norm(conf.id));
 
             divisionProfiles.sort((a, b) => {
-                const idxA = cachedStandingsFranchises.findIndex(s => norm(s.id) === norm(a.id));
-                const idxB = cachedStandingsFranchises.findIndex(s => norm(s.id) === norm(b.id));
+                const idxA = cachedStandingsFranchises.findIndex(s => normFranchiseId(s.id) === normFranchiseId(a.id));
+                const idxB = cachedStandingsFranchises.findIndex(s => normFranchiseId(s.id) === normFranchiseId(b.id));
                 return idxA - idxB;
             });
 
