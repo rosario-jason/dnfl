@@ -909,16 +909,7 @@ caption,
     background-color: var(--dnfl-highlight-yellow) !important;
 }
 
-@media (max-width: 600px) {
-    .dnfl-team-name {
-        max-width: 110px;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: inline-block;
-        font-size: 0.85rem;
-    }
-}
+
 
 /* ==========================================================================
    DNFL Last Team Standing (LTS) Module Styles
