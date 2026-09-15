@@ -586,11 +586,12 @@
 .dnfl-rules-wrapper table.dnfl-rules-table {
     width: 100% !important;
     border-collapse: collapse !important;
-    margin: 0 !important;
+    margin: 4px 0 14px 0 !important;
     background-color: var(--dnfl-bg-card) !important;
     border: 1px solid var(--dnfl-border-medium) !important;
     box-shadow: var(--dnfl-shadow-subtle) !important;
     border-radius: var(--dnfl-radius-md) !important;
+    overflow: hidden !important;
 }
 
 .dnfl-rules-topic-content ol + .dnfl-rules-table-wrapper table.dnfl-rules-table,
@@ -637,20 +638,6 @@
 .dnfl-rules-sub-content,
 .dnfl-rules-topic-content {
     display: none;
-    box-sizing: border-box;
-    max-width: 100%;
-}
-
-/* --- RULES TABLE WRAPPER CONTAINER --- */
-.dnfl-rules-table-wrapper {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    box-sizing: border-box;
-    margin: 6px 0 14px 0;
-    position: relative;
-    border-radius: var(--dnfl-radius-md);
 }
 
 /* Schedule Section Sub-Header Formatting */
@@ -895,42 +882,27 @@ caption,
 }
 
 /* ==========================================================================
-   DNFL Global Table Responsiveness & Sticky Column Extension
+   DNFL LTS Table Responsiveness & Sticky Column Extension (LTS Matrix Only)
    ========================================================================== */
-.dnfl-table-wrapper,
-.dnfl-rules-table-wrapper {
+.dnfl-table-wrapper {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     position: relative;
     max-width: 100%;
-    box-sizing: border-box;
 }
 
 .dnfl-lts-table th:first-child,
-.dnfl-lts-table td:first-child,
-.dnfl-rules-table-wrapper table.dnfl-rules-table th:first-child,
-.dnfl-rules-table-wrapper table.dnfl-rules-table td:first-child,
-.dnfl-rules-wrapper table.dnfl-rules-table th:first-child,
-.dnfl-rules-wrapper table.dnfl-rules-table td:first-child {
+.dnfl-lts-table td:first-child {
     position: sticky;
     left: 0;
     z-index: 2;
-    background-color: var(--dnfl-bg-card) !important;
-    border-right: 2px solid var(--dnfl-border-medium) !important;
+    background-color: var(--dnfl-bg-card);
+    border-right: 2px solid var(--dnfl-border-medium);
 }
 
 .dnfl-lts-table tr:nth-child(even) td:first-child,
-.dnfl-lts-table tr.dnfl-row-even td:first-child,
-.dnfl-rules-wrapper table.dnfl-rules-table tr:nth-child(even) td:first-child,
-.dnfl-rules-wrapper table.dnfl-rules-table tr.eventablerow td:first-child {
-    background-color: var(--dnfl-bg-alt) !important;
-}
-
-.dnfl-lts-table tr:nth-child(odd) td:first-child,
-.dnfl-lts-table tr.dnfl-row-odd td:first-child,
-.dnfl-rules-wrapper table.dnfl-rules-table tr:nth-child(odd) td:first-child,
-.dnfl-rules-wrapper table.dnfl-rules-table tr.oddtablerow td:first-child {
-    background-color: var(--dnfl-bg-card) !important;
+.dnfl-lts-table tr.dnfl-row-even td:first-child {
+    background-color: var(--dnfl-bg-alt);
 }
 
 .dnfl-lts-table tr.dnfl-my-team td:first-child {
