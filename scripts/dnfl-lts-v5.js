@@ -1,7 +1,7 @@
 /* ==========================================================================
    DNFL Last Team Standing (LTS) & Weekly High/Low Scores Engine
-   File: ./scripts/dnfl-lts-vw.js
-   Version: 2.0 (Robust MFL JSON Payload & Conference Mapping Upgrade)
+   File: ./scripts/dnfl-lts-v5.js
+   Version: 5.0 (Robust MFL JSON Payload & Conference Mapping Upgrade)
    ========================================================================== */
 /* global DNFLClient */
 (function() {
@@ -328,7 +328,7 @@
 
             loggedInFranchiseId = getLoggedInFranchiseId();
 
-            const [leagueResponse, weeklyResultsResponse, rawRulesJson] = await Promise.all([
+            let [leagueResponse, weeklyResultsResponse, rawRulesJson] = await Promise.all([
                 apiClient.fetchData("league"),
                 apiClient.fetchData("weeklyResults"),
                 apiClient.fetchRawText(RULES_URL).catch(err => {
@@ -336,6 +336,22 @@
                     return null;
                 })
             ]);
+
+            // Direct Fallback Safety Guard: If weeklyResults returned 1 or 0 weeks (e.g., only Week 17), force direct fetch with W=ALL
+            let testScores = parseWeeklyScores(weeklyResultsResponse);
+            if (Object.keys(testScores).length < 2 && leagueId) {
+                console.warn("[DNFL LTS] API payload returned only " + Object.keys(testScores).length + " week(s) (missing &W=ALL). Direct fetching all weeks...");
+                try {
+                    const directUrl = "https://" + activeHost + "/" + targetYear + "/export?TYPE=weeklyResults&L=" + leagueId + "&W=ALL&JSON=1";
+                    const directResp = await fetch(directUrl);
+                    if (directResp.ok) {
+                        weeklyResultsResponse = await directResp.json();
+                        console.log("[DNFL LTS] Successfully fetched all weeks directly via W=ALL parameter.");
+                    }
+                } catch (fetchErr) {
+                    console.error("[DNFL LTS] Direct W=ALL fetch exception:", fetchErr);
+                }
+            }
 
             if (!leagueResponse) {
                 throw new Error("Missing league configuration payload from MFL API.");
