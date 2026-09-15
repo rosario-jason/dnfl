@@ -8,11 +8,11 @@
     // Establish Global DNFL Namespace
     window.DNFL = window.DNFL || {};
 
-    // Module state flag
-    let _initialized = false;
-
     // Standings & Seeding Configuration (Loaded dynamically from standings_rules.json)
     let STANDINGS_RULES = {};
+
+    // Module state flag
+    let _initialized = false;
 
     // Dynamic Target Environment Variables
     let activeHost = 'www48.myfantasyleague.com';
@@ -44,7 +44,6 @@
      * Helper to normalize 2-digit ID values (e.g. "0", 0, "00")
      */
     function norm(val) {
-        if (window.DNFL && window.DNFL.norm) return window.DNFL.norm(val);
         if (val === null || val === undefined) return '';
         const s = String(val).trim();
         return s.length === 1 && /^\d$/.test(s) ? '0' + s : s;
@@ -54,7 +53,6 @@
      * Helper to normalize 4-digit franchise IDs (e.g. "5", 5, "0005")
      */
     function normFranchiseId(val) {
-        if (window.DNFL && window.DNFL.normFranchiseId) return window.DNFL.normFranchiseId(val);
         if (val === null || val === undefined) return '';
         const s = String(val).trim();
         if (!s || s === '0000') return '';
@@ -70,14 +68,9 @@
     }
 
     /**
-     * Dynamically detects the logged-in franchise ID
+     * Dynamically detects the logged-in franchise ID across all MFL environments
      */
     function getLoggedInFranchiseId() {
-        if (window.DNFL && window.DNFL.getLoggedInFranchiseId) {
-            const fid = window.DNFL.getLoggedInFranchiseId();
-            if (fid && fid !== '0000') return fid;
-        }
-
         let fid = window.franchise_id || window.mflFranchiseId || window.login_franchise_id || window.current_franchise_id;
         
         if (!fid && window.location && window.location.search) {
@@ -96,6 +89,21 @@
             }
         }
 
+        if (!fid) {
+            const myTeamLink = document.querySelector('a[href*="O=01"], a[href*="O=02"], a[href*="F="]');
+            if (myTeamLink && myTeamLink.href) {
+                const hrefMatch = myTeamLink.href.match(/[?&]F=(\d{4})/i);
+                if (hrefMatch && hrefMatch[1]) {
+                    fid = hrefMatch[1];
+                }
+            }
+        }
+
+        if (!fid) {
+            const inputEl = document.querySelector('input[name="FRANCHISE_ID"], select[name="FRANCHISE_ID"]');
+            if (inputEl) fid = inputEl.value;
+        }
+
         const normalized = normFranchiseId(fid);
         return (normalized && normalized !== '0000') ? normalized : null;
     }
@@ -109,14 +117,15 @@
         if (STANDINGS_RULES[String(yr)]) return STANDINGS_RULES[String(yr)];
 
         for (const key in STANDINGS_RULES) {
+            // Skip metadata/instructions blocks (e.g., _instructions, _comment, __README)
             if (key.startsWith('_')) continue;
 
             if (key.includes('-')) {
-                const [start, end] = key.split('-').map(s => parseInt(s.trim(), 10));
+                const [start, end] = key.split('-').map(s => parseInt(s.trim()));
                 if (yr >= start && yr <= end) return STANDINGS_RULES[key];
             }
             if (key.includes(',')) {
-                const yearList = key.split(',').map(s => parseInt(s.trim(), 10));
+                const yearList = key.split(',').map(s => parseInt(s.trim()));
                 if (yearList.includes(yr)) return STANDINGS_RULES[key];
             }
         }
@@ -267,7 +276,7 @@
 
         let disclaimerHtml = '';
         const currentYearNum = new Date().getFullYear();
-        const parsedTargetYear = parseInt(targetYear, 10);
+        const parsedTargetYear = parseInt(targetYear);
         const isHistoric = parsedTargetYear < currentYearNum;
         const isEndOfSeason = cachedCurrentWeek > cachedLastRegWeek;
 
@@ -295,7 +304,7 @@
         const baseRules = getYearRules();
 
         hasSeasonStarted = cachedStandingsFranchises.some(s => {
-            const games = parseInt(s.h2hw || 0, 10) + parseInt(s.h2hl || 0, 10) + parseInt(s.h2ht || 0, 10);
+            const games = parseInt(s.h2hw || 0) + parseInt(s.h2hl || 0) + parseInt(s.h2ht || 0);
             const pf = parseFloat(s.pf || 0);
             return games > 0 || pf > 0;
         });

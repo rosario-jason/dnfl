@@ -11,7 +11,7 @@
     // =========================================================================
 
     // 1. Framework Master Version (Bump to force cache refresh across all user browsers)
-    const FRAMEWORK_VERSION = "3.05";
+    const FRAMEWORK_VERSION = "3.06";
     window.DNFL_FRAMEWORK_VERSION = FRAMEWORK_VERSION;
 
     // 2. Base URL Path for DNFL Framework Scripts & Assets
@@ -72,7 +72,7 @@
     /**
      * Asset Loader Helper
      * Resolves relative script/style names against BASE_URL and injects cache-busting query strings.
-     * Sets script.async = false to preserve sequential loading order (dependencies before modules).
+     * Sets script.async = false to guarantee sequential execution order.
      */
     window.DNFL.loadAsset = function (path, type = 'js') {
         if (!path) return;
@@ -102,7 +102,7 @@
                 const script = document.createElement('script');
                 script.type = 'text/javascript';
                 script.src = cacheBustUrl;
-                script.async = false; // Sequential execution: ensures API client loads before feature modules
+                script.async = false;
                 document.head.appendChild(script);
             }
         }
@@ -116,17 +116,17 @@
     };
 
     window.DNFL.getYear = function () {
-        // Priority 1: URL Query string parameter (e.g., ?YEAR=2024 or ?Y=2024)
+        // Priority 1: MFL global variables
+        if (window.current_year) return String(window.current_year);
+        if (window.mflYear) return String(window.mflYear);
+        if (window.year) return String(window.year);
+
+        // Priority 2: URL Query string parameter (e.g., ?YEAR=2024 or ?Y=2024)
         try {
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.has('YEAR')) return urlParams.get('YEAR');
             if (urlParams.has('Y')) return urlParams.get('Y');
         } catch (e) {}
-
-        // Priority 2: MFL global variables (window.current_year is standard MFL variable)
-        if (window.current_year) return String(window.current_year);
-        if (window.mflYear) return String(window.mflYear);
-        if (window.year) return String(window.year);
 
         // Priority 3: URL pathname match (e.g., /2024/home/...)
         const match = window.location.pathname.match(/\/(\d{4})\//);
@@ -145,13 +145,13 @@
     };
 
     window.DNFL.normFranchiseId = function (id) {
-        if (!id) return '0000';
+        if (id === null || id === undefined) return '';
         const clean = String(id).replace(/^0+/, '');
         return clean.padStart(4, '0');
     };
 
     window.DNFL.norm = function (id) {
-        if (!id) return '00';
+        if (id === null || id === undefined) return '';
         const clean = String(id).replace(/^0+/, '');
         return clean.padStart(2, '0');
     };
