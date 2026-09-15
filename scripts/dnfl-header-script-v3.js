@@ -11,11 +11,12 @@
     // =========================================================================
 
     // 1. Framework Master Version (Bump to force cache refresh across all user browsers)
-    const FRAMEWORK_VERSION = "3.13";
+    const FRAMEWORK_VERSION = "3.15";
     window.DNFL_FRAMEWORK_VERSION = FRAMEWORK_VERSION;
 
     // 2. Base URL Path for DNFL Framework Scripts & Assets
     const BASE_URL = "https://dnfl.live/scripts/";
+    const BASE_CSS_URL = "https://dnfl.live/css/";
 
     // 3. CSS Stylesheets to Load (Third-party full URLs or relative paths)
     const STYLES_TO_LOAD = [
@@ -81,9 +82,10 @@
 
         // Determine if path is already a full absolute URL
         const isFullUrl = path.startsWith('http://') || path.startsWith('https://') || path.startsWith('//');
+        const activeBaseUrl = (type === 'css' && typeof BASE_CSS_URL !== 'undefined') ? BASE_CSS_URL : BASE_URL;
         const fullUrl = isFullUrl 
             ? path 
-            : (BASE_URL.endsWith('/') ? `${BASE_URL}${path}` : `${BASE_URL}/${path}`);
+            : (activeBaseUrl.endsWith('/') ? `${activeBaseUrl}${path}` : `${activeBaseUrl}/${path}`);
 
         // Append version query parameter for cache busting on DNFL domain/raw assets
         const isExternalThirdParty = fullUrl.includes('cdnjs.cloudflare.com') || fullUrl.includes('cdn.jsdelivr.net');
@@ -91,21 +93,25 @@
             ? fullUrl 
             : (fullUrl.includes('?') ? `${fullUrl}&v=${FRAMEWORK_VERSION}` : `${fullUrl}?v=${FRAMEWORK_VERSION}`);
 
+        const targetParent = document.head || document.getElementsByTagName('head')[0] || document.documentElement;
+
         if (type === 'css') {
-            if (!document.querySelector(`link[href*="${path}"]`)) {
+            const cleanPathName = path.split('/').pop().split('?')[0];
+            if (!document.querySelector(`link[href*="${cleanPathName}"]`)) {
                 const link = document.createElement('link');
                 link.rel = 'stylesheet';
                 link.type = 'text/css';
                 link.href = cacheBustUrl;
-                document.head.appendChild(link);
+                targetParent.appendChild(link);
             }
         } else if (type === 'js') {
-            if (!document.querySelector(`script[src*="${path}"]`)) {
+            const cleanPathName = path.split('/').pop().split('?')[0];
+            if (!document.querySelector(`script[src*="${cleanPathName}"]`)) {
                 const script = document.createElement('script');
                 script.type = 'text/javascript';
                 script.src = cacheBustUrl;
                 script.async = false;
-                document.head.appendChild(script);
+                targetParent.appendChild(script);
             }
         }
     };
