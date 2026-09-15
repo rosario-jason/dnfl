@@ -1,7 +1,7 @@
 /* ==========================================================================
    DNFL Last Team Standing (LTS) & Weekly High/Low Scores Engine
-   File: ./scripts/dnfl-lts-v3.js
-   Version: 3.0 (Robust MFL JSON Payload & Conference Mapping Upgrade)
+   File: ./scripts/dnfl-lts-vw.js
+   Version: 2.0 (Robust MFL JSON Payload & Conference Mapping Upgrade)
    ========================================================================== */
 /* global DNFLClient */
 (function() {
@@ -60,6 +60,9 @@
      */
     function norm(val) {
         if (val === null || val === undefined) return '';
+        if (typeof val === 'object') {
+            val = val.id || val.code || val['$'] || val.val || '';
+        }
         const s = String(val).trim();
         return s.length === 1 && /^\d$/.test(s) ? '0' + s : s;
     }
@@ -71,6 +74,9 @@
      */
     function normFranchiseId(val) {
         if (val === null || val === undefined) return '';
+        if (typeof val === 'object') {
+            val = val.id || val.code || val['$'] || val.val || '';
+        }
         const s = String(val).trim();
         if (!s || s === '0000') return '';
         return s.padStart(4, '0');
@@ -185,60 +191,72 @@
      */
     function parseWeeklyScores(data) {
         const scoresByWeek = {};
-        if (!data || !data.weeklyResults) {
-            console.warn("[DNFL LTS] parseWeeklyScores: Received empty or null weeklyResults payload.");
+        if (!data) {
+            console.warn("[DNFL LTS] parseWeeklyScores: Received null or undefined data payload.");
             return scoresByWeek;
         }
 
-        const wr = data.weeklyResults;
+        const wr = data.weeklyResults || data.weeklyResult || data.weekly_results || data;
 
-        // Extract raw week objects array across all MFL JSON formats
+        if (!wr) {
+            console.warn("[DNFL LTS] parseWeeklyScores: Could not find weeklyResults container in payload.", data);
+            return scoresByWeek;
+        }
+
         let rawWeeks = null;
-        if (typeof wr === 'object' && wr !== null) {
-            if (Array.isArray(wr)) {
-                rawWeeks = wr;
-            } else if (wr.weeklyResult) {
+        if (Array.isArray(wr)) {
+            rawWeeks = wr;
+        } else if (typeof wr === 'object' && wr !== null) {
+            if (wr.weeklyResult) {
                 rawWeeks = toArray(wr.weeklyResult);
             } else if (wr.weeklyResults) {
                 rawWeeks = toArray(wr.weeklyResults);
-            } else if (wr.matchup || wr.franchise || wr.week) {
+            } else if (wr.weekly_result) {
+                rawWeeks = toArray(wr.weekly_result);
+            } else if (wr.week || wr.matchup || wr.franchise) {
                 rawWeeks = [wr];
             }
         }
 
         if (!rawWeeks || rawWeeks.length === 0) {
-            console.warn("[DNFL LTS] parseWeeklyScores: Could not find week array in weeklyResults payload.", wr);
+            console.warn("[DNFL LTS] parseWeeklyScores: Could not find week array in payload.", wr);
             return scoresByWeek;
         }
 
-        rawWeeks.forEach(wObj => {
+        rawWeeks.forEach((wObj, index) => {
             if (!wObj || typeof wObj !== 'object') return;
 
-            const weekNum = parseInt(wObj.week || '1', 10);
+            const rawWeekVal = wObj.week || wObj.w || wObj.wk || wObj.weekNum;
+            const weekNum = rawWeekVal !== undefined ? parseInt(rawWeekVal, 10) : (index + 1);
             if (isNaN(weekNum) || weekNum <= 0) return;
 
             scoresByWeek[weekNum] = scoresByWeek[weekNum] || {};
 
             const franchiseEntries = [];
 
-            // Direct franchise array on week object
             if (wObj.franchise) {
                 franchiseEntries.push(...toArray(wObj.franchise));
             }
 
-            // Matchup array containing franchise objects
             if (wObj.matchup) {
                 toArray(wObj.matchup).forEach(m => {
-                    if (m && m.franchise) {
-                        franchiseEntries.push(...toArray(m.franchise));
+                    if (m) {
+                        if (m.franchise) franchiseEntries.push(...toArray(m.franchise));
+                        if (m.team) franchiseEntries.push(...toArray(m.team));
                     }
                 });
             }
 
+            if (wObj.team) {
+                franchiseEntries.push(...toArray(wObj.team));
+            }
+
             franchiseEntries.forEach(f => {
-                if (!f || !f.id) return;
-                const fid = normFranchiseId(f.id);
-                const scoreVal = parseFloat(f.score);
+                if (!f) return;
+                const fid = normFranchiseId(f.id || f.franchise_id || f.teamId || f.team);
+                const scoreRaw = f.score !== undefined ? f.score : (f.points !== undefined ? f.points : f.pts);
+                const scoreVal = parseFloat(scoreRaw);
+
                 if (fid && !isNaN(scoreVal)) {
                     scoresByWeek[weekNum][fid] = scoreVal;
                 }
@@ -246,7 +264,7 @@
         });
 
         const weekCount = Object.keys(scoresByWeek).length;
-        console.log(`[DNFL LTS] Successfully parsed weekly scores for ${weekCount} week(s).`, Object.keys(scoresByWeek));
+        console.log(`[DNFL LTS] parseWeeklyScores: Parsed scores for ${weekCount} week(s).`, Object.keys(scoresByWeek));
         return scoresByWeek;
     }
 
@@ -367,8 +385,55 @@
                 }
             });
 
-            // Parse Weekly Scores
-            cachedWeeklyScores = parseWeeklyScores(weeklyResultsResponse);
+            // Extract League ID context from global variable or URL query params
+            let effectiveLeagueId = window.league_id || window.leagueId || leagueId;
+            if (!effectiveLeagueId && window.location && window.location.search) {
+                const urlParams = new URLSearchParams(window.location.search);
+                effectiveLeagueId = urlParams.get('L') || urlParams.get('league_id') || urlParams.get('l');
+            }
+
+            // Parse Weekly Scores from DNFLClient response
+            let rawWeeklyData = weeklyResultsResponse;
+            let parsedScores = parseWeeklyScores(rawWeeklyData);
+
+            // Stale Cache / Empty Response Guard & Direct Fallback
+            if (Object.keys(parsedScores).length === 0 && effectiveLeagueId) {
+                console.warn("[DNFL LTS] No weekly scores returned from DNFLClient cache. Purging stale localStorage keys & initiating direct MFL API fetch...");
+                
+                // Purge any stale localStorage entries for weeklyResults
+                try {
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const k = localStorage.key(i);
+                        if (k && k.includes('weeklyResults')) {
+                            localStorage.removeItem(k);
+                            console.log(`[DNFL LTS] Purged stale cache key: ${k}`);
+                        }
+                    }
+                } catch (e) {
+                    console.warn("[DNFL LTS] LocalStorage cache purge notice:", e);
+                }
+
+                // Direct fallback fetch to MFL export endpoint
+                try {
+                    const apiKey = window.apiKey || (window.location && new URLSearchParams(window.location.search).get('APIKEY')) || '';
+                    let directUrl = `https://${activeHost}/${targetYear}/export?TYPE=weeklyResults&L=${effectiveLeagueId}&W=ALL&JSON=1`;
+                    if (apiKey) directUrl += `&APIKEY=${apiKey}`;
+
+                    console.log(`[DNFL LTS] Executing direct MFL fallback fetch: ${directUrl}`);
+                    const directResp = await fetch(directUrl);
+                    if (directResp.ok) {
+                        rawWeeklyData = await directResp.json();
+                        parsedScores = parseWeeklyScores(rawWeeklyData);
+                        console.log(`[DNFL LTS] Direct MFL fallback fetch succeeded. Parsed ${Object.keys(parsedScores).length} week(s).`);
+                    } else {
+                        console.error(`[DNFL LTS] Direct MFL fallback fetch rejected with HTTP ${directResp.status}`);
+                    }
+                } catch (fallbackErr) {
+                    console.error("[DNFL LTS] Direct MFL fallback fetch exception:", fallbackErr);
+                }
+            }
+
+            cachedWeeklyScores = parsedScores;
 
             console.log(`[DNFL LTS] Loaded ${cachedFranchises.length} franchises across ${cachedConferences.length} conference(s).`);
 
