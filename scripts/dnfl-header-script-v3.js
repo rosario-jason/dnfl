@@ -11,7 +11,7 @@
     // =========================================================================
 
     // 1. Framework Master Version (Bump to force cache refresh across all user browsers)
-    const FRAMEWORK_VERSION = "3.10";
+    const FRAMEWORK_VERSION = "3.13";
     window.DNFL_FRAMEWORK_VERSION = FRAMEWORK_VERSION;
 
     // 2. Base URL Path for DNFL Framework Scripts & Assets
@@ -19,18 +19,20 @@
 
     // 3. CSS Stylesheets to Load (Third-party full URLs or relative paths)
     const STYLES_TO_LOAD = [
-        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
-        "https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl-global-v3.css"
+        "dnfl-global-v3.css"
     ];
 
     // 4. JavaScript Modules & API Clients to Load (Relative filenames resolve against BASE_URL)
     const SCRIPTS_TO_LOAD = [
+        "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js",
+        "https://cdn.jsdelivr.net/npm/chart.js",
+        "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
         "dnfl-api-client-v4.js",
         "dnfl-standings-v4.js",
         "dnfl-rankings-v3.js",
         "dnfl-podcast-v2.js",
         "dnfl-rules-v3.js",
-        "dnfl-lts-v6.js"
+        "dnfl-lts-v7.js"
     ];
 
     // =========================================================================
@@ -44,7 +46,7 @@
     /**
      * Versioned Cache Invalidation
      * Checks stored framework version against active FRAMEWORK_VERSION.
-     * Purges stale localStorage API cache entries if version mismatch is detected.
+     * Purges stale localStorage/IndexedDB API cache entries if version mismatch is detected.
      */
     (function syncCacheVersion() {
         try {
@@ -144,16 +146,18 @@
         return '00000';
     };
 
-    window.DNFL.normFranchiseId = function (id) {
-        if (id === null || id === undefined) return '';
-        const clean = String(id).replace(/^0+/, '');
-        return clean.padStart(4, '0');
+    window.DNFL.normFranchiseId = function (val) {
+        if (val === null || val === undefined) return '';
+        const s = String(val).trim();
+        if (!s || s === '0000') return '';
+        return s.padStart(4, '0');
     };
 
-    window.DNFL.norm = function (id) {
-        if (id === null || id === undefined) return '';
-        const clean = String(id).replace(/^0+/, '');
-        return clean.padStart(2, '0');
+    window.DNFL.norm = function (val) {
+        if (val === null || val === undefined) return '';
+        const s = String(val).trim();
+        if (!s) return '';
+        return s.length === 1 && /^\d$/.test(s) ? '0' + s : s;
     };
 
     window.DNFL.getLoggedInFranchiseId = function () {

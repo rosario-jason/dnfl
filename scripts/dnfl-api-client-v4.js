@@ -17,6 +17,105 @@
     const inFlightRequests = new Map();
 
     /**
+     * Feature 1: Multi-Tab Broadcast Synchronization Channel
+     */
+    const bc = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('DNFL_Cache_BC') : null;
+    if (bc) {
+        bc.onmessage = function (event) {
+            if (event.data && event.data.type === 'CACHE_UPDATE' && event.data.key) {
+                const { key, cacheEntry, dataType, params } = event.data;
+                memoryCache.set(key, cacheEntry);
+                console.log(`[DNFLClient] Broadcast message received from another tab for key: ${key}`);
+                dispatchReactiveEvent(dataType, params, cacheEntry.data, 'broadcast');
+            }
+        };
+    }
+
+    /**
+     * Feature 2: IndexedDB Storage Layer Initialization
+     */
+    const DB_NAME = 'DNFL_Cache_DB';
+    const DB_VERSION = 1;
+    const STORE_NAME = 'api_cache';
+    let dbPromise = null;
+
+    function initIndexedDB() {
+        if (!dbPromise) {
+            dbPromise = new Promise((resolve) => {
+                if (typeof indexedDB === 'undefined') {
+                    console.warn('[DNFLClient] IndexedDB not supported. Falling back to localStorage.');
+                    resolve(null);
+                    return;
+                }
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onupgradeneeded = function (e) {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME, { keyPath: 'key' });
+                    }
+                };
+                request.onsuccess = function (e) {
+                    const db = e.target.result;
+                    console.log('[DNFLClient] IndexedDB initialized successfully.');
+                    resolve(db);
+                };
+                request.onerror = function (e) {
+                    console.warn('[DNFLClient] IndexedDB open error. Falling back to localStorage:', e);
+                    resolve(null);
+                };
+            });
+        }
+        return dbPromise;
+    }
+
+    async function idbGet(key) {
+        const db = await initIndexedDB();
+        if (!db) return null;
+        return new Promise((resolve) => {
+            try {
+                const tx = db.transaction(STORE_NAME, 'readonly');
+                const store = tx.objectStore(STORE_NAME);
+                const req = store.get(key);
+                req.onsuccess = () => resolve(req.result ? req.result.value : null);
+                req.onerror = () => resolve(null);
+            } catch (e) {
+                resolve(null);
+            }
+        });
+    }
+
+    async function idbSet(key, cacheEntry) {
+        const db = await initIndexedDB();
+        if (!db) return;
+        return new Promise((resolve) => {
+            try {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                store.put({ key: key, value: cacheEntry });
+                tx.oncomplete = () => resolve(true);
+                tx.onerror = () => resolve(false);
+            } catch (e) {
+                resolve(false);
+            }
+        });
+    }
+
+    async function idbClear() {
+        const db = await initIndexedDB();
+        if (!db) return;
+        return new Promise((resolve) => {
+            try {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                store.clear();
+                tx.oncomplete = () => resolve(true);
+            } catch (e) {
+                resolve(false);
+            }
+        });
+    }
+
+    /**
      * Tiered TTL Durations (in milliseconds)
      */
     const TTL = {
@@ -80,182 +179,15 @@
     }
 
     /**
-     * Feature 2: IndexedDB Storage Engine (with localStorage Fallback)
+     * Feature 3: Reactive DOM Events Dispatcher
      */
-    const DB_NAME = 'DNFL_Cache_DB';
-    const DB_VERSION = 1;
-    const STORE_NAME = 'cache_store';
-    let dbInstance = null;
-
-    function openIDB() {
-        if (dbInstance) return Promise.resolve(dbInstance);
-        if (typeof indexedDB === 'undefined') return Promise.resolve(null);
-
-        return new Promise((resolve) => {
-            try {
-                const request = indexedDB.open(DB_NAME, DB_VERSION);
-                request.onupgradeneeded = (e) => {
-                    const db = e.target.result;
-                    if (!db.objectStoreNames.contains(STORE_NAME)) {
-                        db.createObjectStore(STORE_NAME, { keyPath: 'key' });
-                    }
-                };
-                request.onsuccess = (e) => {
-                    dbInstance = e.target.result;
-                    resolve(dbInstance);
-                };
-                request.onerror = (err) => {
-                    console.warn('[DNFLClient] IndexedDB open error, falling back to localStorage:', err);
-                    resolve(null);
-                };
-            } catch (err) {
-                console.warn('[DNFLClient] IndexedDB exception:', err);
-                resolve(null);
-            }
-        });
-    }
-
-    async function getCacheEntry(key) {
-        // 1. Check in-memory cache first (instant hit)
-        if (memoryCache.has(key)) {
-            return memoryCache.get(key);
-        }
-
-        // 2. Try IndexedDB
-        try {
-            const db = await openIDB();
-            if (db) {
-                const tx = db.transaction(STORE_NAME, 'readonly');
-                const store = tx.objectStore(STORE_NAME);
-                const item = await new Promise((resolve) => {
-                    const req = store.get(key);
-                    req.onsuccess = () => resolve(req.result || null);
-                    req.onerror = () => resolve(null);
-                });
-                if (item && item.value) {
-                    memoryCache.set(key, item.value);
-                    return item.value;
-                }
-            }
-        } catch (e) {
-            console.warn('[DNFLClient] IndexedDB read error:', e);
-        }
-
-        // 3. Fallback to localStorage
-        try {
-            const raw = localStorage.getItem(`dnfl_cache_${key}`);
-            if (!raw) return null;
-            const parsed = JSON.parse(raw);
-            memoryCache.set(key, parsed);
-            return parsed;
-        } catch (e) {
-            return null;
-        }
-    }
-
-    async function setCacheEntry(key, data, ttlMs, dataType = '', params = {}, fromSync = false) {
-        const timestamp = getBucketTimestamp(ttlMs);
-        const expiresAt = timestamp + ttlMs;
-        const cacheEntry = {
-            timestamp,
-            expiresAt,
-            data,
-            dataType,
-            params
-        };
-
-        // 1. Memory Cache
-        memoryCache.set(key, cacheEntry);
-
-        // 2. IndexedDB
-        try {
-            const db = await openIDB();
-            if (db) {
-                const tx = db.transaction(STORE_NAME, 'readwrite');
-                const store = tx.objectStore(STORE_NAME);
-                store.put({ key: key, value: cacheEntry });
-            }
-        } catch (e) {
-            console.warn('[DNFLClient] IndexedDB write error:', e);
-        }
-
-        // 3. Backup to localStorage for backwards compatibility
-        try {
-            localStorage.setItem(`dnfl_cache_${key}`, JSON.stringify(cacheEntry));
-        } catch (e) {
-            purgeExpiredLocalStorage();
-        }
-
-        // Feature 3: Cross-Tab Broadcast Sync
-        if (!fromSync && broadcastChannel) {
-            try {
-                broadcastChannel.postMessage({
-                    type: 'CACHE_UPDATE',
-                    key,
-                    cacheEntry
-                });
-            } catch (e) {
-                console.warn('[DNFLClient] BroadcastChannel postMessage error:', e);
-            }
-        }
-
-        // Feature 3: Dispatch Reactive DOM Event
-        signalMFLCacheUpdate(dataType, params, data);
-    }
-
-    function purgeExpiredLocalStorage() {
-        try {
-            const now = Date.now();
-            const keysToRemove = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const k = localStorage.key(i);
-                if (k && k.startsWith('dnfl_cache_')) {
-                    try {
-                        const item = JSON.parse(localStorage.getItem(k));
-                        if (item && item.expiresAt && now > item.expiresAt) {
-                            keysToRemove.push(k);
-                        }
-                    } catch (err) {
-                        keysToRemove.push(k);
-                    }
-                }
-            }
-            keysToRemove.forEach(k => localStorage.removeItem(k));
-        } catch (e) {}
-    }
-
-    /**
-     * Feature 1: Cross-Tab Broadcast Synchronization (BroadcastChannel)
-     */
-    const broadcastChannel = (typeof BroadcastChannel !== 'undefined')
-        ? new BroadcastChannel('DNFL_Cache_BC')
-        : null;
-
-    if (broadcastChannel) {
-        broadcastChannel.onmessage = (event) => {
-            if (!event || !event.data) return;
-            const { type, key, cacheEntry } = event.data;
-
-            if (type === 'CACHE_UPDATE' && key && cacheEntry) {
-                console.log(`[DNFLClient] Cross-Tab Sync received update for key: ${key}`);
-                memoryCache.set(key, cacheEntry);
-                
-                // Save to local storage/IDB asynchronously without re-broadcasting
-                setCacheEntry(key, cacheEntry.data, cacheEntry.expiresAt - cacheEntry.timestamp, cacheEntry.dataType, cacheEntry.params, true).catch(() => {});
-            }
-        };
-    }
-
-    /**
-     * Feature 3: Reactive DOM Events (MFLCacheUpdate)
-     * Dispatches custom event so UI components can update reactively on background cache refreshes
-     */
-    function signalMFLCacheUpdate(dataType, params, data) {
+    function dispatchReactiveEvent(dataType, params, data, source = 'api') {
         try {
             const eventDetail = {
-                dataType: dataType || 'general',
-                params: params || {},
-                data: data || null,
+                dataType: dataType,
+                params: params,
+                data: data,
+                source: source,
                 timestamp: Date.now()
             };
             window.dispatchEvent(new CustomEvent('MFLCacheUpdate', { detail: eventDetail }));
@@ -280,6 +212,69 @@
     }
 
     /**
+     * Dual Storage Cache Resolver (Memory -> IndexedDB -> LocalStorage)
+     */
+    async function getCacheAsync(key) {
+        // 1. Check in-memory map
+        if (memoryCache.has(key)) {
+            return memoryCache.get(key);
+        }
+        // 2. Check IndexedDB
+        const idbResult = await idbGet(key);
+        if (idbResult) {
+            memoryCache.set(key, idbResult);
+            return idbResult;
+        }
+        // 3. Fallback to LocalStorage
+        try {
+            const raw = localStorage.getItem(`dnfl_cache_${key}`);
+            if (!raw) return null;
+            const parsed = JSON.parse(raw);
+            memoryCache.set(key, parsed);
+            return parsed;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function setCache(key, data, ttlMs, dataType, params) {
+        const bucketedTimestamp = getBucketTimestamp(ttlMs);
+        const cacheEntry = {
+            timestamp: bucketedTimestamp,
+            expiresAt: bucketedTimestamp + ttlMs,
+            data: data
+        };
+
+        // 1. In-Memory
+        memoryCache.set(key, cacheEntry);
+
+        // 2. IndexedDB (Asynchronous)
+        idbSet(key, cacheEntry).catch(() => {});
+
+        // 3. LocalStorage Fallback
+        try {
+            localStorage.setItem(`dnfl_cache_${key}`, JSON.stringify(cacheEntry));
+        } catch (e) {
+            console.warn('[DNFLClient] LocalStorage write warning:', e);
+        }
+
+        // 4. Cross-Tab Broadcast Sync
+        if (bc) {
+            bc.postMessage({
+                type: 'CACHE_UPDATE',
+                key: key,
+                cacheEntry: cacheEntry,
+                dataType: dataType,
+                params: params
+            });
+            console.log(`[DNFLClient] Broadcasted update for ${key}`);
+        }
+
+        // 5. Reactive DOM Event
+        dispatchReactiveEvent(dataType, params, data, 'api');
+    }
+
+    /**
      * Construct MFL API Export URL
      */
     function buildMflUrl(dataType, params = {}) {
@@ -297,7 +292,6 @@
 
     /**
      * Public API: fetchData
-     * Fetches MFL API endpoints with tiered caching, deduplication, BroadcastChannel sync, and Stale-While-Revalidate.
      */
     window.DNFLClient.fetchData = async function (dataType, params = {}, options = {}) {
         const resolved = getResolvedParams(params);
@@ -307,20 +301,20 @@
 
         // Stale-While-Revalidate & Cache Lookup
         if (!forceRefresh) {
-            const cached = await getCacheEntry(cacheKey);
+            const cached = await getCacheAsync(cacheKey);
             if (cached && cached.data) {
                 const isExpired = Date.now() > cached.expiresAt;
                 if (!isExpired) {
                     return cached.data; // Instant Fresh Hit
                 }
-                // Stale-While-Revalidate: Serve stale data instantly, refresh in background
+                // Stale-While-Revalidate: Return stale data immediately, trigger background refresh
                 console.log(`[DNFLClient] Serving STALE cache for ${cacheKey}, refreshing in background...`);
                 window.DNFLClient.fetchData(dataType, params, { force: true, ttl: requestedTtl }).catch(() => {});
                 return cached.data;
             }
         }
 
-        // Deduplicate in-flight network requests across caller threads in current tab
+        // Deduplicate in-flight network requests
         if (inFlightRequests.has(cacheKey)) {
             console.log(`[DNFLClient] In-flight deduplication hit for ${cacheKey}`);
             return inFlightRequests.get(cacheKey);
@@ -335,12 +329,11 @@
                     throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
                 }
                 const json = await response.json();
-                await setCacheEntry(cacheKey, json, requestedTtl, dataType, params);
+                setCache(cacheKey, json, requestedTtl, dataType, params);
                 return json;
             } catch (error) {
                 console.error(`[DNFLClient] Fetch error for ${dataType}:`, error);
-                // Fallback to stale data if available on network failure
-                const stale = await getCacheEntry(cacheKey);
+                const stale = await getCacheAsync(cacheKey);
                 if (stale && stale.data) {
                     console.warn(`[DNFLClient] Returning stale fallback data after fetch failure for ${cacheKey}`);
                     return stale.data;
@@ -357,7 +350,6 @@
 
     /**
      * Public API: fetchRawText
-     * Fetches raw text/JSON files (e.g. GitHub config feeds) with caching.
      */
     window.DNFLClient.fetchRawText = async function (url, options = {}) {
         const cacheKey = `raw_${url}`;
@@ -365,7 +357,7 @@
         const requestedTtl = options.ttl || TTL.INTRADAY;
 
         if (!forceRefresh) {
-            const cached = await getCacheEntry(cacheKey);
+            const cached = await getCacheAsync(cacheKey);
             if (cached && cached.data) {
                 if (Date.now() <= cached.expiresAt) {
                     return cached.data;
@@ -388,11 +380,11 @@
                     throw new Error(`HTTP error ${response.status}: ${response.statusText}`);
                 }
                 const text = await response.text();
-                await setCacheEntry(cacheKey, text, requestedTtl, 'raw', { url });
+                setCache(cacheKey, text, requestedTtl, 'rawText', { url });
                 return text;
             } catch (error) {
                 console.error(`[DNFLClient] Raw fetch error for ${url}:`, error);
-                const stale = await getCacheEntry(cacheKey);
+                const stale = await getCacheAsync(cacheKey);
                 if (stale && stale.data) return stale.data;
                 throw error;
             } finally {
@@ -407,16 +399,9 @@
     /**
      * Public Utility Methods
      */
-    window.DNFLClient.clearCache = async function () {
+    window.DNFLClient.clearCache = function () {
         memoryCache.clear();
-        try {
-            const db = await openIDB();
-            if (db) {
-                const tx = db.transaction(STORE_NAME, 'readwrite');
-                tx.objectStore(STORE_NAME).clear();
-            }
-        } catch (e) {}
-
+        idbClear().catch(() => {});
         try {
             const keysToRemove = [];
             for (let i = 0; i < localStorage.length; i++) {
@@ -424,7 +409,7 @@
                 if (k && k.startsWith('dnfl_cache_')) keysToRemove.push(k);
             }
             keysToRemove.forEach(k => localStorage.removeItem(k));
-            console.log('[DNFLClient] Local & IndexedDB cache cleared manually.');
+            console.log('[DNFLClient] Local and IndexedDB cache cleared manually.');
         } catch (e) {}
     };
 
@@ -452,13 +437,21 @@
         return window.DNFL && window.DNFL.getLoggedInFranchiseId ? window.DNFL.getLoggedInFranchiseId() : '0000';
     };
 
-    window.DNFLClient.normFranchiseId = function (id) {
-        return window.DNFL && window.DNFL.normFranchiseId ? window.DNFL.normFranchiseId(id) : String(id || '0000').padStart(4, '0');
+    window.DNFLClient.normFranchiseId = function (val) {
+        if (window.DNFL && window.DNFL.normFranchiseId) return window.DNFL.normFranchiseId(val);
+        if (val === null || val === undefined) return '';
+        const s = String(val).trim();
+        if (!s || s === '0000') return '';
+        return s.padStart(4, '0');
     };
 
-    window.DNFLClient.norm = function (id) {
-        return window.DNFL && window.DNFL.norm ? window.DNFL.norm(id) : String(id || '00').padStart(2, '0');
+    window.DNFLClient.norm = function (val) {
+        if (window.DNFL && window.DNFL.norm) return window.DNFL.norm(val);
+        if (val === null || val === undefined) return '';
+        const s = String(val).trim();
+        if (!s) return '';
+        return s.length === 1 && /^\d$/.test(s) ? '0' + s : s;
     };
 
-    console.log('[DNFLClient] API Client v3.10 Middleware (IndexedDB, BroadcastChannel, MFLCacheUpdate, TimeBucketing) loaded.');
+    console.log('[DNFLClient] API Client v4.00 Middleware loaded (IndexedDB + BroadcastChannel enabled).');
 })();
