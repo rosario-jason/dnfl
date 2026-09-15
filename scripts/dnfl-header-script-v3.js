@@ -11,7 +11,7 @@
     // =========================================================================
 
     // 1. Framework Master Version (Bump to force cache refresh across all user browsers)
-    const FRAMEWORK_VERSION = "3.04";
+    const FRAMEWORK_VERSION = "3.05";
     window.DNFL_FRAMEWORK_VERSION = FRAMEWORK_VERSION;
 
     // 2. Base URL Path for DNFL Framework Scripts & Assets
@@ -123,13 +123,14 @@
             if (urlParams.has('Y')) return urlParams.get('Y');
         } catch (e) {}
 
-        // Priority 2: URL pathname match (e.g., /2024/home/...)
-        const match = window.location.pathname.match(/\/(\d{4})\//);
-        if (match && match[1]) return match[1];
-
-        // Priority 3: MFL global variables
+        // Priority 2: MFL global variables (window.current_year is standard MFL variable)
+        if (window.current_year) return String(window.current_year);
         if (window.mflYear) return String(window.mflYear);
         if (window.year) return String(window.year);
+
+        // Priority 3: URL pathname match (e.g., /2024/home/...)
+        const match = window.location.pathname.match(/\/(\d{4})\//);
+        if (match && match[1]) return match[1];
 
         // Priority 4: Default current year fallback
         return String(new Date().getFullYear());

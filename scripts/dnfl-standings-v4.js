@@ -106,6 +106,7 @@
     function getYearRules() {
         const yr = parseInt(targetYear, 10);
         if (STANDINGS_RULES[yr]) return STANDINGS_RULES[yr];
+        if (STANDINGS_RULES[String(yr)]) return STANDINGS_RULES[String(yr)];
 
         for (const key in STANDINGS_RULES) {
             if (key.startsWith('_')) continue;
@@ -195,10 +196,14 @@
             }
 
             if (rawRulesJson) {
-                try {
-                    STANDINGS_RULES = JSON.parse(rawRulesJson);
-                } catch (e) {
-                    console.error("[DNFL Standings] Corrupted standings_rules.json format. Fallback engaged.", e);
+                if (typeof rawRulesJson === 'object') {
+                    STANDINGS_RULES = rawRulesJson;
+                } else if (typeof rawRulesJson === 'string') {
+                    try {
+                        STANDINGS_RULES = JSON.parse(rawRulesJson);
+                    } catch (e) {
+                        console.error("[DNFL Standings] Corrupted standings_rules.json format. Fallback engaged.", e);
+                    }
                 }
             }
 
