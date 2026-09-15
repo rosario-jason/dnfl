@@ -1,26 +1,50 @@
 /**
  * ============================================================================
  * Duke Networking Fantasy League (DNFL) Framework Header Script
- * File: dnfl-header-script-v3.js
- * Version: 3.00
- * Description: Master script loader and framework cache manager.
  * ============================================================================
  */
 (function () {
     'use strict';
 
+    // =========================================================================
+    // 1. CONFIGURATION & SCRIPT MANIFEST
+    // =========================================================================
+
     // 1. Framework Master Version (Bump to force cache refresh across all user browsers)
-    const FRAMEWORK_VERSION = "3.00";
+    const FRAMEWORK_VERSION = "3.01";
     window.DNFL_FRAMEWORK_VERSION = FRAMEWORK_VERSION;
 
-    // 2. Global Namespace Initialization
+    // 2. Base URL Path for DNFL Framework Scripts & Assets
+    const BASE_URL = "https://dnfl.live/scripts/";
+
+    // 3. CSS Stylesheets to Load (Third-party full URLs or relative paths)
+    const STYLES_TO_LOAD = [
+        "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css",
+        "https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl-global-v3.css"
+    ];
+
+    // 4. JavaScript Modules & API Clients to Load (Relative filenames resolve against BASE_URL)
+    const SCRIPTS_TO_LOAD = [
+        "dnfl-api-client-v3.js",
+        "dnfl-standings-v3.js",
+        "dnfl-rankings-v3.js",
+        "dnfl-podcast-v2.js",
+        "dnfl-rules-v3.js",
+        "dnfl-lts-v6.js"
+    ];
+
+    // =========================================================================
+    // 2. FRAMEWORK NAMESPACE & INITIALIZATION
+    // =========================================================================
     window.DNFL = window.DNFL || {};
     window.DNFL.version = FRAMEWORK_VERSION;
+    window.DNFL.baseUrl = BASE_URL;
+    window.DNFL.modules = window.DNFL.modules || {};
 
     /**
      * Versioned Cache Invalidation
      * Checks stored framework version against active FRAMEWORK_VERSION.
-     * Flushes stale localStorage API cache entries if version mismatch is detected.
+     * Purges stale localStorage API cache entries if version mismatch is detected.
      */
     (function syncCacheVersion() {
         try {
@@ -28,7 +52,6 @@
             if (storedVersion !== FRAMEWORK_VERSION) {
                 console.log(`[DNFL Header] Version change detected (${storedVersion || 'None'} -> ${FRAMEWORK_VERSION}). Purging stale API cache...`);
                 
-                // Evict all DNFL API cache items
                 const keysToRemove = [];
                 for (let i = 0; i < localStorage.length; i++) {
                     const key = localStorage.key(i);
@@ -38,7 +61,6 @@
                 }
                 keysToRemove.forEach(key => localStorage.removeItem(key));
 
-                // Update stored version marker
                 localStorage.setItem('dnfl_framework_version', FRAMEWORK_VERSION);
                 console.log(`[DNFL Header] API cache cleared successfully for v${FRAMEWORK_VERSION}.`);
             }
@@ -49,15 +71,25 @@
 
     /**
      * Asset Loader Helper
-     * Dynamically injects CSS or JS dependencies with version query parameters.
+     * Resolves relative script/style names against BASE_URL and injects cache-busting query strings.
      */
-    window.DNFL.loadAsset = function (url, type = 'js') {
-        const cacheBustUrl = url.includes('?') 
-            ? `${url}&v=${FRAMEWORK_VERSION}` 
-            : `${url}?v=${FRAMEWORK_VERSION}`;
+    window.DNFL.loadAsset = function (path, type = 'js') {
+        if (!path) return;
+
+        // Determine if path is already a full absolute URL
+        const isFullUrl = path.startsWith('http://') || path.startsWith('https://') || path.startsWith('//');
+        const fullUrl = isFullUrl 
+            ? path 
+            : (BASE_URL.endsWith('/') ? `${BASE_URL}${path}` : `${BASE_URL}/${path}`);
+
+        // Append version query parameter for cache busting on DNFL domain/raw assets
+        const isExternalThirdParty = fullUrl.includes('cdnjs.cloudflare.com') || fullUrl.includes('cdn.jsdelivr.net');
+        const cacheBustUrl = isExternalThirdParty 
+            ? fullUrl 
+            : (fullUrl.includes('?') ? `${fullUrl}&v=${FRAMEWORK_VERSION}` : `${fullUrl}?v=${FRAMEWORK_VERSION}`);
 
         if (type === 'css') {
-            if (!document.querySelector(`link[href*="${url}"]`)) {
+            if (!document.querySelector(`link[href*="${path}"]`)) {
                 const link = document.createElement('link');
                 link.rel = 'stylesheet';
                 link.type = 'text/css';
@@ -65,7 +97,7 @@
                 document.head.appendChild(link);
             }
         } else if (type === 'js') {
-            if (!document.querySelector(`script[src*="${url}"]`)) {
+            if (!document.querySelector(`script[src*="${path}"]`)) {
                 const script = document.createElement('script');
                 script.type = 'text/javascript';
                 script.src = cacheBustUrl;
@@ -75,5 +107,108 @@
         }
     };
 
-    console.log(`[DNFL Header] Loaded v${FRAMEWORK_VERSION} initialized.`);
+    /**
+     * Core Framework Helper Utilities
+     */
+    window.DNFL.getHost = function () {
+        return window.location.host || 'www48.myfantasyleague.com';
+    };
+
+    window.DNFL.getYear = function () {
+        const match = window.location.pathname.match(/\/(\d{4})\//);
+        if (match && match[1]) return match[1];
+        if (window.mflYear) return String(window.mflYear);
+        return String(new Date().getFullYear());
+    };
+
+    window.DNFL.getLeagueId = function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('L')) return urlParams.get('L');
+        if (window.mflLeagueId) return String(window.mflLeagueId);
+        if (window.league_id) return String(window.league_id);
+        return '00000';
+    };
+
+    window.DNFL.normFranchiseId = function (id) {
+        if (!id) return '0000';
+        const clean = String(id).replace(/^0+/, '');
+        return clean.padStart(4, '0');
+    };
+
+    window.DNFL.norm = function (id) {
+        if (!id) return '00';
+        const clean = String(id).replace(/^0+/, '');
+        return clean.padStart(2, '0');
+    };
+
+    window.DNFL.getLoggedInFranchiseId = function () {
+        // Tier 1: MFL global variable
+        if (window.mflFranchiseId && window.mflFranchiseId !== '0000') {
+            return window.DNFL.normFranchiseId(window.mflFranchiseId);
+        }
+        // Tier 2: MFL_USER_ID cookie parsing
+        try {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, val] = cookie.trim().split('=');
+                if (name === 'MFL_USER_ID' && val) {
+                    const parts = decodeURIComponent(val).split('%2C') || val.split(',');
+                    if (parts.length >= 2 && parts[1]) {
+                        return window.DNFL.normFranchiseId(parts[1]);
+                    }
+                }
+            }
+        } catch (e) {}
+        // Tier 3: Query string parameter F
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('F')) {
+            return window.DNFL.normFranchiseId(urlParams.get('F'));
+        }
+        // Tier 4: Global franchise_id fallback
+        if (window.franchise_id) {
+            return window.DNFL.normFranchiseId(window.franchise_id);
+        }
+        // Tier 5: Default unauthenticated
+        return '0000';
+    };
+
+    /**
+     * Module Registration & Auto-Initialization Lifecycle
+     */
+    window.DNFL.registerModule = function (name, moduleObj) {
+        window.DNFL.modules[name] = moduleObj;
+        console.log(`[DNFL Header] Module registered: ${name}`);
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            if (moduleObj && typeof moduleObj.init === 'function') {
+                try { moduleObj.init(); } catch (e) { console.error(`[DNFL Header] Error initializing ${name}:`, e); }
+            }
+        }
+    };
+
+    window.DNFL.initAll = function () {
+        Object.keys(window.DNFL.modules).forEach(name => {
+            const mod = window.DNFL.modules[name];
+            if (mod && typeof mod.init === 'function' && !mod._initialized) {
+                try {
+                    mod.init();
+                    mod._initialized = true;
+                } catch (e) {
+                    console.error(`[DNFL Header] Auto-init error for ${name}:`, e);
+                }
+            }
+        });
+    };
+
+    // Load Manifest Assets
+    STYLES_TO_LOAD.forEach(cssUrl => window.DNFL.loadAsset(cssUrl, 'css'));
+    SCRIPTS_TO_LOAD.forEach(jsUrl => window.DNFL.loadAsset(jsUrl, 'js'));
+
+    // Trigger auto-initialization when DOM is ready
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', window.DNFL.initAll);
+    } else {
+        window.DNFL.initAll();
+    }
+
+    console.log(`[DNFL Header] Framework v${FRAMEWORK_VERSION} initialized from ${BASE_URL}`);
 })();
