@@ -487,7 +487,11 @@
         });
 
         const weeklyStats = {}; // { week: { highScorerId, highScore, lowScorerId, lowScore, knockoutId, knockoutScore, postElimLows: [] } }
-        const maxSimWeek = Math.min(cachedCurrentWeek, cachedLastRegWeek);
+        // Calculate max sim week dynamically based on available scores and current week
+        const availableWeeks = Object.keys(cachedWeeklyScores).map(w => parseInt(w, 10)).filter(w => !isNaN(w) && w > 0);
+        const maxScoreWeek = availableWeeks.length > 0 ? Math.max(...availableWeeks) : 0;
+        const effectiveCurrentWeek = Math.max(cachedCurrentWeek, maxScoreWeek);
+        const maxSimWeek = Math.min(effectiveCurrentWeek, cachedLastRegWeek);
 
         for (let w = 1; w <= maxSimWeek; w++) {
             const scoresThisWeek = cachedWeeklyScores[w] || {};
