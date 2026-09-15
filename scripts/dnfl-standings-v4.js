@@ -1,7 +1,5 @@
 /* ==========================================================================
    DNFL Dynamic Standings & Seeding Engine
-   File: dnfl-standings-v4.js
-   Version: 4.00
    ========================================================================== */
 /* global DNFLClient, DNFL */
 (function() {
@@ -174,6 +172,11 @@
             const apiClient = window.DNFLClient || (window.DNFL && window.DNFL.Client) || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
 
             if (!apiClient) {
+                if (retryCount < maxRetries) {
+                    retryCount++;
+                    setTimeout(init, 100);
+                    return;
+                }
                 throw new Error("DNFLClient API middleware unavailable.");
             }
 

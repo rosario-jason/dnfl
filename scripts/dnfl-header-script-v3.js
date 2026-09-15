@@ -11,7 +11,7 @@
     // =========================================================================
 
     // 1. Framework Master Version (Bump to force cache refresh across all user browsers)
-    const FRAMEWORK_VERSION = "3.03";
+    const FRAMEWORK_VERSION = "3.04";
     window.DNFL_FRAMEWORK_VERSION = FRAMEWORK_VERSION;
 
     // 2. Base URL Path for DNFL Framework Scripts & Assets
@@ -30,8 +30,7 @@
         "dnfl-rankings-v3.js",
         "dnfl-podcast-v2.js",
         "dnfl-rules-v3.js",
-        "dnfl-lts-v6.js"        
-        // "dnfl-NEW-vX.js"
+        "dnfl-lts-v6.js"
     ];
 
     // =========================================================================
@@ -73,6 +72,7 @@
     /**
      * Asset Loader Helper
      * Resolves relative script/style names against BASE_URL and injects cache-busting query strings.
+     * Sets script.async = false to preserve sequential loading order (dependencies before modules).
      */
     window.DNFL.loadAsset = function (path, type = 'js') {
         if (!path) return;
@@ -102,7 +102,7 @@
                 const script = document.createElement('script');
                 script.type = 'text/javascript';
                 script.src = cacheBustUrl;
-                script.async = true;
+                script.async = false; // Sequential execution: ensures API client loads before feature modules
                 document.head.appendChild(script);
             }
         }
@@ -193,9 +193,11 @@
         window.DNFL.modules[name] = moduleObj;
         console.log(`[DNFL Header] Module registered: ${name}`);
         if (document.readyState === 'complete' || document.readyState === 'interactive') {
-            if (moduleObj && typeof moduleObj.init === 'function') {
-                try { moduleObj.init(); } catch (e) { console.error(`[DNFL Header] Error initializing ${name}:`, e); }
-            }
+            setTimeout(() => {
+                if (moduleObj && typeof moduleObj.init === 'function') {
+                    try { moduleObj.init(); } catch (e) { console.error(`[DNFL Header] Error initializing ${name}:`, e); }
+                }
+            }, 0);
         }
     };
 
