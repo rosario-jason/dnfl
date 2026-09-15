@@ -17,6 +17,21 @@
     const inFlightRequests = new Map();
 
     /**
+     * Resolve Full Request Context (Host, Year, League ID)
+     */
+    function getResolvedParams(params = {}) {
+        const host = params.HOST || (window.DNFL && window.DNFL.getHost ? window.DNFL.getHost() : window.location.host || 'www48.myfantasyleague.com');
+        const year = params.YEAR || (window.DNFL && window.DNFL.getYear ? window.DNFL.getYear() : '2026');
+        const leagueId = params.L || (window.DNFL && window.DNFL.getLeagueId ? window.DNFL.getLeagueId() : '00000');
+        return {
+            ...params,
+            HOST: host,
+            YEAR: year,
+            L: leagueId
+        };
+    }
+
+    /**
      * Tiered TTL Durations (in milliseconds)
      */
     const TTL = {
@@ -30,8 +45,9 @@
      * Determine Cache TTL based on data type and game context
      */
     function getDynamicTTL(dataType, params = {}) {
+        const resolved = getResolvedParams(params);
         const currentYear = String(new Date().getFullYear());
-        const targetYear = params.YEAR || (window.DNFL && window.DNFL.getYear ? window.DNFL.getYear() : currentYear);
+        const targetYear = String(resolved.YEAR);
 
         // Past season is permanently cached
         if (targetYear !== currentYear) {
@@ -121,11 +137,8 @@
      * Construct MFL API Export URL
      */
     function buildMflUrl(dataType, params = {}) {
-        const host = params.HOST || (window.DNFL && window.DNFL.getHost ? window.DNFL.getHost() : window.location.host || 'www48.myfantasyleague.com');
-        const year = params.YEAR || (window.DNFL && window.DNFL.getYear ? window.DNFL.getYear() : '2026');
-        const leagueId = params.L || (window.DNFL && window.DNFL.getLeagueId ? window.DNFL.getLeagueId() : '00000');
-
-        let url = `https://${host}/${year}/export?TYPE=${dataType}&L=${leagueId}&JSON=1`;
+        const resolved = getResolvedParams(params);
+        let url = `https://${resolved.HOST}/${resolved.YEAR}/export?TYPE=${dataType}&L=${resolved.L}&JSON=1`;
 
         Object.keys(params).forEach(key => {
             if (!['HOST', 'YEAR', 'L'].includes(key)) {
@@ -141,7 +154,8 @@
      * Fetches MFL API endpoints with tiered caching, deduplication, and stale-while-revalidate.
      */
     window.DNFLClient.fetchData = async function (dataType, params = {}, options = {}) {
-        const cacheKey = `${dataType}_${JSON.stringify(params)}`;
+        const resolved = getResolvedParams(params);
+        const cacheKey = `${dataType}_${resolved.YEAR}_${resolved.L}_${JSON.stringify(params)}`;
         const forceRefresh = options.force === true;
         const requestedTtl = options.ttl || getDynamicTTL(dataType, params);
 
