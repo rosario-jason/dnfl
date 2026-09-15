@@ -168,7 +168,7 @@
         }
 
         try {
-            const rulesUrl = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_standings/standings_rules.json`;
+            const rulesUrl = `https://dnfl.live/dnfl_standings/standings_rules.json`;
             const apiClient = window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
 
             if (!apiClient) {

@@ -45,7 +45,7 @@
         if (!selector) return;
 
         // Dynamically fetch published weeks list for the active season year from GitHub
-        const weeksUrl = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/${rankingsMFLYear}/weeks.json`;
+        const weeksUrl = `https://dnfl.live/dnfl_rankings/${rankingsMFLYear}/weeks.json`;
         const apiClient = window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
 
         try {
