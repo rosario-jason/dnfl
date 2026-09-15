@@ -56,6 +56,10 @@
     --dnfl-shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05);
     --dnfl-transition-fast: 0.15s ease;
     --dnfl-transition-smooth: 0.2s ease;
+
+    /* ---------------- LTS Module Custom Tokens ---------------- */
+    --dnfl-lts-bg-eliminated: #f1f5f9;       /* Light Slate Gray cell background for eliminated weeks */
+    --dnfl-lts-text-eliminated: #64748b;     /* Charcoal Gray text for post-knockout scores */
 }
 
 /* ==========================================================================
@@ -878,31 +882,67 @@ caption,
 }
 
 /* ==========================================================================
+   DNFL Global Table Responsiveness & Sticky Column Extension
+   ========================================================================== */
+.dnfl-table-wrapper,
+.dnfl-rules-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    max-width: 100%;
+}
+
+/* Scoped sticky first column specifically for wide matrix tables (.dnfl-lts-table) and rulebook tables (.dnfl-rules-table) */
+.dnfl-lts-table th:first-child,
+.dnfl-lts-table td:first-child,
+.dnfl-rules-table th:first-child,
+.dnfl-rules-table td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background-color: var(--dnfl-bg-card);
+    border-right: 2px solid var(--dnfl-border-medium);
+}
+
+.dnfl-lts-table tr:nth-child(even) td:first-child,
+.dnfl-lts-table tr.dnfl-row-even td:first-child,
+.dnfl-rules-table tr:nth-child(even) td:first-child,
+.dnfl-rules-table tr.eventablerow td:first-child {
+    background-color: var(--dnfl-bg-alt) !important;
+}
+
+.dnfl-lts-table tr.dnfl-my-team td:first-child {
+    background-color: var(--dnfl-highlight-yellow) !important;
+}
+
+@media (max-width: 600px) {
+    .dnfl-team-name {
+        max-width: 110px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+        font-size: 0.85rem;
+    }
+}
+
+/* ==========================================================================
    DNFL Last Team Standing (LTS) Module Styles
    ========================================================================== */
-:root {
-    --dnfl-lts-bg-eliminated: #f1f5f9;       /* Light slate gray background for post-elimination weeks */
-    --dnfl-lts-text-eliminated: #64748b;     /* Charcoal gray text for post-knockout scores */
-}
-
-/* LTS Specific Cell & Badge Utility Classes */
-.dnfl-lts-table td.dnfl-lts-eliminated-cell {
-    background-color: var(--dnfl-lts-bg-eliminated) !important;
-    color: var(--dnfl-lts-text-eliminated) !important;
-}
-
 .dnfl-lts-badge-high-score {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 4px;
     min-width: 90px;
-    padding: 3px 8px;
+    padding: 4px 10px;
     border-radius: 12px;
     background-color: var(--dnfl-success-green) !important;
     color: #ffffff !important;
     font-weight: 700 !important;
     font-size: 0.85rem !important;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 .dnfl-lts-badge-knockout {
@@ -911,16 +951,27 @@ caption,
     justify-content: center;
     gap: 4px;
     min-width: 90px;
-    padding: 3px 8px;
+    padding: 4px 10px;
     border-radius: 12px;
     background-color: var(--dnfl-alert-red) !important;
     color: #ffffff !important;
     font-weight: 700 !important;
     font-size: 0.85rem !important;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 .dnfl-lts-text-post-elim-low {
     color: var(--dnfl-alert-red) !important;
     font-weight: normal !important;
     text-decoration: none !important;
+}
+
+.dnfl-lts-cell-active {
+    background-color: var(--dnfl-bg-card) !important;
+}
+
+.dnfl-lts-cell-eliminated {
+    background-color: var(--dnfl-lts-bg-eliminated) !important;
+    color: var(--dnfl-lts-text-eliminated) !important;
 }
