@@ -265,7 +265,15 @@
     };
 
     window.DNFLClient.getYear = function () {
-        return window.DNFL && window.DNFL.getYear ? window.DNFL.getYear() : '2026';
+        if (window.DNFL && window.DNFL.getYear) return window.DNFL.getYear();
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('YEAR')) return urlParams.get('YEAR');
+            if (urlParams.has('Y')) return urlParams.get('Y');
+        } catch (e) {}
+        const match = window.location.pathname.match(/\/(\d{4})\//);
+        if (match && match[1]) return match[1];
+        return String(new Date().getFullYear());
     };
 
     window.DNFLClient.getLeagueId = function () {

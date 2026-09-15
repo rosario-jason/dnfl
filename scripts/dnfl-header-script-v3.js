@@ -7,7 +7,7 @@
     'use strict';
 
     // =========================================================================
-    // 1. CONFIGURATION & SCRIPT MANIFEST
+    // ⚙️ 1. CONFIGURATION & SCRIPT MANIFEST (EDIT HERE TO CONTROL VERSIONS)
     // =========================================================================
 
     // 1. Framework Master Version (Bump to force cache refresh across all user browsers)
@@ -30,11 +30,12 @@
         "dnfl-rankings-v3.js",
         "dnfl-podcast-v2.js",
         "dnfl-rules-v3.js",
-        "dnfl-lts-v6.js"
+        "dnfl-lts-v6.js"        
+        // "dnfl-NEW-vX.js"
     ];
 
     // =========================================================================
-    // 2. FRAMEWORK NAMESPACE & INITIALIZATION
+    // 🚀 2. FRAMEWORK NAMESPACE & INITIALIZATION
     // =========================================================================
     window.DNFL = window.DNFL || {};
     window.DNFL.version = FRAMEWORK_VERSION;
@@ -115,9 +116,22 @@
     };
 
     window.DNFL.getYear = function () {
+        // Priority 1: URL Query string parameter (e.g., ?YEAR=2024 or ?Y=2024)
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('YEAR')) return urlParams.get('YEAR');
+            if (urlParams.has('Y')) return urlParams.get('Y');
+        } catch (e) {}
+
+        // Priority 2: URL pathname match (e.g., /2024/home/...)
         const match = window.location.pathname.match(/\/(\d{4})\//);
         if (match && match[1]) return match[1];
+
+        // Priority 3: MFL global variables
         if (window.mflYear) return String(window.mflYear);
+        if (window.year) return String(window.year);
+
+        // Priority 4: Default current year fallback
         return String(new Date().getFullYear());
     };
 
