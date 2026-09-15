@@ -11,11 +11,5 @@
     "badgeKnockoutClass": "dnfl-lts-badge-knockout",
     "textPostElimLowClass": "dnfl-lts-text-post-elim-low",
     "tableClass": "dnfl-table dnfl-lts-table"
-  },
-  "2024": {
-    "conferences": {
-      "00": { "ltsEnabled": true, "highLowEnabled": true, "startWeek": "auto" },
-      "01": { "ltsEnabled": false, "highLowEnabled": true, "startWeek": "auto" }
-    }
   }
 }
