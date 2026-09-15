@@ -24,7 +24,7 @@
             ['daily', 'league',          true,  ''],
             ['daily', 'leagueStandings', true,  '&COLUMN_NAMES=1&ALL=1'],
             ['daily', 'rules',           true,  ''],
-            ['daily', 'weeklyResults', true, '&amp;W=ALL']
+            ['daily', 'weeklyResults', true, '']
         ],
 
         // Active Network Handshake Tracker (Request Deduplication)

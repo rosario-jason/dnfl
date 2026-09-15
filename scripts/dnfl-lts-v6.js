@@ -1,7 +1,5 @@
 /* ==========================================================================
    DNFL Last Team Standing (LTS) & Weekly High/Low Scores Engine
-   File: ./scripts/dnfl-lts-v5.js
-   Version: 5.0 (Robust MFL JSON Payload & Conference Mapping Upgrade)
    ========================================================================== */
 /* global DNFLClient */
 (function() {
@@ -304,6 +302,52 @@
     /**
      * Primary Async Initialization Routine
      */
+
+    /**
+     * Iterates weeks 1..lastRegWeek and fetches weeklyResults for each week in parallel
+     * @param {string} lid League ID
+     * @param {number} maxRegWk Last regular season week (e.g. 14)
+     * @returns {Promise<Object>} Aggregate scoresByWeek { weekNum: { fid: score } }
+     */
+    async function fetchAllWeeklyScores(lid, maxRegWk) {
+        const aggregatedScores = {};
+        const apiKey = window.apiKey || (window.location && new URLSearchParams(window.location.search).get('APIKEY')) || '';
+        const targetWks = Math.max(1, Math.min(maxRegWk || 14, 18));
+        
+        console.log("[DNFL LTS] Iterating and fetching weekly results for Weeks 1 through " + targetWks + "...");
+        
+        const weekPromises = [];
+        for (let w = 1; w <= targetWks; w++) {
+            let mflUrl = "https://" + activeHost + "/" + targetYear + "/export?TYPE=weeklyResults&L=" + lid + "&W=" + w + "&JSON=1";
+            if (apiKey) mflUrl += "&APIKEY=" + apiKey;
+            
+            weekPromises.push(
+                fetch(mflUrl)
+                    .then(res => res.ok ? res.json() : null)
+                    .then(data => {
+                        if (!data) return { week: w, scores: {} };
+                        const parsed = parseWeeklyScores(data);
+                        const weekScores = parsed[w] || (Object.values(parsed)[0] || {});
+                        return { week: w, scores: weekScores };
+                    })
+                    .catch(err => {
+                        console.warn("[DNFL LTS] Exception fetching Week " + w + ":", err);
+                        return { week: w, scores: {} };
+                    })
+            );
+        }
+        
+        const weekResults = await Promise.all(weekPromises);
+        weekResults.forEach(item => {
+            if (item && item.week && item.scores && Object.keys(item.scores).length > 0) {
+                aggregatedScores[item.week] = item.scores;
+            }
+        });
+        
+        console.log("[DNFL LTS] Successfully aggregated scores for " + Object.keys(aggregatedScores).length + " week(s).", Object.keys(aggregatedScores));
+        return aggregatedScores;
+    }
+
     async function init() {
         const moduleContainer = document.getElementById("dnfl_lts_module");
         if (!moduleContainer) {
@@ -328,30 +372,20 @@
 
             loggedInFranchiseId = getLoggedInFranchiseId();
 
-            let [leagueResponse, weeklyResultsResponse, rawRulesJson] = await Promise.all([
+            let effectiveLeagueId = window.league_id || window.leagueId || leagueId;
+            if (!effectiveLeagueId && window.location && window.location.search) {
+                const urlParams = new URLSearchParams(window.location.search);
+                effectiveLeagueId = urlParams.get('L') || urlParams.get('league_id') || urlParams.get('l');
+            }
+
+            // Fetch League details and Rules config in parallel
+            const [leagueResponse, rawRulesJson] = await Promise.all([
                 apiClient.fetchData("league"),
-                apiClient.fetchData("weeklyResults"),
                 apiClient.fetchRawText(RULES_URL).catch(err => {
                     console.warn("[DNFL LTS] Could not load lts_rules.json, using fallback rules.", err);
                     return null;
                 })
             ]);
-
-            // Direct Fallback Safety Guard: If weeklyResults returned 1 or 0 weeks (e.g., only Week 17), force direct fetch with W=ALL
-            let testScores = parseWeeklyScores(weeklyResultsResponse);
-            if (Object.keys(testScores).length < 2 && leagueId) {
-                console.warn("[DNFL LTS] API payload returned only " + Object.keys(testScores).length + " week(s) (missing &W=ALL). Direct fetching all weeks...");
-                try {
-                    const directUrl = "https://" + activeHost + "/" + targetYear + "/export?TYPE=weeklyResults&L=" + leagueId + "&W=ALL&JSON=1";
-                    const directResp = await fetch(directUrl);
-                    if (directResp.ok) {
-                        weeklyResultsResponse = await directResp.json();
-                        console.log("[DNFL LTS] Successfully fetched all weeks directly via W=ALL parameter.");
-                    }
-                } catch (fetchErr) {
-                    console.error("[DNFL LTS] Direct W=ALL fetch exception:", fetchErr);
-                }
-            }
 
             if (!leagueResponse) {
                 throw new Error("Missing league configuration payload from MFL API.");
@@ -401,57 +435,10 @@
                 }
             });
 
-            // Extract League ID context from global variable or URL query params
-            let effectiveLeagueId = window.league_id || window.leagueId || leagueId;
-            if (!effectiveLeagueId && window.location && window.location.search) {
-                const urlParams = new URLSearchParams(window.location.search);
-                effectiveLeagueId = urlParams.get('L') || urlParams.get('league_id') || urlParams.get('l');
-            }
+            // Iterate weeks 1 through cachedLastRegWeek and fetch all weekly scores concurrently
+            cachedWeeklyScores = await fetchAllWeeklyScores(effectiveLeagueId || leagueId, cachedLastRegWeek);
 
-            // Parse Weekly Scores from DNFLClient response
-            let rawWeeklyData = weeklyResultsResponse;
-            let parsedScores = parseWeeklyScores(rawWeeklyData);
-
-            // Stale Cache / Empty Response Guard & Direct Fallback
-            if (Object.keys(parsedScores).length === 0 && effectiveLeagueId) {
-                console.warn("[DNFL LTS] No weekly scores returned from DNFLClient cache. Purging stale localStorage keys & initiating direct MFL API fetch...");
-                
-                // Purge any stale localStorage entries for weeklyResults
-                try {
-                    for (let i = 0; i < localStorage.length; i++) {
-                        const k = localStorage.key(i);
-                        if (k && k.includes('weeklyResults')) {
-                            localStorage.removeItem(k);
-                            console.log(`[DNFL LTS] Purged stale cache key: ${k}`);
-                        }
-                    }
-                } catch (e) {
-                    console.warn("[DNFL LTS] LocalStorage cache purge notice:", e);
-                }
-
-                // Direct fallback fetch to MFL export endpoint
-                try {
-                    const apiKey = window.apiKey || (window.location && new URLSearchParams(window.location.search).get('APIKEY')) || '';
-                    let directUrl = `https://${activeHost}/${targetYear}/export?TYPE=weeklyResults&L=${effectiveLeagueId}&W=ALL&JSON=1`;
-                    if (apiKey) directUrl += `&APIKEY=${apiKey}`;
-
-                    console.log(`[DNFL LTS] Executing direct MFL fallback fetch: ${directUrl}`);
-                    const directResp = await fetch(directUrl);
-                    if (directResp.ok) {
-                        rawWeeklyData = await directResp.json();
-                        parsedScores = parseWeeklyScores(rawWeeklyData);
-                        console.log(`[DNFL LTS] Direct MFL fallback fetch succeeded. Parsed ${Object.keys(parsedScores).length} week(s).`);
-                    } else {
-                        console.error(`[DNFL LTS] Direct MFL fallback fetch rejected with HTTP ${directResp.status}`);
-                    }
-                } catch (fallbackErr) {
-                    console.error("[DNFL LTS] Direct MFL fallback fetch exception:", fallbackErr);
-                }
-            }
-
-            cachedWeeklyScores = parsedScores;
-
-            console.log(`[DNFL LTS] Loaded ${cachedFranchises.length} franchises across ${cachedConferences.length} conference(s).`);
+            console.log("[DNFL LTS] Loaded " + cachedFranchises.length + " franchises across " + cachedConferences.length + " conference(s). Total scores parsed for " + Object.keys(cachedWeeklyScores).length + " week(s).");
 
             // Check global feature flag status across all active conferences
             const yrRules = getYearRules();
@@ -493,9 +480,6 @@
         }
     }
 
-    /**
-     * Sets up Conference Filter Dropdown and defaults to logged-in user's conference
-     */
     function setupConferenceDropdown() {
         const selectEl = document.getElementById("dnfl_lts_confFilter");
         if (!selectEl) return;
