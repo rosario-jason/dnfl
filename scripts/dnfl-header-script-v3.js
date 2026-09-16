@@ -11,7 +11,7 @@
     // =========================================================================
 
     // 1. Framework Master Version (Bump to force cache refresh across all user browsers)
-    const FRAMEWORK_VERSION = "3.21";
+    const FRAMEWORK_VERSION = "3.22";
     window.DNFL_FRAMEWORK_VERSION = FRAMEWORK_VERSION;
 
     // 2. Base URL Path for DNFL Framework Scripts & Assets
@@ -20,7 +20,7 @@
 
     // 3. CSS Stylesheets to Load (Third-party full URLs or relative paths)
     const STYLES_TO_LOAD = [
-        "dnfl-global-v5.css"
+        "dnfl-global-v6.css"
     ];
 
     // 4. JavaScript Modules & API Clients to Load (Relative filenames resolve against BASE_URL)

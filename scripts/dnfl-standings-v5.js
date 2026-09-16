@@ -263,19 +263,24 @@
         const keyContainer = document.getElementById("dnfl-standings-key");
         if (!keyContainer) return;
 
-        let iconHtml = `<div class="dnfl-key-icon-group" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">`;
+        // Ensure container has right-aligned flex stack class
+        if (!keyContainer.classList.contains("dnfl-legend-stack")) {
+            keyContainer.classList.add("dnfl-legend-stack");
+        }
+
+        let iconHtml = `<div class="dnfl-legend">`;
         
         if (confRules.hasDivisionCrown) {
-            iconHtml += `<span class="dnfl-key-item"><i class="fas fa-crown" style="color: var(--dnfl-primary-light, #3b82f6);"></i> Div Winner</span>`;
+            iconHtml += `<span class="dnfl-legend-item"><i class="fas fa-crown" style="color: var(--dnfl-primary-light, #3b82f6);"></i> Div Winner</span>`;
         }
         if (confRules.playoffCutoff) {
-            iconHtml += `<span class="dnfl-key-item"><i class="fas fa-trophy" style="color: #d97706;"></i> Playoffs</span>`;
+            iconHtml += `<span class="dnfl-legend-item"><i class="fas fa-trophy" style="color: #d97706;"></i> Playoffs</span>`;
         }
         if (confRules.promotion?.enabled) {
-            iconHtml += `<span class="dnfl-key-item"><i class="fas fa-arrow-circle-up" style="color: #15803d;"></i> Promotion</span>`;
+            iconHtml += `<span class="dnfl-legend-item"><i class="fas fa-arrow-circle-up" style="color: #15803d;"></i> Promotion</span>`;
         }
         if (confRules.relegation?.enabled) {
-            iconHtml += `<span class="dnfl-key-item"><i class="fas fa-arrow-circle-down" style="color: #b91c1c;"></i> Relegation</span>`;
+            iconHtml += `<span class="dnfl-legend-item"><i class="fas fa-arrow-circle-down" style="color: #b91c1c;"></i> Relegation</span>`;
         }
         
         iconHtml += `</div>`;
@@ -287,11 +292,11 @@
         const isEndOfSeason = cachedCurrentWeek > cachedLastRegWeek;
 
         if (!hasSeasonStarted) {
-            disclaimerHtml = `<div class="dnfl-disclaimer-note" style="font-style: italic; font-size: 0.75rem; color: var(--dnfl-text-subtle);">*Pre-season view. Seedings and icons will calculate after Week 1 games complete.</div>`;
+            disclaimerHtml = `<div class="dnfl-disclaimer-note">*Pre-season view. Seedings and icons will calculate after Week 1 games complete.</div>`;
         } else if (isHistoric || isEndOfSeason) {
-            disclaimerHtml = `<div class="dnfl-disclaimer-note" style="font-style: italic; font-size: 0.75rem; color: var(--dnfl-text-subtle);">*Final Regular Season Seedings.</div>`;
+            disclaimerHtml = `<div class="dnfl-disclaimer-note">*Final Regular Season Seedings.</div>`;
         } else {
-            disclaimerHtml = `<div class="dnfl-disclaimer-note" style="font-style: italic; font-size: 0.75rem; color: var(--dnfl-text-subtle);">*Preliminary seedings as of Week ${cachedCurrentWeek} standings. Subject to change until Week ${cachedLastRegWeek}.</div>`;
+            disclaimerHtml = `<div class="dnfl-disclaimer-note">*Preliminary seedings as of Week ${cachedCurrentWeek} standings. Subject to change until Week ${cachedLastRegWeek}.</div>`;
         }
 
         keyContainer.innerHTML = iconHtml + disclaimerHtml;
