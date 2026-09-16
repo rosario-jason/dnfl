@@ -101,12 +101,16 @@
     color: var(--dnfl-primary-dark);
     margin: 0;
     letter-spacing: -0.01em;
+    text-align: left;
+    text-transform: capitalize;
 }
 
 .dnfl-module-subtitle {
     font-size: 0.875rem;
     color: var(--dnfl-text-muted);
     margin-top: 0.15rem;
+    text-align: left;
+    text-transform: none;
 }
 
 /* TIER 2: Control Bar (Dropdowns, Filters, Inline Keys, Search Input) */
@@ -182,11 +186,13 @@
 .dnfl-card-title {
     font-size: 0.95rem;
     font-weight: 600;
-    color: var(--dnfl-text-main);
+    color: var(--dnfl-primary-dark);
     margin: 0;
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    text-align: left;
+    text-transform: capitalize;
 }
 
 .dnfl-card-toggle {
@@ -226,7 +232,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   3. BASE TABLES & DATA DISPLAY
+   3. BASE TABLES & DATA DISPLAY (Method A Auto-Layout)
    -------------------------------------------------------------------------- */
 .dnfl-table {
     width: 100%;
@@ -234,6 +240,7 @@
     font-size: 0.9rem;
     text-align: left;
     white-space: nowrap;
+    table-layout: auto;
 }
 
 .dnfl-table th,
@@ -245,16 +252,15 @@
 .dnfl-table th {
     background-color: var(--dnfl-bg-alt);
     font-weight: 600;
-    color: var(--dnfl-text-muted);
-    text-transform: uppercase;
+    color: var(--dnfl-primary-dark);
+    text-transform: capitalize;
     font-size: 0.75rem;
     letter-spacing: 0.05em;
+    text-align: left;
 }
 
-/* Table Row Hover (Ice Blue Tint from CSS v3 #b6e2ff) */
-.dnfl-table tbody tr:not(.dnfl-division-header):not(.dnfl-division-header-row):hover {
-    background-color: #b6e2ff !important;
-    transition: background-color 0.15s ease-in-out;
+.dnfl-table tbody tr:hover {
+    background-color: #b6e2ff; /* Restored Ice Blue Hover from v3 */
 }
 
 /* Table Modifiers */
@@ -276,20 +282,37 @@
 }
 
 .dnfl-cell-num {
-    text-align: right;
+    text-align: center;
     font-variant-numeric: tabular-nums;
 }
 
-/* User's Team Row Highlight (CSS v3 Canary Yellow #fde68a & Warm Gold #fcd34d Hover) */
+/* Method A Column Auto-Layout Rules */
+.dnfl-table td .dnfl-badge {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+    white-space: nowrap;
+}
+
+/* Franchise Column Flexible Scaling */
+.dnfl-col-franchise,
+.dnfl-table td.dnfl-col-franchise,
+.dnfl-table th.dnfl-col-franchise {
+    width: auto;
+    min-width: 180px;
+}
+
+/* Row State Highlights (Restored from v3) */
 .dnfl-table tr.dnfl-row-my-team,
 .dnfl-table tr.dnfl-my-team {
-    background-color: #fde68a !important;
+    background-color: #fde68a !important; /* Restored Canary Yellow */
     font-weight: 600;
 }
 
 .dnfl-table tr.dnfl-row-my-team:hover,
 .dnfl-table tr.dnfl-my-team:hover {
-    background-color: #fcd34d !important;
+    background-color: #fcd34d !important; /* Restored Warm Gold Hover */
 }
 
 .dnfl-table tr.dnfl-row-eliminated {
@@ -308,9 +331,20 @@
     font-weight: 700;
     color: var(--dnfl-primary-dark);
     font-size: 0.85rem;
-    text-transform: uppercase;
+    text-transform: capitalize;
     letter-spacing: 0.04em;
     border-bottom: 2px solid var(--dnfl-border-color);
+    text-align: left;
+}
+
+/* Sub TH Row under Division Headers */
+.dnfl-table tr.dnfl-sub-th-row th {
+    background-color: var(--dnfl-bg-alt);
+    border-bottom: 1px solid var(--dnfl-border-color);
+    font-size: 0.725rem;
+    color: var(--dnfl-primary-dark);
+    text-align: left;
+    text-transform: capitalize;
 }
 
 /* --------------------------------------------------------------------------
@@ -346,20 +380,6 @@
     font-size: 0.8rem;
     color: var(--dnfl-text-subtle);
     font-weight: 400;
-}
-
-.dnfl-rank-circle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    border-radius: 50%;
-    background: var(--dnfl-bg-alt);
-    font-weight: 700;
-    font-size: 0.85rem;
-    color: var(--dnfl-text-main);
-    border: 1px solid var(--dnfl-border-color);
 }
 
 /* --------------------------------------------------------------------------
@@ -490,6 +510,8 @@
 .dnfl-rules-wrap h5 {
     margin: 0 0 0.5rem 0;
     text-align: left;
+    color: var(--dnfl-primary-dark);
+    text-transform: capitalize;
 }
 
 .dnfl-rule-subsection {
@@ -547,28 +569,6 @@
     margin: 0;
     text-align: right;
 }
-   -------------------------------------------------------------------------- */
-.dnfl-legend {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 1rem;
-    font-size: 0.8rem;
-    color: var(--dnfl-text-muted);
-}
-
-.dnfl-legend-item {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-}
-
-.dnfl-legend-swatch {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    display: inline-block;
-}
 
 /* --------------------------------------------------------------------------
    10. BUTTONS & UTILITIES
@@ -578,12 +578,6 @@
 .dnfl-text-subtle { color: var(--dnfl-text-subtle); }
 .dnfl-text-muted { color: var(--dnfl-text-muted); }
 .dnfl-font-bold { font-weight: 700; }
-
-.dnfl-disclaimer-note {
-    font-size: 0.75rem;
-    font-style: italic;
-    color: var(--dnfl-text-subtle);
-}
 
 .dnfl-btn {
     display: inline-flex;
@@ -614,4 +608,31 @@
 .dnfl-btn-primary:hover {
     background-color: var(--dnfl-primary-dark);
     border-color: var(--dnfl-primary-dark);
+}
+
+/* --------------------------------------------------------------------------
+   11. MFL STYLE UPDATES FOR DNFL (Interim Native Overrides)
+   -------------------------------------------------------------------------- */
+.dnfl-module table.report,
+.dnfl-module table.report th,
+.dnfl-module table.report td {
+    border: none !important;
+    background: transparent !important;
+}
+
+.myfantasyleague_menu {
+    z-index: 9999 !important;
+}
+
+/* --------------------------------------------------------------------------
+   12. MFL SCRIPTS STYLE UPDATES FOR DNFL (Interim Third-Party Script Resets)
+   -------------------------------------------------------------------------- */
+.dnfl-module .report th,
+.dnfl-module .report td {
+    box-sizing: border-box;
+}
+
+.dnfl-card table.report {
+    width: 100% !important;
+    margin: 0 !important;
 }
