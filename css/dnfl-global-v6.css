@@ -251,8 +251,10 @@
     letter-spacing: 0.05em;
 }
 
-.dnfl-table tbody tr:hover {
-    background-color: rgba(59, 130, 246, 0.03);
+/* Table Row Hover (Ice Blue Tint from CSS v3 #b6e2ff) */
+.dnfl-table tbody tr:not(.dnfl-division-header):not(.dnfl-division-header-row):hover {
+    background-color: #b6e2ff !important;
+    transition: background-color 0.15s ease-in-out;
 }
 
 /* Table Modifiers */
@@ -278,11 +280,16 @@
     font-variant-numeric: tabular-nums;
 }
 
-/* Row State Highlights */
+/* User's Team Row Highlight (CSS v3 Canary Yellow #fde68a & Warm Gold #fcd34d Hover) */
 .dnfl-table tr.dnfl-row-my-team,
 .dnfl-table tr.dnfl-my-team {
-    background-color: rgba(59, 130, 246, 0.08);
+    background-color: #fde68a !important;
     font-weight: 600;
+}
+
+.dnfl-table tr.dnfl-row-my-team:hover,
+.dnfl-table tr.dnfl-my-team:hover {
+    background-color: #fcd34d !important;
 }
 
 .dnfl-table tr.dnfl-row-eliminated {

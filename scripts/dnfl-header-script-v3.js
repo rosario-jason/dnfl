@@ -11,7 +11,7 @@
     // =========================================================================
 
     // 1. Framework Master Version (Bump to force cache refresh across all user browsers)
-    const FRAMEWORK_VERSION = "3.22";
+    const FRAMEWORK_VERSION = "3.23";
     window.DNFL_FRAMEWORK_VERSION = FRAMEWORK_VERSION;
 
     // 2. Base URL Path for DNFL Framework Scripts & Assets

@@ -515,7 +515,7 @@
         const pa = rawPa.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const record = `${stats.h2hw || 0}-${stats.h2hl || 0}-${stats.h2ht || 0}`;
 
-        let seedCellContent = `<span class="dnfl-rank-circle" style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--dnfl-bg-alt, #f1f5f9); font-weight: 700; font-size: 0.85rem;">-</span>`;
+        let seedCellContent = `<span class="dnfl-seed-num" style="font-weight: 700; font-size: 0.95rem;">-</span>`;
 
         if (hasSeasonStarted) {
             const seed = teamSeeds[profile.id] || "-";
@@ -523,19 +523,19 @@
 
             const isDivWinner = profile.division && profile.id === divLeaders[norm(profile.division)];
             if (confRules.hasDivisionCrown && isDivWinner) {
-                badgeIcons += `<i class="fas fa-crown" style="color: var(--dnfl-primary-light, #3b82f6); margin-left: 5px;" title="Division Winner"></i>`;
+                badgeIcons += `<i class="fas fa-crown" style="color: var(--dnfl-badge-blue); margin-left: 5px;" title="Division Winner"></i>`;
             }
             if (seed !== "-" && confRules.playoffCutoff && seed <= confRules.playoffCutoff) {
-                badgeIcons += `<i class="fas fa-trophy" style="color: #d97706; margin-left: 5px;" title="Playoff Seed #${seed}"></i>`;
+                badgeIcons += `<i class="fas fa-trophy" style="color: var(--dnfl-badge-amber); margin-left: 5px;" title="Playoff Seed #${seed}"></i>`;
             }
             if (relegatedTeamIds.has(profile.id)) {
-                badgeIcons += `<i class="fas fa-arrow-circle-down" style="color: #b91c1c; margin-left: 5px;" title="Relegation Zone"></i>`;
+                badgeIcons += `<i class="fas fa-arrow-circle-down" style="color: var(--dnfl-alert-red); margin-left: 5px;" title="Relegation Zone"></i>`;
             }
             if (promotedTeamIds.has(profile.id)) {
-                badgeIcons += `<i class="fas fa-arrow-circle-up" style="color: #15803d; margin-left: 5px;" title="Promotion Zone"></i>`;
+                badgeIcons += `<i class="fas fa-arrow-circle-up" style="color: var(--dnfl-success-green); margin-left: 5px;" title="Promotion Zone"></i>`;
             }
 
-            seedCellContent = `<span class="dnfl-rank-circle" style="display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: var(--dnfl-bg-alt, #f1f5f9); font-weight: 700; font-size: 0.85rem;">${seed}</span>${badgeIcons}`;
+            seedCellContent = `<span class="dnfl-seed-num" style="font-weight: 700; font-size: 0.95rem;">${seed}</span>${badgeIcons}`;
         }
 
         const activeFranchiseId = getLoggedInFranchiseId();
@@ -546,23 +546,23 @@
 
         return `
             <tr class="${rowClass}">
-                <td class="dnfl-text-center">
+                <td style="text-align: left;">
                     ${seedCellContent}
                 </td>
                 <td>
                     <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
                         <a href="${targetHref}">
-                            <img src="${logoUrl}" alt="${teamName}" class="franchiseicon" id="franchiseicon_${profile.id}" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';" />
+                            <img src="${logoUrl}" alt="${teamName}" class="franchiseicon dnfl-franchise-icon" id="franchiseicon_${profile.id}" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';" />
                         </a>
                         <div style="display: flex; flex-direction: column;">
-                            <a href="${targetHref}" class="dnfl-team-name" style="font-weight: 700; color: var(--dnfl-text-main); text-decoration: none;">${teamName}</a>
-                            <span class="dnfl-owner-name" style="font-size: 0.8rem; color: var(--dnfl-text-subtle);">${ownerName}</span>
+                            <a href="${targetHref}" class="dnfl-team-name">${teamName}</a>
+                            <span class="dnfl-owner-name">${ownerName}</span>
                         </div>
                     </div>
                 </td>
-                <td class="dnfl-hide-mobile dnfl-cell-num dnfl-standings-pf">${pf}</td>
-                <td class="dnfl-hide-mobile dnfl-cell-num dnfl-standings-pa">${pa}</td>
-                <td class="dnfl-text-center"><span class="dnfl-badge dnfl-badge-info">${record}</span></td>
+                <td class="dnfl-hide-mobile dnfl-cell-num dnfl-standings-pf"><span class="dnfl-badge dnfl-badge-green">${pf}</span></td>
+                <td class="dnfl-hide-mobile dnfl-cell-num dnfl-standings-pa"><span class="dnfl-badge dnfl-badge-red">${pa}</span></td>
+                <td class="dnfl-text-center"><span class="dnfl-badge dnfl-badge-blue dnfl-badge-record">${record}</span></td>
                 <td class="dnfl-hide-mobile dnfl-cell-num dnfl-standings-bbid">${bbidFormatted}</td>
             </tr>
         `;
