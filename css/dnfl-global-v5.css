@@ -1,0 +1,464 @@
+/* ==========================================================================
+   DNFL Global Framework Stylesheet (dnfl-global-v5.css)
+   Architecture: Unified 3-Tier Component Framework
+   Version: 5.00
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. DESIGN SYSTEM & TOKENS
+   -------------------------------------------------------------------------- */
+:root {
+    /* Color System */
+    --dnfl-primary: #1e3a8a;
+    --dnfl-primary-light: #3b82f6;
+    --dnfl-primary-dark: #1e293b;
+    --dnfl-accent: #059669;
+    --dnfl-accent-hover: #047857;
+    --dnfl-danger: #dc2626;
+    --dnfl-warning: #d97706;
+    
+    /* Neutral Palette */
+    --dnfl-bg-main: #f8fafc;
+    --dnfl-bg-card: #ffffff;
+    --dnfl-bg-alt: #f1f5f9;
+    --dnfl-text-main: #0f172a;
+    --dnfl-text-muted: #64748b;
+    --dnfl-text-subtle: #94a3b8;
+    --dnfl-border-color: #e2e8f0;
+    --dnfl-border-light: #f1f5f9;
+
+    /* Semantic Color Tokens */
+    --dnfl-badge-success-bg: #dcfce7;
+    --dnfl-badge-success-text: #15803d;
+    --dnfl-badge-success-border: #bbf7d0;
+
+    --dnfl-badge-danger-bg: #fee2e2;
+    --dnfl-badge-danger-text: #b91c1c;
+    --dnfl-badge-danger-border: #fecaca;
+
+    --dnfl-badge-info-bg: #dbeafe;
+    --dnfl-badge-info-text: #1d4ed8;
+    --dnfl-badge-info-border: #bfdbfe;
+
+    --dnfl-badge-amber-bg: #fef3c7;
+    --dnfl-badge-amber-text: #b45309;
+    --dnfl-badge-amber-border: #fde68a;
+
+    --dnfl-badge-subtle-bg: #f1f5f9;
+    --dnfl-badge-subtle-text: #64748b;
+    --dnfl-badge-subtle-border: #e2e8f0;
+
+    /* Typography */
+    --dnfl-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --dnfl-font-mono: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    
+    /* Shadows & Radii */
+    --dnfl-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --dnfl-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --dnfl-radius-sm: 0.25rem;
+    --dnfl-radius-md: 0.375rem;
+    --dnfl-radius-lg: 0.5rem;
+    --dnfl-radius-full: 9999px;
+}
+
+/* --------------------------------------------------------------------------
+   2. UNIFIED 3-TIER CONTAINER ARCHITECTURE
+   -------------------------------------------------------------------------- */
+
+/* Scoped Universal Box-Sizing Reset */
+.dnfl-module,
+.dnfl-module *,
+.dnfl-standings-wrap, .dnfl-standings-wrap *,
+.dnfl-lts-wrap, .dnfl-lts-wrap *,
+.dnfl-rankings-wrap, .dnfl-rankings-wrap * {
+    box-sizing: border-box;
+}
+
+/* TIER 1: Master Outer Module Wrapper (Single Width Control for All Modules) */
+.dnfl-module,
+.dnfl-standings-wrap,
+.dnfl-lts-wrap,
+.dnfl-rankings-wrap,
+.dnfl-rules-wrap,
+.dnfl-podcast-wrap {
+    width: 100%;
+    max-width: 1200px; /* Single master width control across all modules */
+    margin: 0 auto 1.5rem auto;
+    font-family: var(--dnfl-font-sans);
+    color: var(--dnfl-text-main);
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+/* Optional Width Overrides (data-width="full" or data-width="narrow") */
+.dnfl-module[data-width="full"],
+.dnfl-standings-wrap[data-width="full"],
+.dnfl-lts-wrap[data-width="full"]   { max-width: 100%; }
+
+.dnfl-module[data-width="narrow"],
+.dnfl-standings-wrap[data-width="narrow"],
+.dnfl-lts-wrap[data-width="narrow"] { max-width: 800px; }
+
+/* Module Title & Subtitle Block (Top of Module, Outside Cards) */
+.dnfl-module-header {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.75rem;
+    padding: 0 0.25rem;
+}
+
+.dnfl-module-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--dnfl-primary-dark);
+    margin: 0;
+    letter-spacing: -0.01em;
+}
+
+.dnfl-module-subtitle {
+    font-size: 0.875rem;
+    color: var(--dnfl-text-muted);
+    margin-top: 0.15rem;
+}
+
+/* TIER 2: Control Bar (Dropdowns, Filters, Inline Keys, Search Input) */
+.dnfl-controls,
+.dnfl-controls-bar {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1.15rem;
+    margin-bottom: 1rem;
+    background: var(--dnfl-bg-card);
+    border: 1px solid var(--dnfl-border-color);
+    border-radius: var(--dnfl-radius-md);
+    box-shadow: var(--dnfl-shadow-sm);
+}
+
+.dnfl-control-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dnfl-control-group label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--dnfl-text-muted);
+}
+
+.dnfl-select {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.875rem;
+    border: 1px solid var(--dnfl-border-color);
+    border-radius: var(--dnfl-radius-sm);
+    background-color: var(--dnfl-bg-card);
+    color: var(--dnfl-text-main);
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.15s ease-in-out;
+}
+
+.dnfl-select:focus {
+    border-color: var(--dnfl-primary-light);
+}
+
+/* TIER 3: Content Card / Table Scroll Wrapper (Tables, Matrix, Charts) */
+.dnfl-card,
+.dnfl-matrix-wrap,
+.dnfl-table-responsive {
+    width: 100%;
+    overflow-x: auto; /* Handles wide table horizontal scrolling cleanly */
+    -webkit-overflow-scrolling: touch;
+    background: var(--dnfl-bg-card);
+    border: 1px solid var(--dnfl-border-color);
+    border-radius: var(--dnfl-radius-md);
+    box-shadow: var(--dnfl-shadow-sm);
+    margin-bottom: 1rem;
+}
+
+/* Card Header, Card Title & Accordion Toggle */
+.dnfl-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.15rem;
+    background-color: var(--dnfl-bg-alt);
+    border-bottom: 1px solid var(--dnfl-border-color);
+    gap: 0.75rem;
+}
+
+.dnfl-card-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--dnfl-text-main);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dnfl-card-toggle {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--dnfl-text-muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--dnfl-radius-sm);
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+    margin-left: auto; /* Pushes toggle button to the far right */
+}
+
+.dnfl-card-toggle:hover {
+    background-color: var(--dnfl-border-color);
+    color: var(--dnfl-text-main);
+}
+
+.dnfl-card-toggle .dnfl-toggle-icon {
+    display: inline-block;
+    transition: transform 0.2s ease-in-out;
+    font-size: 0.75rem;
+}
+
+.dnfl-card-toggle[aria-expanded="false"] .dnfl-toggle-icon,
+.dnfl-card-toggle.collapsed .dnfl-toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.dnfl-card-body.collapsed {
+    display: none;
+}
+
+/* --------------------------------------------------------------------------
+   3. BASE TABLES & DATA DISPLAY
+   -------------------------------------------------------------------------- */
+.dnfl-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.dnfl-table th,
+.dnfl-table td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--dnfl-border-light);
+}
+
+.dnfl-table th {
+    background-color: var(--dnfl-bg-alt);
+    font-weight: 600;
+    color: var(--dnfl-text-muted);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.dnfl-table tbody tr:hover {
+    background-color: rgba(59, 130, 246, 0.03);
+}
+
+/* Table Modifiers */
+.dnfl-table-compact th,
+.dnfl-table-compact td {
+    padding: 0.45rem 0.65rem;
+    font-size: 0.825rem;
+}
+
+.dnfl-table-striped tbody tr:nth-child(even) {
+    background-color: #f8fafc;
+}
+
+.dnfl-table-sticky th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    box-shadow: 0 1px 0 var(--dnfl-border-color);
+}
+
+.dnfl-cell-num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Row State Highlights */
+.dnfl-table tr.dnfl-row-my-team,
+.dnfl-table tr.dnfl-my-team {
+    background-color: rgba(59, 130, 246, 0.08);
+    font-weight: 600;
+}
+
+.dnfl-table tr.dnfl-row-eliminated {
+    opacity: 0.65;
+    background-color: #f8fafc;
+}
+
+.dnfl-table tr.dnfl-row-winner {
+    background-color: rgba(34, 197, 94, 0.08);
+}
+
+/* --------------------------------------------------------------------------
+   4. GLOBAL SEMANTIC BADGES
+   -------------------------------------------------------------------------- */
+.dnfl-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    border-radius: var(--dnfl-radius-sm);
+    white-space: nowrap;
+}
+
+/* 🟢 Success / Green */
+.dnfl-badge-success,
+.dnfl-badge-green,
+.dnfl-badge-playoff {
+    background-color: var(--dnfl-badge-success-bg);
+    color: var(--dnfl-badge-success-text);
+    border: 1px solid var(--dnfl-badge-success-border);
+}
+
+/* 🔴 Danger / Red */
+.dnfl-badge-danger,
+.dnfl-badge-red,
+.dnfl-badge-elim {
+    background-color: var(--dnfl-badge-danger-bg);
+    color: var(--dnfl-badge-danger-text);
+    border: 1px solid var(--dnfl-badge-danger-border);
+}
+
+/* 🔵 Info / Blue */
+.dnfl-badge-info,
+.dnfl-badge-blue,
+.dnfl-badge-bye {
+    background-color: var(--dnfl-badge-info-bg);
+    color: var(--dnfl-badge-info-text);
+    border: 1px solid var(--dnfl-badge-info-border);
+}
+
+/* 🟡 Amber / Warning */
+.dnfl-badge-amber,
+.dnfl-badge-warning,
+.dnfl-badge-yellow {
+    background-color: var(--dnfl-badge-amber-bg);
+    color: var(--dnfl-badge-amber-text);
+    border: 1px solid var(--dnfl-badge-amber-border);
+}
+
+/* ⚪ Subtle / Gray */
+.dnfl-badge-subtle,
+.dnfl-badge-gray {
+    background-color: var(--dnfl-badge-subtle-bg);
+    color: var(--dnfl-badge-subtle-text);
+    border: 1px solid var(--dnfl-badge-subtle-border);
+}
+
+/* --------------------------------------------------------------------------
+   5. GLOBAL CALLOUT BANNERS / ALERTS
+   -------------------------------------------------------------------------- */
+.dnfl-alert {
+    padding: 0.75rem 1rem;
+    border-radius: var(--dnfl-radius-sm);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dnfl-alert-info {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    color: #1e40af;
+}
+
+.dnfl-alert-success {
+    background: #f0fdf4;
+    border-left: 4px solid #22c55e;
+    color: #166534;
+}
+
+.dnfl-alert-amber,
+.dnfl-alert-warning {
+    background: #fffbeb;
+    border-left: 4px solid #d97706;
+    color: #92400e;
+}
+
+.dnfl-alert-danger {
+    background: #fef2f2;
+    border-left: 4px solid #ef4444;
+    color: #991b1b;
+}
+
+/* --------------------------------------------------------------------------
+   6. GLOBAL LEGEND KEYS
+   -------------------------------------------------------------------------- */
+.dnfl-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: var(--dnfl-text-muted);
+}
+
+.dnfl-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+/* --------------------------------------------------------------------------
+   7. BUTTONS & UTILITIES
+   -------------------------------------------------------------------------- */
+.dnfl-text-center { text-align: center; }
+.dnfl-text-right { text-align: right; }
+.dnfl-text-subtle { color: var(--dnfl-text-subtle); }
+.dnfl-text-muted { color: var(--dnfl-text-muted); }
+.dnfl-font-bold { font-weight: 700; }
+
+.dnfl-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: var(--dnfl-radius-sm);
+    border: 1px solid var(--dnfl-border-color);
+    background-color: var(--dnfl-bg-card);
+    color: var(--dnfl-text-main);
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.dnfl-btn:hover {
+    background-color: var(--dnfl-bg-alt);
+    border-color: var(--dnfl-text-subtle);
+}
+
+.dnfl-btn-primary {
+    background-color: var(--dnfl-primary);
+    border-color: var(--dnfl-primary);
+    color: #ffffff;
+}
+
+.dnfl-btn-primary:hover {
+    background-color: var(--dnfl-primary-dark);
+    border-color: var(--dnfl-primary-dark);
+}
