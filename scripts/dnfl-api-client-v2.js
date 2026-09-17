@@ -21,10 +21,15 @@
 
         // Dynamic API Request Registry Layout
         MFL_REQUEST_REGISTRY: [
-            ['daily', 'league',          true,  ''],
-            ['daily', 'leagueStandings', true,  '&COLUMN_NAMES=1&ALL=1'],
-            ['daily', 'rules',           true,  ''],
-            ['daily', 'weeklyResults', true, '']
+            ['daily',    'league',          true,  ''],
+            ['daily',    'leagueStandings', true,  '&COLUMN_NAMES=1&ALL=1'],
+            ['daily',    'rules',           true,  ''],
+            ['daily',    'players',         false, '&DETAILS=1'],
+            ['daily',    'rosters',         true,  ''],
+            ['hourly',   'playerScores',    true,  ''],
+            ['hourly',   'projectedScores', true,  ''],
+            ['hourly',   'weeklyResults',   true,  '']
+
         ],
 
         // Active Network Handshake Tracker (Request Deduplication)
