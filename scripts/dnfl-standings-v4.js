@@ -1,7 +1,7 @@
 /* ==========================================================================
    DNFL Dynamic Standings & Seeding Engine
    ========================================================================== */
-/* global DNFLClient, DNFL */
+/* global DNFLClient */
 (function() {
     'use strict';
 
@@ -11,20 +11,23 @@
     // Standings & Seeding Configuration (Loaded dynamically from standings_rules.json)
     let STANDINGS_RULES = {};
 
-    // Module state flag
-    let _initialized = false;
-
-    // Dynamic Target Environment Variables
-    let activeHost = 'www48.myfantasyleague.com';
-    let targetYear = String(new Date().getFullYear());
-    let leagueId = '00000';
-    let loggedInFranchiseId = '0000';
+    // Global Context Engine Variables
+    const activeHost = window.location.hostname || "myfantasyleague.com";
+    let targetYear = window.current_year || null;
+    if (!targetYear) {
+        const pathSegments = window.location.pathname.split('/');
+        const foundYear = pathSegments.find(segment => /^20\d{2}$/.test(segment));
+        targetYear = foundYear ? foundYear : new Date().getFullYear();
+    }
+    const leagueId = window.league_id || null;
+    const loggedInFranchiseId = window.franchise_id || null;
 
     // State Caches
     let cachedConferences = [];
     let cachedDivisions = [];
     let cachedLeagueDetails = [];
     let cachedStandingsFranchises = [];
+    let weeklyPaMap = {};
 
     // Dynamic Week Trackers
     let cachedLastRegWeek = 14;   
@@ -112,9 +115,8 @@
      * Resolves rule set for target season year from STANDINGS_RULES
      */
     function getYearRules() {
-        const yr = parseInt(targetYear, 10);
+        const yr = parseInt(targetYear);
         if (STANDINGS_RULES[yr]) return STANDINGS_RULES[yr];
-        if (STANDINGS_RULES[String(yr)]) return STANDINGS_RULES[String(yr)];
 
         for (const key in STANDINGS_RULES) {
             // Skip metadata/instructions blocks (e.g., _instructions, _comment, __README)
@@ -166,34 +168,17 @@
             return;
         }
 
-        if (_initialized) {
-            // Already initialized, just refresh view
-            updateDnflStandingsView();
-            return;
-        }
-
         try {
-            activeHost = (window.DNFL && window.DNFL.getHost) ? window.DNFL.getHost() : (window.location.host || 'www48.myfantasyleague.com');
-            targetYear = (window.DNFL && window.DNFL.getYear) ? window.DNFL.getYear() : String(new Date().getFullYear());
-            leagueId = (window.DNFL && window.DNFL.getLeagueId) ? window.DNFL.getLeagueId() : '00000';
-            loggedInFranchiseId = getLoggedInFranchiseId();
-
-            const rulesUrl = `https://dnfl.live/dnfl_standings/standings_rules.json`;
-            const apiClient = window.DNFLClient || (window.DNFL && window.DNFL.Client) || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
+            const rulesUrl = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_standings/standings_rules.json`;
+            const apiClient = window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
 
             if (!apiClient) {
-                if (retryCount < maxRetries) {
-                    retryCount++;
-                    setTimeout(init, 100);
-                    return;
-                }
                 throw new Error("DNFLClient API middleware unavailable.");
             }
 
-            // Explicitly pass { YEAR: targetYear } so multi-season/historical views match metadata accurately
             const [standingsResponse, leagueResponse, rawRulesJson] = await Promise.all([
-                apiClient.fetchData("leagueStandings", { YEAR: targetYear }),
-                apiClient.fetchData("league", { YEAR: targetYear }),
+                apiClient.fetchData("leagueStandings"),
+                apiClient.fetchData("league"),
                 apiClient.fetchRawText(rulesUrl).catch(err => {
                     console.warn("[DNFL Standings] Could not load standings_rules.json, using fallback rules.", err);
                     return null;
@@ -205,14 +190,10 @@
             }
 
             if (rawRulesJson) {
-                if (typeof rawRulesJson === 'object') {
-                    STANDINGS_RULES = rawRulesJson;
-                } else if (typeof rawRulesJson === 'string') {
-                    try {
-                        STANDINGS_RULES = JSON.parse(rawRulesJson);
-                    } catch (e) {
-                        console.error("[DNFL Standings] Corrupted standings_rules.json format. Fallback engaged.", e);
-                    }
+                try {
+                    STANDINGS_RULES = JSON.parse(rawRulesJson);
+                } catch (e) {
+                    console.error("[DNFL Standings] Corrupted standings_rules.json format. Fallback engaged.", e);
                 }
             }
 
@@ -235,10 +216,63 @@
             cachedConferences = toArray(leagueResponse.league?.conferences?.conference);
             cachedDivisions = toArray(leagueResponse.league?.divisions?.division);
             
-            cachedLastRegWeek = parseInt(leagueResponse.league?.lastRegularSeasonWeek || 14, 10);
-            cachedCurrentWeek = parseInt(leagueResponse.league?.currentWk || 1, 10);
+            cachedLastRegWeek = parseInt(leagueResponse.league.lastRegularSeasonWeek || 14);
+            cachedCurrentWeek = parseInt(leagueResponse.league.currentWk) || 1;
 
-            _initialized = true;
+            // Check if PA fallback calculation is needed for current season
+            weeklyPaMap = {};
+            const needsPaFallback = cachedStandingsFranchises.some(s => {
+                const games = parseInt(s.h2hw || s.w || 0) + parseInt(s.h2hl || s.l || 0) + parseInt(s.h2ht || s.t || 0);
+                const rawPaVal = parseFloat(s.pa || s.h2hpa || s.points_against || s.opp_pf || 0);
+                return games > 0 && rawPaVal === 0;
+            });
+
+            if (needsPaFallback && cachedCurrentWeek >= 1) {
+                try {
+                    const maxWk = Math.min(cachedCurrentWeek, cachedLastRegWeek);
+                    const weeklyPromises = [];
+                    for (let w = 1; w <= maxWk; w++) {
+                        weeklyPromises.push(apiClient.fetchData('weeklyResults', `&W=${w}`).catch(() => null));
+                    }
+                    const weeklyResults = await Promise.all(weeklyPromises);
+
+                    weeklyResults.forEach(weeklyData => {
+                        if (!weeklyData?.weeklyResults) return;
+                        const rawMatchups = weeklyData.weeklyResults.matchup || weeklyData.weeklyResults.matchUp || weeklyData.weeklyResults.schedule?.matchup;
+                        let matchups = toArray(rawMatchups);
+
+                        if (matchups.length === 0 && weeklyData.weeklyResults.franchise) {
+                            const fList = toArray(weeklyData.weeklyResults.franchise);
+                            const processedFids = new Set();
+                            fList.forEach(f => {
+                                const fid = normFranchiseId(f.id);
+                                const oppId = normFranchiseId(f.opponent || f.opp || f.vs);
+                                if (!processedFids.has(fid)) {
+                                    processedFids.add(fid);
+                                    if (oppId) processedFids.add(oppId);
+                                    const oppObj = fList.find(o => normFranchiseId(o.id) === oppId) || {};
+                                    matchups.push({ franchise: [f, oppObj] });
+                                }
+                            });
+                        }
+
+                        matchups.forEach(m => {
+                            const franchises = toArray(m.franchise);
+                            if (franchises.length >= 2) {
+                                const f1Id = normFranchiseId(franchises[0].id);
+                                const f2Id = normFranchiseId(franchises[1].id);
+                                const f1Score = parseFloat(franchises[0].score || 0);
+                                const f2Score = parseFloat(franchises[1].score || 0);
+
+                                weeklyPaMap[f1Id] = (weeklyPaMap[f1Id] || 0) + f2Score;
+                                weeklyPaMap[f2Id] = (weeklyPaMap[f2Id] || 0) + f1Score;
+                            }
+                        });
+                    });
+                } catch (e) {
+                    console.warn("[DNFL Standings] Exception during PA fallback calculation:", e);
+                }
+            }
 
             calculateSeedsAndBadges();
             setupDropdown();
@@ -494,8 +528,19 @@
         const bbidFormatted = "$" + rawBbid.toFixed(2);
         
         // Number formatting for Points For (PF) and Points Against (PA)
-        const rawPf = parseFloat(stats.pf || 0);
-        const rawPa = parseFloat(stats.pa || 0);
+        const rawPf = parseFloat(stats.pf || stats.h2hpf || stats.points_for || 0);
+        let paVal = (stats.pa !== undefined && stats.pa !== "0" && stats.pa !== 0 && stats.pa !== "0.00")
+            ? stats.pa
+            : (stats.h2hpa || stats.points_against || stats.opp_pf || stats.opp_points || stats.pa_pts || stats.opp_pts || 0);
+        let rawPa = parseFloat(paVal || 0);
+
+        const gamesPlayed = parseInt(stats.h2hw || stats.w || 0) + parseInt(stats.h2hl || stats.l || 0) + parseInt(stats.h2ht || stats.t || 0);
+        const normFid = normFranchiseId(profile.id);
+
+        if (rawPa === 0 && gamesPlayed > 0 && weeklyPaMap[normFid] !== undefined) {
+            rawPa = weeklyPaMap[normFid];
+        }
+
         const pf = rawPf.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const pa = rawPa.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const record = `${stats.h2hw || 0}-${stats.h2hl || 0}-${stats.h2ht || 0}`;
@@ -667,18 +712,13 @@
     }
 
     // Export module onto the window.DNFL namespace
-    const StandingsModule = {
+    window.DNFL.Standings = {
         init: init,
         updateView: updateDnflStandingsView,
         toggleDivision: toggleDnflDivision
     };
 
-    window.DNFL.Standings = StandingsModule;
-
-    // Register with master framework loader if available
-    if (window.DNFL && window.DNFL.registerModule) {
-        window.DNFL.registerModule('standings', StandingsModule);
-    } else if (document.readyState === 'loading') {
+    if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
     } else {
         init();
