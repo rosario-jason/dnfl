@@ -1,13 +1,11 @@
-/**
- * ============================================================================
- * Duke Networking Fantasy League (DNFL) - Standings & Seeding Engine
- * File: dnfl-standings-v5.js
- * Version: 5.00
- * Description: Dynamic standings calculation, multi-conference tiebreakers, 
- *              promotion/relegation tracking, and 3-Tier CSS Architecture integration.
- * ============================================================================
- */
-(function () {
+/* ==========================================================================
+   DNFL Dynamic Standings & Seeding Engine
+   File: dnfl-standings-v5.js
+   Engine Version: 5.00 (Unified 3-Tier Framework & Duke University Palette)
+   ========================================================================== */
+
+/* global DNFLClient, DNFL */
+(function() {
     'use strict';
 
     // Establish Global DNFL Namespace
@@ -76,11 +74,6 @@
      * Dynamically detects the logged-in franchise ID across all MFL environments
      */
     function getLoggedInFranchiseId() {
-        if (window.DNFL && window.DNFL.getLoggedInFranchiseId) {
-            const fid = window.DNFL.getLoggedInFranchiseId();
-            if (fid && fid !== '0000') return fid;
-        }
-
         let fid = window.franchise_id || window.mflFranchiseId || window.login_franchise_id || window.current_franchise_id;
         
         if (!fid && window.location && window.location.search) {
@@ -130,11 +123,11 @@
             if (key.startsWith('_')) continue;
 
             if (key.includes('-')) {
-                const [start, end] = key.split('-').map(s => parseInt(s.trim(), 10));
+                const [start, end] = key.split('-').map(s => parseInt(s.trim()));
                 if (yr >= start && yr <= end) return STANDINGS_RULES[key];
             }
             if (key.includes(',')) {
-                const yearList = key.split(',').map(s => parseInt(s.trim(), 10));
+                const yearList = key.split(',').map(s => parseInt(s.trim()));
                 if (yearList.includes(yr)) return STANDINGS_RULES[key];
             }
         }
@@ -252,54 +245,51 @@
 
         } catch (error) {
             console.error("DNFL Standings Error:", error);
-            tbody.innerHTML = `<tr><td colspan="6" class="dnfl-text-center dnfl-status-error" style="padding: 2rem;">Error loading standings: ${error.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--dnfl-red-text, #b91c1c); padding: 2rem;">Error loading standings.</td></tr>`;
         }
     }
 
     /**
-     * Renders legend keys and disclaimers using global CSS utility classes
+     * Renders legend keys and disclaimers using CSS utility classes
      */
     function renderStandingsKey(confRules) {
         const keyContainer = document.getElementById("dnfl-standings-key");
         if (!keyContainer) return;
 
-        // Ensure container has right-aligned flex stack class
-        if (!keyContainer.classList.contains("dnfl-legend-stack")) {
-            keyContainer.classList.add("dnfl-legend-stack");
-        }
-
-        let iconHtml = `<div class="dnfl-legend">`;
-        
+        let iconHtml = "";
         if (confRules.hasDivisionCrown) {
-            iconHtml += `<span class="dnfl-legend-item"><i class="fas fa-crown" style="color: var(--dnfl-primary-light, #3b82f6);"></i> Div Winner</span>`;
+            iconHtml += `<span class="dnfl-legend-item"><i class="fas fa-crown" style="color: var(--dnfl-blue-text, #1d4ed8);"></i> Div Winner</span>`;
         }
         if (confRules.playoffCutoff) {
-            iconHtml += `<span class="dnfl-legend-item"><i class="fas fa-trophy" style="color: #d97706;"></i> Playoffs</span>`;
+            iconHtml += `<span class="dnfl-legend-item"><i class="fas fa-trophy" style="color: var(--dnfl-amber-text, #b45309);"></i> Playoffs</span>`;
         }
         if (confRules.promotion?.enabled) {
-            iconHtml += `<span class="dnfl-legend-item"><i class="fas fa-arrow-circle-up" style="color: #15803d;"></i> Promotion</span>`;
+            iconHtml += `<span class="dnfl-legend-item"><i class="fas fa-arrow-circle-up" style="color: var(--dnfl-green-text, #15803d);"></i> Promotion</span>`;
         }
         if (confRules.relegation?.enabled) {
-            iconHtml += `<span class="dnfl-legend-item"><i class="fas fa-arrow-circle-down" style="color: #b91c1c;"></i> Relegation</span>`;
+            iconHtml += `<span class="dnfl-legend-item"><i class="fas fa-arrow-circle-down" style="color: var(--dnfl-red-text, #b91c1c);"></i> Relegation</span>`;
         }
-        
-        iconHtml += `</div>`;
 
-        let disclaimerHtml = '';
+        let disclaimerText = '';
         const currentYearNum = new Date().getFullYear();
-        const parsedTargetYear = parseInt(targetYear, 10);
+        const parsedTargetYear = parseInt(targetYear);
         const isHistoric = parsedTargetYear < currentYearNum;
         const isEndOfSeason = cachedCurrentWeek > cachedLastRegWeek;
 
         if (!hasSeasonStarted) {
-            disclaimerHtml = `<div class="dnfl-disclaimer-note">*Pre-season view. Seedings and icons will calculate after Week 1 games complete.</div>`;
+            disclaimerText = "*Pre-season view. Seedings and icons will calculate after Week 1 games complete.";
         } else if (isHistoric || isEndOfSeason) {
-            disclaimerHtml = `<div class="dnfl-disclaimer-note">*Final Regular Season Seedings.</div>`;
+            disclaimerText = "*Final Regular Season Seedings.";
         } else {
-            disclaimerHtml = `<div class="dnfl-disclaimer-note">*Preliminary seedings as of Week ${cachedCurrentWeek} standings. Subject to change until Week ${cachedLastRegWeek}.</div>`;
+            disclaimerText = `*Preliminary seedings as of Week ${cachedCurrentWeek} standings. Subject to change until Week ${cachedLastRegWeek}.`;
         }
 
-        keyContainer.innerHTML = iconHtml + disclaimerHtml;
+        keyContainer.innerHTML = `
+            <div class="dnfl-legend">
+                ${iconHtml}
+            </div>
+            <p class="dnfl-disclaimer-note">${disclaimerText}</p>
+        `;
     }
 
     /**
@@ -437,7 +427,7 @@
     }
 
     /**
-     * Configures conference selector dropdown options and resolves default conference
+     * Configures conference selector dropdown options
      */
     function setupDropdown() {
         const confSelect = document.getElementById("dnfl_standings_confFilter");
@@ -458,11 +448,6 @@
             opt.value = norm(conf.id);
             opt.textContent = conf.name;
             confSelect.appendChild(opt);
-        });
-
-        // Add change event listener programmatically
-        confSelect.addEventListener('change', function () {
-            updateDnflStandingsView();
         });
 
         const activeFranchiseId = getLoggedInFranchiseId();
@@ -495,10 +480,14 @@
         }
 
         confSelect.value = defaultConfId;
+
+        confSelect.addEventListener('change', function() {
+            updateDnflStandingsView();
+        });
     }
 
     /**
-     * Builds individual team table row HTML string using global 3-tier CSS classes
+     * Builds individual team table row HTML string using global CSS classes and formatted PF/PA numbers
      */
     function buildTeamRowHtml(profile, divId, confRules, rowCounter) {
         const stats = cachedStandingsFranchises.find(t => normFranchiseId(t.id) === normFranchiseId(profile.id)) || {};
@@ -515,7 +504,7 @@
         const pa = rawPa.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         const record = `${stats.h2hw || 0}-${stats.h2hl || 0}-${stats.h2ht || 0}`;
 
-        let seedCellContent = `<span class="dnfl-seed-num" style="font-weight: 700; font-size: 0.95rem;">-</span>`;
+        let seedCellContent = `-`;
 
         if (hasSeasonStarted) {
             const seed = teamSeeds[profile.id] || "-";
@@ -523,36 +512,36 @@
 
             const isDivWinner = profile.division && profile.id === divLeaders[norm(profile.division)];
             if (confRules.hasDivisionCrown && isDivWinner) {
-                badgeIcons += `<i class="fas fa-crown" style="color: var(--dnfl-badge-blue); margin-left: 5px;" title="Division Winner"></i>`;
+                badgeIcons += `<i class="fas fa-crown" style="color: var(--dnfl-blue-text, #1d4ed8); margin-left: 5px;" title="Division Winner"></i>`;
             }
             if (seed !== "-" && confRules.playoffCutoff && seed <= confRules.playoffCutoff) {
-                badgeIcons += `<i class="fas fa-trophy" style="color: var(--dnfl-badge-amber); margin-left: 5px;" title="Playoff Seed #${seed}"></i>`;
+                badgeIcons += `<i class="fas fa-trophy" style="color: var(--dnfl-amber-text, #b45309); margin-left: 5px;" title="Playoff Seed #${seed}"></i>`;
             }
             if (relegatedTeamIds.has(profile.id)) {
-                badgeIcons += `<i class="fas fa-arrow-circle-down" style="color: var(--dnfl-alert-red); margin-left: 5px;" title="Relegation Zone"></i>`;
+                badgeIcons += `<i class="fas fa-arrow-circle-down" style="color: var(--dnfl-red-text, #b91c1c); margin-left: 5px;" title="Relegation Zone"></i>`;
             }
             if (promotedTeamIds.has(profile.id)) {
-                badgeIcons += `<i class="fas fa-arrow-circle-up" style="color: var(--dnfl-success-green); margin-left: 5px;" title="Promotion Zone"></i>`;
+                badgeIcons += `<i class="fas fa-arrow-circle-up" style="color: var(--dnfl-green-text, #15803d); margin-left: 5px;" title="Promotion Zone"></i>`;
             }
 
-            seedCellContent = `<span class="dnfl-seed-num" style="font-weight: 700; font-size: 0.95rem;">${seed}</span>${badgeIcons}`;
+            seedCellContent = `<strong>${seed}</strong>${badgeIcons}`;
         }
 
         const activeFranchiseId = getLoggedInFranchiseId();
         const myTeamClass = (activeFranchiseId && normFranchiseId(profile.id) === activeFranchiseId) ? " dnfl-my-team dnfl-row-my-team" : "";
         const divRowClass = divId ? ` dnfl-div-row-${divId}` : "";
-        const rowClass = `${myTeamClass}${divRowClass}`;
+        const rowClass = `${myTeamClass}${divRowClass}`.trim();
         const targetHref = `https://${activeHost}/${targetYear}/options?L=${leagueId}&F=${profile.id}&O=01`;
 
         return `
             <tr class="${rowClass}">
-                <td style="text-align: left;">
+                <td class="dnfl-align-left">
                     ${seedCellContent}
                 </td>
-                <td>
+                <td class="dnfl-col-franchise">
                     <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
                         <a href="${targetHref}">
-                            <img src="${logoUrl}" alt="${teamName}" class="franchiseicon dnfl-franchise-icon" id="franchiseicon_${profile.id}" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';" />
+                            <img src="${logoUrl}" alt="${teamName}" class="franchiseicon" id="franchiseicon_${profile.id}" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';" />
                         </a>
                         <div style="display: flex; flex-direction: column;">
                             <a href="${targetHref}" class="dnfl-team-name">${teamName}</a>
@@ -560,10 +549,10 @@
                         </div>
                     </div>
                 </td>
-                <td class="dnfl-hide-mobile dnfl-cell-num dnfl-standings-pf"><span class="dnfl-badge dnfl-badge-green">${pf}</span></td>
-                <td class="dnfl-hide-mobile dnfl-cell-num dnfl-standings-pa"><span class="dnfl-badge dnfl-badge-red">${pa}</span></td>
-                <td class="dnfl-text-center"><span class="dnfl-badge dnfl-badge-blue dnfl-badge-record">${record}</span></td>
-                <td class="dnfl-hide-mobile dnfl-cell-num dnfl-standings-bbid">${bbidFormatted}</td>
+                <td class="dnfl-hide-mobile dnfl-align-center"><span style="color: var(--dnfl-green-text, #15803d); font-weight: 700;">${pf}</span></td>
+                <td class="dnfl-hide-mobile dnfl-align-center"><span style="color: var(--dnfl-red-text, #b91c1c); font-weight: 700;">${pa}</span></td>
+                <td class="dnfl-align-center"><span class="dnfl-record-pill">${record}</span></td>
+                <td class="dnfl-hide-mobile dnfl-align-center">${bbidFormatted}</td>
             </tr>
         `;
     }
@@ -584,7 +573,7 @@
         let rowCounter = 0;
 
         if (selectedValue === 'playoffs') {
-            if (caption) caption.textContent = `Playoff Standings`;
+            if (caption) caption.textContent = "Playoff Standings";
             
             renderStandingsKey(globalRules);
 
@@ -632,10 +621,21 @@
                     <tr class="dnfl-division-header">
                         <td colspan="6" style="background-color: var(--dnfl-bg-alt, #f1f5f9); border-bottom: 2px solid var(--dnfl-border-color); padding: 0.65rem 1rem;">
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--dnfl-text-main);">${div.name}</h4>
-                                <button id="dnfl-btn-div-${div.id}" type="button" class="dnfl-btn dnfl-btn-subtle" style="font-size: 0.75rem; padding: 0.2rem 0.5rem;" onclick="DNFL.Standings.toggleDivision('${div.id}')">Hide</button>
+                                <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--dnfl-primary-dark);">${div.name}</h4>
+                                <button id="dnfl-btn-div-${div.id}" type="button" class="dnfl-card-toggle" aria-expanded="true" onclick="DNFL.Standings.toggleDivision('${div.id}')">
+                                    <span>Collapse</span>
+                                    <span class="dnfl-toggle-icon">▼</span>
+                                </button>
                             </div>
                         </td>
+                    </tr>
+                    <tr class="dnfl-sub-th-row dnfl-div-subth-${div.id}">
+                        <th class="dnfl-align-left">Seed</th>
+                        <th class="dnfl-col-franchise dnfl-align-left">Franchise</th>
+                        <th class="dnfl-hide-mobile dnfl-align-left">PF</th>
+                        <th class="dnfl-hide-mobile dnfl-align-left">PA</th>
+                        <th class="dnfl-align-left">Record</th>
+                        <th class="dnfl-hide-mobile dnfl-align-left">BBID $</th>
                     </tr>
                 `;
             }
@@ -664,47 +664,47 @@
      */
     function toggleDnflDivision(divId) {
         const rows = document.querySelectorAll('.dnfl-div-row-' + divId);
+        const subTh = document.querySelector('.dnfl-div-subth-' + divId);
         const btn = document.getElementById('dnfl-btn-div-' + divId);
         let isHidden = false;
 
-        rows.forEach(row => {
-            if (row.style.display === 'none') {
-                row.style.display = '';
-                isHidden = false;
-            } else {
-                row.style.display = 'none';
-                isHidden = true;
-            }
-        });
+        if (btn) {
+            const currentExpanded = btn.getAttribute('aria-expanded') !== 'false';
+            btn.setAttribute('aria-expanded', !currentExpanded);
+            const spanText = btn.querySelector('span:first-child');
+            if (spanText) spanText.textContent = currentExpanded ? 'Expand' : 'Collapse';
+            isHidden = currentExpanded;
+        }
 
-        if (btn) btn.textContent = isHidden ? 'Show' : 'Hide';
+        if (subTh) {
+            subTh.style.display = isHidden ? 'none' : '';
+        }
+
+        rows.forEach(row => {
+            row.style.display = isHidden ? 'none' : '';
+        });
     }
 
     /**
-     * Toggles card body visibility for accordion controls
+     * Toggle entire Card body collapse state
      */
     function toggleCard(btnEl) {
         if (!btnEl) return;
         const cardHeader = btnEl.closest('.dnfl-card-header');
         if (!cardHeader) return;
-        const card = cardHeader.closest('.dnfl-card');
-        if (!card) return;
-        const cardBody = card.querySelector('.dnfl-card-body');
+        const cardBody = cardHeader.nextElementSibling;
         if (!cardBody) return;
 
-        const isCollapsed = cardBody.classList.contains('collapsed') || cardBody.style.display === 'none';
-        if (isCollapsed) {
-            cardBody.classList.remove('collapsed');
-            cardBody.style.display = '';
-            btnEl.setAttribute('aria-expanded', 'true');
-            const icon = btnEl.querySelector('.dnfl-toggle-icon');
-            if (icon) icon.style.transform = 'rotate(0deg)';
-        } else {
+        const currentExpanded = btnEl.getAttribute('aria-expanded') !== 'false';
+        btnEl.setAttribute('aria-expanded', !currentExpanded);
+        
+        const spanText = btnEl.querySelector('span:first-child');
+        if (spanText) spanText.textContent = currentExpanded ? 'Expand' : 'Collapse';
+
+        if (currentExpanded) {
             cardBody.classList.add('collapsed');
-            cardBody.style.display = 'none';
-            btnEl.setAttribute('aria-expanded', 'false');
-            const icon = btnEl.querySelector('.dnfl-toggle-icon');
-            if (icon) icon.style.transform = 'rotate(-90deg)';
+        } else {
+            cardBody.classList.remove('collapsed');
         }
     }
 
@@ -718,14 +718,6 @@
 
     window.DNFL.Standings = StandingsModule;
 
-    // Reactive Cache Update Listener
-    window.addEventListener('MFLCacheUpdate', function () {
-        if (_initialized) {
-            console.log('[DNFL Standings] Background cache update detected. Re-rendering standings view...');
-            updateDnflStandingsView();
-        }
-    });
-
     // Register with master framework loader if available
     if (window.DNFL && window.DNFL.registerModule) {
         window.DNFL.registerModule('standings', StandingsModule);
@@ -734,4 +726,5 @@
     } else {
         init();
     }
+
 })();

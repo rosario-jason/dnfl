@@ -441,6 +441,59 @@
     border: 1px solid var(--dnfl-gray-border);
 }
 
+
+/* --------------------------------------------------------------------------
+   5B. SOLID PILL CAPSULES (.dnfl-pill-[color])
+   -------------------------------------------------------------------------- */
+.dnfl-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.825rem;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: var(--dnfl-radius-full);
+    white-space: nowrap;
+    color: #ffffff;
+    border: none;
+}
+
+/* 🟢 Green Pill (High Score / Success) */
+.dnfl-pill-green,
+.dnfl-lts-badge-high-score {
+    background-color: var(--dnfl-green-text);
+    color: #ffffff !important;
+}
+
+/* 🔴 Red Pill (Knockout / Danger) */
+.dnfl-pill-red,
+.dnfl-lts-badge-knockout {
+    background-color: var(--dnfl-red-text);
+    color: #ffffff !important;
+}
+
+/* 🔵 Blue Pill (Record Capsule / Info) */
+.dnfl-pill-blue,
+.dnfl-record-pill,
+.dnfl-record-badge {
+    background-color: var(--dnfl-blue-text);
+    color: #ffffff !important;
+}
+
+/* 🟡 Amber Pill (Playoff / Warning) */
+.dnfl-pill-amber {
+    background-color: var(--dnfl-amber-text);
+    color: #ffffff !important;
+}
+
+/* ⚪ Gray Pill (Neutral) */
+.dnfl-pill-gray {
+    background-color: var(--dnfl-gray-text);
+    color: #ffffff !important;
+}
+
 /* --------------------------------------------------------------------------
    6. GLOBAL CALLOUT BANNERS / ALERTS
    -------------------------------------------------------------------------- */

@@ -1,0 +1,56 @@
+<!-- DNFL Standings Module - Unified 3-Tier Architecture (v2) -->
+<div class="dnfl-module" data-module="standings">
+    
+    <!-- Module Header Block -->
+    <div class="dnfl-module-header">
+        <h2 class="dnfl-module-title">DNFL League Standings</h2>
+        <div class="dnfl-module-subtitle">Current regular season standings, division races, and seeding qualifications</div>
+    </div>
+
+    <!-- Tier 2: Controls Toolbar -->
+    <div class="dnfl-controls">
+        <div class="dnfl-control-group">
+            <label for="dnfl_standings_confFilter">Conference:</label>
+            <select id="dnfl_standings_confFilter" class="dnfl-select" aria-label="Select Conference"></select>
+        </div>
+
+        <!-- Right-Aligned Legend & Disclaimer Flex Stack (Injected dynamically by JS) -->
+        <div id="dnfl-standings-key" class="dnfl-legend-stack"></div>
+    </div>
+
+    <!-- Tier 3: Standings Data Card Container -->
+    <div class="dnfl-card">
+        <div class="dnfl-card-header">
+            <h3 class="dnfl-card-title">
+                <i class="fas fa-trophy" style="color: var(--dnfl-primary-light);"></i>
+                <span id="dnfl-standings-caption">League Standings</span>
+            </h3>
+            <button class="dnfl-card-toggle" aria-expanded="true" onclick="DNFL.Standings.toggleCard(this)">
+                <span>Collapse</span>
+                <span class="dnfl-toggle-icon">▼</span>
+            </button>
+        </div>
+        <div class="dnfl-card-body">
+            <table class="dnfl-table">
+                <thead>
+                    <tr>
+                        <th class="dnfl-align-left">Seed</th>
+                        <th class="dnfl-col-franchise dnfl-align-left">Franchise</th>
+                        <th class="dnfl-hide-mobile dnfl-align-left">PF</th>
+                        <th class="dnfl-hide-mobile dnfl-align-left">PA</th>
+                        <th class="dnfl-align-left">Record</th>
+                        <th class="dnfl-hide-mobile dnfl-align-left">BBID $</th>
+                    </tr>
+                </thead>
+                <tbody id="dnfl-standings-tbody">
+                    <tr>
+                        <td colspan="6" class="dnfl-text-center dnfl-status-loading" style="padding: 2.5rem; font-weight: 600;">
+                            Loading DNFL League Standings...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
