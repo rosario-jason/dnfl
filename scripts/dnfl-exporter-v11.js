@@ -1,6 +1,6 @@
-// dnfl-exporter-v10.js v10.0
+// dnfl-exporter-v11.js v11.0
 /* ==========================================================================
-   DNFL Commissioner Data Exporter Engine v10.0
+   DNFL Commissioner Data Exporter Engine v11.0
    Repository: rosario-jason/dnfl
    File: scripts/dnfl-exporter-v9.js
    Architecture Constraint: 100% standard MFL APIs via window.DNFLClient.
@@ -494,10 +494,6 @@
                 }
             });
         });
-        const client = getApiClient();
-        await getLeagueInfo();
-
-        const standingsData = await client.fetchData('leagueStandings', '&COLUMN_NAMES=1&ALL=1');
 
         const franchiseStandings = toArray(standingsData?.leagueStandings?.franchise);
         const divisions = toArray(cachedLeague?.divisions?.division);
