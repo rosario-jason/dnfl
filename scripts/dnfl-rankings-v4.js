@@ -1,10 +1,12 @@
 /* ==========================================================================
    DNFL Power Rankings Chart & Data Table Logic (v4)
+   Directly based on dnfl-rankings-live-js and dnfl-global-live-css
    ========================================================================== */
 /* global DNFLClient, Papa, Chart */
 (function() {
     'use strict';
 
+    // Establish Global DNFL Namespace
     window.DNFL = window.DNFL || {};
 
     let rankingsMFLYear = '';
@@ -15,6 +17,18 @@
     let chartInstance = null;
     let publishedWeeks = [];
     let isPreseasonWeek = true;
+
+    const conferenceColors = {
+        'Cameron Crazies': 'rgba(54, 162, 235, 0.85)',
+        'K-Ville': 'rgba(255, 99, 132, 0.85)',
+        'Blue Devils': 'rgba(75, 192, 192, 0.85)'
+    };
+
+    const conferenceBorders = {
+        'Cameron Crazies': 'rgb(54, 162, 235)',
+        'K-Ville': 'rgb(255, 99, 132)',
+        'Blue Devils': 'rgb(75, 192, 192)'
+    };
 
     /**
      * Normalizes MFL franchise ID to 4-digit string ('18' -> '0018')
@@ -27,6 +41,7 @@
 
     /**
      * Initializes the rankings dashboard for a specific season year
+     * @param {string|number} mflYear 
      */
     async function init(mflYear) {
         if (!mflYear || mflYear === '%YEAR%') {
@@ -46,11 +61,13 @@
         const apiClient = window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
 
         try {
-            if (!apiClient) throw new Error("DNFLClient API middleware unavailable.");
+            if (!apiClient) {
+                throw new Error("DNFLClient API middleware unavailable.");
+            }
             const rawJson = await apiClient.fetchRawText(weeksUrl);
             publishedWeeks = JSON.parse(rawJson);
         } catch (err) {
-            console.warn("[DNFL Rankings] Could not load weeks.json, using fallback weeks.", err);
+            console.warn("[DNFL Rankings] Could not load weeks.json, using fallback week.", err);
             publishedWeeks = [
                 { id: "00_pre-season_NEW", display: "Pre-Season" },
                 { id: "01_NEW", display: "Week 1" }
@@ -58,6 +75,7 @@
         }
 
         selector.innerHTML = ''; 
+
         publishedWeeks.forEach(week => {
             const opt = document.createElement('option');
             opt.value = week.id;
@@ -73,7 +91,7 @@
     }
 
     /**
-     * Fetches CSV ranking data & MFL API data
+     * Fetches CSV ranking data via DNFLClient and parses via PapaParse
      */
     async function loadWeeklyData() {
         const weekSelector = document.getElementById('dnfl_weekSelector');
@@ -86,22 +104,42 @@
         const apiClient = window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
 
         try {
-            if (!apiClient) throw new Error("DNFLClient API middleware unavailable.");
+            if (!apiClient) {
+                throw new Error("DNFLClient API middleware unavailable.");
+            }
 
-            // Fetch League Franchise Metadata for Icons, Team Names & Owners
+            // Fetch League Franchise Metadata for Icons, Team Names, Owners, Conferences & Divisions
             try {
                 const leagueData = await apiClient.fetchData('league');
-                if (leagueData && leagueData.league && leagueData.league.franchises) {
-                    const franchiseList = Array.isArray(leagueData.league.franchises.franchise) 
-                        ? leagueData.league.franchises.franchise 
-                        : [leagueData.league.franchises.franchise];
-                    
+                if (leagueData && leagueData.league) {
+                    const confList = leagueData.league.conferences ? (Array.isArray(leagueData.league.conferences.conference) ? leagueData.league.conferences.conference : [leagueData.league.conferences.conference]) : [];
+                    const divList = leagueData.league.divisions ? (Array.isArray(leagueData.league.divisions.division) ? leagueData.league.divisions.division : [leagueData.league.divisions.division]) : [];
+                    const franList = leagueData.league.franchises ? (Array.isArray(leagueData.league.franchises.franchise) ? leagueData.league.franchises.franchise : [leagueData.league.franchises.franchise]) : [];
+
+                    const confMap = {};
+                    confList.forEach(c => { confMap[normId(c.id)] = c.name; });
+
+                    const divMap = {};
+                    divList.forEach(d => {
+                        divMap[normId(d.id)] = {
+                            name: d.name,
+                            confName: confMap[normId(d.conference)] || ''
+                        };
+                    });
+
                     mflFranchiseMap = {};
-                    franchiseList.forEach(f => {
-                        mflFranchiseMap[normId(f.id)] = {
+                    franList.forEach(f => {
+                        const fId = normId(f.id);
+                        const divObj = divMap[normId(f.division)] || {};
+                        const confName = divObj.confName || f.conference || 'Other';
+                        const divName = divObj.name ? `${confName} - ${divObj.name}` : confName;
+
+                        mflFranchiseMap[fId] = {
                             name: f.name || 'Unknown Team',
                             owner: f.owner_name || 'Owner',
-                            icon: f.icon || f.logo || 'https://dnfl.live/images/ficon-dnfl.png'
+                            icon: f.icon || f.logo || 'https://dnfl.live/images/ficon-dnfl.png',
+                            conference: confName,
+                            division: divName
                         };
                     });
                 }
@@ -109,7 +147,6 @@
                 console.warn("[DNFL Rankings] League metadata fetch warning:", lErr);
             }
 
-            // If not pre-season, fetch previous week CSV and MFL weekly standings
             prevWeekRankMap = {};
             mflStandingsMap = {};
 
@@ -129,7 +166,6 @@
                     console.warn("[DNFL Rankings] Could not fetch previous week rankings:", pErr);
                 }
 
-                // Parse week number (e.g., '01_NEW' -> 1)
                 const weekNumMatch = selectedWeekFile.match(/(\d+)/);
                 const weekNum = weekNumMatch ? parseInt(weekNumMatch[1], 10) : 1;
 
@@ -157,7 +193,6 @@
                 }
             }
 
-            // Fetch Current Week CSV
             const rawCsv = await apiClient.fetchRawText(filePath);
             const results = Papa.parse(rawCsv, {
                 header: true,
@@ -173,32 +208,38 @@
                 return {
                     rank: parseInt(row['Rank'] || 0, 10),
                     powerIndex: parseFloat(row['Power Index'] || row['Overall Grade'] || 0),
+                    grade: parseFloat(row['Power Index'] || row['Overall Grade'] || 0),
                     franchiseId: fId,
+                    franchise: mflMeta.name || fallbackName,
                     franchiseName: mflMeta.name || fallbackName,
+                    owner: mflMeta.owner || row['Owner Name'] || 'Owner',
+                    coOwner: row['Co-Owner Name'] || '',
                     ownerName: mflMeta.owner || row['Owner Name'] || 'Owner',
                     iconUrl: mflMeta.icon || 'https://dnfl.live/images/ficon-dnfl.png',
+                    conference: mflMeta.conference || row['Conference'] || 'Other',
+                    division: mflMeta.division || row['Conference - Division'] || '',
                     projectedRecord: row['Projected W-L'] || 'N/A',
-                    comments: row['Rank Comments'] || ''
+                    comments: row['Rank Comments'] || 'No comment provided.'
                 };
             });
 
-            renderChartAndTable(masterData);
+            applyConferenceFilter();
         } catch (err) {
-            console.error("[DNFL Rankings] CSV/Data fetch error:", err);
+            console.error("[DNFL Rankings] CSV Data fetch error:", err);
         }
     }
 
     /**
      * Renders both the bar chart and detailed data table
+     * @param {Array} records 
      */
     function renderChartAndTable(records) {
         const sortedData = [...records].sort((a, b) => a.rank - b.rank);
-        const table = document.getElementById('dnfl_dataTable');
         const tableBody = document.getElementById('dnfl_tableBody');
-        if (!table || !tableBody) return;
+        const table = document.getElementById('dnfl_dataTable');
+        if (!tableBody) return;
 
-        // Render Table Header dynamically based on week type
-        const thead = table.querySelector('thead');
+        const thead = table ? table.querySelector('thead') : null;
         if (thead) {
             if (isPreseasonWeek) {
                 thead.innerHTML = `
@@ -227,28 +268,20 @@
 
         tableBody.innerHTML = '';
 
-        sortedData.forEach(item => {
+        sortedData.forEach((item, index) => {
             const row = document.createElement('tr');
-            
-            // Calculate Rank Change
-            let changeHtml = '';
-            if (!isPreseasonWeek) {
-                const prevRank = prevWeekRankMap[item.franchiseId];
-                if (prevRank && prevRank > 0) {
-                    const diff = prevRank - item.rank; // Positive = Improved Rank
-                    if (diff > 0) {
-                        changeHtml = `<span class="dnfl-badge dnfl-badge-green">▲ ${diff}</span>`;
-                    } else if (diff < 0) {
-                        changeHtml = `<span class="dnfl-badge dnfl-badge-red">▼ ${Math.abs(diff)}</span>`;
-                    } else {
-                        changeHtml = `<span class="dnfl-badge dnfl-badge-gray">-</span>`;
-                    }
-                } else {
-                    changeHtml = `<span class="dnfl-badge dnfl-badge-gray">-</span>`;
-                }
-            }
+            const confKey = String(item.conference).trim();
+            const badgeColor = conferenceColors[confKey] || 'var(--dnfl-border-dark)'; 
+            const borderStyle = conferenceBorders[confKey] || 'var(--dnfl-border-dark)';
 
-            // Standings-style Franchise Column Formatting
+            const displayRank = item.rank || (index + 1);
+
+            const rankBadgeHtml = `
+                <span class="dnfl-rank-badge" style="background-color: ${badgeColor}; border: 1px solid ${borderStyle};">
+                    ${displayRank}
+                </span>
+            `;
+
             const franchiseColHtml = `
                 <div style="display: flex; align-items: center; gap: 12px; text-align: left;">
                     <img src="${item.iconUrl}" alt="${item.franchiseName}" class="franchiseicon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';" />
@@ -265,20 +298,35 @@
 
             if (isPreseasonWeek) {
                 row.innerHTML = `
-                    <td class="dnfl-align-left"><strong>${item.rank}</strong></td>
+                    <td class="dnfl-align-center">${rankBadgeHtml}</td>
                     <td class="dnfl-col-franchise">${franchiseColHtml}</td>
                     <td class="dnfl-align-center"><strong>${item.powerIndex.toFixed(1)}</strong></td>
                     <td class="dnfl-align-center">${recordVal}</td>
                     <td class="dnfl-align-left">${item.comments}</td>
                 `;
             } else {
+                let changeHtml = '';
+                const prevRank = prevWeekRankMap[item.franchiseId];
+                if (prevRank && prevRank > 0) {
+                    const diff = prevRank - item.rank;
+                    if (diff > 0) {
+                        changeHtml = `<span class="dnfl-badge dnfl-badge-green">▲ ${diff}</span>`;
+                    } else if (diff < 0) {
+                        changeHtml = `<span class="dnfl-badge dnfl-badge-red">▼ ${Math.abs(diff)}</span>`;
+                    } else {
+                        changeHtml = `<span class="dnfl-badge dnfl-badge-gray">-</span>`;
+                    }
+                } else {
+                    changeHtml = `<span class="dnfl-badge dnfl-badge-gray">-</span>`;
+                }
+
                 row.innerHTML = `
-                    <td class="dnfl-align-left"><strong>${item.rank}</strong></td>
+                    <td class="dnfl-align-center">${rankBadgeHtml}</td>
                     <td class="dnfl-align-center">${changeHtml}</td>
                     <td class="dnfl-col-franchise">${franchiseColHtml}</td>
                     <td class="dnfl-align-center"><strong>${item.powerIndex.toFixed(1)}</strong></td>
                     <td class="dnfl-align-center">${recordVal}</td>
-                    <td class="dnfl-align-center"><span style="color: var(--dnfl-green-text, #15803d); font-weight: 700;">${pfVal}</span></td>
+                    <td class="dnfl-align-center"><span style="color: var(--dnfl-success-green, #10b981); font-weight: 700;">${pfVal}</span></td>
                     <td class="dnfl-align-left">${item.comments}</td>
                 `;
             }
@@ -290,17 +338,21 @@
     }
 
     /**
-     * Renders the horizontal bar chart
+     * Renders horizontal bar chart using Chart.js strictly based on live dnfl-rankings-live-js
+     * @param {Array} records 
      */
     function renderChart(records) {
-        const chartSorted = [...records].sort((a, b) => b.powerIndex - a.powerIndex);
-        const labels = chartSorted.map(r => r.franchiseName);
-        const dataValues = chartSorted.map(r => r.powerIndex);
+        const chartSorted = [...records].sort((a, b) => b.grade - a.grade);
+        const labels = chartSorted.map(r => r.franchise);
+        const dataValues = chartSorted.map(r => r.grade);
+        const backgroundColors = chartSorted.map(r => conferenceColors[r.conference] || 'rgba(201, 203, 207, 0.85)');
+        const borderColors = chartSorted.map(r => conferenceBorders[r.conference] || 'rgb(201, 203, 207)');
 
         const weekDropdown = document.getElementById('dnfl_weekSelector');
         const displaySubtitle = weekDropdown && weekDropdown.options[weekDropdown.selectedIndex] ? 
                                 weekDropdown.options[weekDropdown.selectedIndex].text + " Ranking" : "Ranking";
 
+        const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
         const chartCanvas = document.getElementById('dnfl_powerRankingChart');
         if (!chartCanvas) return;
         const ctx = chartCanvas.getContext('2d');
@@ -310,9 +362,11 @@
         }
 
         const style = getComputedStyle(document.documentElement);
-        const primaryDark = style.getPropertyValue('--dnfl-primary-dark').trim() || '#001A57';
-        const primaryLight = style.getPropertyValue('--dnfl-primary-light').trim() || '#336699';
-        const textMain = style.getPropertyValue('--dnfl-text-main').trim() || '#0f172a';
+        const getCssVar = (varName, fallback) => style.getPropertyValue(varName).trim() || fallback;
+
+        const bgSubhead = getCssVar('--dnfl-bg-subhead', '#1e293b');
+        const textMain = getCssVar('--dnfl-text-main', '#f8fafc');
+        const borderDark = getCssVar('--dnfl-border-dark', '#334155');
 
         chartInstance = new Chart(ctx, {
             type: 'bar',
@@ -320,8 +374,8 @@
                 labels: labels,
                 datasets: [{
                     data: dataValues,
-                    backgroundColor: 'rgba(0, 83, 155, 0.85)', // Duke Royal Blue
-                    borderColor: primaryDark,
+                    backgroundColor: backgroundColors,
+                    borderColor: borderColors,
                     borderWidth: 1,
                     borderRadius: 4,      
                     borderSkipped: false
@@ -336,28 +390,36 @@
                     subtitle: {
                         display: true,
                         text: displaySubtitle,
-                        color: primaryDark,
-                        font: { size: 14, weight: 'bold' },
+                        color: textMain,
+                        font: { size: 0.8 * rootFontSize, weight: 'bold' },
                         padding: { bottom: 15 }
                     },
                     legend: { display: false },
                     tooltip: {
-                        backgroundColor: '#ffffff',
-                        titleColor: primaryDark,
+                        backgroundColor: bgSubhead,
+                        titleColor: textMain,
                         bodyColor: textMain,
-                        borderColor: '#e2e8f0',
+                        borderColor: borderDark,
                         borderWidth: 1,
                         padding: 12,
                         enabled: true,
+                        titleFont: { size: 1.0 * rootFontSize, weight: 'bold' },
+                        bodyFont: { size: 0.875 * rootFontSize },
                         callbacks: {
+                            title: function(context) { return context.label; },
                             label: function(context) {
                                 const franchiseName = context.label;
-                                const item = chartSorted.find(r => r.franchiseName === franchiseName);
+                                const item = chartSorted.find(r => r.franchise === franchiseName);
                                 if (!item) return 'No data found';
+                                const owners = item.coOwner ? `${item.owner}, ${item.coOwner}` : item.owner;
+                                const recVal = isPreseasonWeek ? item.projectedRecord : ((mflStandingsMap[item.franchiseId] || {}).record || '0-0-0');
+                                const recLabel = isPreseasonWeek ? 'Projected Record' : 'Record';
                                 return [
-                                    `Owner: ${item.ownerName}`,
-                                    `Rank: #${item.rank}`,
-                                    `Power Index: ${item.powerIndex.toFixed(1)}`
+                                    `${item.division}`,
+                                    `${owners}`,
+                                    `DNFL Rank: ${item.rank}`,
+                                    `Power Index: ${item.powerIndex.toFixed(1)}`,
+                                    `${recLabel}: ${recVal}`
                                 ];
                             }
                         }
@@ -366,19 +428,47 @@
                 scales: {
                     x: {
                         min: 50, max: 100,
-                        grid: { color: 'rgba(0, 0, 0, 0.05)' },
-                        ticks: { color: textMain },
-                        title: { display: true, text: 'Power Index', color: primaryDark, font: { size: 14, weight: 'bold' }, padding: 15 }
+                        grid: { color: 'rgba(255, 255, 255, 0.1)' },
+                        ticks: { color: textMain, font: { size: Math.round(0.813 * rootFontSize) } },
+                        title: { display: true, text: 'Power Rank Grade', color: textMain, font: { size: 14 }, padding: 15 }
                     },
                     y: {
                         grid: { display: false },
-                        ticks: { color: textMain }
+                        ticks: { align: 'center', color: textMain, font: { size: Math.round(0.813 * rootFontSize) } }
                     }
                 }
             }
         });
     }
 
+    /**
+     * Filters power rankings by selected conference
+     */
+    function applyConferenceFilter() {
+        const confFilter = document.getElementById('dnfl_confFilter');
+        if (!confFilter) return;
+
+        const selected = confFilter.value;
+        const wrapper = document.getElementById('dnfl_chartWrapperContainer');
+        
+        let filtered;
+        if (selected === 'All' || !selected) {
+            filtered = masterData;
+        } else {
+            filtered = masterData.filter(d => d.conference.trim().toLowerCase() === selected.toLowerCase());
+        }
+
+        if (wrapper && wrapper.style.display !== 'none') {
+            const calculatedHeight = (filtered.length * 32) + 100;
+            wrapper.style.height = calculatedHeight + 'px';
+        }
+        renderChartAndTable(filtered);
+    }
+
+    /**
+     * Toggles visibility of either the chart container or the table container
+     * @param {string} sectionType - 'chart' or 'table'
+     */
     function toggleElementVisibility(sectionType) {
         if (sectionType === 'chart') {
             const wrapper = document.getElementById('dnfl_chartWrapperContainer');
@@ -388,6 +478,7 @@
             if (wrapper.style.display === 'none') {
                 wrapper.style.display = 'block';
                 button.textContent = 'Hide Chart';
+                applyConferenceFilter(); 
             } else {
                 wrapper.style.display = 'none';
                 button.textContent = 'Show Chart';
@@ -407,13 +498,16 @@
         }
     }
 
+    // Export module onto window.DNFL.Rankings
     window.DNFL.Rankings = {
         init: init,
         loadWeeklyData: loadWeeklyData,
         renderChartAndTable: renderChartAndTable,
+        applyConferenceFilter: applyConferenceFilter,
         toggleElementVisibility: toggleElementVisibility
     };
 
+    // Auto-initialize if DOM element exists
     function autoInit() {
         if (document.getElementById('dnfl_weekSelector')) {
             init();
