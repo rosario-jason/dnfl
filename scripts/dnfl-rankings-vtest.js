@@ -315,8 +315,8 @@
                         <th class="dnfl-col-rank">Rank</th>
                         <th class="dnfl-col-franchise">Franchise</th>
                         <th class="dnfl-col-index">Power Index</th>
-                        <th class="dnfl-col-record">Projected Record</th>
-                        <th class="dnfl-col-comments">Rank Comments</th>
+                        <th class="dnfl-col-record dnfl-hide-mobile">Projected Record</th>
+                        <th class="dnfl-col-comments dnfl-hide-mobile">Rank Comments</th>
                     </tr>
                 `;
             } else {
@@ -326,9 +326,9 @@
                         <th class="dnfl-col-change">Change</th>
                         <th class="dnfl-col-franchise">Franchise</th>
                         <th class="dnfl-col-index">Power Index</th>
-                        <th class="dnfl-col-record">Record</th>
-                        <th class="dnfl-col-pf">Points For</th>
-                        <th class="dnfl-col-comments">Rank Comments</th>
+                        <th class="dnfl-col-record dnfl-hide-mobile">Record</th>
+                        <th class="dnfl-col-pf dnfl-hide-mobile">Points For</th>
+                        <th class="dnfl-col-comments dnfl-hide-mobile">Rank Comments</th>
                     </tr>
                 `;
             }
@@ -395,8 +395,8 @@
                     <td class="dnfl-col-rank">${rankBadgeHtml}</td>
                     <td class="dnfl-col-franchise">${franchiseColHtml}</td>
                     <td class="dnfl-col-index">${item.powerIndex.toFixed(1)}</td>
-                    <td class="dnfl-col-record">${recordVal}</td>
-                    <td class="dnfl-col-comments">${item.comments}</td>
+                    <td class="dnfl-col-record dnfl-hide-mobile">${recordVal}</td>
+                    <td class="dnfl-col-comments dnfl-hide-mobile">${item.comments}</td>
                 `;
             } else {
                 row.innerHTML = `
@@ -404,9 +404,9 @@
                     <td class="dnfl-col-change">${changeBadgeHtml}</td>
                     <td class="dnfl-col-franchise">${franchiseColHtml}</td>
                     <td class="dnfl-col-index">${item.powerIndex.toFixed(1)}</td>
-                    <td class="dnfl-col-record">${recordVal}</td>
-                    <td class="dnfl-col-pf">${pfVal}</td>
-                    <td class="dnfl-col-comments">${item.comments}</td>
+                    <td class="dnfl-col-record dnfl-hide-mobile">${recordVal}</td>
+                    <td class="dnfl-col-pf dnfl-hide-mobile">${pfVal}</td>
+                    <td class="dnfl-col-comments dnfl-hide-mobile">${item.comments}</td>
                 `;
             }
 

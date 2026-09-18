@@ -1,7 +1,6 @@
-/* ==========================================================================
-   DNFL Global Framework Stylesheet (dnfl-global-v2.css)
-   Refactored for Modular Table & Badge System
-   ========================================================================== */
+/* --------------------------
+   DNFL Global Stylesheet
+----------------------------- */
 
 /* ==========================================================================
    DNFL DESIGN TOKENS & GLOBAL CSS VARIABLES
@@ -48,6 +47,24 @@
     --dnfl-text-subtle: #555555;        /* Medium Charcoal */
     --dnfl-text-muted: #a3a3a3;         /* Muted Ash Gray */
     --dnfl-text-quote: #475569;         /* Slate Blue-Gray */
+
+    
+    /* ---------------- Badge & Status Color Tokens ---------------- */
+    --dnfl-green-bg: #dcfce7;
+    --dnfl-green-text: #15803d;
+    --dnfl-green-border: #bbf7d0;
+    --dnfl-red-bg: #fee2e2;
+    --dnfl-red-text: #b91c1c;
+    --dnfl-red-border: #fecaca;
+    --dnfl-blue-bg: #dbeafe;
+    --dnfl-blue-text: #1d4ed8;
+    --dnfl-blue-border: #bfdbfe;
+    --dnfl-amber-bg: #fef3c7;
+    --dnfl-amber-text: #b45309;
+    --dnfl-amber-border: #fde68a;
+    --dnfl-gray-bg: #f1f5f9;
+    --dnfl-gray-text: #64748b;
+    --dnfl-gray-border: #e2e8f0;
 
     /* ---------------- Layout & Components ---------------- */
     --dnfl-radius-lg: 12px;
@@ -279,14 +296,14 @@
 /* 🟢 Green Pill (High Score / Success) */
 .dnfl-pill-green,
 .dnfl-lts-badge-high-score {
-    background-color: var(--dnfl-green-text);
+    background-color: var(--dnfl-success-green);
     color: #ffffff !important;
 }
 
 /* 🔴 Red Pill (Knockout / Danger) */
 .dnfl-pill-red,
 .dnfl-lts-badge-knockout {
-    background-color: var(--dnfl-red-text);
+    background-color: var(--dnfl-alert-red);
     color: #ffffff !important;
 }
 
@@ -294,13 +311,13 @@
 .dnfl-pill-blue,
 .dnfl-record-pill,
 .dnfl-record-badge {
-    background-color: var(--dnfl-blue-text);
+    background-color: var(--dnfl-badge-blue);
     color: #ffffff !important;
 }
 
 /* 🟡 Amber Pill (Playoff / Warning) */
 .dnfl-pill-amber {
-    background-color: var(--dnfl-amber-text);
+    background-color: var(--dnfl-badge-amber);
     color: #ffffff !important;
 }
 
@@ -473,19 +490,15 @@
     color: var(--dnfl-text-main);
 }
 
-/* Alignment Utilities */
-.dnfl-align-left   { text-align: left !important; }
-.dnfl-align-center { text-align: center !important; }
-.dnfl-align-right  { text-align: right !important; }
-
-/* Reusable Column Width & Formatting Tokens */
-.dnfl-col-rank      { width: 7%;  text-align: center; }
-.dnfl-col-change    { width: 9%;  text-align: center; }
-.dnfl-col-franchise { width: 25%; text-align: left; }
-.dnfl-col-index     { width: 10%; text-align: center; font-weight: 600; }
-.dnfl-col-record    { width: 10%; text-align: center; }
-.dnfl-col-pf        { width: 10%; text-align: center; font-weight: 700; color: var(--dnfl-success-green, #10b981); }
-.dnfl-col-comments  { width: auto; text-align: left; }
+/* Data Table Column Widths & Alignment Tokens */
+/* Data Table Column Utility Classes */
+.dnfl-col-rank      { width: 7% !important; text-align: center !important; }
+.dnfl-col-change    { width: 9% !important; text-align: center !important; }
+.dnfl-col-franchise { width: 25% !important; text-align: left !important; }
+.dnfl-col-index     { width: 10% !important; text-align: center !important; font-weight: 600 !important; }
+.dnfl-col-record    { width: 10% !important; text-align: center !important; }
+.dnfl-col-pf        { width: 10% !important; text-align: center !important; }
+.dnfl-col-comments  { width: auto !important; text-align: left !important; }
 
 #dnfl_dataTable tr:nth-child(even) {
     background-color: var(--dnfl-bg-alt);
