@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Power Rankings Chart & Data Table Logic (v4)
+   DNFL Power Rankings Dashboard Engine (v4 Streamlined)
    ========================================================================== */
 /* global DNFLClient, Papa, Chart */
 (function() {
@@ -89,7 +89,7 @@
         const selector = document.getElementById('dnfl_weekSelector');
         if (!selector) return;
 
-        const weeksUrl = `https://dnfl.live/dnfl_rankings/${rankingsMFLYear}/weeks_vtest.json`;
+        const weeksUrl = `https://dnfl.live/dnfl_rankings/${rankingsMFLYear}/weeks.json`;
         const apiClient = window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
 
         try {
@@ -112,40 +112,17 @@
             selector.appendChild(opt);
         });
 
-        const mostRecentWeek = publishedWeeks[publishedWeeks.length - 1];
-        if (mostRecentWeek) {
-            selector.value = mostRecentWeek.id;
-            loadWeeklyData();
-        }
-    }
-
-    async function loadWeeklyData() {
-        const weekSelector = document.getElementById('dnfl_weekSelector');
-        if (!weekSelector) return;
-
-        const selectedWeekFile = weekSelector.value;
-        isPreseasonWeek = selectedWeekFile.includes('00_pre-season') || selectedWeekFile.includes('pre-season');
-
-        const filePath = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/${rankingsMFLYear}/data_${selectedWeekFile}.csv`;
-        const apiClient = window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
-
-        try {
-            if (!apiClient) throw new Error("DNFLClient API middleware unavailable.");
-
-            // Fetch League Metadata
+        // Pre-fetch League Metadata ONCE during init to bootstrap mflFranchiseMap
+        if (apiClient) {
             try {
                 const leagueData = await apiClient.fetchData('league');
                 if (leagueData && leagueData.league) {
                     const lg = leagueData.league;
-
-                    // Build Conference Map
                     const confMap = {};
                     if (lg.conferences && lg.conferences.conference) {
                         const cList = Array.isArray(lg.conferences.conference) ? lg.conferences.conference : [lg.conferences.conference];
                         cList.forEach(c => { confMap[String(c.id)] = c.name; });
                     }
-
-                    // Build Division Map
                     const divConfMap = {};
                     if (lg.divisions && lg.divisions.division) {
                         const dList = Array.isArray(lg.divisions.division) ? lg.divisions.division : [lg.divisions.division];
@@ -154,7 +131,6 @@
                             divConfMap[String(d.id)] = { divName: d.name, confName: cName };
                         });
                     }
-
                     if (lg.franchises && lg.franchises.franchise) {
                         const franchiseList = Array.isArray(lg.franchises.franchise) 
                             ? lg.franchises.franchise 
@@ -175,21 +151,49 @@
                     }
                 }
             } catch (lErr) {
-                console.warn("[DNFL Rankings] League metadata fetch warning:", lErr);
+                console.warn("[DNFL Rankings] Initial League metadata fetch warning:", lErr);
             }
+        }
 
-            // Fetch Previous Week CSV
-            prevWeekRankMap = {};
-            mflStandingsMap = {};
+        const mostRecentWeek = publishedWeeks[publishedWeeks.length - 1];
+        if (mostRecentWeek) {
+            selector.value = mostRecentWeek.id;
+            loadWeeklyData();
+        }
+    }
+
+    async function loadWeeklyData() {
+        const weekSelector = document.getElementById('dnfl_weekSelector');
+        if (!weekSelector) return;
+
+        const selectedWeekFile = weekSelector.value;
+        isPreseasonWeek = selectedWeekFile.includes('00_pre-season') || selectedWeekFile.includes('pre-season');
+
+        const filePath = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/${rankingsMFLYear}/data_${selectedWeekFile}.csv`;
+        const apiClient = window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
+
+        try {
+            if (!apiClient) throw new Error("DNFLClient API middleware unavailable.");
 
             const currentIndex = publishedWeeks.findIndex(w => w.id === selectedWeekFile);
-            if (!isPreseasonWeek && currentIndex > 0) {
-                const prevWeekFile = publishedWeeks[currentIndex - 1].id;
-                const prevPath = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/${rankingsMFLYear}/data_${prevWeekFile}.csv`;
+            const prevWeekFile = (!isPreseasonWeek && currentIndex > 0) ? publishedWeeks[currentIndex - 1].id : null;
+            const prevPath = prevWeekFile ? `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/${rankingsMFLYear}/data_${prevWeekFile}.csv` : null;
+
+            const weekNumMatch = selectedWeekFile.match(/(\d+)/);
+            const weekNum = weekNumMatch ? parseInt(weekNumMatch[1], 10) : 1;
+
+            // Streamlined Parallel Requests (Promise.all)
+            const [rawCsv, prevCsvText, standingsDataRaw] = await Promise.all([
+                apiClient.fetchRawText(filePath),
+                prevPath ? apiClient.fetchRawText(prevPath).catch(() => null) : Promise.resolve(null),
+                !isPreseasonWeek ? apiClient.fetchData('leagueStandings', `&W=${weekNum}`).catch(() => null) : Promise.resolve(null)
+            ]);
+
+            // Process Previous Week CSV if available
+            prevWeekRankMap = {};
+            if (prevCsvText) {
                 try {
-                    const prevCsv = await apiClient.fetchRawText(prevPath);
-                    const prevParsed = Papa.parse(prevCsv, { header: true, dynamicTyping: true, skipEmptyLines: true });
-                    
+                    const prevParsed = Papa.parse(prevCsvText, { header: true, dynamicTyping: true, skipEmptyLines: true });
                     const prevList = prevParsed.data.map(r => {
                         const fId = normId(r['Franchise ID'] || r['FranchiseId'] || r['id']);
                         const fallbackMeta = FRANCHISE_META_MAP[fId] || {};
@@ -207,47 +211,53 @@
                     prevList.forEach(item => {
                         const c = item.conference;
                         confRankCounters[c] = (confRankCounters[c] || 0) + 1;
-                        const confRank = confRankCounters[c];
-                        
                         prevWeekRankMap[item.franchiseId] = {
                             overallRank: item.overallRank,
-                            confRank: confRank
+                            confRank: confRankCounters[c]
                         };
                     });
                 } catch (pErr) {
-                    console.warn("[DNFL Rankings] Could not fetch previous week rankings:", pErr);
-                }
-
-                // Fetch Standings
-                const weekNumMatch = selectedWeekFile.match(/(\d+)/);
-                const weekNum = weekNumMatch ? parseInt(weekNumMatch[1], 10) : 1;
-
-                try {
-                    const standingsData = await apiClient.fetchData('leagueStandings', `&W=${weekNum}`);
-                    if (standingsData && standingsData.leagueStandings && standingsData.leagueStandings.franchise) {
-                        const stList = Array.isArray(standingsData.leagueStandings.franchise)
-                            ? standingsData.leagueStandings.franchise
-                            : [standingsData.leagueStandings.franchise];
-                        
-                        stList.forEach(s => {
-                            const fId = normId(s.id);
-                            const wins = s.h2hw || 0;
-                            const losses = s.h2hl || 0;
-                            const ties = s.h2ht || 0;
-                            const pf = parseFloat(s.pf || 0);
-                            mflStandingsMap[fId] = {
-                                record: `${wins}-${losses}-${ties}`,
-                                pf: pf.toFixed(2)
-                            };
-                        });
-                    }
-                } catch (sErr) {
-                    console.warn("[DNFL Rankings] Standings API fetch warning:", sErr);
+                    console.warn("[DNFL Rankings] Previous week CSV parse warning:", pErr);
                 }
             }
 
-            // Fetch Current Week CSV
-            const rawCsv = await apiClient.fetchRawText(filePath);
+            // Process Standings Data with Fallback
+            mflStandingsMap = {};
+            if (!isPreseasonWeek) {
+                const extractFranchises = (data) => {
+                    if (!data || !data.leagueStandings) return null;
+                    const ls = data.leagueStandings;
+                    const raw = ls.franchise || (ls.franchises ? ls.franchises.franchise : null);
+                    if (!raw) return null;
+                    return Array.isArray(raw) ? raw : [raw];
+                };
+
+                let stList = extractFranchises(standingsDataRaw);
+                if (!stList || stList.length === 0) {
+                    try {
+                        const fallbackStandings = await apiClient.fetchData('leagueStandings');
+                        stList = extractFranchises(fallbackStandings);
+                    } catch (fErr) {
+                        console.warn("[DNFL Rankings] Fallback standings fetch error:", fErr);
+                    }
+                }
+
+                if (stList && stList.length > 0) {
+                    stList.forEach(s => {
+                        const fId = normId(s.id);
+                        const wins = (s.h2hw !== undefined && s.h2hw !== null) ? s.h2hw : (s.wins || s.w || 0);
+                        const losses = (s.h2hl !== undefined && s.h2hl !== null) ? s.h2hl : (s.losses || s.l || 0);
+                        const ties = (s.h2ht !== undefined && s.h2ht !== null) ? s.h2ht : (s.ties || s.t || 0);
+                        const rawPf = parseFloat(s.pf !== undefined ? s.pf : (s.points || s.pts || 0));
+                        mflStandingsMap[fId] = {
+                            record: `${wins}-${losses}-${ties}`,
+                            pf: isNaN(rawPf) ? '0.00' : rawPf.toFixed(2)
+                        };
+                    });
+                }
+            }
+
+            // Process Current Week CSV
             const results = Papa.parse(rawCsv, {
                 header: true,
                 dynamicTyping: true,
@@ -306,7 +316,7 @@
 
         const isFiltered = activeConfFilter && activeConfFilter !== 'All';
 
-        // Update Table Header
+        // Update Table Header with dnfl-hide-mobile for Record, Points For, Comments
         const thead = table.querySelector('thead');
         if (thead) {
             if (isPreseasonWeek) {
