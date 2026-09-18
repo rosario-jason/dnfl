@@ -27,7 +27,7 @@
 
         // Feature Modules
         { url: "dnfl-standings-v4.js", isExternal: false },
-        { url: "dnfl-rankings-v4.js", isExternal: false },
+        { url: "dnfl-rankings-v3.js", isExternal: false },
         { url: "dnfl-podcast-v2.js", isExternal: false },
         { url: "dnfl-rules-v3.js", isExternal: false },
         { url: "dnfl-lts-v6.js", isExternal: false },
