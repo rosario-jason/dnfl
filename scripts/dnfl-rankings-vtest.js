@@ -89,7 +89,7 @@
         const selector = document.getElementById('dnfl_weekSelector');
         if (!selector) return;
 
-        const weeksUrl = `https://dnfl.live/dnfl_rankings/${rankingsMFLYear}/weeks.json`;
+        const weeksUrl = `https://dnfl.live/dnfl_rankings/${rankingsMFLYear}/weeks_vtest.json`;
         const apiClient = window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
 
         try {
