@@ -23,7 +23,7 @@
 
         
         // Core Framework & API Engine
-        { url: "dnfl-api-client-v5.js", isExternal: false },
+        { url: "dnfl-api-client-Live.js", isExternal: false },
 
         // Feature Modules
         { url: "dnfl-standings-Live.js", isExternal: false },
