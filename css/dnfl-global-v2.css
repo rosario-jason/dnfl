@@ -201,6 +201,115 @@
     }
 }
 
+/* STRICT COLOR-ONLY BADGES (.dnfl-badge-[color]) */
+.dnfl-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.2rem 0.55rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+    border-radius: var(--dnfl-radius-sm);
+    white-space: nowrap;
+}
+
+/* Record Badge Modifier (Larger & Bold) */
+.dnfl-badge-lg,
+.dnfl-badge-record {
+    font-size: 0.95rem;
+    font-weight: 700;
+    padding: 0.3rem 0.75rem;
+}
+
+/* 🟢 Green Badge */
+.dnfl-badge-green {
+    background-color: var(--dnfl-green-bg);
+    color: var(--dnfl-green-text);
+    border: 1px solid var(--dnfl-green-border);
+}
+
+/* 🔴 Red Badge */
+.dnfl-badge-red {
+    background-color: var(--dnfl-red-bg);
+    color: var(--dnfl-red-text);
+    border: 1px solid var(--dnfl-red-border);
+}
+
+/* 🔵 Blue Badge */
+.dnfl-badge-blue {
+    background-color: var(--dnfl-blue-bg);
+    color: var(--dnfl-blue-text);
+    border: 1px solid var(--dnfl-blue-border);
+}
+
+/* 🟡 Amber Badge */
+.dnfl-badge-amber {
+    background-color: var(--dnfl-amber-bg);
+    color: var(--dnfl-amber-text);
+    border: 1px solid var(--dnfl-amber-border);
+}
+
+/* ⚪ Gray Badge */
+.dnfl-badge-gray {
+    background-color: var(--dnfl-gray-bg);
+    color: var(--dnfl-gray-text);
+    border: 1px solid var(--dnfl-gray-border);
+}
+
+
+/* SOLID PILL CAPSULES (.dnfl-pill-[color]) */
+.dnfl-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.825rem;
+    font-weight: 700;
+    line-height: 1;
+    border-radius: var(--dnfl-radius-full);
+    white-space: nowrap;
+    color: #ffffff;
+    border: none;
+}
+
+/* 🟢 Green Pill (High Score / Success) */
+.dnfl-pill-green,
+.dnfl-lts-badge-high-score {
+    background-color: var(--dnfl-green-text);
+    color: #ffffff !important;
+}
+
+/* 🔴 Red Pill (Knockout / Danger) */
+.dnfl-pill-red,
+.dnfl-lts-badge-knockout {
+    background-color: var(--dnfl-red-text);
+    color: #ffffff !important;
+}
+
+/* 🔵 Blue Pill (Record Capsule / Info) */
+.dnfl-pill-blue,
+.dnfl-record-pill,
+.dnfl-record-badge {
+    background-color: var(--dnfl-blue-text);
+    color: #ffffff !important;
+}
+
+/* 🟡 Amber Pill (Playoff / Warning) */
+.dnfl-pill-amber {
+    background-color: var(--dnfl-amber-text);
+    color: #ffffff !important;
+}
+
+/* ⚪ Gray Pill (Neutral) */
+.dnfl-pill-gray {
+    background-color: var(--dnfl-gray-text);
+    color: #ffffff !important;
+}
+
+
 /* ==========================================================================
    DNFL Podcast Module Styles
    ========================================================================== */
