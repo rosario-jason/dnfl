@@ -1,4 +1,4 @@
-// dnfl-api-client-v5.js v5.0
+// dnfl-api-client.js v5.0
 /* ==========================================================================
    DNFL API Client, Storage Guard & Request Deduplication Engine v5.0
    Repository: rosario-jason/dnfl
