@@ -89,7 +89,7 @@
         const selector = document.getElementById('dnfl_weekSelector');
         if (!selector) return;
 
-        const weeksUrl = `https://dnfl.live/dnfl_rankings/${rankingsMFLYear}/weeks_vtest.json`;
+        const weeksUrl = `https://dnfl.live/dnfl_rankings/${rankingsMFLYear}/weeks.json`;
         const apiClient = window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
 
         try {
@@ -99,8 +99,8 @@
         } catch (err) {
             console.warn("[DNFL Rankings] Could not load weeks.json, using fallback weeks.", err);
             publishedWeeks = [
-                { id: "00_pre-season_NEW", display: "Pre-Season" },
-                { id: "01_NEW", display: "Week 1" }
+                { id: "00_pre-season", display: "Pre-Season" },
+                { id: "01", display: "Week 1" }
             ];
         }
 
