@@ -1,5 +1,5 @@
 # Devil's Advocate
-## Season 1, Episode 1 - Kicking Off the 2026 DNFL Season!
+## Season 1, Episode 1 - No Bling... No Ring
 *September 9, 2026*
 
 **[K-Z]**: Welcome to Devil's Advocate, which is, uh, your ultimate guide to the Duke Networking Fantasy League.
