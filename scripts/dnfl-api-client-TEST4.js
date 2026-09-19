@@ -1,15 +1,11 @@
 /* ==========================================================================
-   DNFL API Client Middleware (v3.00-TEST4)
+   DNFL API Client Middleware (v3.00-TEST4/TEST5)
    Duke Networking Fantasy League (DNFL)
-   ==========================================================================
-   Provides centralized API data fetching, multi-tier caching (RAM + LocalStorage),
-   cross-tab synchronization, request deduplication, and league metadata bootstrapping.
    ========================================================================== */
 
 (function (window, document) {
     'use strict';
 
-    // Namespace setup
     window.DNFL = window.DNFL || {};
     const DNFL = window.DNFL;
 
@@ -19,15 +15,11 @@
     DNFL.franchiseMap = DNFL.franchiseMap || {};
     DNFL.currentFranchiseId = DNFL.currentFranchiseId || null;
 
-    // Prevent duplicate initialization
     if (DNFL.Client && DNFL.Client._initialized) {
         console.warn("[DNFL.Client] API Client already initialized.");
         return;
     }
 
-    // ----------------------------------------------------------------------
-    // Cache Engine (RAM, LocalStorage, & Cross-Tab Broadcast Channel Sync)
-    // ----------------------------------------------------------------------
     const CACHE_PREFIX = 'dnfl_';
     const RAM_CACHE = new Map();
     let cacheChannel = null;
@@ -49,13 +41,8 @@
     }
 
     DNFL.Cache = {
-        /**
-         * Retrieve cached value from RAM or LocalStorage if unexpired
-         */
         get: function (key) {
             const prefixedKey = CACHE_PREFIX + key;
-
-            // Check RAM cache
             if (RAM_CACHE.has(prefixedKey)) {
                 const ramItem = RAM_CACHE.get(prefixedKey);
                 if (Date.now() < ramItem.expiry) {
@@ -64,7 +51,6 @@
                 RAM_CACHE.delete(prefixedKey);
             }
 
-            // Check LocalStorage
             try {
                 const raw = localStorage.getItem(prefixedKey);
                 if (!raw) return null;
@@ -83,9 +69,6 @@
             }
         },
 
-        /**
-         * Store value in RAM and LocalStorage with TTL
-         */
         set: function (key, value, ttlMs) {
             const prefixedKey = CACHE_PREFIX + key;
             const expiry = ttlMs && ttlMs > 0 ? Date.now() + ttlMs : 0;
@@ -106,9 +89,6 @@
             }
         },
 
-        /**
-         * Invalidate cache key across RAM, LocalStorage, and active browser tabs
-         */
         invalidate: function (key) {
             const prefixedKey = CACHE_PREFIX + key;
             RAM_CACHE.delete(prefixedKey);
@@ -121,9 +101,6 @@
             }
         },
 
-        /**
-         * Evict expired dnfl_ keys from LocalStorage
-         */
         evictStale: function () {
             const now = Date.now();
             const keysToRemove = [];
@@ -144,31 +121,21 @@
         }
     };
 
-    // ----------------------------------------------------------------------
-    // Client Configuration & TTL Presets
-    // ----------------------------------------------------------------------
     const CONFIG = {
         BASE_DOMAIN: 'https://dnfl.live',
         DEFAULT_LEAGUE_ID: '22883',
         TTL: {
-            REALTIME: 30 * 1000,             // 30 Seconds
-            FIVE_MIN: 5 * 60 * 1000,         // 5 Minutes
-            HOURLY: 60 * 60 * 1000,          // 1 Hour
-            DAILY: 24 * 60 * 60 * 1000,      // 24 Hours
-            WEEKLY: 7 * 24 * 60 * 60 * 1000, // 7 Days
-            NEVER: 365 * 24 * 60 * 60 * 1000 // 1 Year
+            REALTIME: 30 * 1000,
+            FIVE_MIN: 5 * 60 * 1000,
+            HOURLY: 60 * 60 * 1000,
+            DAILY: 24 * 60 * 60 * 1000,
+            WEEKLY: 7 * 24 * 60 * 60 * 1000,
+            NEVER: 365 * 24 * 60 * 60 * 1000
         }
     };
 
     const ACTIVE_FETCHES = new Map();
 
-    // ----------------------------------------------------------------------
-    // Helper Utilities: Context, URL Building, & Parameter Normalization
-    // ----------------------------------------------------------------------
-
-    /**
-     * Resolve active league context (League ID, Year, Segment) from URL, Globals, or Defaults
-     */
     function resolveContext() {
         const urlParams = new URLSearchParams(window.location.search);
         let leagueId = urlParams.get('L') || window.mflLeagueId || window.league_id || CONFIG.DEFAULT_LEAGUE_ID;
@@ -187,9 +154,6 @@
         return { leagueId, year, leagueSegment };
     }
 
-    /**
-     * Normalize input parameters (Object vs URL String) into a key-value map
-     */
     function normalizeParams(params) {
         if (!params) return {};
         if (typeof params === 'object' && params !== null) {
@@ -207,9 +171,6 @@
         return {};
     }
 
-    /**
-     * Construct the export API endpoint URL dynamically (Same-Origin on MFL, API fallback offsite)
-     */
     function buildExportUrl(context, mflRequestType, paramsObj) {
         const isMflHost = window.location.host && window.location.host.includes('myfantasyleague.com');
         const baseUrl = isMflHost 
@@ -226,9 +187,6 @@
         return `${baseUrl}?${new URLSearchParams(queryObj).toString()}`;
     }
 
-    /**
-     * Generate parameter-aware unique cache key
-     */
     function buildCacheKey(mflRequestType, paramsObj, context) {
         let paramSlug = '';
         if (paramsObj && typeof paramsObj === 'object') {
@@ -242,16 +200,22 @@
         return `${mflRequestType}_${context.leagueSegment}_Y${context.year}${paramSlug}`;
     }
 
-    // ----------------------------------------------------------------------
-    // Core Fetch Engine (Request Deduplication & Caching)
-    // ----------------------------------------------------------------------
+    function generateUrlCacheKey(url) {
+        let hash = 0;
+        for (let i = 0; i < url.length; i++) {
+            hash = ((hash << 5) - hash) + url.charCodeAt(i);
+            hash |= 0;
+        }
+        const cleanSlug = url.replace(/[^a-zA-Z0-9]/g, '_').slice(-30);
+        return `raw_${cleanSlug}_${Math.abs(hash)}`;
+    }
+
     async function executeFetch(mflRequestType, params = {}, options = {}) {
         const context = resolveContext();
         const normParams = normalizeParams(params);
         const cacheKey = buildCacheKey(mflRequestType, normParams, context);
         const ttl = options.ttl !== undefined ? options.ttl : CONFIG.TTL.HOURLY;
 
-        // Check cache
         if (!options.forceRefresh) {
             const cachedData = DNFL.Cache.get(cacheKey);
             if (cachedData !== null) {
@@ -259,7 +223,6 @@
             }
         }
 
-        // Return active promise if fetch is already in-flight
         if (ACTIVE_FETCHES.has(cacheKey)) {
             return ACTIVE_FETCHES.get(cacheKey);
         }
@@ -287,9 +250,6 @@
         return fetchPromise;
     }
 
-    // ----------------------------------------------------------------------
-    // Metadata Bootstrapping & User Session Resolution
-    // ----------------------------------------------------------------------
     async function bootstrapMetadata() {
         try {
             const data = await executeFetch('league', {}, { ttl: CONFIG.TTL.DAILY });
@@ -356,9 +316,6 @@
         });
     }
 
-    // ----------------------------------------------------------------------
-    // Public API Export & Legacy Backwards Compatibility
-    // ----------------------------------------------------------------------
     DNFL.Client = {
         _initialized: true,
         TTL: CONFIG.TTL,
@@ -368,7 +325,7 @@
         },
 
         fetchRawText: async function (url) {
-            const cacheKey = `raw_${btoa(url).slice(-20)}`;
+            const cacheKey = generateUrlCacheKey(url);
             const cached = DNFL.Cache.get(cacheKey);
             if (cached) return cached;
 
@@ -389,10 +346,7 @@
         bootstrap: bootstrapMetadata
     };
 
-    // Legacy Global Shim
     window.DNFLClient = DNFL.Client;
-
-    // Bootstrapping on script load
     bootstrapMetadata();
 
 })(window, document);
