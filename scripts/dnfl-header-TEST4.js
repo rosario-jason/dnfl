@@ -7,7 +7,7 @@
     'use strict';
 
     const CONFIG = {
-        VERSION: "3.03-TEST4",
+        VERSION: "3.04-TEST4",
         BASE_URL: "https://dnfl.live/scripts/",
 
         STYLESHEETS: [
@@ -22,7 +22,7 @@
         FEATURE_MODULES: [
             { name: "standings", url: "dnfl-standings.js" },
             { name: "rankings",  url: "dnfl-rankings.js" },
-            { name: "podcast",   url: "dnfl-podcast-TEST1.js" },
+            { name: "podcast",   url: "dnfl-podcast.js" },
             { name: "rules",     url: "dnfl-rules.js" }
         ],
 
