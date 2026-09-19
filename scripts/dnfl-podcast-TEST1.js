@@ -18,6 +18,7 @@
     let podcastMFLYear = '';
     let episodeList = [];
     let currentEpisode = null;
+    let isInitialized = false;
 
     /**
      * Ensure Marked.js library is loaded before parsing transcript markdown
@@ -51,10 +52,13 @@
      * Initialize Podcast Module
      */
     async function init(yearOverride) {
-        podcastMFLYear = yearOverride || getTargetYear();
+        if (isInitialized) return;
 
         const selector = document.getElementById('dnfl_podcast_selector') || document.getElementById('dnfl-podcast-select');
         if (!selector) return;
+
+        isInitialized = true;
+        podcastMFLYear = yearOverride || getTargetYear();
 
         const episodesUrl = `https://dnfl.live/dnfl_podcast/${podcastMFLYear}/episodes.json`;
         const apiClient = window.DNFLClient || DNFL.Client;
@@ -148,7 +152,7 @@
             // Hydrate Marked.js on-demand before parsing
             const markedReady = await ensureMarkedLoaded();
 
-            if (markedReady && typeof marked.parse === 'function') {
+            if (markedReady && typeof marked !== 'undefined' && typeof marked.parse === 'function') {
                 transcriptEl.innerHTML = marked.parse(rawMarkdown);
             } else if (typeof marked === 'function') {
                 transcriptEl.innerHTML = marked(rawMarkdown);
@@ -186,22 +190,23 @@
         toggleTranscript: toggleTranscript
     };
 
-    // Auto-Initialization
-    function autoInit() {
-        if (document.getElementById('dnfl_podcast_selector') || 
-            document.getElementById('dnfl-podcast-select') || 
-            document.getElementById('dnfl-podcast-transcript') ||
-            document.getElementById('dnfl_transcriptWrapper')) {
-            init();
+    // Robust Auto-Initialization using DOM MutationObserver
+    function setupAutoInit() {
+        const selectorStr = '#dnfl_podcast_selector, #dnfl-podcast-select, #dnfl-podcast-transcript, #dnfl_transcriptWrapper';
+        if (DNFL.Utils && typeof DNFL.Utils.onElementReady === 'function') {
+            DNFL.Utils.onElementReady(selectorStr, () => {
+                init();
+            });
+        } else {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => init());
+            } else {
+                init();
+            }
         }
     }
 
-    window.addEventListener('dnfl:ready', autoInit);
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', autoInit);
-    } else {
-        autoInit();
-    }
+    window.addEventListener('dnfl:ready', setupAutoInit);
+    setupAutoInit();
 
 })(window, document);

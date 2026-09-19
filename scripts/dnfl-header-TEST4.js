@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Framework Script Loader & Version Controller (v3.00-TEST4)
+   DNFL Framework Script Loader & Version Controller
    Duke Networking Fantasy League (DNFL)
    ==========================================================================
    Manages global CSS injection, 3-step async dependency pipeline, conditional library
@@ -13,7 +13,7 @@
     // USER CONFIGURATION BLOCK (Edit here to add/test modules or CSS)
     // =========================================================================
     const CONFIG = {
-        VERSION: "3.02-TEST4",
+        VERSION: "3.03-TEST4",
         BASE_URL: "https://dnfl.live/scripts/",
 
         // Stylesheet Manifest (Edit URL here to test custom or test CSS)
@@ -35,7 +35,7 @@
             { name: "rules",     url: "dnfl-rules.js" }
         ],
 
-        // Conditional Libraries (Hydrated on-demand if target DOM containers exist)
+        // Conditional Libraries (Hydrated on-demand or when target DOM containers exist)
         CONDITIONAL_LIBRARIES: {
             chartjs: {
                 url: "https://cdn.jsdelivr.net/npm/chart.js",
@@ -99,16 +99,18 @@
     }
 
     /**
-     * Hydrate a conditional library if its target DOM elements are present
+     * Hydrate a conditional library (on-demand or if DOM container exists)
      */
-    function loadConditionalLibrary(libKey) {
+    function loadConditionalLibrary(libKey, force = false) {
         return new Promise((resolve) => {
             const lib = CONFIG.CONDITIONAL_LIBRARIES[libKey];
             if (!lib) return resolve(false);
 
-            const containerExists = lib.targets.some(selector => document.querySelector(selector) !== null);
+            if (lib.loaded) return resolve(true);
 
-            if (containerExists && !lib.loaded) {
+            const containerExists = force || lib.targets.some(selector => document.querySelector(selector) !== null);
+
+            if (containerExists) {
                 lib.loaded = true;
                 const script = document.createElement("script");
                 script.src = lib.url;
@@ -119,11 +121,12 @@
                 };
                 script.onerror = () => {
                     console.error(`[DNFL.Header] Failed to hydrate library: ${libKey}`);
+                    lib.loaded = false;
                     resolve(false);
                 };
                 document.head.appendChild(script);
             } else {
-                resolve(lib.loaded || false);
+                resolve(false);
             }
         });
     }
@@ -132,7 +135,7 @@
      * Scan and hydrate all required conditional libraries before feature module execution
      */
     async function loadRequiredConditionalLibraries() {
-        const tasks = Object.keys(CONFIG.CONDITIONAL_LIBRARIES).map(key => loadConditionalLibrary(key));
+        const tasks = Object.keys(CONFIG.CONDITIONAL_LIBRARIES).map(key => loadConditionalLibrary(key, false));
         await Promise.all(tasks);
     }
 
@@ -143,27 +146,40 @@
      * Execute callback when DOM selector becomes available (utilizing MutationObserver)
      */
     DNFL.Utils.onElementReady = function (selector, callback) {
-        if (document.querySelector(selector)) {
-            callback(document.querySelector(selector));
-            return;
-        }
-
-        const observer = new MutationObserver((mutations, obs) => {
+        const check = () => {
             const element = document.querySelector(selector);
             if (element) {
-                obs.disconnect();
                 callback(element);
+                return true;
             }
-        });
+            return false;
+        };
 
-        observer.observe(document.body, { childList: true, subtree: true });
+        if (check()) return;
+
+        const startObserver = () => {
+            if (check()) return;
+            const target = document.body || document.documentElement;
+            const observer = new MutationObserver((mutations, obs) => {
+                if (check()) {
+                    obs.disconnect();
+                }
+            });
+            observer.observe(target, { childList: true, subtree: true });
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startObserver);
+        } else {
+            startObserver();
+        }
     };
 
     /**
      * Public method to manually trigger dynamic library hydration on-demand
      */
     DNFL.Utils.loadLibrary = function (libKey) {
-        return loadConditionalLibrary(libKey);
+        return loadConditionalLibrary(libKey, true);
     };
 
     // ----------------------------------------------------------------------
@@ -173,13 +189,13 @@
         // Step 1: Load Core Infrastructure
         await loadScriptsSequentially(CONFIG.INFRASTRUCTURE);
 
-        // Step 2: Hydrate Required Conditional Libraries (Chart.js / Marked.js)
+        // Step 2: Hydrate Required Conditional Libraries (Chart.js / Marked.js) if DOM target present
         await loadRequiredConditionalLibraries();
 
         // Step 3: Load Downstream Feature Modules
         await loadScriptsSequentially(CONFIG.FEATURE_MODULES);
 
-        // Backup DOMContentLoaded listener for late-rendered containers
+        // Backup listener for late-rendered DOM containers
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', loadRequiredConditionalLibraries);
         }
