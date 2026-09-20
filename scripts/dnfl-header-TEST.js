@@ -12,7 +12,7 @@
     const LOG_PREFIX = `[DNFL Framework]`;
 
     const CONFIG = {
-        VERSION: "3.16-TEST",
+        VERSION: "3.17-TEST",
         BASE_URL: "https://dnfl.live/scripts/",
 
         STYLESHEETS: [
@@ -26,7 +26,7 @@
         ],
 
         FEATURE_MODULES: [
-            { name: "standings", url: "dnfl-standings-TEST5.js" },
+            { name: "standings", url: "dnfl-standings-TEST6.js" },
             { name: "rankings",  url: "dnfl-rankings.js" },
             { name: "podcast",   url: "dnfl-podcast-TEST.js" },
             { name: "rules",     url: "dnfl-rules.js" }
@@ -103,24 +103,26 @@
     DNFL.Utils = DNFL.Utils || {};
 
     /**
-     * Core String Padding Utility
-     * @param {string|number} val - Input value to normalize
-     * @param {number} length - Desired target string length (defaults to 4)
+     * Standardized ID padding helper.
+     * Safely converts valid values to padded strings while leaving empty/undefined values as ''.
      */
     DNFL.Utils.pad = function (val, length = 4) {
-        return String(val ?? '').trim().padStart(length, '0');
+        if (val === null || val === undefined || String(val).trim() === '') return '';
+        return String(val).trim().padStart(length, '0');
     };
 
-    // Explicit Length Shortcuts
-    DNFL.Utils.pad2 = (val) => DNFL.Utils.pad(val, 2); // Conferences, Divisions, Weeks (e.g., "01")
-    DNFL.Utils.pad4 = (val) => DNFL.Utils.pad(val, 4); // Franchise IDs, Years (e.g., "0001")
-    DNFL.Utils.pad5 = (val) => DNFL.Utils.pad(val, 5); // Player IDs (e.g., "09912")
+    DNFL.Utils.pad2 = function (val) {
+        return DNFL.Utils.pad(val, 2);
+    };
 
-    /**
-     * Execute callback when DOM selector becomes available
-     * @param {string} selector - CSS selector
-     * @param {Function} callback - Callback function
-     */
+    DNFL.Utils.pad4 = function (val) {
+        return DNFL.Utils.pad(val, 4);
+    };
+
+    DNFL.Utils.pad5 = function (val) {
+        return DNFL.Utils.pad(val, 5);
+    };
+
     DNFL.Utils.onElementReady = function (selector, callback) {
         const check = () => {
             const el = document.querySelector(selector);
@@ -134,6 +136,7 @@
         });
         observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
     };
+
 
     /**
      * Public helper to trigger dynamic library hydration on-demand
