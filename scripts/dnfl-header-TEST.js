@@ -10,7 +10,7 @@
     // USER CONFIGURATION BLOCK (Edit here to add/test modules or CSS)
     // =========================================================================
     const CONFIG = {
-        VERSION: "3.09-TEST",
+        VERSION: "3.10-TEST",
         BASE_URL: "https://dnfl.live/scripts/",
 
         STYLESHEETS: [
@@ -19,6 +19,7 @@
 
         INFRASTRUCTURE: [
             { name: "papaparse", url: "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js", isExternal: true },
+            { name: "marked",     url: "https://cdn.jsdelivr.net/npm/marked/marked.min.js", isExternal: true },
             { name: "api-client", url: "dnfl-api-client-TEST.js" }
         ],
 
@@ -33,10 +34,6 @@
             chartjs: {
                 url: "https://cdn.jsdelivr.net/npm/chart.js",
                 targets: ["#dnfl_powerRankingChart", "#dnfl_chartWrapperContainer"]
-            },
-            marked: {
-                url: "https://cdn.jsdelivr.net/npm/marked/marked.min.js",
-                targets: ["#dnfl-podcast-transcript", "#dnfl_transcriptWrapper"]
             }
         }
     };
