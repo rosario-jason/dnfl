@@ -12,7 +12,7 @@
     const LOG_PREFIX = `[DNFL Framework]`;
 
     const CONFIG = {
-        VERSION: "3.15-TEST",
+        VERSION: "3.16-TEST",
         BASE_URL: "https://dnfl.live/scripts/",
 
         STYLESHEETS: [
@@ -26,7 +26,7 @@
         ],
 
         FEATURE_MODULES: [
-            { name: "standings", url: "dnfl-standings-TEST4.js" },
+            { name: "standings", url: "dnfl-standings-TEST5.js" },
             { name: "rankings",  url: "dnfl-rankings.js" },
             { name: "podcast",   url: "dnfl-podcast-TEST.js" },
             { name: "rules",     url: "dnfl-rules.js" }
