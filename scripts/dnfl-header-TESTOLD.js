@@ -1,9 +1,6 @@
 /* ==========================================================================
-   DNFL Framework Script Loader & Version Controller
+   DNFL Framework Script Loader & Version Controller (v3.10-TEST)
    Duke Networking Fantasy League (DNFL)
-   ==========================================================================
-   Manages global CSS injection, 3-step async dependency pipeline, conditional 
-   library hydration, string padding utilities, and DOM mutation observers.
    ========================================================================== */
 
 (function (window, document) {
@@ -12,7 +9,7 @@
     const LOG_PREFIX = `[DNFL Framework]`;
 
     const CONFIG = {
-        VERSION: "3.13-TEST",
+        VERSION: "3.12-TEST",
         BASE_URL: "https://dnfl.live/scripts/",
 
         STYLESHEETS: [
@@ -26,7 +23,7 @@
         ],
 
         FEATURE_MODULES: [
-            { name: "standings", url: "dnfl-standings-TEST2.js" },
+            { name: "standings", url: "dnfl-standings-TEST1.js" },
             { name: "rankings",  url: "dnfl-rankings.js" },
             { name: "podcast",   url: "dnfl-podcast-TEST.js" },
             { name: "rules",     url: "dnfl-rules.js" }
@@ -97,30 +94,8 @@
         });
     }
 
-    // ----------------------------------------------------------------------
-    // Framework Helper Utilities
-    // ----------------------------------------------------------------------
+    // Attach Helper Utilities
     DNFL.Utils = DNFL.Utils || {};
-
-    /**
-     * Core String Padding Utility
-     * @param {string|number} val - Input value to normalize
-     * @param {number} length - Desired target string length (defaults to 4)
-     */
-    DNFL.Utils.pad = function (val, length = 4) {
-        return String(val ?? '').trim().padStart(length, '0');
-    };
-
-    // Explicit Length Shortcuts
-    DNFL.Utils.pad2 = (val) => DNFL.Utils.pad(val, 2); // Conferences, Divisions, Weeks (e.g., "01")
-    DNFL.Utils.pad4 = (val) => DNFL.Utils.pad(val, 4); // Franchise IDs, Years (e.g., "0001")
-    DNFL.Utils.pad5 = (val) => DNFL.Utils.pad(val, 5); // Player IDs (e.g., "09912")
-
-    /**
-     * Execute callback when DOM selector becomes available
-     * @param {string} selector - CSS selector
-     * @param {Function} callback - Callback function
-     */
     DNFL.Utils.onElementReady = function (selector, callback) {
         const check = () => {
             const el = document.querySelector(selector);
@@ -135,27 +110,7 @@
         observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
     };
 
-    /**
-     * Public helper to trigger dynamic library hydration on-demand
-     * @param {string} libKey - Key in CONFIG.CONDITIONAL_LIBRARIES
-     */
-    DNFL.Utils.loadLibrary = function (libKey) {
-        const lib = CONFIG.CONDITIONAL_LIBRARIES[libKey];
-        if (!lib || lib.loaded) return Promise.resolve(!!lib?.loaded);
-        lib.loaded = true;
-        return new Promise((resolve) => {
-            const script = document.createElement("script");
-            script.src = lib.url;
-            script.async = true;
-            script.onload = () => resolve(true);
-            script.onerror = () => { lib.loaded = false; resolve(false); };
-            document.head.appendChild(script);
-        });
-    };
-
-    // ----------------------------------------------------------------------
     // Main 5-Step Pipeline
-    // ----------------------------------------------------------------------
     (async function runFramework() {
         // Step 1: Stylesheets
         CONFIG.STYLESHEETS.forEach(s => {
