@@ -12,7 +12,7 @@
     const LOG_PREFIX = `[DNFL Framework]`;
 
     const CONFIG = {
-        VERSION: "3.17-TEST",
+        VERSION: "3.18-TEST",
         BASE_URL: "https://dnfl.live/scripts/",
 
         STYLESHEETS: [
@@ -26,7 +26,7 @@
         ],
 
         FEATURE_MODULES: [
-            { name: "standings", url: "dnfl-standings-TEST6.js" },
+            { name: "standings", url: "dnfl-standings-TEST7.js" },
             { name: "rankings",  url: "dnfl-rankings.js" },
             { name: "podcast",   url: "dnfl-podcast-TEST.js" },
             { name: "rules",     url: "dnfl-rules.js" }
@@ -104,7 +104,7 @@
 
     /**
      * Standardized ID padding helper.
-     * Safely converts valid values to padded strings while leaving empty/undefined values as ''.
+     * Converts valid values to padded strings while leaving empty/undefined values as ''.
      */
     DNFL.Utils.pad = function (val, length = 4) {
         if (val === null || val === undefined || String(val).trim() === '') return '';
