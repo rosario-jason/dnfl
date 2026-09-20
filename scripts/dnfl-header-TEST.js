@@ -26,7 +26,7 @@
         ],
 
         FEATURE_MODULES: [
-            { name: "standings", url: "dnfl-standings-TEST4.js" },
+            { name: "standings", url: "dnfl-standings.js" },
             { name: "rankings",  url: "dnfl-rankings.js" },
             { name: "podcast",   url: "dnfl-podcast-TEST.js" },
             { name: "rules",     url: "dnfl-rules.js" }
