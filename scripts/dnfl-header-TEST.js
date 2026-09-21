@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Framework Script Loader & Version Controller
+   DNFL Master Header & Loader Script (v3.00-TEST2)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 
@@ -7,122 +7,42 @@
     'use strict';
 
     // =========================================================================
-    // USER CONFIGURATION BLOCK (Edit here to add/test modules or CSS)
+    // 1. Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "3.22-TEST",
-        BASE_URL: "https://dnfl.live/scripts/",
-
-        STYLESHEETS: [
-            { id: "dnfl-global-css", url: "https://dnfl.live/css/dnfl-global.css" }
-        ],
-
-        INFRASTRUCTURE: [
-            { name: "papaparse", url: "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js", isExternal: true },
-            { name: "marked",     url: "https://cdn.jsdelivr.net/npm/marked/marked.min.js", isExternal: true },
-            { name: "api-client", url: "dnfl-api-client-TEST.js" }
-        ],
-
+        FRAMEWORK_VERSION: 'v3.00',
+        BASE_URL: 'https://dnfl.live/',
+        API_CLIENT_SCRIPT: 'dnfl-api-client-v3.00.js',
+        GLOBAL_CSS: 'dnfl-global-v3.00.css',
         FEATURE_MODULES: [
-            { name: "standings", url: "dnfl-standings-TEST.js" },
-            { name: "rankings",  url: "dnfl-rankings.js" },
-            { name: "podcast",   url: "dnfl-podcast-TEST.js" },
-            { name: "rules",     url: "dnfl-rules.js" }
-        ],
-
-        CONDITIONAL_LIBRARIES: {
-            chartjs: {
-                url: "https://cdn.jsdelivr.net/npm/chart.js",
-                targets: ["#dnfl_powerRankingChart", "#dnfl_chartWrapperContainer"]
-            }
-        }
+            { name: 'standings', url: 'dnfl-standings-TEST10.js' },
+            { name: 'rankings',  url: 'dnfl-rankings-TEST1.js' },
+            { name: 'podcast',   url: 'dnfl-podcast-TEST7.js' },
+            { name: 'rules',     url: 'dnfl-rules-TEST1.js' }
+        ]
     };
 
-    // =========================================================================
-    // FRAMEWORK LOADER ENGINE (No editing required below)
-    // =========================================================================
+    const startTime = performance.now();
+    const tag = `[DNFL Framework ${CONFIG.FRAMEWORK_VERSION}]`;
 
+    // =========================================================================
+    // 2. Global Namespace Initialization
+    // =========================================================================
     window.DNFL = window.DNFL || {};
+    window.DNFL.version = CONFIG.FRAMEWORK_VERSION;
+    window.DNFL.Utils = window.DNFL.Utils || {};
 
-    CONFIG.STYLESHEETS.forEach(sheet => {
-        if (!document.getElementById(sheet.id)) {
-            const cssLink = document.createElement('link');
-            cssLink.id = sheet.id;
-            cssLink.rel = 'stylesheet';
-            cssLink.href = `${sheet.url}?v=${CONFIG.VERSION}`;
-            document.head.appendChild(cssLink);
-        }
-    });
+    /**
+     * DOM MutationObserver Helper (Replaces polling timers)
+     * Executes callback as soon as selector renders in the DOM.
+     */
+    window.DNFL.Utils.onElementReady = function (selector, callback) {
+        if (!selector || typeof callback !== 'function') return;
 
-    function loadScript(scriptConfig) {
-        return new Promise((resolve) => {
-            const scriptElement = document.createElement("script");
-            const fullUrl = scriptConfig.isExternal 
-                ? scriptConfig.url 
-                : `${CONFIG.BASE_URL}${scriptConfig.url}?v=${CONFIG.VERSION}`;
-
-            scriptElement.src = fullUrl;
-            scriptElement.type = "text/javascript";
-            scriptElement.async = false;
-
-            scriptElement.onload = () => resolve({ success: true, url: scriptConfig.url });
-            scriptElement.onerror = (err) => {
-                console.error(`[DNFL Header] Script load error: ${scriptConfig.url}`, err);
-                resolve({ success: false, url: scriptConfig.url });
-            };
-
-            document.head.appendChild(scriptElement);
-        });
-    }
-
-    async function loadScriptsSequentially(scriptList) {
-        for (const scriptConfig of scriptList) {
-            await loadScript(scriptConfig);
-        }
-    }
-
-    function loadConditionalLibrary(libKey, force = false) {
-        return new Promise((resolve) => {
-            const lib = CONFIG.CONDITIONAL_LIBRARIES[libKey];
-            if (!lib) return resolve(false);
-
-            if (lib.loaded) return resolve(true);
-
-            const containerExists = force || lib.targets.some(selector => document.querySelector(selector) !== null);
-
-            if (containerExists) {
-                lib.loaded = true;
-                const script = document.createElement("script");
-                script.src = lib.url;
-                script.async = true;
-                script.onload = () => {
-                    console.log(`[DNFL.Header] Hydrated library: ${libKey}`);
-                    resolve(true);
-                };
-                script.onerror = () => {
-                    console.error(`[DNFL.Header] Failed to hydrate library: ${libKey}`);
-                    lib.loaded = false;
-                    resolve(false);
-                };
-                document.head.appendChild(script);
-            } else {
-                resolve(false);
-            }
-        });
-    }
-
-    async function loadRequiredConditionalLibraries() {
-        const tasks = Object.keys(CONFIG.CONDITIONAL_LIBRARIES).map(key => loadConditionalLibrary(key, false));
-        await Promise.all(tasks);
-    }
-
-    DNFL.Utils = DNFL.Utils || {};
-
-    DNFL.Utils.onElementReady = function (selector, callback) {
         const check = () => {
-            const element = document.querySelector(selector);
-            if (element) {
-                callback(element);
+            const el = document.querySelector(selector);
+            if (el) {
+                callback(el);
                 return true;
             }
             return false;
@@ -130,39 +50,138 @@
 
         if (check()) return;
 
-        const startObserver = () => {
-            if (check()) return;
-            const target = document.body || document.documentElement;
-            const observer = new MutationObserver((mutations, obs) => {
-                if (check()) {
-                    obs.disconnect();
+        const observer = new MutationObserver((_, obs) => {
+            if (check()) obs.disconnect();
+        });
+
+        observer.observe(document.body || document.documentElement, {
+            childList: true,
+            subtree: true
+        });
+    };
+
+    // =========================================================================
+    // 3. Resource Loading Helpers
+    // =========================================================================
+
+    /**
+     * Dynamically injects JavaScript files asynchronously
+     */
+    function loadScript(url) {
+        return new Promise((resolve, reject) => {
+            if (document.querySelector(`script[src="${url}"]`)) {
+                resolve(url);
+                return;
+            }
+
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = url;
+            script.async = true;
+
+            script.onload = () => resolve(url);
+            script.onerror = (err) => reject(new Error(`Failed to load script: ${url}`));
+
+            (document.head || document.documentElement).appendChild(script);
+        });
+    }
+
+    /**
+     * Dynamically injects CSS stylesheets
+     */
+    function loadStylesheet(url) {
+        return new Promise((resolve) => {
+            if (document.querySelector(`link[href="${url}"]`)) {
+                resolve(url);
+                return;
+            }
+
+            const link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = url;
+
+            link.onload = () => resolve(url);
+            link.onerror = () => {
+                console.warn(`${tag} Non-fatal warning: CSS stylesheet could not be loaded (${url})`);
+                resolve(url);
+            };
+
+            (document.head || document.documentElement).appendChild(link);
+        });
+    }
+
+    /**
+     * Resolves absolute CDN URLs
+     */
+    function resolveUrl(filename) {
+        if (!filename) return '';
+        if (filename.startsWith('http://') || filename.startsWith('https://')) {
+            return filename;
+        }
+        return CONFIG.BASE_URL + filename.replace(/^\//, '');
+    }
+
+    // =========================================================================
+    // 4. Master Framework Initialization Pipeline
+    // =========================================================================
+    async function bootstrap() {
+        console.groupCollapsed(`${tag} Initializing Framework Loader...`);
+
+        try {
+            // Stage 1: Core API Client Middleware
+            const apiClientUrl = resolveUrl(CONFIG.API_CLIENT_SCRIPT);
+            console.log(`${tag} Stage 1/3: Loading Core API Middleware (${CONFIG.API_CLIENT_SCRIPT})...`);
+            await loadScript(apiClientUrl);
+            console.log(`${tag} -> Core API Middleware loaded successfully (${CONFIG.API_CLIENT_SCRIPT}).`);
+
+            // Stage 2: Global CSS Stylesheet
+            const cssUrl = resolveUrl(CONFIG.GLOBAL_CSS);
+            console.log(`${tag} Stage 2/3: Injecting Global Stylesheet (${CONFIG.GLOBAL_CSS})...`);
+            await loadStylesheet(cssUrl);
+            console.log(`${tag} -> Global Stylesheet injected (${CONFIG.GLOBAL_CSS}).`);
+
+            // Stage 3: Feature Modules
+            console.log(`${tag} Stage 3/3: Loading Feature Modules (${CONFIG.FEATURE_MODULES.length} configured)...`);
+
+            const modulePromises = CONFIG.FEATURE_MODULES.map(async (mod) => {
+                const modUrl = resolveUrl(mod.url);
+                try {
+                    console.log(`${tag} -> Loading Module [${mod.name}]: ${mod.url}`);
+                    await loadScript(modUrl);
+                    console.log(`${tag} -> Module [${mod.name}] loaded successfully (${mod.url}).`);
+                } catch (err) {
+                    console.warn(`${tag} Warning: Feature module [${mod.name}] failed to load (${mod.url}).`, err);
                 }
             });
-            observer.observe(target, { childList: true, subtree: true });
-        };
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', startObserver);
-        } else {
-            startObserver();
+            await Promise.allSettled(modulePromises);
+
+            const duration = (performance.now() - startTime).toFixed(2);
+            console.log(`${tag} Framework initialization completed successfully in ${duration}ms.`);
+            console.groupEnd();
+
+            // Dispatch Event
+            window.DNFL.isReady = true;
+            const readyEvent = new CustomEvent('dnfl:ready', {
+                detail: {
+                    version: CONFIG.FRAMEWORK_VERSION,
+                    timestamp: Date.now()
+                }
+            });
+            window.dispatchEvent(readyEvent);
+
+        } catch (fatalErr) {
+            console.error(`${tag} Fatal Core Initialization Error:`, fatalErr);
+            console.groupEnd();
         }
-    };
+    }
 
-    DNFL.Utils.loadLibrary = function (libKey) {
-        return loadConditionalLibrary(libKey, true);
-    };
-
-    (async function initializeFramework() {
-        await loadScriptsSequentially(CONFIG.INFRASTRUCTURE);
-        await loadRequiredConditionalLibraries();
-        await loadScriptsSequentially(CONFIG.FEATURE_MODULES);
-
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', loadRequiredConditionalLibraries);
-        }
-
-        window.dispatchEvent(new CustomEvent('dnfl:ready', { detail: { version: CONFIG.VERSION } }));
-        window.dispatchEvent(new CustomEvent('dnflFrameworkReady', { detail: { version: CONFIG.VERSION } }));
-    })();
+    // Execute Bootstrap
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', bootstrap);
+    } else {
+        bootstrap();
+    }
 
 })(window, document);
