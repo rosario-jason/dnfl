@@ -1,4 +1,4 @@
-// dnfl-exporter-v11.js v11.0
+// dnfl-exporter-v13.js v12.0
 /* ==========================================================================
    DNFL Commissioner Data Exporter Engine v11.0
    Repository: rosario-jason/dnfl
@@ -179,7 +179,203 @@
      * REPORT 1: Rosters
      * Fetches rosters for selected week and YTD points natively via &W=YTD
      */
-    async function generateRostersReport(week) {
+    
+    // Standings & Seeding Configuration Cache
+    let STANDINGS_RULES = {};
+
+    /**
+     * Helper to load standings rules dynamically from standings_rules.json
+     */
+    async function loadStandingsRules() {
+        if (Object.keys(STANDINGS_RULES).length > 0) return STANDINGS_RULES;
+        try {
+            const rulesUrl = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_standings/standings_rules.json`;
+            const client = getApiClient();
+            const rawRulesJson = await client.fetchRawText(rulesUrl).catch(() => null);
+            if (rawRulesJson) {
+                STANDINGS_RULES = JSON.parse(rawRulesJson);
+            }
+        } catch (e) {
+            console.warn('[DNFL Exporter] Could not load standings_rules.json, applying fallback.', e);
+        }
+
+        if (!STANDINGS_RULES || !STANDINGS_RULES['default']) {
+            STANDINGS_RULES = {
+                'default': {
+                    seedingScope: 'conference',
+                    seedingModel: 'standard_div_winners_first',
+                    playoffCutoff: 6,
+                    hasDivisionCrown: true
+                }
+            };
+        }
+        return STANDINGS_RULES;
+    }
+
+    /**
+     * Resolves rule set for target season year from STANDINGS_RULES
+     */
+    function getYearRules() {
+        const yr = parseInt(targetYear);
+        if (STANDINGS_RULES[yr]) return STANDINGS_RULES[yr];
+
+        for (const key in STANDINGS_RULES) {
+            if (key.startsWith('_')) continue;
+
+            if (key.includes('-')) {
+                const [start, end] = key.split('-').map(s => parseInt(s.trim()));
+                if (yr >= start && yr <= end) return STANDINGS_RULES[key];
+            }
+            if (key.includes(',')) {
+                const yearList = key.split(',').map(s => parseInt(s.trim()));
+                if (yearList.includes(yr)) return STANDINGS_RULES[key];
+            }
+        }
+        return STANDINGS_RULES['default'] || {};
+    }
+
+    /**
+     * Deep merge resolver for conference-specific overrides
+     */
+    function getConfRules(baseRules, confId) {
+        const normConfId = norm(confId);
+        if (!normConfId || !baseRules.conferenceOverrides || !baseRules.conferenceOverrides[normConfId]) {
+            return baseRules;
+        }
+        const override = baseRules.conferenceOverrides[normConfId];
+        return {
+            ...baseRules,
+            ...override
+        };
+    }
+
+    /**
+     * Replicates calculateSeedsAndBadges() from dnfl-standings-v3.js
+     * Evaluates division leaders (1-6), division runner ups (7-12), and tiered PF models
+     */
+    async function calculateTeamSeeds(franchiseStandings) {
+        await loadStandingsRules();
+        const baseRules = getYearRules();
+        const teamSeeds = {};
+        const divLeaders = {};
+        const divRunnerUps = {};
+
+        const hasSeasonStarted = franchiseStandings.some(s => {
+            const games = parseInt(s.h2hw || 0) + parseInt(s.h2hl || 0) + parseInt(s.h2ht || 0);
+            const pf = parseFloat(s.pf || 0);
+            return games > 0 || pf > 0;
+        });
+
+        if (!hasSeasonStarted) {
+            franchiseStandings.forEach((s, idx) => {
+                teamSeeds[normFranchiseId(s.id)] = idx + 1;
+            });
+            return teamSeeds;
+        }
+
+        const divisions = toArray(cachedLeague?.divisions?.division);
+        const conferences = toArray(cachedLeague?.conferences?.conference);
+        const leagueFranchises = toArray(cachedLeague?.franchises?.franchise);
+
+        const divToConfMap = {};
+        divisions.forEach(d => divToConfMap[norm(d.id)] = norm(d.conference));
+
+        const getMflIndex = (id) => franchiseStandings.findIndex(s => normFranchiseId(s.id) === normFranchiseId(id));
+
+        const getPf = (id) => {
+            const s = franchiseStandings.find(item => normFranchiseId(item.id) === normFranchiseId(id));
+            return parseFloat(s?.pf || s?.h2hpf || s?.points_for || 0);
+        };
+
+        const sortByPfThenMfl = (a, b) => {
+            const pfDiff = getPf(b) - getPf(a);
+            if (pfDiff !== 0) return pfDiff;
+            return getMflIndex(a) - getMflIndex(b);
+        };
+
+        divisions.forEach(div => {
+            const divIdNorm = norm(div.id);
+            const teamsInDiv = leagueFranchises.filter(f => norm(f.division || f.div) === divIdNorm).map(f => normFranchiseId(f.id));
+            teamsInDiv.sort((a, b) => getMflIndex(a) - getMflIndex(b));
+
+            if (teamsInDiv.length > 0) divLeaders[divIdNorm] = teamsInDiv[0];
+            if (teamsInDiv.length > 1) divRunnerUps[divIdNorm] = teamsInDiv[1];
+        });
+
+        let scopesToProcess = [];
+
+        if (baseRules.seedingScope === 'league') {
+            scopesToProcess.push({
+                scopeId: 'league',
+                teams: leagueFranchises.map(f => normFranchiseId(f.id)),
+                leaders: Object.values(divLeaders),
+                runnersUp: Object.values(divRunnerUps)
+            });
+        } else {
+            conferences.forEach(conf => {
+                const confIdNorm = norm(conf.id);
+                const confTeams = leagueFranchises.filter(f => {
+                    const fDivNorm = norm(f.division || f.div);
+                    const fConfNorm = norm(f.conference || f.conf || divToConfMap[fDivNorm]);
+                    return fConfNorm === confIdNorm;
+                }).map(f => normFranchiseId(f.id));
+
+                const confDivs = divisions.filter(d => norm(d.conference) === confIdNorm).map(d => norm(d.id));
+                const confLeaders = confDivs.map(dId => divLeaders[dId]).filter(id => id !== undefined);
+                const confRunners = confDivs.map(dId => divRunnerUps[dId]).filter(id => id !== undefined);
+
+                scopesToProcess.push({
+                    scopeId: confIdNorm,
+                    teams: confTeams,
+                    leaders: confLeaders,
+                    runnersUp: confRunners
+                });
+            });
+        }
+
+        if (baseRules.seedingModel === 'manual' && baseRules.manualSeeds) {
+            Object.keys(baseRules.manualSeeds).forEach(fid => {
+                teamSeeds[normFranchiseId(fid)] = baseRules.manualSeeds[fid];
+            });
+        } else {
+            scopesToProcess.forEach(scope => {
+                const confRules = scope.scopeId !== 'league' ? getConfRules(baseRules, scope.scopeId) : baseRules;
+
+                if (confRules.seedingModel === 'tiered_div_finish_pf') {
+                    const winners = scope.leaders.slice();
+                    winners.sort(sortByPfThenMfl);
+                    winners.forEach((id, idx) => teamSeeds[id] = idx + 1);
+
+                    const runners = scope.runnersUp.slice();
+                    runners.sort(sortByPfThenMfl);
+                    runners.forEach((id, idx) => teamSeeds[id] = idx + 1 + winners.length);
+
+                    const assigned = new Set([...winners, ...runners]);
+                    const remaining = scope.teams.filter(id => !assigned.has(id));
+                    remaining.sort(sortByPfThenMfl);
+                    remaining.forEach((id, idx) => teamSeeds[id] = idx + 1 + winners.length + runners.length);
+
+                } else if (confRules.seedingModel === 'standard_div_winners_first') {
+                    const winners = scope.leaders.slice();
+                    winners.sort((a, b) => getMflIndex(a) - getMflIndex(b));
+                    winners.forEach((id, idx) => teamSeeds[id] = idx + 1);
+
+                    const remaining = scope.teams.filter(id => !winners.includes(id));
+                    remaining.sort((a, b) => getMflIndex(a) - getMflIndex(b));
+                    remaining.forEach((id, idx) => teamSeeds[id] = idx + 1 + winners.length);
+
+                } else if (confRules.seedingModel === 'mfl_native') {
+                    const allTeams = scope.teams.slice();
+                    allTeams.sort((a, b) => getMflIndex(a) - getMflIndex(b));
+                    allTeams.forEach((id, idx) => teamSeeds[id] = idx + 1);
+                }
+            });
+        }
+
+        return teamSeeds;
+    }
+
+async function generateRostersReport(week) {
         const client = getApiClient();
         await getLeagueInfo();
         const playersMap = await getPlayersMap();
@@ -496,6 +692,7 @@
         });
 
         const franchiseStandings = toArray(standingsData?.leagueStandings?.franchise);
+        const teamSeedsMap = await calculateTeamSeeds(franchiseStandings);
         const divisions = toArray(cachedLeague?.divisions?.division);
         const conferences = toArray(cachedLeague?.conferences?.conference);
 
@@ -571,7 +768,7 @@
             }
 
             rows.push({
-                "Seed": idx + 1,
+                "Seed": teamSeedsMap[fid] !== undefined ? teamSeedsMap[fid] : (idx + 1),
                 "Franchise ID": fid,
                 "Team Name": teamName,
                 "Owner": ownerName,
@@ -585,6 +782,16 @@
                 "Points Against (PA)": pa,
                 "Streak": streak
             });
+        });
+
+        // Sort rows strictly by Seed numerical ascending
+        rows.sort((a, b) => {
+            const seedA = parseInt(a["Seed"]) || 999;
+            const seedB = parseInt(b["Seed"]) || 999;
+            if (seedA !== seedB) {
+                return seedA - seedB;
+            }
+            return a["Conference"].localeCompare(b["Conference"]);
         });
 
         return {

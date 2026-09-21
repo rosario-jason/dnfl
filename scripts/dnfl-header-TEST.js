@@ -10,7 +10,7 @@
     // USER CONFIGURATION BLOCK (Edit here to add/test modules or CSS)
     // =========================================================================
     const CONFIG = {
-        VERSION: "3.21-TEST",
+        VERSION: "3.22-TEST",
         BASE_URL: "https://dnfl.live/scripts/",
 
         STYLESHEETS: [
@@ -24,7 +24,7 @@
         ],
 
         FEATURE_MODULES: [
-            { name: "standings", url: "dnfl-standings-TEST10.js" },
+            { name: "standings", url: "dnfl-standings-TEST.js" },
             { name: "rankings",  url: "dnfl-rankings.js" },
             { name: "podcast",   url: "dnfl-podcast-TEST.js" },
             { name: "rules",     url: "dnfl-rules.js" }

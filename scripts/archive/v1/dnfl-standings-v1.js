@@ -1,9 +1,8 @@
 /* ==========================================================================
-   DNFL Dynamic Standings & Seeding Engine (v3.00-TEST3)
-   Duke Networking Fantasy League (DNFL)
+   DNFL Dynamic Standings & Seeding Engine
    ========================================================================== */
-
-(function () {
+/* global DNFLClient */
+(function() {
     'use strict';
 
     // Establish Global DNFL Namespace
@@ -12,49 +11,16 @@
     // Standings & Seeding Configuration (Loaded dynamically from standings_rules.json)
     let STANDINGS_RULES = {};
 
-    // Standardized ID Normalization Utilities (Delegating to DNFL.Utils framework helpers)
-    function norm(val) {
-        if (window.DNFL && window.DNFL.Utils && window.DNFL.Utils.pad2) {
-            return window.DNFL.Utils.pad2(val);
-        }
-        if (val === null || val === undefined) return '';
-        const s = String(val).trim();
-        return s.length === 1 && /^\d$/.test(s) ? '0' + s : s;
-    }
-
-    function normFranchiseId(val) {
-        if (window.DNFL && window.DNFL.Utils && window.DNFL.Utils.pad4) {
-            return window.DNFL.Utils.pad4(val);
-        }
-        if (val === null || val === undefined) return '';
-        const s = String(val).trim();
-        if (!s || s === '0000') return '';
-        return s.padStart(4, '0');
-    }
-
-    function toArray(val) {
-        if (!val) return [];
-        return Array.isArray(val) ? val : [val];
-    }
-
-    // Context & Identity Resolution
-    function getContext() {
-        if (window.DNFL && window.DNFL.Client && window.DNFL.Client.getContext) {
-            return window.DNFL.Client.getContext();
-        }
+    // Global Context Engine Variables
+    const activeHost = window.location.hostname || "myfantasyleague.com";
+    let targetYear = window.current_year || null;
+    if (!targetYear) {
         const pathSegments = window.location.pathname.split('/');
         const foundYear = pathSegments.find(segment => /^20\d{2}$/.test(segment));
-        const urlParams = new URLSearchParams(window.location.search);
-        return {
-            year: foundYear || urlParams.get('YEAR') || window.current_year || new Date().getFullYear().toString(),
-            leagueId: urlParams.get('L') || window.league_id || '22883'
-        };
+        targetYear = foundYear ? foundYear : new Date().getFullYear();
     }
-
-    const context = getContext();
-    const targetYear = context.year;
-    const leagueId = context.leagueId;
-    const activeHost = window.location.hostname || "myfantasyleague.com";
+    const leagueId = window.league_id || null;
+    const loggedInFranchiseId = window.franchise_id || null;
 
     // State Caches
     let cachedConferences = [];
@@ -74,13 +40,40 @@
     let relegatedTeamIds = new Set();
     let promotedTeamIds = new Set();
 
+    let retryCount = 0;
+    const maxRetries = 50; 
+
+    /**
+     * Helper to normalize 2-digit ID values (e.g. "0", 0, "00")
+     */
+    function norm(val) {
+        if (val === null || val === undefined) return '';
+        const s = String(val).trim();
+        return s.length === 1 && /^\d$/.test(s) ? '0' + s : s;
+    }
+
+    /**
+     * Helper to normalize 4-digit franchise IDs (e.g. "5", 5, "0005")
+     */
+    function normFranchiseId(val) {
+        if (val === null || val === undefined) return '';
+        const s = String(val).trim();
+        if (!s || s === '0000') return '';
+        return s.padStart(4, '0');
+    }
+
+    /**
+     * Helper to safely convert MFL payload values into Arrays
+     */
+    function toArray(val) {
+        if (!val) return [];
+        return Array.isArray(val) ? val : [val];
+    }
+
     /**
      * Dynamically detects the logged-in franchise ID across all MFL environments
      */
     function getLoggedInFranchiseId() {
-        if (window.DNFL && window.DNFL.currentFranchiseId) {
-            return normFranchiseId(window.DNFL.currentFranchiseId);
-        }
         let fid = window.franchise_id || window.mflFranchiseId || window.login_franchise_id || window.current_franchise_id;
         
         if (!fid && window.location && window.location.search) {
@@ -126,6 +119,7 @@
         if (STANDINGS_RULES[yr]) return STANDINGS_RULES[yr];
 
         for (const key in STANDINGS_RULES) {
+            // Skip metadata/instructions blocks (e.g., _instructions, _comment, __README)
             if (key.startsWith('_')) continue;
 
             if (key.includes('-')) {
@@ -166,21 +160,27 @@
      */
     async function init() {
         const tbody = document.getElementById("dnfl-standings-tbody");
-        if (!tbody) return;
+        if (!tbody) {
+            if (retryCount < maxRetries) {
+                retryCount++;
+                setTimeout(init, 100);
+            }
+            return;
+        }
 
         try {
             const rulesUrl = `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_standings/standings_rules.json`;
-            const apiClient = (window.DNFL && window.DNFL.Client) || window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
+            const apiClient = window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
 
             if (!apiClient) {
-                throw new Error("DNFL API middleware unavailable.");
+                throw new Error("DNFLClient API middleware unavailable.");
             }
 
             const [standingsResponse, leagueResponse, rawRulesJson] = await Promise.all([
                 apiClient.fetchData("leagueStandings"),
                 apiClient.fetchData("league"),
                 apiClient.fetchRawText(rulesUrl).catch(err => {
-                    console.warn("[DNFL.Standings] Could not load standings_rules.json, using fallback rules.", err);
+                    console.warn("[DNFL Standings] Could not load standings_rules.json, using fallback rules.", err);
                     return null;
                 })
             ]);
@@ -193,7 +193,7 @@
                 try {
                     STANDINGS_RULES = JSON.parse(rawRulesJson);
                 } catch (e) {
-                    console.error("[DNFL.Standings] Corrupted standings_rules.json format. Fallback engaged.", e);
+                    console.error("[DNFL Standings] Corrupted standings_rules.json format. Fallback engaged.", e);
                 }
             }
 
@@ -216,8 +216,8 @@
             cachedConferences = toArray(leagueResponse.league?.conferences?.conference);
             cachedDivisions = toArray(leagueResponse.league?.divisions?.division);
             
-            cachedLastRegWeek = parseInt(leagueResponse.league?.lastRegularSeasonWeek || 14);
-            cachedCurrentWeek = parseInt(leagueResponse.league?.currentWk) || 1;
+            cachedLastRegWeek = parseInt(leagueResponse.league.lastRegularSeasonWeek || 14);
+            cachedCurrentWeek = parseInt(leagueResponse.league.currentWk) || 1;
 
             // Check if PA fallback calculation is needed for current season
             weeklyPaMap = {};
@@ -232,7 +232,7 @@
                     const maxWk = Math.min(cachedCurrentWeek, cachedLastRegWeek);
                     const weeklyPromises = [];
                     for (let w = 1; w <= maxWk; w++) {
-                        weeklyPromises.push(apiClient.fetchData('weeklyResults', { W: w }).catch(() => null));
+                        weeklyPromises.push(apiClient.fetchData('weeklyResults', `&W=${w}`).catch(() => null));
                     }
                     const weeklyResults = await Promise.all(weeklyPromises);
 
@@ -270,7 +270,7 @@
                         });
                     });
                 } catch (e) {
-                    console.warn("[DNFL.Standings] Exception during PA fallback calculation:", e);
+                    console.warn("[DNFL Standings] Exception during PA fallback calculation:", e);
                 }
             }
 
@@ -279,7 +279,7 @@
             updateDnflStandingsView(); 
 
         } catch (error) {
-            console.error("[DNFL.Standings] Initialization Error:", error);
+            console.error("DNFL Standings Error:", error);
             tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--dnfl-alert-red); padding: 2rem;">Error loading standings.</td></tr>`;
         }
     }
@@ -711,26 +711,16 @@
         if (btn) btn.textContent = isHidden ? 'Show' : 'Hide';
     }
 
-    // Export module onto window.DNFL namespace
+    // Export module onto the window.DNFL namespace
     window.DNFL.Standings = {
         init: init,
         updateView: updateDnflStandingsView,
         toggleDivision: toggleDnflDivision
     };
 
-    // Auto-Initialize on Framework Readiness or DOM Load
-    function autoInit() {
-        if (document.getElementById('dnfl-standings-tbody') || document.getElementById('dnfl_standings_confFilter')) {
-            init();
-        }
-    }
-
-    window.addEventListener('dnfl:ready', autoInit);
-
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', autoInit);
+        document.addEventListener('DOMContentLoaded', init);
     } else {
-        autoInit();
+        init();
     }
-
 })();

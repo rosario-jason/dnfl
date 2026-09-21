@@ -1,12 +1,45 @@
-// dnfl-api-client-v2.js v1.0
+// dnfl-api-client.js v5.0
 /* ==========================================================================
-   DNFL API Client, Storage Guard & Request Deduplication Engine
+   DNFL API Client, Storage Guard & Request Deduplication Engine v5.0
+   Repository: rosario-jason/dnfl
+   File: scripts/dnfl-api-client-v5.js
    ========================================================================== */
 (function() {
     'use strict';
 
     // Establish Global DNFL Namespace
     window.DNFL = window.DNFL || {};
+
+    /**
+     * Helper to resolve active League ID across MFL environments
+     */
+    function getLeagueId() {
+        let lid = window.league_id || window.mflLeagueId || window.current_league_id;
+        if (!lid && window.location && window.location.search) {
+            const urlParams = new URLSearchParams(window.location.search);
+            lid = urlParams.get('L') || urlParams.get('LEAGUE_ID') || urlParams.get('l');
+        }
+        if (!lid && document.cookie) {
+            const cookieMatch = document.cookie.match(/(?:MFL_LEAGUE_ID|league_id)=([^;]+)/i);
+            if (cookieMatch && cookieMatch[1]) {
+                lid = decodeURIComponent(cookieMatch[1]).trim();
+            }
+        }
+        return lid ? String(lid).trim() : null;
+    }
+
+    /**
+     * Helper to resolve target season year
+     */
+    function getTargetYear() {
+        let targetYear = window.current_year || null;
+        if (!targetYear && window.location) {
+            const pathSegments = window.location.pathname.split('/');
+            const foundYear = pathSegments.find(segment => /^20\d{2}$/.test(segment));
+            targetYear = foundYear ? foundYear : new Date().getFullYear();
+        }
+        return targetYear || new Date().getFullYear();
+    }
 
     const DNFLClient = {
         // Cache Tier Configurations (TTL in milliseconds)
@@ -19,17 +52,17 @@
             realtime:      30 * 1000
         },
 
-        // Dynamic API Request Registry Layout
+        // Master Centralized MFL Request Registry
+        // Format: [frequency, MflRequestType, includeLeague, defaultArgs]
         MFL_REQUEST_REGISTRY: [
             ['daily',    'league',          true,  ''],
             ['daily',    'leagueStandings', true,  '&COLUMN_NAMES=1&ALL=1'],
             ['daily',    'rules',           true,  ''],
-            ['daily',    'players',         false, '&DETAILS=1'],
+            ['daily',    'players',         true,  '&DETAILS=1'],
             ['daily',    'rosters',         true,  ''],
             ['hourly',   'playerScores',    true,  ''],
             ['hourly',   'projectedScores', true,  ''],
             ['hourly',   'weeklyResults',   true,  '']
-
         ],
 
         // Active Network Handshake Tracker (Request Deduplication)
@@ -63,77 +96,76 @@
         },
 
         /**
-         * Main MFL Export API fetcher with TTL caching and request deduplication
+         * Main MFL Export API fetcher with dynamic parameter support, TTL caching, and request deduplication
          * @param {string} MflRequestType 
+         * @param {string} [extraParams=''] - Dynamic extra query string parameters (e.g. '&W=3' or '&W=YTD')
          * @returns {Promise<any>}
          */
-        async fetchData(MflRequestType) {
-            // FIX: Search by index 1 of each registry row array
-            const config = this.MFL_REQUEST_REGISTRY.find(row => row[1] === MflRequestType);
+        async fetchData(MflRequestType, extraParams = '') {
+            let config = this.MFL_REQUEST_REGISTRY.find(row => row[1] === MflRequestType);
             
+            // Fallback config if endpoint is not explicitly pre-registered
             if (!config) {
-                console.error(`DNFL Client Error: Request type [${MflRequestType}] not defined in registry.`);
-                return null;
+                console.warn(`[DNFL Client] Endpoint [${MflRequestType}] not found in static registry. Applying dynamic hourly configuration.`);
+                config = ['hourly', MflRequestType, true, ''];
             }
 
-            const [frequency, , includeLeague, mflArgs] = config;
-            const leagueId = window.league_id || null;
+            const [frequency, , includeLeague, defaultArgs] = config;
+            const leagueId = getLeagueId();
+            const targetYear = getTargetYear();
             const apiKey = window.apiKey || new URLSearchParams(window.location.search).get('APIKEY') || null;
             const activeHost = window.location.hostname || "myfantasyleague.com";
-
-            let targetYear = window.current_year || null;
-            if (!targetYear) {
-                const pathSegments = window.location.pathname.split('/');
-                const foundYear = pathSegments.find(segment => /^20\d{2}$/.test(segment));
-                targetYear = foundYear ? foundYear : new Date().getFullYear();
-            }
 
             if (includeLeague && !leagueId) {
                 console.error(`DNFL Client Error: ${MflRequestType} requires an active League ID context.`);
                 return null;
             }
 
+            // Create parameter-aware cache key to handle parameterized queries (e.g., &W=3 vs &W=YTD)
             const leagueSegment = (includeLeague && leagueId) ? `L${leagueId}` : 'GLOBAL';
-            const cacheKey = `dnfl_${MflRequestType}_${leagueSegment}_Y${targetYear}`;
+            const paramSlug = extraParams ? `_P${extraParams.replace(/[^a-zA-Z0-9]/g, '_')}` : '';
+            const cacheKey = `dnfl_${MflRequestType}_${leagueSegment}_Y${targetYear}${paramSlug}`;
             
             const cachedRecord = this.safeGetStorage(cacheKey);
             const currentTime = Date.now();
-            const allowedTtl = this.CACHE_CONFIGS[frequency];
+            const allowedTtl = this.CACHE_CONFIGS[frequency] || this.CACHE_CONFIGS.hourly;
 
             // Cache Hit: Serve instantly from browser memory if valid
             if (cachedRecord) {
                 try {
                     const parsedRecord = JSON.parse(cachedRecord);
                     if (currentTime - parsedRecord.timestamp < allowedTtl) {
-                        console.log(`[${MflRequestType}] - Loading from DNFL browser cache`);
+                        console.log(`[DNFLClient] Serving cached [${MflRequestType}${extraParams}] (Key: ${cacheKey})`);
                         return parsedRecord.payload;
                     }
                 } catch (e) {
-                    console.warn(`[${MflRequestType}] - Corrupted cache record. Refetching...`);
+                    console.warn(`[DNFLClient] Corrupted cache record for [${cacheKey}]. Refetching...`);
                 }
             }
 
-            // Deduplicator Engine: If identical request is active, join existing Promise
+            // Request Deduplication: If identical network call is active, join existing Promise
             if (this.activeFetches[cacheKey]) {
-                console.log(`[${MflRequestType}] - Simultaneous call detected. Bundling with existing network stream.`);
+                console.log(`[DNFLClient] Bundling simultaneous fetch for [${cacheKey}]`);
                 return this.activeFetches[cacheKey];
             }
 
-            // Initiate Single Network Request wrapped in a trackable Promise
+            // Initiate Network Request via fetch() wrapped in a trackable Promise
             this.activeFetches[cacheKey] = (async () => {
                 try {
-                    console.log(`[${MflRequestType}] - API request from https://${activeHost}/${targetYear}/export?TYPE=${MflRequestType}`);
-                    
                     let mflUrl = `https://${activeHost}/${targetYear}/export?TYPE=${MflRequestType}&JSON=1`;
                     if (includeLeague && leagueId) mflUrl += `&L=${leagueId.toString().trim()}`;
                     if (apiKey)                   mflUrl += `&APIKEY=${apiKey.toString().trim()}`;
-                    if (mflArgs)                  mflUrl += mflArgs.toString().trim();
+                    if (defaultArgs)              mflUrl += defaultArgs.toString().trim();
+                    if (extraParams)              mflUrl += extraParams.toString().trim();
+
+                    console.log(`[DNFLClient] Initiating network fetch: ${mflUrl}`);
                     
                     const response = await fetch(mflUrl);
-                    if (!response.ok) throw new Error("MFL Server rejected connection request.");
+                    if (!response.ok) throw new Error(`MFL Server rejected connection request: HTTP ${response.status}`);
                     
                     const data = await response.json();
 
+                    // Cache payload securely
                     const recordToCache = {
                         timestamp: currentTime,
                         payload: data

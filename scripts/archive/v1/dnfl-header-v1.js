@@ -8,7 +8,7 @@
     window.DNFL = window.DNFL || {};
 
     // 2. FRAMEWORK VERSION (Increment this to bust browser cache globally)
-    const FRAMEWORK_VERSION = "2.91";
+    const FRAMEWORK_VERSION = "2.95";
     const BASE_URL = "https://dnfl.live/scripts/";
 
     /* 3. MASTER CHRONOLOGICAL SCRIPT REGISTRY
@@ -23,15 +23,14 @@
 
         
         // Core Framework & API Engine
-        { url: "dnfl-api-client-v5.js", isExternal: false },
+        { url: "dnfl-api-client.js", isExternal: false },
 
         // Feature Modules
-        { url: "dnfl-standings-v4.js", isExternal: false },
-        { url: "dnfl-rankings-vtest.js", isExternal: false },
-        { url: "dnfl-podcast-v2.js", isExternal: false },
-        { url: "dnfl-rules-v3.js", isExternal: false },
-        { url: "dnfl-lts-v6.js", isExternal: false },
-        { url: "dnfl-exporter-v13.js", isExternal: false }       
+        { url: "dnfl-standings.js", isExternal: false },
+        { url: "dnfl-rankings.js", isExternal: false },
+        { url: "dnfl-podcast.js", isExternal: false },
+        { url: "dnfl-rules.js", isExternal: false },
+        { url: "dnfl-exporter.js", isExternal: false }       
     ];
 
     /**
