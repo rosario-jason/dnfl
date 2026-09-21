@@ -1,18 +1,16 @@
 /* ==========================================================================
    DNFL Framework Script Loader & Version Controller
    Duke Networking Fantasy League (DNFL)
-   ==========================================================================
-   Manages global CSS injection, 3-step async dependency pipeline, conditional 
-   library hydration, string padding utilities, and DOM mutation observers.
    ========================================================================== */
 
 (function (window, document) {
     'use strict';
 
-    const LOG_PREFIX = `[DNFL Framework]`;
-
+    // =========================================================================
+    // USER CONFIGURATION BLOCK (Edit here to add/test modules or CSS)
+    // =========================================================================
     const CONFIG = {
-        VERSION: "3.18-TEST",
+        VERSION: "3.21-TEST",
         BASE_URL: "https://dnfl.live/scripts/",
 
         STYLESHEETS: [
@@ -26,7 +24,7 @@
         ],
 
         FEATURE_MODULES: [
-            { name: "standings", url: "dnfl-standings-TEST7.js" },
+            { name: "standings", url: "dnfl-standings-TEST10.js" },
             { name: "rankings",  url: "dnfl-rankings.js" },
             { name: "podcast",   url: "dnfl-podcast-TEST.js" },
             { name: "rules",     url: "dnfl-rules.js" }
@@ -40,13 +38,23 @@
         }
     };
 
+    // =========================================================================
+    // FRAMEWORK LOADER ENGINE (No editing required below)
+    // =========================================================================
+
     window.DNFL = window.DNFL || {};
 
-    // ----------------------------------------------------------------------
-    // Execution Engine
-    // ----------------------------------------------------------------------
+    CONFIG.STYLESHEETS.forEach(sheet => {
+        if (!document.getElementById(sheet.id)) {
+            const cssLink = document.createElement('link');
+            cssLink.id = sheet.id;
+            cssLink.rel = 'stylesheet';
+            cssLink.href = `${sheet.url}?v=${CONFIG.VERSION}`;
+            document.head.appendChild(cssLink);
+        }
+    });
 
-    function loadScript(scriptConfig, sectionName) {
+    function loadScript(scriptConfig) {
         return new Promise((resolve) => {
             const scriptElement = document.createElement("script");
             const fullUrl = scriptConfig.isExternal 
@@ -57,141 +65,104 @@
             scriptElement.type = "text/javascript";
             scriptElement.async = false;
 
-            scriptElement.onload = () => resolve({ success: true });
+            scriptElement.onload = () => resolve({ success: true, url: scriptConfig.url });
             scriptElement.onerror = (err) => {
-                console.error(`${LOG_PREFIX} ERROR in ${sectionName}: Failed to load "${scriptConfig.name}" from "${fullUrl}"`, err);
-                resolve({ success: false });
+                console.error(`[DNFL Header] Script load error: ${scriptConfig.url}`, err);
+                resolve({ success: false, url: scriptConfig.url });
             };
 
             document.head.appendChild(scriptElement);
         });
     }
 
-    async function loadGroup(scriptList, sectionName) {
-        let allOk = true;
-        for (const item of scriptList) {
-            const result = await loadScript(item, sectionName);
-            if (!result.success) allOk = false;
+    async function loadScriptsSequentially(scriptList) {
+        for (const scriptConfig of scriptList) {
+            await loadScript(scriptConfig);
         }
-        return allOk;
     }
 
-    function checkOptionalLibraries() {
+    function loadConditionalLibrary(libKey, force = false) {
         return new Promise((resolve) => {
-            const keys = Object.keys(CONFIG.CONDITIONAL_LIBRARIES);
-            if (keys.length === 0) return resolve(true);
+            const lib = CONFIG.CONDITIONAL_LIBRARIES[libKey];
+            if (!lib) return resolve(false);
 
-            keys.forEach(key => {
-                const lib = CONFIG.CONDITIONAL_LIBRARIES[key];
-                const exists = lib.targets.some(sel => document.querySelector(sel) !== null);
-                if (exists && !lib.loaded) {
-                    lib.loaded = true;
-                    const script = document.createElement("script");
-                    script.src = lib.url;
-                    script.async = true;
-                    script.onerror = () => console.error(`${LOG_PREFIX} ERROR in Section 3 (Optional Tools): Failed to load "${key}" from "${lib.url}"`);
-                    document.head.appendChild(script);
-                }
-            });
-            resolve(true);
+            if (lib.loaded) return resolve(true);
+
+            const containerExists = force || lib.targets.some(selector => document.querySelector(selector) !== null);
+
+            if (containerExists) {
+                lib.loaded = true;
+                const script = document.createElement("script");
+                script.src = lib.url;
+                script.async = true;
+                script.onload = () => {
+                    console.log(`[DNFL.Header] Hydrated library: ${libKey}`);
+                    resolve(true);
+                };
+                script.onerror = () => {
+                    console.error(`[DNFL.Header] Failed to hydrate library: ${libKey}`);
+                    lib.loaded = false;
+                    resolve(false);
+                };
+                document.head.appendChild(script);
+            } else {
+                resolve(false);
+            }
         });
     }
 
-    // ----------------------------------------------------------------------
-    // Framework Helper Utilities
-    // ----------------------------------------------------------------------
+    async function loadRequiredConditionalLibraries() {
+        const tasks = Object.keys(CONFIG.CONDITIONAL_LIBRARIES).map(key => loadConditionalLibrary(key, false));
+        await Promise.all(tasks);
+    }
+
     DNFL.Utils = DNFL.Utils || {};
-
-    /**
-     * Standardized ID padding helper.
-     * Converts valid values to padded strings while leaving empty/undefined values as ''.
-     */
-    DNFL.Utils.pad = function (val, length = 4) {
-        if (val === null || val === undefined || String(val).trim() === '') return '';
-        return String(val).trim().padStart(length, '0');
-    };
-
-    DNFL.Utils.pad2 = function (val) {
-        return DNFL.Utils.pad(val, 2);
-    };
-
-    DNFL.Utils.pad4 = function (val) {
-        return DNFL.Utils.pad(val, 4);
-    };
-
-    DNFL.Utils.pad5 = function (val) {
-        return DNFL.Utils.pad(val, 5);
-    };
 
     DNFL.Utils.onElementReady = function (selector, callback) {
         const check = () => {
-            const el = document.querySelector(selector);
-            if (el) { callback(el); return true; }
+            const element = document.querySelector(selector);
+            if (element) {
+                callback(element);
+                return true;
+            }
             return false;
         };
+
         if (check()) return;
 
-        const observer = new MutationObserver((_, obs) => {
-            if (check()) obs.disconnect();
-        });
-        observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
+        const startObserver = () => {
+            if (check()) return;
+            const target = document.body || document.documentElement;
+            const observer = new MutationObserver((mutations, obs) => {
+                if (check()) {
+                    obs.disconnect();
+                }
+            });
+            observer.observe(target, { childList: true, subtree: true });
+        };
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', startObserver);
+        } else {
+            startObserver();
+        }
     };
 
-
-    /**
-     * Public helper to trigger dynamic library hydration on-demand
-     * @param {string} libKey - Key in CONFIG.CONDITIONAL_LIBRARIES
-     */
     DNFL.Utils.loadLibrary = function (libKey) {
-        const lib = CONFIG.CONDITIONAL_LIBRARIES[libKey];
-        if (!lib || lib.loaded) return Promise.resolve(!!lib?.loaded);
-        lib.loaded = true;
-        return new Promise((resolve) => {
-            const script = document.createElement("script");
-            script.src = lib.url;
-            script.async = true;
-            script.onload = () => resolve(true);
-            script.onerror = () => { lib.loaded = false; resolve(false); };
-            document.head.appendChild(script);
-        });
+        return loadConditionalLibrary(libKey, true);
     };
 
-    // ----------------------------------------------------------------------
-    // Main 5-Step Pipeline
-    // ----------------------------------------------------------------------
-    (async function runFramework() {
-        // Step 1: Stylesheets
-        CONFIG.STYLESHEETS.forEach(s => {
-            if (!document.getElementById(s.id)) {
-                const link = document.createElement('link');
-                link.id = s.id;
-                link.rel = 'stylesheet';
-                link.href = `${s.url}?v=${CONFIG.VERSION}`;
-                document.head.appendChild(link);
-            }
-        });
-        console.log(`${LOG_PREFIX} 1/5: Stylesheets loaded.`);
+    (async function initializeFramework() {
+        await loadScriptsSequentially(CONFIG.INFRASTRUCTURE);
+        await loadRequiredConditionalLibraries();
+        await loadScriptsSequentially(CONFIG.FEATURE_MODULES);
 
-        // Step 2: Core Libraries
-        const coreOk = await loadGroup(CONFIG.INFRASTRUCTURE, "Section 2 (Core Libraries)");
-        if (coreOk) {
-            console.log(`${LOG_PREFIX} 2/5: Core site libraries loaded (PapaParse, Marked, API Client).`);
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', loadRequiredConditionalLibraries);
         }
 
-        // Step 3: Optional Tools
-        await checkOptionalLibraries();
-        console.log(`${LOG_PREFIX} 3/5: Optional page tools checked.`);
-
-        // Step 4: Feature Modules
-        const featuresOk = await loadGroup(CONFIG.FEATURE_MODULES, "Section 4 (League Features)");
-        if (featuresOk) {
-            console.log(`${LOG_PREFIX} 4/5: League features loaded (Standings, Rankings, Podcast, Rules).`);
-        }
-
-        // Step 5: Readiness Event
         window.dispatchEvent(new CustomEvent('dnfl:ready', { detail: { version: CONFIG.VERSION } }));
         window.dispatchEvent(new CustomEvent('dnflFrameworkReady', { detail: { version: CONFIG.VERSION } }));
-        console.log(`${LOG_PREFIX} 5/5: DNFL Framework is ready.`);
     })();
 
 })(window, document);
