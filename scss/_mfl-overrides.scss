@@ -64,5 +64,5 @@ caption,
 
 // 5. MFLScripts Decoupling & Framework Accent Overrides
 .dnfl {
-  --accent: #{}; // Primary Duke Shale Blue override
+  --accent: #{$dnfl-primary}; // Primary Duke Shale Blue override
 }
