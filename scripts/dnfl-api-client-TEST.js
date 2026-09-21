@@ -169,10 +169,10 @@
         const urlParams = new URLSearchParams(window.location.search);
         let leagueId = urlParams.get('L') || window.mflLeagueId || window.league_id || CONFIG.DEFAULT_LEAGUE_ID;
         
-        let year = urlParams.get('YEAR') || window.mflYear || window.year;
+        let year = urlParams.get('YEAR') || window.current_year || window.mflYear || window.year;
         if (!year) {
             const pathMatch = window.location.pathname.match(/\/(\d{4})\//);
-            year = pathMatch ? pathMatch[1] : new Date().getFullYear().toString();
+            year = pathMatch ? pathMatch[2] : new Date().getFullYear().toString();
         }
 
         let leagueSegment = "0";

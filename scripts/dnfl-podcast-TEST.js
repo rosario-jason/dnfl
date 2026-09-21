@@ -27,7 +27,14 @@
      * Initialize Podcast Module
      */
     async function init(yearOverride) {
-        podcastYear = yearOverride || (DNFL.Client ? DNFL.Client.getContext().year : new Date().getFullYear().toString());
+        // Middleware availability guard
+        const client = (window.DNFL && window.DNFL.Client) || window.DNFLClient;
+        if (!client) {
+            console.error('[DNFL.Podcast] API Client middleware is unavailable.');
+            return;
+        }
+
+        podcastYear = yearOverride || client.getContext().year || new Date().getFullYear().toString();
 
         const selector = document.getElementById('dnfl_podcast_selector');
         if (!selector) return;
