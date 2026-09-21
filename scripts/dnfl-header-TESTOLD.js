@@ -10,7 +10,7 @@
     // USER CONFIGURATION BLOCK (Edit here to add/test modules or CSS)
     // =========================================================================
     const CONFIG = {
-        VERSION: "3.22-TEST",
+        VERSION: "TESTOLD",
         BASE_URL: "https://dnfl.live/scripts/",
 
         STYLESHEETS: [

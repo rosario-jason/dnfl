@@ -10,15 +10,15 @@
     // 1. Framework Configuration
     // =========================================================================
     const CONFIG = {
-        FRAMEWORK_VERSION: 'v3.00',
+        FRAMEWORK_VERSION: 'TEST',
         BASE_URL: 'https://dnfl.live/',
-        API_CLIENT_SCRIPT: 'dnfl-api-client-v3.00.js',
-        GLOBAL_CSS: 'dnfl-global-v3.00.css',
+        API_CLIENT_SCRIPT: 'dnfl-api-client-TEST.js',
+        GLOBAL_CSS: 'dnfl-global.css',
         FEATURE_MODULES: [
-            { name: 'standings', url: 'dnfl-standings-TEST10.js' },
-            { name: 'rankings',  url: 'dnfl-rankings-TEST1.js' },
-            { name: 'podcast',   url: 'dnfl-podcast-TEST7.js' },
-            { name: 'rules',     url: 'dnfl-rules-TEST1.js' }
+            { name: 'standings', url: 'dnfl-standings-TEST.js' },
+            { name: 'rankings',  url: 'dnfl-rankings.js' },
+            { name: 'podcast',   url: 'dnfl-podcast-TEST.js' },
+            { name: 'rules',     url: 'dnfl-rules.js' }
         ]
     };
 
