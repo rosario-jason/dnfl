@@ -1,0 +1,84 @@
+/* ==========================================================================
+   DNFL Base Styles & Element Resets (_base.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt
+   ========================================================================== */
+
+// --------------------------------------------------------------------------
+// 1. Box Sizing & Root Resets
+// --------------------------------------------------------------------------
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+// --------------------------------------------------------------------------
+// 2. Base Typography & Link Defaults
+// --------------------------------------------------------------------------
+body {
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--dnfl-text-main);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--dnfl-primary);
+  text-decoration: none;
+  transition: color var(--dnfl-transition-fast);
+
+  &:hover {
+    color: var(--dnfl-primary-hover);
+    text-decoration: underline;
+  }
+}
+
+// --------------------------------------------------------------------------
+// 3. Universal Status Messaging Classes
+// --------------------------------------------------------------------------
+.dnfl-status-loading {
+  color: var(--dnfl-text-muted) !important;
+  font-style: italic !important;
+}
+
+.dnfl-status-error {
+  color: var(--dnfl-alert-red) !important;
+  font-style: italic !important;
+}
+
+// --------------------------------------------------------------------------
+// 4. Common Layout & Disclaimer Utilities
+// --------------------------------------------------------------------------
+.dnfl-section-header-row {
+  display: flex;
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+.dnfl-disclaimer-text {
+  font-size: 0.8rem;
+  font-style: italic;
+  text-align: center;
+  color: var(--dnfl-text-subtle);
+  margin-top: 1rem;
+}
+
+.dnfl-disclaimer-note {
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--dnfl-text-subtle);
+}
+
+// --------------------------------------------------------------------------
+// 5. Universal Responsive Visibility Helpers
+// --------------------------------------------------------------------------
+@media (max-width: 768px) {
+  .dnfl-hide-mobile {
+    display: none !important;
+  }
+}

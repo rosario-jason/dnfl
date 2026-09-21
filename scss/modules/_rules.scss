@@ -1,0 +1,206 @@
+/* ==========================================================================
+   DNFL Rules Module Styles (modules/_rules.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt
+   Note: Tables and generic accordion/blockquote wrappers are promoted to global
+   _tables-v5.scss and _containers-v5.scss. This module provides complete 1:1
+   parity for the Rulebook UI.
+   ========================================================================== */
+
+// 1. Rules Container & Header Resets
+.dnfl-rules-wrapper {
+  width: 100%;
+  margin-top: 1rem;
+  box-sizing: border-box;
+
+  h1, h2, h3, h4, h5 {
+    text-align: left !important;
+    margin: 14px 0 6px 0 !important;
+    font-family: inherit !important;
+    letter-spacing: normal !important;
+    text-transform: none !important;
+    background: none !important;
+  }
+}
+
+.dnfl-rules-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--dnfl-text-heading);
+}
+
+.dnfl-rules-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+// 2. Level 1 Accordion (# Section)
+.dnfl-rules-tabhead {
+  background-color: var(--dnfl-bg-muted);
+  color: var(--dnfl-text-main);
+  padding: 14px 18px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: 1px solid var(--dnfl-border-medium);
+  border-radius: var(--dnfl-radius-md);
+  margin-top: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color var(--dnfl-transition-smooth), border-color var(--dnfl-transition-smooth);
+  user-select: none;
+
+  &:hover {
+    background-color: var(--dnfl-bg-subhead);
+    border-color: var(--dnfl-primary);
+    color: var(--dnfl-primary);
+  }
+}
+
+.dnfl-rules-icon {
+  margin-right: 8px;
+  color: var(--dnfl-primary);
+}
+
+.dnfl-rules-badge {
+  font-size: 0.75rem;
+  background-color: var(--dnfl-primary);
+  color: var(--dnfl-bg-card);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.dnfl-rules-main-content {
+  padding: 12px 16px;
+  background-color: var(--dnfl-bg-card);
+  border: 1px solid var(--dnfl-border-subtle);
+  border-top: none;
+  border-bottom-left-radius: var(--dnfl-radius-md);
+  border-bottom-right-radius: var(--dnfl-radius-md);
+  margin-bottom: 12px;
+}
+
+// 3. Level 2 Accordion (## Subsection)
+.dnfl-rules-subhead {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dnfl-primary);
+  padding: 10px 12px;
+  background-color: var(--dnfl-bg-subhead);
+  border-left: 4px solid var(--dnfl-primary);
+  border-radius: var(--dnfl-radius-sm);
+  margin-top: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--dnfl-transition-fast);
+
+  &:hover {
+    background-color: var(--dnfl-border-subtle);
+  }
+}
+
+.dnfl-sub-icon {
+  margin-right: 6px;
+}
+
+.dnfl-rules-sub-content {
+  padding: 10px 12px 12px 12px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--dnfl-text-subhead);
+}
+
+// 4. Level 3 Accordion (### Topic)
+.dnfl-rules-topichead {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--dnfl-text-heading);
+  padding: 8px 10px;
+  background-color: var(--dnfl-bg-muted);
+  border: 1px solid var(--dnfl-border-subtle);
+  border-radius: var(--dnfl-radius-sm);
+  margin-top: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color var(--dnfl-transition-fast);
+
+  &:hover {
+    background-color: var(--dnfl-bg-subhead);
+    color: var(--dnfl-primary);
+  }
+}
+
+.dnfl-topic-icon {
+  margin-right: 6px;
+  color: var(--dnfl-primary);
+}
+
+.dnfl-rules-topic-content {
+  padding: 10px 14px;
+  background-color: var(--dnfl-bg-card);
+  border: 1px solid var(--dnfl-border-subtle);
+  border-top: none;
+  border-bottom-left-radius: var(--dnfl-radius-sm);
+  border-bottom-right-radius: var(--dnfl-radius-sm);
+  margin-bottom: 8px;
+}
+
+// 5. Lists & Hanging Indent Alignment
+.dnfl-rules-wrapper {
+  ol {
+    margin-left: 1.25rem !important;
+    padding-left: 0.5rem !important;
+  }
+
+  li {
+    margin-bottom: 8px !important;
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
+  }
+}
+
+.dnfl-rules-topic-content li {
+  margin-bottom: 8px !important;
+
+  &:last-child {
+    margin-bottom: 0 !important;
+  }
+}
+
+// 6. Default Collapsed State for Accordions
+.dnfl-rules-main-content,
+.dnfl-rules-sub-content,
+.dnfl-rules-topic-content {
+  display: none;
+}
+
+// 7. Schedule Section Sub-Header Formatting
+.dnfl-rules-schedule-header {
+  font-weight: 700;
+  font-style: italic;
+  text-decoration: underline;
+  color: var(--dnfl-text-heading);
+  margin: 1rem 0 0.5rem 0;
+}
+
+// 8. Mobile Responsive Overrides
+@media (max-width: 768px) {
+  .dnfl-rules-tabhead {
+    font-size: 0.95rem;
+    padding: 12px 14px;
+  }
+
+  .dnfl-rules-badge {
+    display: none;
+  }
+
+  .dnfl-rules-wrapper blockquote {
+    margin-left: 1rem !important;
+  }
+}

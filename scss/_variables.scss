@@ -1,0 +1,187 @@
+/* ==========================================================================
+   DNFL Design Tokens & Global Variables (_variables.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt
+   ========================================================================== */
+
+// --------------------------------------------------------------------------
+// 1. SCSS Variables (Direct 1:1 Mapping to Base Tokens)
+// --------------------------------------------------------------------------
+
+// Primary Brand Palette
+$accent:                      #0577B1 !default; // Duke Shale Blue / Medium Cerulean (Preserved for MFL scripts compatibility)
+$dnfl-primary:                #0577B1 !default; // Duke Shale Blue / Medium Cerulean
+$dnfl-primary-hover:          #045e8c !default; // Deep Ocean Blue / Dark Cerulean
+$dnfl-primary-light:          #b6e2ff !default; // Ice Blue Tint / Light Sky Blue
+
+// Accent & Highlight Colors
+$dnfl-accent-blue:            #36a2eb !default; // Bright Sky Blue
+$dnfl-highlight-yellow:       #fde68a !default; // Soft Canary Yellow / Light Amber
+$dnfl-highlight-yellow-hover: #fcd34d !default; // Warm Gold / Amber Yellow
+$dnfl-alert-red:              #ef4444 !default; // Coral Red / Bright Red
+$dnfl-success-green:          #10b981 !default; // Emerald Green
+$dnfl-badge-blue:             #3b82f6 !default; // Cobalt Blue / Royal Blue
+$dnfl-badge-amber:            #f59e0b !default; // Dark Amber / Vivid Amber
+
+// Chart & Conference Color Palette (6-Color Scalable Palette)
+$dnfl-chart-1:                rgba(54, 162, 235, 0.85) !default;  // #1 - Sky Blue (Cameron Crazies)
+$dnfl-chart-1-border:         rgb(54, 162, 235) !default;        // #1 Border
+$dnfl-chart-2:                rgba(255, 99, 132, 0.85) !default; // #2 - Rose Pink (K-Ville)
+$dnfl-chart-2-border:         rgb(255, 99, 132) !default;        // #2 Border
+$dnfl-chart-3:                rgba(75, 192, 192, 0.85) !default; // #3 - Teal / Cyan (Blue Devils)
+$dnfl-chart-3-border:         rgb(75, 192, 192) !default;        // #3 Border
+$dnfl-chart-4:                rgba(255, 205, 86, 0.85) !default;  // #4 - Warm Amber / Gold
+$dnfl-chart-4-border:         rgb(255, 205, 86) !default;        // #4 Border
+$dnfl-chart-5:                rgba(153, 102, 255, 0.85) !default; // #5 - Royal Purple
+$dnfl-chart-5-border:         rgb(153, 102, 255) !default;       // #5 Border
+$dnfl-chart-6:                rgba(255, 159, 64, 0.85) !default;  // #6 - Vivid Coral / Orange
+$dnfl-chart-6-border:         rgb(255, 159, 64) !default;        // #6 Border
+
+// Legacy Conference Aliases (Preserved for backwards compatibility)
+$dnfl-conf-crazies-bg:        $dnfl-chart-1 !default;
+$dnfl-conf-crazies-border:    $dnfl-chart-1-border !default;
+$dnfl-conf-kville-bg:         $dnfl-chart-2 !default;
+$dnfl-conf-kville-border:     $dnfl-chart-2-border !default;
+$dnfl-conf-bluedevils-bg:     $dnfl-chart-3 !default;
+$dnfl-conf-bluedevils-border: $dnfl-chart-3-border !default;
+
+// Neutral Palette
+$dnfl-bg-card:                #ffffff !default; // Pure White
+$dnfl-bg-alt:                 #fafafa !default; // Off-White / Snow
+$dnfl-bg-muted:               #f8fafc !default; // Cool Slate Tint / Alice Blue
+$dnfl-bg-dark:                #262626 !default; // Dark Charcoal
+$dnfl-bg-subhead:             #f1f5f9 !default; // Soft Slate Gray
+$dnfl-border-dark:            #444444 !default; // Dark Mineral Gray / Charcoal Gray
+$dnfl-border-medium:          #cbd5e1 !default; // Light Slate Border / Light Gray
+$dnfl-border-light:           #e5e7eb !default; // Soft Divider Gray / Very Light Gray
+$dnfl-border-subtle:          #e2e8f0 !default; // Ultra-Light Slate / Pale Gray
+
+// Typography Colors
+$dnfl-text-main:              #121212 !default; // Obsidian Black / Very Dark Gray
+$dnfl-text-heading:           #0f172a !default; // Dark Slate / Charcoal Heading
+$dnfl-text-subhead:           #1e293b !default; // Deep Slate Subhead
+$dnfl-text-subtle:            #555555 !default; // Medium Gray / Dim Text
+$dnfl-text-muted:             #a3a3a3 !default; // Muted Silver / Light Gray
+$dnfl-text-quote:             #475569 !default; // Slate Blue-Gray / Blockquote Text
+
+// Status Indicator Colors
+$dnfl-green-bg:               #dcfce7 !default; // Mint Green Tint / Light Emerald
+$dnfl-green-text:             #15803d !default; // Forest Green / Dark Emerald
+$dnfl-green-border:           #bbf7d0 !default; // Soft Emerald Border
+$dnfl-red-bg:                 #fee2e2 !default; // Soft Rose Tint / Light Red
+$dnfl-red-text:               #b91c1c !default; // Deep Crimson / Dark Red
+$dnfl-red-border:             #fecaca !default; // Soft Rose Border
+$dnfl-blue-bg:                #dbeafe !default; // Soft Ice Blue Tint / Light Blue
+$dnfl-blue-text:              #1d4ed8 !default; // Royal Blue / Dark Blue
+$dnfl-blue-border:            #bfdbfe !default; // Soft Sky Blue Border
+$dnfl-amber-bg:               #fef3c7 !default; // Light Warm Amber Tint
+$dnfl-amber-text:             #b45309 !default; // Deep Amber / Ochre
+$dnfl-amber-border:           #fde68a !default; // Soft Amber Border
+$dnfl-gray-bg:                #f1f5f9 !default; // Light Slate Gray Tint
+$dnfl-gray-text:              #64748b !default; // Slate Gray Text
+$dnfl-gray-border:            #e2e8f0 !default; // Soft Slate Border
+
+// Interface Dimensions & Radius Tokens
+$dnfl-radius-lg:              12px !default;    // Large Card & Container Radius
+$dnfl-radius-md:              8px !default;     // Medium Control & Button Radius
+$dnfl-radius-sm:              4px !default;     // Small Tag & Badge Radius
+
+// Shadow & Elevation Tokens
+$dnfl-shadow-card:            0 4px 16px rgba(0, 0, 0, 0.4) !default; // Deep Elevation Shadow
+$dnfl-shadow-subtle:          0 1px 3px rgba(0, 0, 0, 0.05) !default;  // Soft Surface Shadow
+
+// Motion & Transition Tokens
+$dnfl-transition-fast:        0.15s ease !default; // Rapid Micro-Interaction
+$dnfl-transition-smooth:      0.2s ease !default;  // Smooth State Transition
+
+// --------------------------------------------------------------------------
+// 2. CSS Custom Properties (:root & .dnfl Scope Binding)
+// --------------------------------------------------------------------------
+
+:root, .dnfl {
+  /* ---------------- Primary Brand Palette ---------------- */
+  --accent:                      #{$accent};
+  --dnfl-primary:                #{$dnfl-primary};
+  --dnfl-primary-hover:          #{$dnfl-primary-hover};
+  --dnfl-primary-light:          #{$dnfl-primary-light};
+
+  /* ---------------- Accent & Highlight Colors ---------------- */
+  --dnfl-accent-blue:            #{$dnfl-accent-blue};
+  --dnfl-highlight-yellow:       #{$dnfl-highlight-yellow};
+  --dnfl-highlight-yellow-hover: #{$dnfl-highlight-yellow-hover};
+  --dnfl-alert-red:              #{$dnfl-alert-red};
+  --dnfl-success-green:          #{$dnfl-success-green};
+  --dnfl-badge-blue:             #{$dnfl-badge-blue};
+  --dnfl-badge-amber:            #{$dnfl-badge-amber};
+
+  /* ---------------- Chart & Conference Color Palette ---------------- */
+  --dnfl-chart-1:                #{$dnfl-chart-1};
+  --dnfl-chart-1-border:         #{$dnfl-chart-1-border};
+  --dnfl-chart-2:                #{$dnfl-chart-2};
+  --dnfl-chart-2-border:         #{$dnfl-chart-2-border};
+  --dnfl-chart-3:                #{$dnfl-chart-3};
+  --dnfl-chart-3-border:         #{$dnfl-chart-3-border};
+  --dnfl-chart-4:                #{$dnfl-chart-4};
+  --dnfl-chart-4-border:         #{$dnfl-chart-4-border};
+  --dnfl-chart-5:                #{$dnfl-chart-5};
+  --dnfl-chart-5-border:         #{$dnfl-chart-5-border};
+  --dnfl-chart-6:                #{$dnfl-chart-6};
+  --dnfl-chart-6-border:         #{$dnfl-chart-6-border};
+
+  /* Legacy Conference Aliases */
+  --dnfl-conf-crazies-bg:        var(--dnfl-chart-1);
+  --dnfl-conf-crazies-border:    var(--dnfl-chart-1-border);
+  --dnfl-conf-kville-bg:         var(--dnfl-chart-2);
+  --dnfl-conf-kville-border:     var(--dnfl-chart-2-border);
+  --dnfl-conf-bluedevils-bg:     var(--dnfl-chart-3);
+  --dnfl-conf-bluedevils-border: var(--dnfl-chart-3-border);
+
+  /* ---------------- Neutral Palette ---------------- */
+  --dnfl-bg-card:                #{$dnfl-bg-card};
+  --dnfl-bg-alt:                 #{$dnfl-bg-alt};
+  --dnfl-bg-muted:               #{$dnfl-bg-muted};
+  --dnfl-bg-dark:                #{$dnfl-bg-dark};
+  --dnfl-bg-subhead:             #{$dnfl-bg-subhead};
+  --dnfl-border-dark:            #{$dnfl-border-dark};
+  --dnfl-border-medium:          #{$dnfl-border-medium};
+  --dnfl-border-light:           #{$dnfl-border-light};
+  --dnfl-border-subtle:          #{$dnfl-border-subtle};
+
+  /* ---------------- Typography Colors ---------------- */
+  --dnfl-text-main:              #{$dnfl-text-main};
+  --dnfl-text-heading:           #{$dnfl-text-heading};
+  --dnfl-text-subhead:           #{$dnfl-text-subhead};
+  --dnfl-text-subtle:            #{$dnfl-text-subtle};
+  --dnfl-text-muted:             #{$dnfl-text-muted};
+  --dnfl-text-quote:             #{$dnfl-text-quote};
+
+  /* ---------------- Status Indicator Colors ---------------- */
+  --dnfl-green-bg:               #{$dnfl-green-bg};
+  --dnfl-green-text:             #{$dnfl-green-text};
+  --dnfl-green-border:           #{$dnfl-green-border};
+  --dnfl-red-bg:                 #{$dnfl-red-bg};
+  --dnfl-red-text:               #{$dnfl-red-text};
+  --dnfl-red-border:             #{$dnfl-red-border};
+  --dnfl-blue-bg:                #{$dnfl-blue-bg};
+  --dnfl-blue-text:              #{$dnfl-blue-text};
+  --dnfl-blue-border:            #{$dnfl-blue-border};
+  --dnfl-amber-bg:               #{$dnfl-amber-bg};
+  --dnfl-amber-text:             #{$dnfl-amber-text};
+  --dnfl-amber-border:           #{$dnfl-amber-border};
+  --dnfl-gray-bg:                #{$dnfl-gray-bg};
+  --dnfl-gray-text:              #{$dnfl-gray-text};
+  --dnfl-gray-border:            #{$dnfl-gray-border};
+
+  /* ---------------- Interface Dimensions & Radius ---------------- */
+  --dnfl-radius-lg:              #{$dnfl-radius-lg};
+  --dnfl-radius-md:              #{$dnfl-radius-md};
+  --dnfl-radius-sm:              #{$dnfl-radius-sm};
+
+  /* ---------------- Shadow & Elevation ---------------- */
+  --dnfl-shadow-card:            #{$dnfl-shadow-card};
+  --dnfl-shadow-subtle:          #{$dnfl-shadow-subtle};
+
+  /* ---------------- Motion & Transition ---------------- */
+  --dnfl-transition-fast:        #{$dnfl-transition-fast};
+  --dnfl-transition-smooth:      #{$dnfl-transition-smooth};
+}

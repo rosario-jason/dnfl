@@ -1,0 +1,272 @@
+/* ==========================================================================
+   DNFL Base Tables, Badges & Status Capsules (_tables.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt
+   ========================================================================== */
+
+// 1. Shared Base Table Architecture
+.dnfl-table,
+#dnfl_dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background-color: var(--dnfl-bg-card);
+  text-align: left;
+
+  th {
+    background-color: var(--dnfl-bg-card);
+    color: var(--dnfl-text-main);
+    padding: 12px 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--dnfl-border-dark);
+  }
+
+  td {
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--dnfl-border-light);
+    color: var(--dnfl-text-main);
+    vertical-align: middle;
+  }
+
+  tr:nth-child(even),
+  tr.dnfl-row-even {
+    background-color: var(--dnfl-bg-alt);
+  }
+
+  tr:hover {
+    background-color: var(--dnfl-primary-light);
+    transition: background-color var(--dnfl-transition-smooth);
+  }
+
+  tr.dnfl-my-team {
+    background-color: var(--dnfl-highlight-yellow) !important;
+
+    &:hover {
+      background-color: var(--dnfl-highlight-yellow-hover) !important;
+    }
+  }
+}
+
+// 2. Division & Section Subheads
+.dnfl-division-header-cell,
+.dnfl-table-subhead-cell {
+  background-color: var(--dnfl-bg-subhead) !important;
+  border-bottom: 2px solid var(--dnfl-border-dark) !important;
+  padding: 10px 15px !important;
+}
+
+.dnfl-division-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--dnfl-text-main);
+  }
+}
+
+// 3. Franchise & Owner Cell Typography
+.dnfl-team-name {
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  color: var(--dnfl-text-main) !important;
+  text-decoration: none !important;
+
+  &:hover {
+    color: var(--dnfl-primary) !important;
+    text-decoration: underline !important;
+  }
+}
+
+.dnfl-owner-name {
+  font-size: 0.8rem !important;
+  color: var(--dnfl-text-subtle) !important;
+}
+
+// 4. Data Table Column Widths & Alignment Tokens
+.dnfl-col-rank      { width: 7% !important; text-align: center !important; }
+.dnfl-col-change    { width: 9% !important; text-align: center !important; }
+.dnfl-col-franchise { width: 25% !important; text-align: left !important; }
+.dnfl-col-index     { width: 10% !important; text-align: center !important; font-weight: 600 !important; }
+.dnfl-col-record    { width: 10% !important; text-align: center !important; }
+.dnfl-col-pf        { width: 10% !important; text-align: center !important; }
+.dnfl-col-comments  { width: auto !important; text-align: left !important; }
+
+// 5. Circular & Square Rank Badges
+.dnfl-rank-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--dnfl-bg-subhead);
+  color: var(--dnfl-text-main);
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 1px solid var(--dnfl-border-medium);
+}
+
+.dnfl-rank-badge {
+  font-weight: bold;
+  color: var(--dnfl-bg-card);
+  padding: 3px 3px;
+  border-radius: var(--dnfl-radius-sm);
+  display: inline-block;
+  text-align: center;
+  min-width: 1.5rem;
+}
+
+// 6. Outlined Badges (.dnfl-badge-[color])
+.dnfl-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: var(--dnfl-radius-sm);
+  white-space: nowrap;
+}
+
+.dnfl-badge-lg,
+.dnfl-badge-record {
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+}
+
+.dnfl-badge-green {
+  background-color: var(--dnfl-green-bg);
+  color: var(--dnfl-green-text);
+  border: 1px solid var(--dnfl-green-border);
+}
+
+.dnfl-badge-red {
+  background-color: var(--dnfl-red-bg);
+  color: var(--dnfl-red-text);
+  border: 1px solid var(--dnfl-red-border);
+}
+
+.dnfl-badge-blue {
+  background-color: var(--dnfl-blue-bg);
+  color: var(--dnfl-blue-text);
+  border: 1px solid var(--dnfl-blue-border);
+}
+
+.dnfl-badge-amber {
+  background-color: var(--dnfl-amber-bg);
+  color: var(--dnfl-amber-text);
+  border: 1px solid var(--dnfl-amber-border);
+}
+
+.dnfl-badge-gray {
+  background-color: var(--dnfl-gray-bg);
+  color: var(--dnfl-gray-text);
+  border: 1px solid var(--dnfl-gray-border);
+}
+
+// 7. Solid Pill Capsules (.dnfl-pill-[color])
+.dnfl-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.825rem;
+  font-weight: 700;
+  line-height: 1;
+  border-radius: 9999px;
+  white-space: nowrap;
+  color: #ffffff;
+  border: none;
+}
+
+.dnfl-pill-green,
+.dnfl-lts-badge-high-score {
+  background-color: var(--dnfl-success-green);
+  color: #ffffff !important;
+}
+
+.dnfl-pill-red,
+.dnfl-lts-badge-knockout {
+  background-color: var(--dnfl-alert-red);
+  color: #ffffff !important;
+}
+
+.dnfl-pill-blue,
+.dnfl-record-pill,
+.dnfl-record-badge {
+  background-color: var(--dnfl-badge-blue);
+  color: #ffffff !important;
+}
+
+.dnfl-pill-amber {
+  background-color: var(--dnfl-badge-amber);
+  color: #ffffff !important;
+}
+
+.dnfl-pill-gray {
+  background-color: var(--dnfl-gray-text);
+  color: #ffffff !important;
+}
+
+
+// 6. Text-Heavy Module Rules Tables (.dnfl-rules-table)
+.dnfl-rules-wrapper table.dnfl-rules-table,
+table.dnfl-rules-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 4px 0 14px 0 !important;
+  background-color: var(--dnfl-bg-card) !important;
+  border: 1px solid var(--dnfl-border-medium) !important;
+  box-shadow: var(--dnfl-shadow-subtle) !important;
+  border-radius: var(--dnfl-radius-md) !important;
+  overflow: hidden !important;
+
+  th {
+    background-color: var(--dnfl-bg-card) !important;
+    color: var(--dnfl-text-subhead) !important;
+    padding: 12px 15px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 0.7rem !important;
+    letter-spacing: 0.5px !important;
+    border-bottom: 2px solid var(--dnfl-border-dark) !important;
+    text-align: inherit !important;
+  }
+
+  tr:nth-child(even),
+  tr.eventablerow {
+    background-color: var(--dnfl-bg-alt) !important;
+  }
+
+  tr:nth-child(odd),
+  tr.oddtablerow {
+    background-color: var(--dnfl-bg-card) !important;
+  }
+
+  tr:hover {
+    background-color: var(--dnfl-primary-light) !important;
+  }
+
+  td {
+    padding: 9px 12px !important;
+    border-bottom: 1px solid var(--dnfl-border-light) !important;
+    font-size: 0.88rem !important;
+    color: var(--dnfl-text-subhead) !important;
+  }
+}
+
+.dnfl-rules-topic-content ol + .dnfl-rules-table-wrapper table.dnfl-rules-table,
+.dnfl-rules-topic-content ul + .dnfl-rules-table-wrapper table.dnfl-rules-table,
+.dnfl-rules-topic-content p + .dnfl-rules-table-wrapper table.dnfl-rules-table {
+  margin-top: 2px !important;
+}
