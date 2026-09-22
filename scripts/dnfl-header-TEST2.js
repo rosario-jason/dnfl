@@ -21,12 +21,12 @@
             // { name: "fontawesome", url: "https://kit.fontawesome.com/aa3dbf3e4a.js", isExternal: true },
             { name: "papaparse",   url: "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js", isExternal: true },
             { name: "marked",       url: "https://cdn.jsdelivr.net/npm/marked/marked.min.js", isExternal: true },
-            { name: "api-client",   url: "dnfl-api-client-TEST.js" }
+            { name: "api-client",   url: "dnfl-api-client-TEST2.js" }
         ],
 
         FEATURE_MODULES: [
             // { name: "ui-enhancements", url: "dnfl-ui-enhancements-TEST.js" },
-            { name: "standings",       url: "dnfl-standings-TEST.js" },
+            { name: "standings",       url: "dnfl-standings-TEST2.js" },
             { name: "rankings",        url: "dnfl-rankings.js" },
             { name: "podcast",         url: "dnfl-podcast-TEST.js" },
             { name: "rules",           url: "dnfl-rules.js" }
