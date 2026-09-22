@@ -1,8 +1,8 @@
 /* ==========================================================================
-   DNFL Podcast Module Engine
+   DNFL Podcast Module Engine (v3.10-TEST2)
    Duke Networking Fantasy League (DNFL)
-   Features dynamic multi-year fallback, graceful loading UI, marked.js integration,
-   and compatibility with DNFL.Client middleware.
+   Features event-driven MutationObserver initialization, Marked.js integration,
+   and clean integration with DNFL.Client middleware.
    ========================================================================== */
 (function (window, document) {
     'use strict';
@@ -22,7 +22,7 @@
     }
 
     /**
-     * Initialize Podcast Module with Multi-Year Fallback
+     * Initialize Podcast Module
      */
     async function init(yearOverride) {
         const client = (window.DNFL && window.DNFL.Client) || window.DNFLClient;
@@ -34,50 +34,31 @@
         const selector = document.getElementById('dnfl_podcast_selector');
         if (!selector) return;
 
-        const targetYear = String(yearOverride || client.getContext().year || new Date().getFullYear());
-        const currentYearNum = parseInt(targetYear, 10) || new Date().getFullYear();
-        
-        // Build candidate years list: targetYear down to 2024
-        const yearCandidates = [];
-        for (let y = currentYearNum; y >= 2024; y--) {
-            yearCandidates.push(String(y));
+        podcastYear = String(yearOverride || client.getContext().year || new Date().getFullYear());
+        const episodesUrl = `https://dnfl.live/dnfl_podcast/${podcastYear}/episodes.json`;
+
+        try {
+            const rawJson = await client.fetchRawText(episodesUrl);
+            if (!rawJson || typeof rawJson !== 'string') throw new Error('Empty response payload');
+            
+            const parsed = JSON.parse(rawJson);
+            const rawEpisodes = Array.isArray(parsed) ? parsed : (parsed.episodes || []);
+
+            episodeList = rawEpisodes.map((ep, idx) => {
+                const id = ep.fileId || ep.id || `ep_${idx + 1}`;
+                return {
+                    id: id,
+                    title: ep.title || `Episode ${id}`,
+                    date: ep.date || '',
+                    description: ep.description || '',
+                    audio: resolveCdnUrl(ep.audio || `${id}.m4a`, podcastYear),
+                    transcript: resolveCdnUrl(ep.transcript || `${id}.md`, podcastYear)
+                };
+            });
+        } catch (err) {
+            console.warn(`[DNFL.Podcast] Could not load podcast index from ${episodesUrl}:`, err.message || err);
+            episodeList = [];
         }
-
-        let loadedEpisodes = [];
-        let successfulYear = targetYear;
-
-        // Try candidate years sequentially until valid episodes.json is retrieved
-        for (const candidateYear of yearCandidates) {
-            const episodesUrl = `https://dnfl.live/dnfl_podcast/${candidateYear}/episodes.json`;
-            try {
-                const rawJson = await client.fetchRawText(episodesUrl);
-                if (!rawJson || typeof rawJson !== 'string') continue;
-                
-                const parsed = JSON.parse(rawJson);
-                const rawEpisodes = Array.isArray(parsed) ? parsed : (parsed.episodes || []);
-
-                if (rawEpisodes.length > 0) {
-                    loadedEpisodes = rawEpisodes.map(ep => {
-                        const id = ep.fileId || ep.id;
-                        return {
-                            id: id,
-                            title: ep.title || id,
-                            date: ep.date || '',
-                            description: ep.description || '',
-                            audio: resolveCdnUrl(ep.audio || `${id}.m4a`, candidateYear),
-                            transcript: resolveCdnUrl(ep.transcript || `${id}.md`, candidateYear)
-                        };
-                    });
-                    successfulYear = candidateYear;
-                    break; // Stop on first year with valid episodes
-                }
-            } catch (err) {
-                console.warn(`[DNFL.Podcast] Could not load episodes for year ${candidateYear}, trying fallback...`, err.message || err);
-            }
-        }
-
-        podcastYear = successfulYear;
-        episodeList = loadedEpisodes;
 
         // Populate Dropdown Options
         selector.innerHTML = '';
@@ -85,11 +66,11 @@
         if (episodeList.length === 0) {
             const opt = document.createElement('option');
             opt.value = '';
-            opt.textContent = `No podcast episodes available (${targetYear})`;
+            opt.textContent = `No podcast episodes available (${podcastYear})`;
             selector.appendChild(opt);
 
             const descEl = document.getElementById('dnfl_podcast_desc');
-            if (descEl) descEl.textContent = 'No episodes published yet for this season.';
+            if (descEl) descEl.textContent = 'No podcast episodes published yet for this season.';
             return;
         }
 
@@ -104,7 +85,7 @@
             loadEpisode(this.value);
         };
 
-        // Default to latest episode (last item in array)
+        // Select latest episode (last item in array)
         const latest = episodeList[episodeList.length - 1];
         selector.value = latest.id;
         await loadEpisode(latest.id);
@@ -134,12 +115,12 @@
         const dateEl = document.getElementById('dnfl_podcast_date');
         if (dateEl) dateEl.textContent = episode.date ? `Released: ${episode.date}` : '';
 
-        // Fetch and Render Transcript
+        // Fetch & Render Transcript
         await loadTranscript(episode.transcript);
     }
 
     /**
-     * Fetch and render markdown transcript using Marked.js
+     * Fetch and render transcript markdown
      */
     async function loadTranscript(transcriptUrl) {
         const transcriptEl = document.getElementById('dnfl_podcast_transcript');
@@ -161,7 +142,7 @@
     }
 
     /**
-     * Toggle transcript container visibility (Expand / Collapse)
+     * Toggle transcript visibility
      */
     function toggleTranscript() {
         const wrapper = document.getElementById('dnfl_podcast_transcript');
@@ -176,19 +157,23 @@
     // Export Module API
     DNFL.Podcast = { init, loadEpisode, toggleTranscript };
 
-    // Auto-Initialize on Framework Readiness or DOM Load
-    function autoInit() {
-        if (document.getElementById('dnfl_podcast_selector') || document.getElementById('dnfl_podcast_transcript')) {
+    // Pure Event-Driven DOM Readiness Observer
+    function startWatcher() {
+        if (window.DNFL && window.DNFL.Utils && typeof window.DNFL.Utils.onElementReady === 'function') {
+            window.DNFL.Utils.onElementReady('#dnfl_podcast_selector', () => {
+                init();
+            });
+        } else {
             init();
         }
     }
 
-    window.addEventListener('dnfl:ready', autoInit);
+    window.addEventListener('dnfl:ready', startWatcher);
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', autoInit);
+        document.addEventListener('DOMContentLoaded', startWatcher);
     } else {
-        autoInit();
+        startWatcher();
     }
 
 })(window, document);
