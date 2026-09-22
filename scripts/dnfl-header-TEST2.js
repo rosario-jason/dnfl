@@ -1,33 +1,35 @@
 /* ==========================================================================
-   DNFL Master Header & Loader Script
-   Duke Networking Fantasy League (DNFL)
+   DNFL Master Header & Framework Loader
+   Duke Networking Fantasy League (DNFL) - Framework
+   Target Architecture: Decoupled Framework Orchestrator & Dependency Loader
    ========================================================================== */
-
 (function (window, document) {
     'use strict';
 
     // =========================================================================
-    // 1. Expanded Framework Configuration
+    // 1. Central Infrastructure & Feature Module Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "3.33",
+        VERSION: "3.32-TEST",
         BASE_URL: "https://dnfl.live/scripts/",
 
         STYLESHEETS: [
-            { id: "dnfl-global-css", url: "https://dnfl.live/css/dnfl-global.css" }
+            { id: "dnfl-global-css", url: "https://dnfl.live/css/dnfl-global-TEST.css" }
         ],
 
         INFRASTRUCTURE: [
-            { name: "papaparse", url: "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js", isExternal: true },
-            { name: "marked",     url: "https://cdn.jsdelivr.net/npm/marked/marked.min.js", isExternal: true },
-            { name: "api-client", url: "dnfl-api-client-TEST.js" }
+            // { name: "fontawesome", url: "https://kit.fontawesome.com/aa3dbf3e4a.js", isExternal: true },
+            { name: "papaparse",   url: "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js", isExternal: true },
+            { name: "marked",       url: "https://cdn.jsdelivr.net/npm/marked/marked.min.js", isExternal: true },
+            { name: "api-client",   url: "dnfl-api-client-TEST.js" }
         ],
 
         FEATURE_MODULES: [
-            { name: "standings", url: "dnfl-standings-TEST.js" },
-            { name: "rankings",  url: "dnfl-rankings.js" },
-            { name: "podcast",   url: "dnfl-podcast-TEST.js" },
-            { name: "rules",     url: "dnfl-rules.js" }
+            // { name: "ui-enhancements", url: "dnfl-ui-enhancements-TEST.js" },
+            { name: "standings",       url: "dnfl-standings-TEST.js" },
+            { name: "rankings",        url: "dnfl-rankings.js" },
+            { name: "podcast",         url: "dnfl-podcast-TEST.js" },
+            { name: "rules",           url: "dnfl-rules.js" }
         ],
 
         CONDITIONAL_LIBRARIES: {
@@ -42,14 +44,15 @@
     const tag = `[DNFL Framework v${CONFIG.VERSION}]`;
 
     // =========================================================================
-    // 2. Global Namespace & Utilities
+    // 2. Global Namespace & Utilities Initialization
     // =========================================================================
     window.DNFL = window.DNFL || {};
     window.DNFL.version = CONFIG.VERSION;
+    window.DNFL.Config = CONFIG;
     window.DNFL.Utils = window.DNFL.Utils || {};
 
     /**
-     * DOM MutationObserver Helper (Replaces polling timers)
+     * DOM MutationObserver Helper
      * Executes callback as soon as selector renders in the DOM.
      */
     window.DNFL.Utils.onElementReady = function (selector, callback) {
@@ -145,7 +148,7 @@
     // 4. Master Framework Initialization Pipeline
     // =========================================================================
     async function bootstrap() {
-        console.groupCollapsed(`${tag} Initializing Framework Loader...`);
+        console.groupCollapsed(`${tag} Initializing Framework Orchestrator...`);
 
         try {
             // Stage 1: Global Stylesheets
@@ -159,7 +162,7 @@
                 }
             }
 
-            // Stage 2: Core Infrastructure Libraries (PapaParse, Marked, API Client)
+            // Stage 2: Core Infrastructure Libraries (Font Awesome, PapaParse, Marked, API Client)
             if (CONFIG.INFRASTRUCTURE && CONFIG.INFRASTRUCTURE.length > 0) {
                 console.log(`${tag} Stage 2/4: Loading Core Infrastructure (${CONFIG.INFRASTRUCTURE.length} libraries)...`);
                 for (const infra of CONFIG.INFRASTRUCTURE) {
@@ -184,7 +187,6 @@
                         await loadScript(libUrl);
                         console.log(`${tag} -> Conditional Library [${libKey}] loaded successfully (${libUrl}).`);
                     } else {
-                        // Attach DOM observer to load dynamically if element renders later
                         targets.forEach(selector => {
                             window.DNFL.Utils.onElementReady(selector, async () => {
                                 const libUrl = resolveUrl(lib);
@@ -202,7 +204,7 @@
                 }
             }
 
-            // Stage 4: Feature Modules
+            // Stage 4: Feature Modules (UI Enhancements, Standings, Rankings, Podcast, Rules)
             if (CONFIG.FEATURE_MODULES && CONFIG.FEATURE_MODULES.length > 0) {
                 console.log(`${tag} Stage 4/4: Loading Feature Modules (${CONFIG.FEATURE_MODULES.length} configured)...`);
 
@@ -221,7 +223,7 @@
             }
 
             const duration = (performance.now() - startTime).toFixed(2);
-            console.log(`${tag} Framework initialization completed successfully in ${duration}ms.`);
+            console.log(`${tag} Framework orchestrator initialization completed in ${duration}ms.`);
             console.groupEnd();
 
             // Dispatch Framework Ready Event
