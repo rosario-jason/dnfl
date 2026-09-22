@@ -1031,4 +1031,68 @@ table.dnfl-rules-table td {
   .dnfl-rules-wrapper blockquote {
     margin-left: 1rem !important;
   }
+}
+/* ==========================================================================
+   DNFL Native MFL UI Overrides & MFLScripts Decoupling (_mfl-overrides.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt (MFL & MFLScripts Style Updates)
+   ========================================================================== */
+.myfantasyleague_menu {
+  border-bottom: 0;
+  border-top: 0;
+  background: var(--accent) !important;
+  box-shadow: none;
+  height: 2.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.mobile-wrap,
+.settings-mobile-wrap,
+#options_45 #container-wrap table.report,
+#body_live_scoring_summary #live_scoring_summary table.scoresummary table,
+#body_live_scoring_summary #live_scoring_summary table.teamscoresummary table,
+#body_live_scoring_summary #live_scoring_summary table[width="90%"],
+#body_live_scoring_summary #live_scoring_summary span.reportnavigation + table {
+  border-radius: var(--dnfl-radius-lg) !important;
+}
+
+.franchiseicon {
+  min-width: 4rem !important;
+  max-width: 4rem !important;
+  width: 4rem !important;
+  min-height: 4rem !important;
+  max-height: 4rem !important;
+  height: 4rem !important;
+  aspect-ratio: 1/1 !important;
+  -o-object-fit: cover !important;
+     object-fit: cover !important;
+  border-radius: 25% !important;
+  border: 0 !important;
+}
+
+.franchiselogo {
+  max-height: 25rem !important;
+  width: auto !important;
+  -o-object-fit: contain !important;
+     object-fit: contain !important;
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.homepagecolumn .homepagemodule caption,
+caption,
+#commissioner_setup table.two_column_layout th {
+  font-size: 1.1rem;
+  text-align: left;
+  background: none;
+  padding: 0.5rem 0.313rem;
+  line-height: 100%;
+  text-transform: capitalize;
+}
+
+.dnfl {
+  --accent: #0577B1;
 }/*# sourceMappingURL=dnfl-global-TEST.css.map */
