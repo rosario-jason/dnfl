@@ -10,24 +10,24 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "3.36",
-        BASE_URL: "https://dnfl.live/scripts/",
+        VERSION: "4.01",
+        BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
-            { id: "dnfl-global-css", url: "https://dnfl.live/css/dnfl-global.css" }
+            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-v4_01.css" }
         ],
 
         INFRASTRUCTURE: [
             { name: "papaparse", url: "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js", isExternal: true },
             { name: "marked",     url: "https://cdn.jsdelivr.net/npm/marked/marked.min.js", isExternal: true },
-            { name: "api-client", url: "dnfl-api-client-TEST2.js" }
+            { name: "api-client", url: "dnfl-api-client-v3_36.js" }
         ],
 
         FEATURE_MODULES: [
-            { name: "standings", url: "dnfl-standings-TEST2.js" },
-            { name: "rankings",  url: "dnfl-rankings.js" },
-            { name: "podcast",   url: "dnfl-podcast-TEST.js" },
-            { name: "rules",     url: "dnfl-rules.js" }
+            { name: "standings", url: "dnfl-standings-v3_36.js" },
+            { name: "rankings",  url: "dnfl-rankings-v3_36.js" },
+            { name: "podcast",   url: "dnfl-podcast-v3_36.js" },
+            { name: "rules",     url: "dnfl-rules-v3_36.js" }
         ],
 
         CONDITIONAL_LIBRARIES: {

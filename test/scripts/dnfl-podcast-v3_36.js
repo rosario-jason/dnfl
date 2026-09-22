@@ -1,9 +1,11 @@
 /* ==========================================================================
-   DNFL Podcast Module Engine (v3.10-TEST2)
+   DNFL Podcast Module Engine v3.36
    Duke Networking Fantasy League (DNFL)
-   Features event-driven MutationObserver initialization, Marked.js integration,
-   and clean integration with DNFL.Client middleware.
+   ==========================================================================
+   Streamlined, modern podcast player module. Strictly targets the new HPM spec 
+   with zero legacy fallbacks or redundant code.
    ========================================================================== */
+
 (function (window, document) {
     'use strict';
 
@@ -25,30 +27,30 @@
      * Initialize Podcast Module
      */
     async function init(yearOverride) {
+        // Middleware availability guard
         const client = (window.DNFL && window.DNFL.Client) || window.DNFLClient;
         if (!client) {
             console.error('[DNFL.Podcast] API Client middleware is unavailable.');
             return;
         }
 
+        podcastYear = yearOverride || client.getContext().year || new Date().getFullYear().toString();
+
         const selector = document.getElementById('dnfl_podcast_selector');
         if (!selector) return;
 
-        podcastYear = String(yearOverride || client.getContext().year || new Date().getFullYear());
         const episodesUrl = `https://dnfl.live/dnfl_podcast/${podcastYear}/episodes.json`;
 
         try {
-            const rawJson = await client.fetchRawText(episodesUrl);
-            if (!rawJson || typeof rawJson !== 'string') throw new Error('Empty response payload');
-            
+            const rawJson = await DNFL.Client.fetchRawText(episodesUrl);
             const parsed = JSON.parse(rawJson);
             const rawEpisodes = Array.isArray(parsed) ? parsed : (parsed.episodes || []);
 
-            episodeList = rawEpisodes.map((ep, idx) => {
-                const id = ep.fileId || ep.id || `ep_${idx + 1}`;
+            episodeList = rawEpisodes.map(ep => {
+                const id = ep.fileId || ep.id;
                 return {
                     id: id,
-                    title: ep.title || `Episode ${id}`,
+                    title: ep.title || id,
                     date: ep.date || '',
                     description: ep.description || '',
                     audio: resolveCdnUrl(ep.audio || `${id}.m4a`, podcastYear),
@@ -56,24 +58,12 @@
                 };
             });
         } catch (err) {
-            console.warn(`[DNFL.Podcast] Could not load podcast index from ${episodesUrl}:`, err.message || err);
-            episodeList = [];
+            console.error('[DNFL.Podcast] Error loading episodes index:', err);
+            return;
         }
 
         // Populate Dropdown Options
         selector.innerHTML = '';
-
-        if (episodeList.length === 0) {
-            const opt = document.createElement('option');
-            opt.value = '';
-            opt.textContent = `No podcast episodes available (${podcastYear})`;
-            selector.appendChild(opt);
-
-            const descEl = document.getElementById('dnfl_podcast_desc');
-            if (descEl) descEl.textContent = 'No podcast episodes published yet for this season.';
-            return;
-        }
-
         episodeList.forEach(ep => {
             const opt = document.createElement('option');
             opt.value = ep.id;
@@ -85,10 +75,12 @@
             loadEpisode(this.value);
         };
 
-        // Select latest episode (last item in array)
-        const latest = episodeList[episodeList.length - 1];
-        selector.value = latest.id;
-        await loadEpisode(latest.id);
+        // Default to latest episode (last item in array)
+        if (episodeList.length > 0) {
+            const latest = episodeList[episodeList.length - 1];
+            selector.value = latest.id;
+            await loadEpisode(latest.id);
+        }
     }
 
     /**
@@ -115,12 +107,12 @@
         const dateEl = document.getElementById('dnfl_podcast_date');
         if (dateEl) dateEl.textContent = episode.date ? `Released: ${episode.date}` : '';
 
-        // Fetch & Render Transcript
+        // Fetch and Render Transcript
         await loadTranscript(episode.transcript);
     }
 
     /**
-     * Fetch and render transcript markdown
+     * Fetch and render markdown transcript using Marked.js
      */
     async function loadTranscript(transcriptUrl) {
         const transcriptEl = document.getElementById('dnfl_podcast_transcript');
@@ -136,13 +128,13 @@
             const rawMarkdown = await DNFL.Client.fetchRawText(transcriptUrl);
             transcriptEl.innerHTML = window.marked ? marked.parse(rawMarkdown) : `<div style="white-space: pre-wrap;">${rawMarkdown}</div>`;
         } catch (err) {
-            console.warn('[DNFL.Podcast] Error loading transcript:', err.message || err);
-            transcriptEl.innerHTML = '<p class="dnfl-disclaimer-text">Transcript currently unavailable.</p>';
+            console.error('[DNFL.Podcast] Error loading transcript:', err);
+            transcriptEl.innerHTML = '<p class="dnfl-disclaimer-text">Error loading transcript.</p>';
         }
     }
 
     /**
-     * Toggle transcript visibility
+     * Toggle transcript container visibility (Expand / Collapse)
      */
     function toggleTranscript() {
         const wrapper = document.getElementById('dnfl_podcast_transcript');
@@ -157,23 +149,19 @@
     // Export Module API
     DNFL.Podcast = { init, loadEpisode, toggleTranscript };
 
-    // Pure Event-Driven DOM Readiness Observer
-    function startWatcher() {
-        if (window.DNFL && window.DNFL.Utils && typeof window.DNFL.Utils.onElementReady === 'function') {
-            window.DNFL.Utils.onElementReady('#dnfl_podcast_selector', () => {
-                init();
-            });
-        } else {
+    // Auto-Initialize on Framework Readiness or DOM Load
+    function autoInit() {
+        if (document.getElementById('dnfl_podcast_selector') || document.getElementById('dnfl_podcast_transcript')) {
             init();
         }
     }
 
-    window.addEventListener('dnfl:ready', startWatcher);
+    window.addEventListener('dnfl:ready', autoInit);
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', startWatcher);
+        document.addEventListener('DOMContentLoaded', autoInit);
     } else {
-        startWatcher();
+        autoInit();
     }
 
 })(window, document);

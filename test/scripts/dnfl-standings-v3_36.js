@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Dynamic Standings & Seeding Engine
+   DNFL Dynamic Standings & Seeding Engine v3.36
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 (function() { 'use strict';

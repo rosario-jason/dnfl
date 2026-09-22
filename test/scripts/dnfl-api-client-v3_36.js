@@ -1,14 +1,11 @@
 /* ==========================================================================
-   DNFL API Client Middleware
+   DNFL API Client Middleware v3.36
    Duke Networking Fantasy League (DNFL)
-   ==========================================================================
    Provides centralized API fetching, multi-tier caching (RAM + LocalStorage),
    cross-tab synchronization, request deduplication, parameter normalization,
    CORS same-origin resolution, and HTML response guards for data feeds.
    ========================================================================== */
-
-(function (window, document) {
-    'use strict';
+(function (window, document) { 'use strict';
 
     // Global Namespace Setup
     window.DNFL = window.DNFL || {};
@@ -167,12 +164,12 @@
 
     function resolveContext() {
         const urlParams = new URLSearchParams(window.location.search);
-        let leagueId = urlParams.get('L') || window.mflLeagueId || window.league_id || CONFIG.DEFAULT_LEAGUE_ID;
+        let leagueId = urlParams.get('L') || urlParams.get('l') || window.mflLeagueId || window.league_id || CONFIG.DEFAULT_LEAGUE_ID;
         
         let year = urlParams.get('YEAR') || window.current_year || window.mflYear || window.year;
         if (!year) {
             const pathMatch = window.location.pathname.match(/\/(\d{4})\//);
-            year = pathMatch ? pathMatch[2] : new Date().getFullYear().toString();
+            year = pathMatch ? pathMatch[1] : new Date().getFullYear().toString();
         }
 
         let leagueSegment = "0";
@@ -180,7 +177,7 @@
             leagueSegment = "LSM";
         }
 
-        return { leagueId, year, leagueSegment };
+        return { leagueId: String(leagueId), year: String(year), leagueSegment };
     }
 
     function normalizeParams(params) {
@@ -216,6 +213,9 @@
         return `${baseUrl}?${new URLSearchParams(queryObj).toString()}`;
     }
 
+    /**
+     * Generate isolated cache keys using mflRequestType, leagueSegment, leagueId, year & sorted params
+     */
     function buildCacheKey(mflRequestType, paramsObj, context) {
         let paramSlug = '';
         if (paramsObj && typeof paramsObj === 'object') {
@@ -226,7 +226,8 @@
                 paramSlug = '_' + sortedKeys.map(k => `${k}${paramsObj[k]}`).join('_');
             }
         }
-        return `${mflRequestType}_${context.leagueSegment}_Y${context.year}${paramSlug}`;
+        // Explicitly include League ID (L) to prevent cross-league cache collisions
+        return `${mflRequestType}_${context.leagueSegment}_L${context.leagueId}_Y${context.year}${paramSlug}`;
     }
 
     /**
@@ -329,7 +330,7 @@
         let fId = window.franchise_id || null;
         if (!fId) {
             const urlParams = new URLSearchParams(window.location.search);
-            fId = urlParams.get('FRANCHISE_ID') || urlParams.get('F');
+            fId = urlParams.get('FRANCHISE_ID') || urlParams.get('F') || urlParams.get('f');
         }
         if (!fId) {
             const match = document.cookie.match(/(?:^|; )mfl_franchise_id=([^;]*)/);

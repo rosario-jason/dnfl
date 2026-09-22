@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Power Rankings Dashboard Engine (v4 Streamlined)
+   DNFL Power Rankings Dashboard Engine v3.36
    ========================================================================== */
 /* global DNFLClient, Papa, Chart */
 (function() {

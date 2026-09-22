@@ -1,10 +1,5 @@
-// dnfl-exporter-v13.js v12.0
 /* ==========================================================================
-   DNFL Commissioner Data Exporter Engine v11.0
-   Repository: rosario-jason/dnfl
-   File: scripts/dnfl-exporter-v9.js
-   Architecture Constraint: 100% standard MFL APIs via window.DNFLClient.
-   No manual data accumulation loops or redundant network calls.
+   DNFL Commissioner Data Exporter Engine v3.36
    ========================================================================== */
 /* global DNFLClient, Papa */
 (function() {
