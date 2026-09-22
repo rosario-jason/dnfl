@@ -201,11 +201,23 @@
   color: #ffffff !important;
 }
 
-.dnfl-pill-blue,
-.dnfl-record-pill,
-.dnfl-record-badge {
+.dnfl-pill-blue {
   background-color: var(--dnfl-badge-blue);
   color: #ffffff !important;
+}
+
+/* Win-Loss-Tie (W-L-T) Blue Pill Badge */
+.dnfl-record-badge,
+.dnfl-record-pill {
+  display: inline-block;
+  min-width: 85px;
+  text-align: center;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background-color: var(--dnfl-badge-blue) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
 }
 
 .dnfl-pill-amber {
