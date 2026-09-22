@@ -1,0 +1,74 @@
+/* ==========================================================================
+   DNFL Podcast Module Styles (modules/_podcast.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt
+   ========================================================================== */
+
+@import '../mixins';
+
+// 1. Podcast Banner & Header Graphic
+.dnfl-podcast-banner {
+  width: 100%;
+  height: auto;
+  border-radius: var(--dnfl-radius-md);
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--dnfl-border-dark);
+}
+
+// 2. Audio Media Player Dark Shell
+.dnfl-media-player-block {
+  background-color: var(--dnfl-bg-dark);
+  padding: 1.25rem;
+  border-radius: var(--dnfl-radius-md);
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+  border: 1px solid var(--dnfl-border-dark);
+}
+
+.dnfl-now-playing-label {
+  font-size: 0.875rem;
+  color: var(--dnfl-bg-card);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.dnfl-audio {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+// 3. Scrollable Podcast Transcript Container & Markdown Elements
+.dnfl-transcript-wrapper {
+  width: 95%;
+  background-color: var(--dnfl-bg-card);
+  padding: 1.5rem;
+  border-radius: var(--dnfl-radius-md);
+  border: 1px solid var(--dnfl-border-dark);
+  max-height: 500px;
+  overflow-y: auto;
+  line-height: 1.6;
+  margin: 0.75rem auto 0 auto;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+
+  @include custom-scrollbar(6px, var(--dnfl-bg-muted), var(--dnfl-border-medium));
+
+  h1,
+  h2 {
+    color: var(--dnfl-text-main);
+    margin-top: 0;
+    font-size: 1rem;
+  }
+
+  strong {
+    color: var(--dnfl-text-main);
+  }
+
+  em {
+    color: var(--dnfl-primary);
+    font-style: italic;
+  }
+}

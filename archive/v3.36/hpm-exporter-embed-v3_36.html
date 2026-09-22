@@ -1,0 +1,51 @@
+<!-- DNFL Exporter Module Shell Stub v3.36 -->
+
+<div id="dnfl-exporter-container" class="dnfl-module-container dnfl">
+    <!-- Controls Toolbar -->
+    <div class="dnfl-toolbar">
+        <div class="dnfl-filter-group">
+            <label for="dnfl-export-report-select">Report Type</label>
+            <select id="dnfl-export-report-select" class="dnfl-select">
+                <option value="rosters">1. Current Rosters (YTD & ROS Projections)</option>
+                <option value="matchups">2. Weekly Matchup Score Summary</option>
+                <option value="weeklyDetails">3. Detailed Weekly Player Results (Completed Week)</option>
+                <option value="standings">4. Season Standings (DNFL Module Parity)</option>
+            </select>
+        </div>
+
+        <div class="dnfl-filter-group" id="dnfl-export-week-group" style="display: none;">
+            <label for="dnfl-export-week-select">Week</label>
+            <select id="dnfl-export-week-select" class="dnfl-select"></select>
+        </div>
+
+        <div class="dnfl-filter-group">
+            <label for="dnfl-export-format-select">Format</label>
+            <select id="dnfl-export-format-select" class="dnfl-select">
+                <option value="markdown">Markdown (AI Prompt Ready)</option>
+                <option value="csv">CSV (Spreadsheet / Analysis)</option>
+                <option value="json">JSON (Programmatic Data)</option>
+            </select>
+        </div>
+
+        <div class="dnfl-buttons-right">
+            <button id="dnfl-export-generate-btn" class="dnfl-visibility-toggle-btn" style="border: 1px solid var(--dnfl-primary); border-radius: 4px; padding: 6px 12px;">
+                ⚡ Generate Report
+            </button>
+        </div>
+    </div>
+
+    <!-- Status & Action Toolbar -->
+    <div id="dnfl-export-status" class="dnfl-status-loading" style="padding: 10px 0;">Select report options above and click Generate.</div>
+
+    <div id="dnfl-export-actions" class="dnfl-toolbar" style="display: none; background-color: var(--dnfl-bg-subhead);">
+        <button id="dnfl-export-copy-btn" class="dnfl-visibility-toggle-btn" style="color: var(--dnfl-text-heading); border: 1px solid var(--dnfl-border-dark); border-radius: 4px; padding: 6px 12px; margin-right: 10px;">
+            📋 Copy to Clipboard
+        </button>
+        <button id="dnfl-export-download-btn" class="dnfl-visibility-toggle-btn" style="color: var(--dnfl-text-heading); border: 1px solid var(--dnfl-border-dark); border-radius: 4px; padding: 6px 12px;">
+            💾 Download File
+        </button>
+    </div>
+
+    <!-- Data Preview Container -->
+    <div class="dnfl-table-wrapper" id="dnfl-export-preview-container" style="margin-top: 15px;"></div>
+</div>

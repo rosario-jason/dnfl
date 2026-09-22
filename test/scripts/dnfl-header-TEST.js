@@ -20,13 +20,13 @@
         INFRASTRUCTURE: [
             { name: "papaparse", url: "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js", isExternal: true },
             { name: "marked",     url: "https://cdn.jsdelivr.net/npm/marked/marked.min.js", isExternal: true },
-            { name: "api-client", url: "dnfl-api-client.js" }
+            { name: "api-client", url: "dnfl-api-client-TEST2.js" }
         ],
 
         FEATURE_MODULES: [
-            { name: "standings", url: "dnfl-standings.js" },
+            { name: "standings", url: "dnfl-standings-TEST2.js" },
             { name: "rankings",  url: "dnfl-rankings.js" },
-            { name: "podcast",   url: "dnfl-podcast.js" },
+            { name: "podcast",   url: "dnfl-podcast-TEST.js" },
             { name: "rules",     url: "dnfl-rules.js" }
         ],
 

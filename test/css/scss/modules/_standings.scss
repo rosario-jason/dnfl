@@ -1,0 +1,23 @@
+/* ==========================================================================
+   DNFL Standings Module Specifics (modules/_standings.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt
+   Note: Universal table layouts, division headers, team/owner typography, 
+         and key containers are imported globally from _tables.scss & _containers.scss.
+   ========================================================================== */
+
+// Standings-Specific Metric Column Colors
+.dnfl-standings-pf {
+  color: var(--dnfl-success-green) !important;
+  font-weight: 600;
+}
+
+.dnfl-standings-pa {
+  color: var(--dnfl-alert-red) !important;
+  font-weight: 600;
+}
+
+.dnfl-standings-bbid {
+  color: var(--dnfl-text-subtle) !important;
+  font-size: 0.8rem;
+}

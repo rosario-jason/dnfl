@@ -1,0 +1,86 @@
+<!-- DNFL LTS Module - Last Team Standing & Weekly High Scores -->
+
+<div id="dnfl_lts" class="mobile-wrap">
+   <table class="homepagemodule report" cellspacing="1" align="center">
+    <caption>Last Team Standing</caption>
+  </table>
+
+  <div class="toggle_tabs"> 
+    <br/>
+
+    <div id="dnfl_lts_module" class="dnfl-module-container">
+
+        <!-- Controls & Toolbar -->
+        <div class="dnfl-toolbar">
+            <div class="dnfl-filter-group">
+                <label for="dnfl_lts_confFilter">Conference Filter</label>
+                <select id="dnfl_lts_confFilter" class="dnfl-select" aria-label="Select Conference">
+                    <option value="">Loading Conferences...</option>
+                </select>
+            </div>
+            <div class="dnfl-actions-right">
+                <button id="dnfl_lts_toggle_graveyard" class="dnfl-visibility-toggle-btn" type="button" aria-expanded="true">
+                    <i class="fas fa-ghost"></i> Toggle Graveyard View
+                </button>
+            </div>
+        </div>
+
+        <!-- Universal Status / Loading Indicator Container -->
+        <div id="dnfl_lts_status_container">
+            <p id="dnfl_lts_status" class="dnfl-status-loading">Loading Last Team Standing &amp; Weekly High Scores data...</p>
+        </div>
+
+        <!-- Primary Component 1: Survival Timeline Cross-Grid Matrix -->
+        <div id="dnfl_lts_matrix_wrapper">
+            <div class="dnfl-section-header-row">
+                <h3 class="dnfl-rules-title">
+                    <i class="fas fa-shield-alt" style="color: var(--dnfl-primary); margin-right: 8px;"></i>
+                    Survival Timeline Cross-Grid
+                </h3>
+            </div>
+            <div class="dnfl-table-wrapper">
+                <table id="dnfl_lts_crossGridTable" class="dnfl-table dnfl-lts-table">
+                    <thead id="dnfl_lts_crossGridThead">
+                        <tr>
+                            <th>Franchise</th>
+                            <!-- Dynamic week columns injected by JavaScript -->
+                        </tr>
+                    </thead>
+                    <tbody id="dnfl_lts_crossGridTbody">
+                        <!-- Dynamic team rows injected by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Primary Component 2: The Graveyard & Weekly High/Low Score Summary -->
+        <div id="dnfl_lts_graveyardSection" style="margin-top: 2rem;">
+            <div class="dnfl-section-header-row">
+                <h3 class="dnfl-rules-title">
+                    <i class="fas fa-skull-crossbones" style="color: var(--dnfl-alert-red); margin-right: 8px;"></i>
+                    The Graveyard &amp; Weekly High Scores
+                </h3>
+            </div>
+            <div class="dnfl-table-wrapper">
+                <table id="dnfl_lts_graveyardTable" class="dnfl-table dnfl-lts-table">
+                    <thead id="dnfl_lts_graveyardThead">
+                        <tr>
+                            <th style="text-align: center;">Week</th>
+                            <th>Eliminated / Low Franchise</th>
+                            <th style="text-align: center;">Knockout / Low Score</th>
+                            <th>Weekly High Scorer (Prize Winner)</th>
+                            <th style="text-align: center;">Weekly High Score</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dnfl_lts_graveyardTbody">
+                        <!-- Dynamic chronological graveyard rows injected by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+
+  </div>
+</div>

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Official Bylaws & Rules Interactive Accordion Engine v3.36
+   DNFL Official Bylaws & Rules Interactive Accordion Engine v2.95
    ========================================================================== */
 /* global DNFLClient */
 (function() {

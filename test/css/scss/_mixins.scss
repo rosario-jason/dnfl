@@ -1,0 +1,112 @@
+/* ==========================================================================
+   DNFL SCSS Mixins & Reusable Helpers (_mixins.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt & Responsive Utility Architecture
+   ========================================================================== */
+
+// --------------------------------------------------------------------------
+// 1. Responsive Media Query Breakpoint Mixins
+// --------------------------------------------------------------------------
+
+/// Mobile viewports (<= 768px)
+@mixin mobile {
+  @media (max-width: 768px) {
+    @content;
+  }
+}
+
+/// Small mobile viewports (<= 480px)
+@mixin mobile-sm {
+  @media (max-width: 480px) {
+    @content;
+  }
+}
+
+/// Tablet viewports (769px - 1024px)
+@mixin tablet {
+  @media (min-width: 769px) and (max-width: 1024px) {
+    @content;
+  }
+}
+
+/// Desktop viewports (>= 1025px)
+@mixin desktop {
+  @media (min-width: 1025px) {
+    @content;
+  }
+}
+
+
+// --------------------------------------------------------------------------
+// 2. Flexbox & Layout Helpers
+// --------------------------------------------------------------------------
+
+/// Centers children using flexbox
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/// Flex layout with space-between alignment
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/// Vertical flex layout
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+
+// --------------------------------------------------------------------------
+// 3. Component Design Token Mixins
+// --------------------------------------------------------------------------
+
+/// Applies standard DNFL card container styling (white background, border, shadow, radius)
+@mixin dnfl-card-base {
+  background-color: var(--dnfl-bg-card);
+  border: 1px solid var(--dnfl-border-light);
+  border-radius: var(--dnfl-radius-md);
+  box-shadow: var(--dnfl-shadow-card);
+}
+
+/// Applies standard badge/pill formatting
+@mixin dnfl-badge-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.2rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+/// Applies subtle transition for interactive elements
+@mixin smooth-transition($properties: all, $duration: var(--dnfl-transition-smooth)) {
+  transition: $properties $duration;
+}
+
+/// Custom dark scrollbar styling
+@mixin custom-scrollbar($width: 6px, $track-bg: var(--dnfl-bg-muted), $thumb-bg: var(--dnfl-border-medium)) {
+  &::-webkit-scrollbar {
+    width: $width;
+    height: $width;
+  }
+  &::-webkit-scrollbar-track {
+    background: $track-bg;
+    border-radius: var(--dnfl-radius-sm);
+  }
+  &::-webkit-scrollbar-thumb {
+    background: $thumb-bg;
+    border-radius: var(--dnfl-radius-sm);
+
+    &:hover {
+      background: var(--dnfl-gray-text);
+    }
+  }
+}

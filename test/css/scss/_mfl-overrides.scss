@@ -1,0 +1,68 @@
+/* ==========================================================================
+   DNFL Native MFL UI Overrides & MFLScripts Decoupling (_mfl-overrides.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt (MFL & MFLScripts Style Updates)
+   ========================================================================== */
+
+// 1. Native MFL Header & Main Menu Styling
+.myfantasyleague_menu {
+  border-bottom: 0;
+  border-top: 0;
+  background: var(--accent) !important;
+  box-shadow: none;
+  height: 2.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+// 2. MFL Report Containers & Rounded Wrapper Overrides
+.mobile-wrap,
+.settings-mobile-wrap,
+#options_45 #container-wrap table.report,
+#body_live_scoring_summary #live_scoring_summary table.scoresummary table,
+#body_live_scoring_summary #live_scoring_summary table.teamscoresummary table,
+#body_live_scoring_summary #live_scoring_summary table[width="90%"],
+#body_live_scoring_summary #live_scoring_summary span.reportnavigation + table {
+  border-radius: var(--dnfl-radius-lg) !important;
+}
+
+// 3. Franchise Icons & Logos
+.franchiseicon {
+  min-width: 4rem !important;
+  max-width: 4rem !important;
+  width: 4rem !important;
+  min-height: 4rem !important;
+  max-height: 4rem !important;
+  height: 4rem !important;
+  aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;
+  border-radius: 25% !important;
+  border: 0 !important;
+}
+
+.franchiselogo {
+  max-height: 25rem !important;
+  width: auto !important;
+  object-fit: contain !important;
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+// 4. MFL Module & Report Table Captions / Headers
+.homepagecolumn .homepagemodule caption,
+caption,
+#commissioner_setup table.two_column_layout th {
+  font-size: 1.1rem;
+  text-align: left;
+  background: none;
+  padding: 0.5rem 0.313rem;
+  line-height: 100%;
+  text-transform: capitalize;
+}
+
+// 5. MFLScripts Decoupling & Framework Accent Overrides
+.dnfl {
+  --accent: #{$dnfl-primary}; // Primary Duke Shale Blue override
+}
