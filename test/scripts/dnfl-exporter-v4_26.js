@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Commissioner Data Exporter Engine v4.25
+   DNFL Commissioner Data Exporter Engine v4.24 (Architecture Aligned)
    Duke Networking Fantasy League (DNFL)
    Aligned with dnfl-standings-v3_36.js & dnfl-api-client-v3_36.txt architecture.
    Provides centralized API fetching, multi-tier isolated caching (_L{leagueId}_Y{year}),
@@ -1222,6 +1222,10 @@
     }
 
     function updateControlVisibility() {
+        const reportSelect = document.getElementById('dnfl-export-report-select');
+        const weekGroup = document.getElementById('dnfl-export-week-group');
+        if (!reportSelect || !weekGroup) return;
+
         const val = reportSelect.value;
         if (val === 'rosters' || val === 'matchups' || val === 'weeklyDetails' || val === 'powerRankings') {
             weekGroup.style.display = 'flex';
@@ -1265,7 +1269,7 @@
             if (detectedWk !== null) {
                 maxWeek = Math.min(detectedWk, lastRegWk);
             } else {
-                maxWeek = lastRegWk;
+                maxWeek = 1;
             }
         } else {
             maxWeek = lastRegWk;
