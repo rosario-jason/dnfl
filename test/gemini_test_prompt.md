@@ -1,10 +1,58 @@
+Does MFL have projections through the rest of the season for players, or just for next upcoming game? I need something that is looking out at whole season.
 
-#### Issues
-**Issue A: Exporter Table in Test B width in mobile view is still making outer container stretch**
-On **Test B (Native MFL)** the table for csv is still too wide - it does scroll, but it is pushing wrapper around it wider so that selectors, buttons, and any elements outside card are being minimized on screen
+I believe we can use API for Fantasy Pros (with limited calls). They may truncate data as I have a free account. Can we try and see what data looks like to see if we can use?
 
-**Issue B: Test B MFL Native Table Styling still has some issues** The tables are now formatting with the correct row paddings background / hover colors. However, we have some tables within tables in native NFL, so both the background table and the inner table have coloring and hover states, which looks strange (for example with class "two_column_layout"). In addition, on some pages (e.g. Weekly Lineups Report O=06) The main table does not appear to be in a wrapper, so it is 100% width of screen and not in a visual card, while other tables seem to be in multiple wrappers, buth having shadow. We need to see how to make these look more natural and in line with out style. Some table headers (e.g. draft grid report) have white font on a white background, so are not visible.
+See copy of documentation below:
 
-#### Update
-**Additional MFL Styling Updates** We need to update some additional elements so that pages look like our other reports. These include report navigation headers and selectors, pagetitle, etc.
+Javascript:
+const response = await fetch(
+  "https://api.fantasypros.com/public/v2/json/nfl/2025/projections?position=RB&week=4",
+  { headers: { "x-api-key": "YOUR_API_KEY" } }
+);
+const data = await response.json();
+console.log(data.players);
 
+**My API Key: opmFk3LieZ1XJv47E7tRDaXByPnhhcEJ9hLDK0Q0**
+
+TEST:
+https://api.fantasypros.com/public/v2/json/nfl/{season}/projections
+
+Authorizations:
+api_key
+path Parameters
+season
+required
+integer (Season) >= 2012
+Example: 2024
+A numerical season in the format YYYY
+
+query Parameters
+position
+required
+NFLPositions (string) or MLBPositions (string) or NBAPositions (string) or NHLPositions (string) or NCAAFPositions (string) (SPORTPositions)
+filters	
+string^(\d+)((?:\:\d+)+)?$
+Example: filters=345:332:12
+A comma delimited string of expert IDs filter rankings by
+
+positions	
+string (wordColon) ^(\w+)((?:\:\w+)+)?$
+Colon delimited list of positions to filter response by
+
+players	
+string (digitColon) ^(\d+)((?:\:\d+)+)?$
+Examples:
+players=7354 - A single player
+players=7354:6880 - Multiple players
+Colon delimited list of FP player IDs to filter response by
+
+week	
+integer
+Example: week=4
+The week to request projections for use week = 0 for preseason projections.
+
+ros	
+boolean
+Default: false
+Example: ros=true
+Return Rest of Season projections
