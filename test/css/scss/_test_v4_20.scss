@@ -1,0 +1,460 @@
+/* ==========================================================================
+   DNFL Framework Modular Stylesheet Partial (_test_v4_19.scss)
+   Duke Networking Fantasy League (DNFL)
+   Fully aligned with dnfl-global-v3_36.css baseline design tokens.
+   Fixes Outer Module Discoloration & Restores Card Box-Shadow.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. LEVEL 1: PAGE SHELL CONTAINER RESETS (No Cards, No Shadows)
+   -------------------------------------------------------------------------- */
+#body_content, #reports, .dnfl-page-shell {
+  width: 95% !important;
+  max-width: 1000px !important;
+  margin: 0 auto 2rem auto !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+@media (max-width: 768px) {
+  #body_content, #reports, .homepagecolumn {
+    width: 100% !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   2. HOMEPAGE MODULE & CELL UN-NESTING RESETS (Eliminates Gray Background & Unclips Shadow)
+   -------------------------------------------------------------------------- */
+.homepagemodule,
+div[id^="homepagemodule_"],
+td.homepagecell,
+.homepagecolumn,
+.mobile-wrap,
+.homepagemodule_content,
+.settings-mobile-wrap {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: visible !important; /* Essential: Prevents clipping of .dnfl-card box-shadow */
+}
+
+/* Standalone Native MFL Wrappers (when NOT wrapping a custom .dnfl-card) */
+.mobile-wrap:not(:has(.dnfl-card)),
+.settings-mobile-wrap:not(:has(.dnfl-card)) {
+  width: 95% !important;
+  max-width: 1000px !important;
+  min-width: 0 !important;
+  margin: 0 auto 2rem auto !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+  box-shadow: var(--dnfl-shadow-card, 0 4px 16px rgba(0, 0, 0, 0.4)) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. LEVEL 3: STANDALONE CARD ARCHITECTURE
+   -------------------------------------------------------------------------- */
+.dnfl-card, .dnfl-module-container {
+  width: 95% !important;
+  max-width: 1000px !important;
+  min-width: 0 !important;
+  margin: 0 auto 2rem auto !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+  box-shadow: var(--dnfl-shadow-card, 0 4px 16px rgba(0, 0, 0, 0.4)) !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+/* When .dnfl-card sits inside an MFL module wrapper */
+.homepagemodule .dnfl-card,
+.mobile-wrap .dnfl-card,
+td.homepagecell .dnfl-card {
+  width: 100% !important;
+  margin: 0 auto 2rem auto !important;
+}
+
+.dnfl-card-header {
+  padding: 14px 20px !important;
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+.dnfl-card-title,
+.dnfl-card-header h3,
+h3.dnfl-card-title,
+caption.dnfl-card-title,
+caption .dnfl-card-title {
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  color: var(--dnfl-text-heading, #0f172a) !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+
+  span, a {
+    color: var(--dnfl-text-heading, #0f172a) !important;
+  }
+}
+
+/* Icon protection targeted specifically to <i> tags */
+.dnfl-card-title i,
+.dnfl-card-header i,
+h3.dnfl-card-title i,
+caption i,
+.dnfl-card-title i[class*="fa-"],
+.dnfl-card-header h3 i {
+  color: var(--dnfl-primary, #0577B1) !important;
+  font-size: 1rem !important;
+  width: 18px !important;
+  text-align: center !important;
+  display: inline-block !important;
+}
+
+.dnfl-card-body {
+  padding: 1.25rem !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+}
+
+/* --------------------------------------------------------------------------
+   4. LEVEL 2: FLEX TOOLBARS, CONTROLS & SELECTORS
+   -------------------------------------------------------------------------- */
+.dnfl-toolbar, .dnfl-controls, .reportnavigation, table.report_navigation {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 1rem !important;
+  margin-bottom: 1rem !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  padding: 0.875rem 1.25rem !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  box-shadow: none !important;
+}
+
+.dnfl-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+
+  label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--dnfl-text-main, #121212);
+  }
+}
+
+.dnfl-select, .dnfl-form-control {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  border: 1px solid var(--dnfl-border-dark, #444444) !important;
+  padding: 8px 12px !important;
+  border-radius: var(--dnfl-radius-sm, 4px) !important;
+  font-size: 0.95rem !important;
+  min-width: 160px !important;
+  outline: none !important;
+  transition: border-color var(--dnfl-transition-fast, 0.15s ease) !important;
+
+  &:focus {
+    border-color: var(--dnfl-accent-blue, #36a2eb) !important;
+  }
+}
+
+.pagetitle, #pagetitle {
+  font-size: 1.35rem !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  color: var(--dnfl-text-heading, #0f172a) !important;
+  margin: 1rem 0 !important;
+  text-align: center !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. BUTTONS & BADGES SYSTEM
+   -------------------------------------------------------------------------- */
+.dnfl-buttons-right, .dnfl-actions-right {
+  margin-left: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  flex-wrap: wrap !important;
+}
+
+.dnfl-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  padding: 8px 16px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  text-decoration: none !important;
+  transition: all var(--dnfl-transition-fast, 0.15s ease) !important;
+
+  i {
+    transition: transform var(--dnfl-transition-fast, 0.15s ease) !important;
+  }
+}
+
+.btn-text-short {
+  display: none !important;
+}
+.btn-text-full {
+  display: inline !important;
+}
+
+@media (max-width: 768px) {
+  .btn-text-full {
+    display: none !important;
+  }
+  .btn-text-short {
+    display: inline !important;
+  }
+  .dnfl-btn {
+    padding: 8px 12px !important;
+  }
+}
+
+.dnfl-btn, .dnfl-btn-primary {
+  background-color: var(--dnfl-primary, #0577B1) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--dnfl-primary, #0577B1) !important;
+
+  &:hover {
+    background-color: var(--dnfl-primary-hover, #045e8c) !important;
+    border-color: var(--dnfl-primary-hover, #045e8c) !important;
+    color: #ffffff !important;
+  }
+}
+
+.dnfl-btn-secondary {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  color: var(--dnfl-primary, #0577B1) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+
+  &:hover {
+    background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+    border-color: var(--dnfl-primary, #0577B1) !important;
+    color: var(--dnfl-primary-hover, #045e8c) !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   6. LEVEL 4: FLUSH TABLE WRAPPERS & TOUCH SCROLLING
+   -------------------------------------------------------------------------- */
+.dnfl-table-wrapper, .mobile-wrapper {
+  width: 100% !important;
+  max-width: 1000px !important;
+  min-width: 0 !important;
+  margin: 0 auto !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+
+  > table, .dnfl-table {
+    width: 100% !important;
+    min-width: 650px !important;
+    border-collapse: collapse !important;
+    font-size: 0.85rem !important;
+    background-color: var(--dnfl-bg-card, #ffffff) !important;
+
+    th {
+      background-color: var(--dnfl-bg-card, #ffffff) !important;
+      color: var(--dnfl-text-main, #121212) !important;
+      padding: 12px 15px !important;
+      font-weight: 600 !important;
+      text-transform: uppercase !important;
+      font-size: 0.75rem !important;
+      letter-spacing: 0.5px !important;
+      border-bottom: 2px solid var(--dnfl-border-dark, #444444) !important;
+      text-align: left !important;
+      white-space: nowrap !important;
+    }
+
+    td {
+      padding: 12px 15px !important;
+      border-bottom: 1px solid var(--dnfl-border-light, #e5e7eb) !important;
+      color: var(--dnfl-text-main, #121212) !important;
+      vertical-align: middle !important;
+      white-space: nowrap !important;
+    }
+
+    tr:nth-child(even), tr.dnfl-row-even {
+      background-color: var(--dnfl-bg-alt, #fafafa) !important;
+    }
+
+    tr:hover {
+      background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+      transition: background-color var(--dnfl-transition-smooth, 0.2s ease) !important;
+    }
+  }
+}
+
+.dnfl-card-body .dnfl-table-wrapper,
+.dnfl-card-body .mobile-wrapper,
+.mobile-wrap > table.report {
+  width: 100% !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  border: none !important;
+  margin-top: 1rem !important;
+}
+
+/* --------------------------------------------------------------------------
+   7. STATUS MESSAGING SYSTEM
+   -------------------------------------------------------------------------- */
+.dnfl-status-loading {
+  color: var(--dnfl-text-subtle, #555555) !important;
+  font-style: italic !important;
+  font-size: 0.875rem !important;
+  padding: 12px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.dnfl-status-success {
+  color: var(--dnfl-success-green, #10b981) !important;
+  font-style: italic !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  padding: 12px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.dnfl-status-error {
+  color: var(--dnfl-alert-red, #ef4444) !important;
+  font-style: italic !important;
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  padding: 12px 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.dnfl-action-toolbar {
+  border-top: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  padding-top: 12px !important;
+  margin-top: 12px !important;
+}
+
+.dnfl-preview-textarea {
+  width: 100% !important;
+  height: 350px !important;
+  font-family: monospace !important;
+  font-size: 0.85rem !important;
+  padding: 12px !important;
+  box-sizing: border-box !important;
+  background-color: var(--dnfl-bg-muted, #f8fafc) !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  outline: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   8. NATIVE MFL TABLE & STRUCTURAL LAYOUT UNWRAPPING
+   -------------------------------------------------------------------------- */
+table.report, table.report_navigation {
+  width: 100% !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+  border-collapse: collapse !important;
+  margin-bottom: 1.5rem !important;
+  overflow: hidden !important;
+}
+
+table.two_column_layout, 
+table.two_column_layout table, 
+table.report table {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+table.two_column_layout tr:hover, 
+table.report table tr:hover {
+  background-color: transparent !important;
+}
+
+caption, .homepagecolumn caption, .reporttitle {
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  color: var(--dnfl-text-heading, #0f172a) !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  padding: 14px 20px !important;
+  border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  text-align: left !important;
+}
+
+table.report th, th.reportheader, th.reportsort, th.reportcolumnheader, .draftgrid th {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  padding: 12px 15px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.5px !important;
+  border-bottom: 2px solid var(--dnfl-border-dark, #444444) !important;
+  text-align: left !important;
+
+  a, span, b {
+    color: var(--dnfl-text-main, #121212) !important;
+  }
+}
+
+table.report td, td.reportcell, td.oddtablerow, td.eventablerow {
+  padding: 12px 15px !important;
+  border-bottom: 1px solid var(--dnfl-border-light, #e5e7eb) !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  vertical-align: middle !important;
+}
+
+table.report tr:nth-child(even), tr.eventablerow {
+  background-color: var(--dnfl-bg-alt, #fafafa) !important;
+}
+
+table.report tr:hover, tr.reportcell:hover {
+  background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+  transition: background-color var(--dnfl-transition-smooth, 0.2s ease) !important;
+}
