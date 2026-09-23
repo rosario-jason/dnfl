@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Master Header & Loader Script v4.03
+   DNFL Master Header & Loader Script
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 
@@ -10,11 +10,11 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "4.06-B",
+        VERSION: "4.07-B",
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
-            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-v4_06.css" }
+            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-v4_07.css" }
         ],
 
         INFRASTRUCTURE: [
@@ -30,7 +30,7 @@
             { name: "rankings",  url: "dnfl-rankings-v3_36.js" },
             { name: "podcast",   url: "dnfl-podcast-v3_36.js" },
             { name: "rules",     url: "dnfl-rules-v3_36.js" },
-            { name: "exporter",  url: "dnfl-exporter-v4_04.js" }
+            { name: "exporter",  url: "dnfl-exporter-v4_06.js" }
         ],
 
         CONDITIONAL_LIBRARIES: {
@@ -151,6 +151,15 @@
         console.groupCollapsed(`${tag} Initializing Framework Loader...`);
 
         try {
+            // Mobile Viewport Injection
+            if (!document.querySelector('meta[name="viewport"]')) {
+                const meta = document.createElement('meta');
+                meta.name = 'viewport';
+                meta.content = 'width=device-width, initial-scale=1.0';
+                (document.head || document.documentElement).appendChild(meta);
+                console.log(`${tag} Injected mobile viewport meta tag.`);
+        }    
+            
             // Stage 1: Global Stylesheets
             if (CONFIG.STYLESHEETS && CONFIG.STYLESHEETS.length > 0) {
                 console.log(`${tag} Stage 1/4: Injecting Stylesheets (${CONFIG.STYLESHEETS.length} configured)...`);
