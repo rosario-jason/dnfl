@@ -1,0 +1,181 @@
+/* ==========================================================================
+   DNFL Temporary Test SCSS Partial (_test.scss) v4.01
+   Duke Networking Fantasy League (DNFL)
+   Use for sandbox staging and experimental utility testing.
+   ========================================================================== */
+
+/* 1. Temporary Card & Layout Utilities */
+.dnfl-card {
+  background-color: var(--dnfl-bg-card, #1e2430);
+  border: 1px solid var(--dnfl-border-card, rgba(255, 255, 255, 0.08));
+  border-radius: var(--dnfl-radius-card, 12px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+}
+
+.dnfl-card-header {
+  padding: 14px 20px;
+  background-color: var(--dnfl-bg-header, #161a23);
+  border-bottom: 1px solid var(--dnfl-border-card, rgba(255, 255, 255, 0.08));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dnfl-card-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #ffffff;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  i {
+    color: var(--dnfl-accent-gold, #e2b857);
+    font-size: 0.9375rem;
+  }
+}
+
+.dnfl-card-body {
+  padding: 20px;
+  flex: 1 1 auto;
+}
+
+/* 2. Toolbar & Controls */
+.dnfl-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.dnfl-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--dnfl-text-subtle, #94a3b8);
+  }
+}
+
+.dnfl-select, .dnfl-form-control {
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  background-color: #161a23;
+  color: #ffffff;
+  outline: none;
+
+  &:focus {
+    border-color: var(--dnfl-accent-gold, #e2b857);
+  }
+}
+
+/* 3. Action Buttons & Animations */
+.dnfl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 7px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--dnfl-accent-gold, #e2b857);
+  background-color: rgba(226, 184, 87, 0.1);
+  border: 1px solid var(--dnfl-accent-gold, #e2b857);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: var(--dnfl-accent-gold, #e2b857);
+    color: #0f172a;
+
+    i {
+      transform: scale(1.15) rotate(5deg);
+    }
+  }
+
+  i {
+    transition: transform 0.2s ease;
+  }
+
+  @media (max-width: 768px) {
+    .btn-text {
+      display: none;
+    }
+    padding: 6px 10px;
+  }
+}
+
+.dnfl-buttons-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+/* 4. Responsive Table Wrapper (Touch Scrolling Bridge) */
+.dnfl-table-wrapper, .mobile-wrapper {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
+  > table {
+    width: 100% !important;
+    border-collapse: collapse;
+    background-color: #1e2430;
+
+    th {
+      background-color: #161a23;
+      color: #94a3b8;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 10px 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    td {
+      padding: 10px 14px;
+      font-size: 0.85rem;
+      color: #ffffff;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    tr:hover td {
+      background-color: rgba(255, 255, 255, 0.04);
+    }
+  }
+}
+
+/* 5. Status Indicators */
+.dnfl-status-loading {
+  color: #38bdf8;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.dnfl-status-error {
+  color: #f87171;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
