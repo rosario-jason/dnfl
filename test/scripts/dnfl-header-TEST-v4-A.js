@@ -10,7 +10,7 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "4.22-A",
+        VERSION: "4.23-A",
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
@@ -21,7 +21,7 @@
             // { name: "fontawesome", url: "https://kit.fontawesome.com/aa3dbf3e4a.js", isExternal: true },
             { name: "papaparse", url: "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js", isExternal: true },
             { name: "marked",     url: "https://cdn.jsdelivr.net/npm/marked/marked.min.js", isExternal: true },
-            { name: "api-client", url: "dnfl-api-client-v3_36.js" }
+            { name: "api-client", url: "dnfl-api-client-v3_37.js" }
         ],
 
         FEATURE_MODULES: [
@@ -30,7 +30,7 @@
             { name: "rankings",  url: "dnfl-rankings-v3_36.js" },
             { name: "podcast",   url: "dnfl-podcast-v3_36.js" },
             { name: "rules",     url: "dnfl-rules-v3_36.js" },
-            { name: "exporter",     url: "dnfl-exporter-v4_22.js" }
+            { name: "exporter",     url: "dnfl-exporter-v4_23.js" }
         ],
 
         CONDITIONAL_LIBRARIES: {
