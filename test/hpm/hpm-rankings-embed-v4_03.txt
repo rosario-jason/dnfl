@@ -1,0 +1,74 @@
+<!-- DNFL Power Rankings Module Shell v4.03 -->
+<div class="dnfl-card" id="dnfl-rankings-container">
+    <div class="dnfl-card-header">
+        <h3 class="dnfl-card-title">
+            <i class="fa-solid fa-ranking-star"></i> DNFL Power Rankings
+        </h3>
+    </div>
+    
+    <div class="dnfl-card-body">
+        <!-- Controls Toolbar -->
+        <div class="dnfl-toolbar">
+            <div class="dnfl-filter-group">
+                <label for="dnfl_weekSelector">Target Week</label>
+                <select id="dnfl_weekSelector" class="dnfl-select" onchange="DNFL.Rankings.loadWeeklyData()"></select>
+            </div>
+            
+            <div class="dnfl-filter-group">
+                <label for="dnfl_confFilter">Conference Filter</label>
+                <select id="dnfl_confFilter" class="dnfl-select" onchange="DNFL.Rankings.applyConferenceFilter()">
+                    <option value="All">All Conferences</option>
+                    <option value="Cameron Crazies">Cameron Crazies</option>
+                    <option value="K-Ville">K-Ville</option>
+                    <option value="Blue Devils">Blue Devils</option>
+                </select>
+            </div>
+
+            <div class="dnfl-buttons-right">
+                <button id="dnfl_chartToggleBtn" class="dnfl-btn dnfl-btn-secondary" onclick="DNFL.Rankings.toggleElementVisibility('chart')">
+                    <i class="fa-solid fa-chart-bar"></i>
+                    <span class="btn-text-full">Hide Chart</span>
+                    <span class="btn-text-short">Chart</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Conference Swatch Legend -->
+        <div class="dnfl-rankings-legend" style="display: flex; flex-wrap: wrap; gap: 1.25rem; margin-bottom: 1rem; padding: 10px 14px; background-color: var(--dnfl-bg-subhead, #f1f5f9); border-radius: var(--dnfl-radius-md, 8px); border: 1px solid var(--dnfl-border-subtle, #e2e8f0); font-size: 0.85rem; font-weight: 600;">
+            <div class="dnfl-legend-item" style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 12px; height: 12px; border-radius: 3px; background-color: rgba(54, 162, 235, 0.85); border: 1px solid rgb(54, 162, 235);"></span>
+                <span>Cameron Crazies</span>
+            </div>
+            <div class="dnfl-legend-item" style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 12px; height: 12px; border-radius: 3px; background-color: rgba(255, 99, 132, 0.85); border: 1px solid rgb(255, 99, 132);"></span>
+                <span>K-Ville</span>
+            </div>
+            <div class="dnfl-legend-item" style="display: flex; align-items: center; gap: 6px;">
+                <span style="width: 12px; height: 12px; border-radius: 3px; background-color: rgba(75, 192, 192, 0.85); border: 1px solid rgb(75, 192, 192);"></span>
+                <span>Blue Devils</span>
+            </div>
+        </div>
+
+        <!-- Chart Section Container -->
+        <div id="dnfl_chartWrapperContainer" class="dnfl-chart-wrapper" style="margin-bottom: 1.5rem; border: 1px solid var(--dnfl-border-subtle, #e2e8f0); border-radius: var(--dnfl-radius-md, 8px); padding: 1rem; background-color: #ffffff;">
+            <canvas id="dnfl_powerRankingChart"></canvas>
+        </div>
+
+        <!-- Detailed Table Container -->
+        <div id="dnfl_tableWrapperContainer" class="dnfl-table-wrapper">
+            <table id="dnfl_dataTable" class="dnfl-table">
+                <thead>
+                    <tr>
+                        <th class="dnfl-col-rank">Rank</th>
+                        <th class="dnfl-col-change dnfl-hide-mobile">Change</th>
+                        <th class="dnfl-col-franchise">Franchise</th>
+                        <th class="dnfl-col-index">Power Index</th>
+                        <th class="dnfl-col-record dnfl-hide-mobile">Record</th>
+                        <th class="dnfl-col-pf">Points For</th>
+                    </tr>
+                </thead>
+                <tbody id="dnfl_tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
