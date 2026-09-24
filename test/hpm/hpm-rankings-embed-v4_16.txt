@@ -1,54 +1,58 @@
-<!-- DNFL Power Rankings Module HTML Embed Shell (v4.16) -->
+<!-- DNFL Power Rankings Module Shell v4.16 -->
 <div id="dnfl-rankings-container" class="dnfl-card dnfl-module-container">
     <div class="dnfl-card-header">
         <h3 class="dnfl-card-title">
-            <i class="fa-solid fa-ranking-star"></i>
+            <i class="fa-solid fa-chart-line"></i>
             <span id="dnfl-rankings-title">DNFL Power Rankings</span>
         </h3>
     </div>
     <div class="dnfl-card-body">
-        <!-- Control Toolbar -->
+        <!-- Controls Toolbar -->
         <div class="dnfl-toolbar">
             <div class="dnfl-filter-group">
-                <label for="dnfl_weekSelect">Week:</label>
-                <select id="dnfl_weekSelect" class="dnfl-select" onchange="DNFL.Rankings.handleWeekChange()">
-                    <option value="">Loading weeks...</option>
-                </select>
+                <label for="dnfl_weekSelector">Target Week</label>
+                <select id="dnfl_weekSelector" class="dnfl-select" onchange="DNFL.Rankings.loadWeeklyData()"></select>
             </div>
+            
             <div class="dnfl-filter-group">
-                <label for="dnfl_confFilter">Conference:</label>
+                <label for="dnfl_confFilter">Conference Filter</label>
                 <select id="dnfl_confFilter" class="dnfl-select" onchange="DNFL.Rankings.applyConferenceFilter()">
                     <option value="All">All Conferences</option>
                 </select>
             </div>
-            <div class="dnfl-actions-right">
-                <button id="dnfl_toggleChartBtn" class="dnfl-btn dnfl-btn-secondary" onclick="DNFL.Rankings.toggleChart()">
-                    <i class="fa-solid fa-chart-simple"></i>
+
+            <div class="dnfl-buttons-right">
+                <button id="dnfl_chartToggleBtn" class="dnfl-btn dnfl-btn-secondary" onclick="DNFL.Rankings.toggleElementVisibility('chart')">
+                    <i class="fa-solid fa-chart-bar"></i>
                     <span class="btn-text-full">Hide Chart</span>
                     <span class="btn-text-short">Chart</span>
                 </button>
             </div>
         </div>
 
-        <!-- Dedicated Legend Panel -->
-        <div id="dnfl_rankings_legend" class="dnfl-legend-panel">
-            <!-- Dynamically populated swatches -->
+        <!-- Conference Swatch Legend Hook -->
+        <div id="dnfl_rankings_legend" class="dnfl-legend-panel"></div>
+
+        <!-- Chart Section Container -->
+        <div id="dnfl_chartWrapperContainer" class="dnfl-chart-wrapper" style="margin-bottom: 1.5rem; border: 1px solid var(--dnfl-border-subtle, #e2e8f0); border-radius: var(--dnfl-radius-md, 8px); padding: 1rem; background-color: #ffffff;">
+            <canvas id="dnfl_powerRankingChart"></canvas>
         </div>
 
-        <!-- Dynamic Chart Wrapper -->
-        <div id="dnfl_chartWrapper" class="dnfl-chart-wrapper" style="margin-bottom: 1.25rem; height: 380px; padding: 12px;">
-            <canvas id="dnfl_rankingsChart"></canvas>
-        </div>
-
-        <!-- Table Outer Wrapper -->
-        <div class="dnfl-table-wrapper">
+        <!-- Detailed Table Container -->
+        <div id="dnfl_tableWrapperContainer" class="dnfl-table-wrapper">
             <table id="dnfl_dataTable" class="dnfl-table">
                 <thead>
-                    <!-- Table header dynamically built by JS -->
+                    <tr>
+                        <th class="dnfl-col-rank">Rank</th>
+                        <th class="dnfl-col-change dnfl-hide-mobile">Change</th>
+                        <th class="dnfl-col-franchise">Franchise</th>
+                        <th class="dnfl-col-index">Power Index</th>
+                        <th class="dnfl-col-record dnfl-hide-mobile">Record</th>
+                        <th class="dnfl-col-pf dnfl-hide-mobile">Points For</th>
+                        <th class="dnfl-col-comment" style="text-align: center;">Comments</th>
+                    </tr>
                 </thead>
-                <tbody id="dnfl_tableBody">
-                    <!-- Dynamic team rows injected via JS -->
-                </tbody>
+                <tbody id="dnfl_tableBody"></tbody>
             </table>
         </div>
     </div>
