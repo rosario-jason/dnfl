@@ -1,0 +1,37 @@
+Rank,Franchise ID,Team Name,Owner,Conference,Points For (PF),H2H Record,H2H Win %,All-Play Record,All-Play Win %,Perf Score (A),Starter ROS Proj,Bench ROS Proj,ROS Score (B),Power Index,Tier,Owner Roast / Commentary
+1,0018,InWinceAbles 2.0 (Vince),Vince Hsieh,Blue Devils,256.58,2-0,100.0%,45-25,64.3%,84.8,2520.56,1025.08,86.3,91.1,Tier 1: Championship Contenders,Automated projection calculation.
+2,0017,McLean's McTeam (Jenny),Jenny McLean,K-Ville,269.86,2-0,100.0%,52-18,74.3%,86.9,2591.44,1204.92,90.3,86.0,Tier 1: Championship Contenders,Automated projection calculation.
+3,0034,FreeBallers (James),James Freeman,K-Ville,282.18,2-0,100.0%,57-13,81.4%,88.6,2283.74,919.86,77.0,84.8,Tier 1: Championship Contenders,Automated projection calculation.
+4,0001,Bombers (Jason R),Jason Rosario,K-Ville,208.58,0-2,0.0%,20-50,28.6%,73.4,2445.46,1424.36,87.1,84.3,Tier 1: Championship Contenders,Automated projection calculation.
+5,0019,Honeybadgers (Sasi),"Deepak Prabhakar (Owner), Sasi Reddy (GM)",Cameron Crazies,268.72,1-1,50.0%,48-22,68.6%,84.1,2516.86,1318.92,88.7,82.1,Tier 1: Championship Contenders,Automated projection calculation.
+6,0021,Rollover (Aaron),Aaron Schumm,Blue Devils,242.42,1-1,50.0%,32-38,45.7%,79.6,2446.78,1784.48,90.3,81.7,Tier 1: Championship Contenders,Automated projection calculation.
+7,0027,Bend It Like Bendeck (Brad),Brad Bendeck,Cameron Crazies,278.48,2-0,100.0%,53-17,75.7%,87.6,2695.24,1298.34,94.8,80.8,Tier 2: Playoff Lock,Automated projection calculation.
+8,0015,Dingoes (Dinush),Dinush Kurera,K-Ville,215.08,1-1,50.0%,24-46,34.3%,76.5,2364.20,1151.74,81.9,79.4,Tier 2: Playoff Lock,Automated projection calculation.
+9,0029,Biltong & Kimchi (Jacus & So-Yeon),"Jacus de Beer, So-Yeon Jeong",Blue Devils,281.90,1-1,50.0%,58-12,82.9%,86.8,2282.54,1390.52,81.1,78.9,Tier 2: Playoff Lock,Automated projection calculation.
+10,0028,Bessel's Vessels (Rich),Rich Bessel,Cameron Crazies,231.68,2-0,100.0%,34-36,48.6%,81.3,2255.92,1187.80,78.4,78.8,Tier 2: Playoff Lock,Automated projection calculation.
+11,0012,Funky Cold Medina (Joe),Joe Beaudoin,Blue Devils,259.40,1-1,50.0%,45-25,64.3%,83.0,2483.04,1165.60,86.2,78.2,Tier 2: Playoff Lock,Automated projection calculation.
+12,0024,Harbaugh’s Heros (Kyle),Kyle Watson,Cameron Crazies,228.94,1-1,50.0%,28-42,40.0%,78.1,2240.16,992.22,76.1,77.5,Tier 2: Playoff Lock,Automated projection calculation.
+13,0006,Norseman Cometh (Weldon),Weldon Bell,Cameron Crazies,200.34,1-1,50.0%,17-53,24.3%,74.4,2310.62,1278.62,81.1,77.1,Tier 2: Playoff Lock,Automated projection calculation.
+14,0008,Water (and Electric) Boy Ferrell (Jason),Jason Ferrell,Cameron Crazies,282.96,2-0,100.0%,57-13,81.4%,88.6,2327.28,1371.50,82.5,76.4,Tier 2: Playoff Lock,Automated projection calculation.
+15,0003,Booger's Gas-passers (Jeff),Jeff Berger,Blue Devils,244.60,1-1,50.0%,39-31,55.7%,81.1,2095.72,1155.12,72.5,76.0,Tier 2: Playoff Lock,Automated projection calculation.
+16,0022,Skol Krushers (Tom),Tom Tate,K-Ville,228.32,1-1,50.0%,32-38,45.7%,78.8,2411.42,1398.32,85.7,76.0,Tier 2: Playoff Lock,Automated projection calculation.
+17,0032,Gold Standard (Ben G),Ben Golding,K-Ville,220.86,1-1,50.0%,24-46,34.3%,76.8,2170.96,1140.24,75.0,76.0,Tier 2: Playoff Lock,Automated projection calculation.
+18,0016,Kappler's Team (Rick),Rick Kappler,K-Ville,289.84,2-0,100.0%,59-11,84.3%,89.4,2430.68,954.64,82.5,75.9,Tier 2: Playoff Lock,Automated projection calculation.
+19,0009,PAIN TRAIN (Rob F),Rob Fuqua,Blue Devils,225.68,0-2,0.0%,27-43,38.6%,75.7,2175.94,995.62,73.9,75.8,Tier 3: On the Bubble,Automated projection calculation.
+20,0023,Zippy's Speedsters (Jim),Jim Vint,Cameron Crazies,199.26,0-2,0.0%,16-54,22.9%,72.2,2418.20,1366.64,85.7,75.7,Tier 3: On the Bubble,Automated projection calculation.
+21,0004,Ankit's a Rookie No More!,Ankit Singhal,Cameron Crazies,222.08,1-1,50.0%,29-41,41.4%,77.9,2249.14,1545.64,81.3,75.2,Tier 3: On the Bubble,Automated projection calculation.
+22,0010,Atlanta Fantasy Football Team (Cary & Verlin),"Verlin Henderson, Cary Lawler",Blue Devils,243.44,1-1,50.0%,33-37,47.1%,79.8,2389.52,1128.62,82.6,74.8,Tier 3: On the Bubble,Automated projection calculation.
+23,0002,Chugifer Returns (Jenn),Jennifer Bentley,Blue Devils,178.56,1-1,50.0%,10-60,14.3%,71.8,2013.56,1247.46,70.4,74.7,Tier 3: On the Bubble,Automated projection calculation.
+24,0030,Brett's Bets,Brett Wehmann,Cameron Crazies,243.20,0-2,0.0%,39-31,55.7%,79.0,2010.92,1227.42,70.2,74.3,Tier 3: On the Bubble,Automated projection calculation.
+25,0014,Chia Kung Fu Fighters,Chia Kung,Blue Devils,320.14,2-0,100.0%,67-3,95.7%,92.6,2325.64,745.92,77.0,74.2,Tier 3: On the Bubble,Automated projection calculation.
+26,0033,Team Hatherley Corkery (Christine),Christine Hatherley Corkery,Cameron Crazies,183.34,0-2,0.0%,9-61,12.9%,69.9,2329.58,1243.92,81.5,74.2,Tier 3: On the Bubble,Automated projection calculation.
+27,0035,Inappropriate Comment (Rob M),Rob McLaughlin,Blue Devils,287.84,1-1,50.0%,48-22,68.6%,85.1,2361.70,1315.52,83.2,73.2,Tier 3: On the Bubble,Automated projection calculation.
+28,0013,Wendt's Motown Masher (Mike),Mike Wendt,K-Ville,217.94,1-1,50.0%,26-44,37.1%,77.1,2441.14,1042.20,83.6,73.0,Tier 3: On the Bubble,Automated projection calculation.
+29,0025,Tenured Underachievers (Matt),Matt West,Blue Devils,189.90,0-2,0.0%,9-61,12.9%,70.3,2175.40,1325.14,76.8,72.0,Tier 4: Rebuilding,Automated projection calculation.
+30,0007,Draft Dodgers (Paul),Paul DiMarco,Cameron Crazies,272.18,1-1,50.0%,47-23,67.1%,84.1,2119.64,576.78,68.3,71.7,Tier 4: Rebuilding,Automated projection calculation.
+31,0005,O Canada (Evan),Evan Bryman,Cameron Crazies,224.48,1-1,50.0%,31-39,44.3%,78.4,2283.86,931.70,77.1,71.6,Tier 4: Rebuilding,Automated projection calculation.
+32,0036,Sailor's Delight (Giancarlo),Giancarlo Rossi,Blue Devils,261.08,1-1,50.0%,44-26,62.9%,82.9,2458.04,576.48,80.1,71.6,Tier 4: Rebuilding,Automated projection calculation.
+33,0020,Talented Mr Riley (Ben R),Ben Riley,K-Ville,283.78,1-1,50.0%,59-11,84.3%,87.1,2051.76,1285.76,72.1,69.4,Tier 4: Rebuilding,Automated projection calculation.
+34,0026,Phat Sackers (Steve),Steve Hirsh,K-Ville,207.24,0-2,0.0%,18-52,25.7%,73.0,2306.02,1043.10,78.9,68.0,Tier 4: Rebuilding,Automated projection calculation.
+35,0031,Nashville (Nikki),Nikki Nash,K-Ville,202.20,0-2,0.0%,18-52,25.7%,72.7,2057.92,1182.98,71.4,67.1,Tier 4: Rebuilding,Automated projection calculation.
+36,0011,Wyld Stallyns (Chris),Chris Zaloumis,K-Ville,171.54,1-1,50.0%,6-64,8.6%,70.7,1946.62,1297.60,68.5,66.7,Tier 4: Rebuilding,Automated projection calculation.
