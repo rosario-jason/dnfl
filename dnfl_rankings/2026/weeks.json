@@ -1,5 +1,4 @@
 [
   { "id": "00_pre-season", "display": "Pre-Season" },
-  { "id": "01", "display": "Week 1" },
-  { "id": "02", "display": "Week 2" }
+  { "id": "01", "display": "Week 1" }
 ]
