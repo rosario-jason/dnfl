@@ -1,0 +1,45 @@
+<!-- DNFL STANDINGS MODULE EMBED v4.02 -->
+<div id="dnfl-standings-container" class="dnfl-card dnfl-module-container">
+    <div class="dnfl-card-header">
+        <h3 class="dnfl-card-title">
+            <i class="fa-solid fa-trophy"></i>
+            <span id="dnfl-standings-title">DNFL League Standings</span>
+        </h3>
+    </div>
+    <div class="dnfl-card-body">
+        <!-- Controls Toolbar -->
+        <div class="dnfl-toolbar">
+            <!-- Left Side: Conference Filter Dropdown -->
+            <div class="dnfl-filter-group">
+                <label for="dnfl_standings_confFilter">Conference Filter</label>
+                <select id="dnfl_standings_confFilter" class="dnfl-select" onchange="DNFL.Standings.updateView()"></select>
+            </div>
+
+            <!-- Right Side: Dynamic Legend Key & Disclaimer (Injected by JS Engine) -->
+            <div id="dnfl-standings-key" class="dnfl-actions-right"></div>
+        </div>
+
+        <!-- Standings Data Table Container -->
+        <div class="dnfl-table-wrapper">
+            <table id="dnfl_standingsTable" class="dnfl-table dnfl-standings-table">
+                <thead>
+                    <tr>
+                        <th class="dnfl-col-seed">Seed</th>
+                        <th class="dnfl-col-franchise">Franchise</th>
+                        <th class="dnfl-col-pf dnfl-hide-mobile">Points For</th>
+                        <th class="dnfl-col-pa dnfl-hide-mobile">Points Against</th>
+                        <th class="dnfl-col-record">Record</th>
+                        <th class="dnfl-col-bbid dnfl-hide-mobile">BBID $</th>
+                    </tr>
+                </thead>
+                <tbody id="dnfl-standings-tbody">
+                    <tr>
+                        <td colspan="6" class="dnfl-status-loading" style="text-align: center; padding: 2.5rem; font-weight: 600;">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Loading DNFL League Standings...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
