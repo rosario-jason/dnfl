@@ -1,0 +1,48 @@
+<!-- DNFL POWER RANKINGS MODULE EMBED v4.18 -->
+<div id="dnfl-rankings-container" class="dnfl-card">
+    <div class="dnfl-card-header">
+        <h3 class="dnfl-card-title">
+            <i class="fa-solid fa-ranking-star"></i> DNFL Power Rankings
+        </h3>
+    </div>
+    <div class="dnfl-card-body">
+        <div class="dnfl-toolbar">
+            <div class="dnfl-filter-group">
+                <label for="dnfl_rankings_confFilter">Conference Filter</label>
+                <select id="dnfl_rankings_confFilter" class="dnfl-select" onchange="DNFL.Rankings.updateView()"></select>
+            </div>
+            <div class="dnfl-filter-group">
+                <label for="dnfl_rankings_weekFilter">Week Filter</label>
+                <select id="dnfl_rankings_weekFilter" class="dnfl-select" onchange="DNFL.Rankings.updateView()"></select>
+            </div>
+            <div class="dnfl-buttons-right">
+                <button id="dnfl-btn-toggle-chart" class="dnfl-btn dnfl-btn-secondary" onclick="DNFL.Rankings.toggleChart()">
+                    <i class="fa-solid fa-chart-simple"></i>
+                    <span class="btn-text-full">Hide Chart</span>
+                    <span class="btn-text-short">Chart</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="dnfl_rankings_legend" class="dnfl-legend-panel"></div>
+
+        <div id="dnfl_chartWrapperContainer" class="dnfl-chart-wrapper" style="position: relative; height: 380px; padding: 10px; margin-bottom: 1rem;">
+            <canvas id="dnfl_powerRankingsChart"></canvas>
+        </div>
+
+        <div id="dnfl_tableWrapperContainer" class="dnfl-table-wrapper">
+            <table id="dnfl_dataTable" class="dnfl-table">
+                <thead id="dnfl-rankings-thead">
+                    <!-- Dynamic Headers Rendered via JS -->
+                </thead>
+                <tbody id="dnfl-rankings-tbody">
+                    <tr>
+                        <td colspan="7" class="dnfl-status-loading" style="text-align: center; padding: 2.5rem; font-weight: 600;">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Loading DNFL Power Rankings...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
