@@ -304,7 +304,7 @@ button.dnfl-btn, a.dnfl-btn, input.dnfl-btn, .dnfl-btn {
 
 /* Fix Chart Toggle Button Width Constant Sizing */
 #dnfl_rankings_toggleChartBtn, #dnfl_chartToggleBtn, .dnfl-btn-toggle-chart {
-  min-width: 128px !important;
+  min-width: 145px !important;
   justify-content: center !important;
 }
 
@@ -712,3 +712,5 @@ table.dnfl-table tbody, #dnfl_dataTable tbody, #dnfl_standingsTable tbody {
     }
   }
 }
+
+table.dnfl-table th, .dnfl-table th { font-style: normal !important; }

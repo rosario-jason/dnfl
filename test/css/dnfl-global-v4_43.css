@@ -1434,7 +1434,7 @@ button.dnfl-btn, a.dnfl-btn, input.dnfl-btn, .dnfl-btn {
 
 /* Fix Chart Toggle Button Width Constant Sizing */
 #dnfl_rankings_toggleChartBtn, #dnfl_chartToggleBtn, .dnfl-btn-toggle-chart {
-  min-width: 128px !important;
+  min-width: 145px !important;
   justify-content: center !important;
 }
 
@@ -1875,4 +1875,8 @@ table.dnfl-table tbody tr.dnfl-my-team, table.dnfl-table tbody tr.myfranchise, #
 table.dnfl-table tbody tr.dnfl-my-team:hover, table.dnfl-table tbody tr.myfranchise:hover, #dnfl_dataTable tbody tr.dnfl-my-team:hover, #dnfl_dataTable tbody tr.myfranchise:hover, #dnfl_standingsTable tbody tr.dnfl-my-team:hover, #dnfl_standingsTable tbody tr.myfranchise:hover {
   background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
   transition: background-color var(--dnfl-transition-smooth, 0.2s ease) !important;
+}
+
+table.dnfl-table th, .dnfl-table th {
+  font-style: normal !important;
 }/*# sourceMappingURL=dnfl-global-TEST.css.map */
