@@ -1,0 +1,1796 @@
+/* ==========================================================================
+   DNFL Master Entry File
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+/* ==========================================================================
+   DNFL Design Tokens & Global Variables (_variables.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt
+   ========================================================================== */
+:root, .dnfl {
+  /* ---------------- Primary Brand Palette ---------------- */
+  --accent: #0577B1;
+  --dnfl-primary: #0577B1;
+  --dnfl-primary-hover: #045e8c;
+  --dnfl-primary-light: #b6e2ff;
+  /* ---------------- Accent & Highlight Colors ---------------- */
+  --dnfl-accent-blue: #36a2eb;
+  --dnfl-highlight-yellow: #fde68a;
+  --dnfl-highlight-yellow-hover: #fcd34d;
+  --dnfl-alert-red: #ef4444;
+  --dnfl-success-green: #10b981;
+  --dnfl-badge-blue: #3b82f6;
+  --dnfl-badge-amber: #f59e0b;
+  /* ---------------- Chart & Conference Color Palette ---------------- */
+  --dnfl-chart-1: rgba(54, 162, 235, 0.85);
+  --dnfl-chart-1-border: rgb(54, 162, 235);
+  --dnfl-chart-2: rgba(255, 99, 132, 0.85);
+  --dnfl-chart-2-border: rgb(255, 99, 132);
+  --dnfl-chart-3: rgba(75, 192, 192, 0.85);
+  --dnfl-chart-3-border: rgb(75, 192, 192);
+  --dnfl-chart-4: rgba(255, 205, 86, 0.85);
+  --dnfl-chart-4-border: rgb(255, 205, 86);
+  --dnfl-chart-5: rgba(153, 102, 255, 0.85);
+  --dnfl-chart-5-border: rgb(153, 102, 255);
+  --dnfl-chart-6: rgba(255, 159, 64, 0.85);
+  --dnfl-chart-6-border: rgb(255, 159, 64);
+  /* Legacy Conference Aliases */
+  --dnfl-conf-crazies-bg: var(--dnfl-chart-1);
+  --dnfl-conf-crazies-border: var(--dnfl-chart-1-border);
+  --dnfl-conf-kville-bg: var(--dnfl-chart-2);
+  --dnfl-conf-kville-border: var(--dnfl-chart-2-border);
+  --dnfl-conf-bluedevils-bg: var(--dnfl-chart-3);
+  --dnfl-conf-bluedevils-border: var(--dnfl-chart-3-border);
+  /* ---------------- Neutral Palette ---------------- */
+  --dnfl-bg-card: #ffffff;
+  --dnfl-bg-alt: #fafafa;
+  --dnfl-bg-muted: #f8fafc;
+  --dnfl-bg-dark: #262626;
+  --dnfl-bg-subhead: #f1f5f9;
+  --dnfl-border-dark: #444444;
+  --dnfl-border-medium: #cbd5e1;
+  --dnfl-border-light: #e5e7eb;
+  --dnfl-border-subtle: #e2e8f0;
+  /* ---------------- Typography Colors ---------------- */
+  --dnfl-text-main: #121212;
+  --dnfl-text-heading: #0f172a;
+  --dnfl-text-subhead: #1e293b;
+  --dnfl-text-subtle: #555555;
+  --dnfl-text-muted: #a3a3a3;
+  --dnfl-text-quote: #475569;
+  /* ---------------- Status Indicator Colors ---------------- */
+  --dnfl-green-bg: #dcfce7;
+  --dnfl-green-text: #15803d;
+  --dnfl-green-border: #bbf7d0;
+  --dnfl-red-bg: #fee2e2;
+  --dnfl-red-text: #b91c1c;
+  --dnfl-red-border: #fecaca;
+  --dnfl-blue-bg: #dbeafe;
+  --dnfl-blue-text: #1d4ed8;
+  --dnfl-blue-border: #bfdbfe;
+  --dnfl-amber-bg: #fef3c7;
+  --dnfl-amber-text: #b45309;
+  --dnfl-amber-border: #fde68a;
+  --dnfl-gray-bg: #f1f5f9;
+  --dnfl-gray-text: #64748b;
+  --dnfl-gray-border: #e2e8f0;
+  /* ---------------- Interface Dimensions & Radius ---------------- */
+  --dnfl-radius-lg: 12px;
+  --dnfl-radius-md: 8px;
+  --dnfl-radius-sm: 4px;
+  /* ---------------- Shadow & Elevation ---------------- */
+  --dnfl-shadow-card: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --dnfl-shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05);
+  /* ---------------- Motion & Transition ---------------- */
+  --dnfl-transition-fast: 0.15s ease;
+  --dnfl-transition-smooth: 0.2s ease;
+}
+
+/* ==========================================================================
+   DNFL Base Styles & Element Resets (_base.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt
+   ========================================================================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--dnfl-text-main);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--dnfl-primary);
+  text-decoration: none;
+  transition: color var(--dnfl-transition-fast);
+}
+a:hover {
+  color: var(--dnfl-primary-hover);
+  text-decoration: underline;
+}
+
+.dnfl-status-loading {
+  color: var(--dnfl-text-muted) !important;
+  font-style: italic !important;
+}
+
+.dnfl-status-error {
+  color: var(--dnfl-alert-red) !important;
+  font-style: italic !important;
+}
+
+.dnfl-section-header-row {
+  display: flex;
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+.dnfl-disclaimer-text {
+  font-size: 0.8rem;
+  font-style: italic;
+  text-align: center;
+  color: var(--dnfl-text-subtle);
+  margin-top: 1rem;
+}
+
+.dnfl-disclaimer-note {
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--dnfl-text-subtle);
+}
+
+@media (max-width: 768px) {
+  .dnfl-hide-mobile {
+    display: none !important;
+  }
+}
+/* ==========================================================================
+   DNFL SCSS Mixins & Reusable Helpers (_mixins.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt & Responsive Utility Architecture
+   ========================================================================== */
+/* ==========================================================================
+   DNFL Container Shells & Control Toolbars (_containers.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt & Chart/Legend Standardization
+   ========================================================================== */
+.dnfl-module-container {
+  width: 95%;
+  max-width: 1000px;
+  margin: 0 auto 2rem auto;
+  background-color: var(--dnfl-bg-card);
+  padding: 1.5rem;
+  border-radius: var(--dnfl-radius-lg);
+  box-shadow: var(--dnfl-shadow-card);
+  box-sizing: border-box;
+}
+
+.dnfl-table-wrapper {
+  width: 95%;
+  max-width: 1000px;
+  margin: 0 auto;
+  background-color: var(--dnfl-bg-card);
+  overflow-x: auto;
+  border-radius: var(--dnfl-radius-lg);
+  box-shadow: var(--dnfl-shadow-card);
+  box-sizing: border-box;
+}
+
+.dnfl-controls,
+.dnfl-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+  background-color: var(--dnfl-bg-card);
+  padding: 0.938rem;
+  border-radius: var(--dnfl-radius-md);
+}
+
+.dnfl-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+.dnfl-filter-group label {
+  font-size: 0.875rem;
+  color: var(--dnfl-text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.dnfl-select {
+  background-color: var(--dnfl-bg-card);
+  color: var(--dnfl-text-main);
+  border: 1px solid var(--dnfl-border-dark);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 1rem;
+  min-width: 160px;
+  transition: border-color var(--dnfl-transition-fast);
+}
+.dnfl-select:focus {
+  outline: none;
+  border-color: var(--dnfl-accent-blue);
+}
+
+.dnfl-buttons-right,
+.dnfl-actions-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.dnfl-visibility-toggle-btn {
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: var(--dnfl-primary);
+  text-transform: uppercase;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 8px;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  transition: color var(--dnfl-transition-fast);
+}
+.dnfl-visibility-toggle-btn:hover {
+  color: var(--dnfl-text-muted);
+}
+
+.dnfl-key-container,
+#dnfl-standings-key {
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--dnfl-text-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dnfl-key-icon-group {
+  display: flex;
+  gap: 15px;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+}
+
+.dnfl-key-item {
+  white-space: nowrap;
+}
+
+.dnfl-chart-wrapper {
+  position: relative;
+  min-height: 500px;
+  max-height: 1000px;
+  height: 100vh;
+  width: 100%;
+}
+
+.dnfl-chart-legend,
+.dnfl-rankings-legend {
+  display: flex;
+  gap: 20px;
+  justify-content: flex-start;
+  margin: 15px 0;
+  background-color: var(--dnfl-bg-subhead);
+  padding: 12px 15px;
+  border-radius: var(--dnfl-radius-md);
+  border: 1px solid var(--dnfl-border-dark);
+  flex-wrap: wrap;
+}
+
+.dnfl-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--dnfl-text-main);
+}
+
+.dnfl-legend-swatch {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  border-radius: var(--dnfl-radius-sm);
+  flex-shrink: 0;
+}
+.dnfl-legend-swatch.swatch-1, .dnfl-legend-swatch.conf-00, .dnfl-legend-swatch.crazies {
+  background-color: var(--dnfl-chart-1);
+  border: 1px solid var(--dnfl-chart-1-border);
+}
+.dnfl-legend-swatch.swatch-2, .dnfl-legend-swatch.conf-01, .dnfl-legend-swatch.kville {
+  background-color: var(--dnfl-chart-2);
+  border: 1px solid var(--dnfl-chart-2-border);
+}
+.dnfl-legend-swatch.swatch-3, .dnfl-legend-swatch.conf-02, .dnfl-legend-swatch.bluedevils {
+  background-color: var(--dnfl-chart-3);
+  border: 1px solid var(--dnfl-chart-3-border);
+}
+.dnfl-legend-swatch.swatch-4, .dnfl-legend-swatch.conf-03 {
+  background-color: var(--dnfl-chart-4);
+  border: 1px solid var(--dnfl-chart-4-border);
+}
+.dnfl-legend-swatch.swatch-5, .dnfl-legend-swatch.conf-04 {
+  background-color: var(--dnfl-chart-5);
+  border: 1px solid var(--dnfl-chart-5-border);
+}
+.dnfl-legend-swatch.swatch-6, .dnfl-legend-swatch.conf-05 {
+  background-color: var(--dnfl-chart-6);
+  border: 1px solid var(--dnfl-chart-6-border);
+}
+
+.dnfl-accordion-wrapper,
+.dnfl-rules-wrapper {
+  width: 100%;
+  margin-top: 1rem;
+  box-sizing: border-box;
+}
+
+.dnfl-blockquote,
+.dnfl-rules-wrapper blockquote {
+  margin: 10px 0 10px 1.75rem !important;
+  padding: 8px 14px !important;
+  background-color: var(--dnfl-bg-muted) !important;
+  border-left: 4px solid var(--dnfl-primary) !important;
+  color: var(--dnfl-text-quote) !important;
+  font-style: italic !important;
+  font-size: 0.88rem !important;
+  border-radius: 0 6px 6px 0 !important;
+}
+
+.dnfl-accordion-header,
+.dnfl-rules-tabhead {
+  background-color: var(--dnfl-bg-muted);
+  color: var(--dnfl-text-main);
+  padding: 14px 18px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: 1px solid var(--dnfl-border-medium);
+  border-radius: var(--dnfl-radius-md);
+  margin-top: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color var(--dnfl-transition-smooth), border-color var(--dnfl-transition-smooth);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.dnfl-accordion-header:hover,
+.dnfl-rules-tabhead:hover {
+  background-color: var(--dnfl-bg-subhead);
+  border-color: var(--dnfl-primary);
+  color: var(--dnfl-primary);
+}
+
+.dnfl-accordion-subhead,
+.dnfl-rules-subhead {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dnfl-primary);
+  padding: 10px 12px;
+  background-color: var(--dnfl-bg-subhead);
+  border-left: 4px solid var(--dnfl-primary);
+  border-radius: var(--dnfl-radius-sm);
+  margin-top: 8px;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  transition: background-color var(--dnfl-transition-fast);
+}
+.dnfl-accordion-subhead:hover,
+.dnfl-rules-subhead:hover {
+  background-color: var(--dnfl-border-subtle);
+}
+
+.dnfl-accordion-topichead,
+.dnfl-rules-topichead {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--dnfl-text-heading);
+  padding: 8px 10px;
+  background-color: var(--dnfl-bg-muted);
+  border: 1px solid var(--dnfl-border-subtle);
+  border-radius: var(--dnfl-radius-sm);
+  margin-top: 8px;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  transition: background-color var(--dnfl-transition-fast);
+}
+.dnfl-accordion-topichead:hover,
+.dnfl-rules-topichead:hover {
+  background-color: var(--dnfl-bg-subhead);
+  color: var(--dnfl-primary);
+}
+
+/* ==========================================================================
+   DNFL Base Tables, Badges & Status Capsules (_tables.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt
+   ========================================================================== */
+.dnfl-table,
+#dnfl_dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  background-color: var(--dnfl-bg-card);
+  text-align: left;
+}
+.dnfl-table th,
+#dnfl_dataTable th {
+  background-color: var(--dnfl-bg-card);
+  color: var(--dnfl-text-main);
+  padding: 12px 15px;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+  border-bottom: 2px solid var(--dnfl-border-dark);
+}
+.dnfl-table td,
+#dnfl_dataTable td {
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--dnfl-border-light);
+  color: var(--dnfl-text-main);
+  vertical-align: middle;
+}
+.dnfl-table tr:nth-child(even),
+.dnfl-table tr.dnfl-row-even,
+#dnfl_dataTable tr:nth-child(even),
+#dnfl_dataTable tr.dnfl-row-even {
+  background-color: var(--dnfl-bg-alt);
+}
+.dnfl-table tr:hover,
+#dnfl_dataTable tr:hover {
+  background-color: var(--dnfl-primary-light);
+  transition: background-color var(--dnfl-transition-smooth);
+}
+.dnfl-table tr.dnfl-my-team,
+#dnfl_dataTable tr.dnfl-my-team {
+  background-color: var(--dnfl-highlight-yellow) !important;
+}
+.dnfl-table tr.dnfl-my-team:hover,
+#dnfl_dataTable tr.dnfl-my-team:hover {
+  background-color: var(--dnfl-highlight-yellow-hover) !important;
+}
+
+.dnfl-division-header-cell,
+.dnfl-table-subhead-cell {
+  background-color: var(--dnfl-bg-subhead) !important;
+  border-bottom: 2px solid var(--dnfl-border-dark) !important;
+  padding: 10px 15px !important;
+}
+
+.dnfl-division-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.dnfl-division-header-content h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--dnfl-text-main);
+}
+
+.dnfl-team-name {
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  color: var(--dnfl-text-main) !important;
+  text-decoration: none !important;
+}
+.dnfl-team-name:hover {
+  color: var(--dnfl-primary) !important;
+  text-decoration: underline !important;
+}
+
+.dnfl-owner-name {
+  font-size: 0.8rem !important;
+  color: var(--dnfl-text-subtle) !important;
+}
+
+.dnfl-col-rank {
+  width: 7% !important;
+  text-align: center !important;
+}
+
+.dnfl-col-change {
+  width: 9% !important;
+  text-align: center !important;
+}
+
+.dnfl-col-franchise {
+  width: 25% !important;
+  text-align: left !important;
+}
+
+.dnfl-col-index {
+  width: 10% !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+}
+
+.dnfl-col-record {
+  width: 10% !important;
+  text-align: center !important;
+}
+
+.dnfl-col-pf {
+  width: 10% !important;
+  text-align: center !important;
+}
+
+.dnfl-col-comments {
+  width: auto !important;
+  text-align: left !important;
+}
+
+.dnfl-rank-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: var(--dnfl-bg-subhead);
+  color: var(--dnfl-text-main);
+  font-weight: 700;
+  font-size: 0.95rem;
+  border: 1px solid var(--dnfl-border-medium);
+}
+
+.dnfl-rank-badge {
+  font-weight: bold;
+  color: var(--dnfl-bg-card);
+  padding: 3px 3px;
+  border-radius: var(--dnfl-radius-sm);
+  display: inline-block;
+  text-align: center;
+  min-width: 1.5rem;
+}
+
+.dnfl-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.2rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  border-radius: var(--dnfl-radius-sm);
+  white-space: nowrap;
+}
+
+.dnfl-badge-lg,
+.dnfl-badge-record {
+  font-size: 0.95rem;
+  font-weight: 700;
+  padding: 0.3rem 0.75rem;
+}
+
+.dnfl-badge-green {
+  background-color: var(--dnfl-green-bg);
+  color: var(--dnfl-green-text);
+  border: 1px solid var(--dnfl-green-border);
+}
+
+.dnfl-badge-red {
+  background-color: var(--dnfl-red-bg);
+  color: var(--dnfl-red-text);
+  border: 1px solid var(--dnfl-red-border);
+}
+
+.dnfl-badge-blue {
+  background-color: var(--dnfl-blue-bg);
+  color: var(--dnfl-blue-text);
+  border: 1px solid var(--dnfl-blue-border);
+}
+
+.dnfl-badge-amber {
+  background-color: var(--dnfl-amber-bg);
+  color: var(--dnfl-amber-text);
+  border: 1px solid var(--dnfl-amber-border);
+}
+
+.dnfl-badge-gray {
+  background-color: var(--dnfl-gray-bg);
+  color: var(--dnfl-gray-text);
+  border: 1px solid var(--dnfl-gray-border);
+}
+
+.dnfl-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.825rem;
+  font-weight: 700;
+  line-height: 1;
+  border-radius: 9999px;
+  white-space: nowrap;
+  color: #ffffff;
+  border: none;
+}
+
+.dnfl-pill-green,
+.dnfl-lts-badge-high-score {
+  background-color: var(--dnfl-success-green);
+  color: #ffffff !important;
+}
+
+.dnfl-pill-red,
+.dnfl-lts-badge-knockout {
+  background-color: var(--dnfl-alert-red);
+  color: #ffffff !important;
+}
+
+.dnfl-pill-blue {
+  background-color: var(--dnfl-badge-blue);
+  color: #ffffff !important;
+}
+
+/* Win-Loss-Tie (W-L-T) Blue Pill Badge */
+.dnfl-record-badge,
+.dnfl-record-pill {
+  display: inline-block;
+  min-width: 85px;
+  text-align: center;
+  padding: 3px 8px;
+  border-radius: 12px;
+  background-color: var(--dnfl-badge-blue) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+}
+
+.dnfl-pill-amber {
+  background-color: var(--dnfl-badge-amber);
+  color: #ffffff !important;
+}
+
+.dnfl-pill-gray {
+  background-color: var(--dnfl-gray-text);
+  color: #ffffff !important;
+}
+
+.dnfl-rules-wrapper table.dnfl-rules-table,
+table.dnfl-rules-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 4px 0 14px 0 !important;
+  background-color: var(--dnfl-bg-card) !important;
+  border: 1px solid var(--dnfl-border-medium) !important;
+  box-shadow: var(--dnfl-shadow-subtle) !important;
+  border-radius: var(--dnfl-radius-md) !important;
+  overflow: hidden !important;
+}
+.dnfl-rules-wrapper table.dnfl-rules-table th,
+table.dnfl-rules-table th {
+  background-color: var(--dnfl-bg-card) !important;
+  color: var(--dnfl-text-subhead) !important;
+  padding: 12px 15px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  font-size: 0.7rem !important;
+  letter-spacing: 0.5px !important;
+  border-bottom: 2px solid var(--dnfl-border-dark) !important;
+  text-align: inherit !important;
+}
+.dnfl-rules-wrapper table.dnfl-rules-table tr:nth-child(even),
+.dnfl-rules-wrapper table.dnfl-rules-table tr.eventablerow,
+table.dnfl-rules-table tr:nth-child(even),
+table.dnfl-rules-table tr.eventablerow {
+  background-color: var(--dnfl-bg-alt) !important;
+}
+.dnfl-rules-wrapper table.dnfl-rules-table tr:nth-child(odd),
+.dnfl-rules-wrapper table.dnfl-rules-table tr.oddtablerow,
+table.dnfl-rules-table tr:nth-child(odd),
+table.dnfl-rules-table tr.oddtablerow {
+  background-color: var(--dnfl-bg-card) !important;
+}
+.dnfl-rules-wrapper table.dnfl-rules-table tr:hover,
+table.dnfl-rules-table tr:hover {
+  background-color: var(--dnfl-primary-light) !important;
+}
+.dnfl-rules-wrapper table.dnfl-rules-table td,
+table.dnfl-rules-table td {
+  padding: 9px 12px !important;
+  border-bottom: 1px solid var(--dnfl-border-light) !important;
+  font-size: 0.88rem !important;
+  color: var(--dnfl-text-subhead) !important;
+}
+
+.dnfl-rules-topic-content ol + .dnfl-rules-table-wrapper table.dnfl-rules-table,
+.dnfl-rules-topic-content ul + .dnfl-rules-table-wrapper table.dnfl-rules-table,
+.dnfl-rules-topic-content p + .dnfl-rules-table-wrapper table.dnfl-rules-table {
+  margin-top: 2px !important;
+}
+
+/* ==========================================================================
+   DNFL Standings Module Specifics (modules/_standings.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt
+   Note: Universal table layouts, division headers, team/owner typography, 
+         and key containers are imported globally from _tables.scss & _containers.scss.
+   ========================================================================== */
+.dnfl-standings-pf {
+  color: var(--dnfl-success-green) !important;
+  font-weight: 600;
+}
+
+.dnfl-standings-pa {
+  color: var(--dnfl-alert-red) !important;
+  font-weight: 600;
+}
+
+.dnfl-standings-bbid {
+  color: var(--dnfl-text-subtle) !important;
+  font-size: 0.8rem;
+}
+
+/* ==========================================================================
+   DNFL Podcast Module Styles (modules/_podcast.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt
+   ========================================================================== */
+/* ==========================================================================
+   DNFL SCSS Mixins & Reusable Helpers (_mixins.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt & Responsive Utility Architecture
+   ========================================================================== */
+.dnfl-podcast-banner {
+  width: 100%;
+  height: auto;
+  border-radius: var(--dnfl-radius-md);
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--dnfl-border-dark);
+}
+
+.dnfl-media-player-block {
+  background-color: var(--dnfl-bg-dark);
+  padding: 1.25rem;
+  border-radius: var(--dnfl-radius-md);
+  margin-bottom: 2rem;
+  margin-top: 1rem;
+  border: 1px solid var(--dnfl-border-dark);
+}
+
+.dnfl-now-playing-label {
+  font-size: 0.875rem;
+  color: var(--dnfl-bg-card);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.dnfl-audio {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.dnfl-transcript-wrapper {
+  width: 95%;
+  background-color: var(--dnfl-bg-card);
+  padding: 1.5rem;
+  border-radius: var(--dnfl-radius-md);
+  border: 1px solid var(--dnfl-border-dark);
+  max-height: 500px;
+  overflow-y: auto;
+  line-height: 1.6;
+  margin: 0.75rem auto 0 auto;
+  font-size: 0.85rem;
+  box-sizing: border-box;
+}
+.dnfl-transcript-wrapper::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.dnfl-transcript-wrapper::-webkit-scrollbar-track {
+  background: var(--dnfl-bg-muted);
+  border-radius: var(--dnfl-radius-sm);
+}
+.dnfl-transcript-wrapper::-webkit-scrollbar-thumb {
+  background: var(--dnfl-border-medium);
+  border-radius: var(--dnfl-radius-sm);
+}
+.dnfl-transcript-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--dnfl-gray-text);
+}
+.dnfl-transcript-wrapper h1,
+.dnfl-transcript-wrapper h2 {
+  color: var(--dnfl-text-main);
+  margin-top: 0;
+  font-size: 1rem;
+}
+.dnfl-transcript-wrapper strong {
+  color: var(--dnfl-text-main);
+}
+.dnfl-transcript-wrapper em {
+  color: var(--dnfl-primary);
+  font-style: italic;
+}
+
+/* ==========================================================================
+   DNFL Rankings Module Styles (modules/_rankings.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt
+   Note: Chart canvas, legend bar, and data table rules are promoted to global
+   _containers.scss and _tables.scss. Module file retains specific extensions.
+   ========================================================================== */
+/* ==========================================================================
+   DNFL Rules Module Styles (modules/_rules.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt
+   Note: Tables and generic accordion/blockquote wrappers are promoted to global
+   _tables-v5.scss and _containers-v5.scss. This module provides complete 1:1
+   parity for the Rulebook UI.
+   ========================================================================== */
+.dnfl-rules-wrapper {
+  width: 100%;
+  margin-top: 1rem;
+  box-sizing: border-box;
+}
+.dnfl-rules-wrapper h1, .dnfl-rules-wrapper h2, .dnfl-rules-wrapper h3, .dnfl-rules-wrapper h4, .dnfl-rules-wrapper h5 {
+  text-align: left !important;
+  margin: 14px 0 6px 0 !important;
+  font-family: inherit !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  background: none !important;
+}
+
+.dnfl-rules-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--dnfl-text-heading);
+}
+
+.dnfl-rules-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.dnfl-rules-tabhead {
+  background-color: var(--dnfl-bg-muted);
+  color: var(--dnfl-text-main);
+  padding: 14px 18px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: 1px solid var(--dnfl-border-medium);
+  border-radius: var(--dnfl-radius-md);
+  margin-top: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color var(--dnfl-transition-smooth), border-color var(--dnfl-transition-smooth);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.dnfl-rules-tabhead:hover {
+  background-color: var(--dnfl-bg-subhead);
+  border-color: var(--dnfl-primary);
+  color: var(--dnfl-primary);
+}
+
+.dnfl-rules-icon {
+  margin-right: 8px;
+  color: var(--dnfl-primary);
+}
+
+.dnfl-rules-badge {
+  font-size: 0.75rem;
+  background-color: var(--dnfl-primary);
+  color: var(--dnfl-bg-card);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.dnfl-rules-main-content {
+  padding: 12px 16px;
+  background-color: var(--dnfl-bg-card);
+  border: 1px solid var(--dnfl-border-subtle);
+  border-top: none;
+  border-bottom-left-radius: var(--dnfl-radius-md);
+  border-bottom-right-radius: var(--dnfl-radius-md);
+  margin-bottom: 12px;
+}
+
+.dnfl-rules-subhead {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dnfl-primary);
+  padding: 10px 12px;
+  background-color: var(--dnfl-bg-subhead);
+  border-left: 4px solid var(--dnfl-primary);
+  border-radius: var(--dnfl-radius-sm);
+  margin-top: 8px;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  transition: background-color var(--dnfl-transition-fast);
+}
+.dnfl-rules-subhead:hover {
+  background-color: var(--dnfl-border-subtle);
+}
+
+.dnfl-sub-icon {
+  margin-right: 6px;
+}
+
+.dnfl-rules-sub-content {
+  padding: 10px 12px 12px 12px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--dnfl-text-subhead);
+}
+
+.dnfl-rules-topichead {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--dnfl-text-heading);
+  padding: 8px 10px;
+  background-color: var(--dnfl-bg-muted);
+  border: 1px solid var(--dnfl-border-subtle);
+  border-radius: var(--dnfl-radius-sm);
+  margin-top: 8px;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  transition: background-color var(--dnfl-transition-fast);
+}
+.dnfl-rules-topichead:hover {
+  background-color: var(--dnfl-bg-subhead);
+  color: var(--dnfl-primary);
+}
+
+.dnfl-topic-icon {
+  margin-right: 6px;
+  color: var(--dnfl-primary);
+}
+
+.dnfl-rules-topic-content {
+  padding: 10px 14px;
+  background-color: var(--dnfl-bg-card);
+  border: 1px solid var(--dnfl-border-subtle);
+  border-top: none;
+  border-bottom-left-radius: var(--dnfl-radius-sm);
+  border-bottom-right-radius: var(--dnfl-radius-sm);
+  margin-bottom: 8px;
+}
+
+.dnfl-rules-wrapper ol {
+  margin-left: 1.25rem !important;
+  padding-left: 0.5rem !important;
+}
+.dnfl-rules-wrapper li {
+  margin-bottom: 8px !important;
+}
+.dnfl-rules-wrapper li:last-child {
+  margin-bottom: 0 !important;
+}
+
+.dnfl-rules-topic-content li {
+  margin-bottom: 8px !important;
+}
+.dnfl-rules-topic-content li:last-child {
+  margin-bottom: 0 !important;
+}
+
+.dnfl-rules-main-content,
+.dnfl-rules-sub-content,
+.dnfl-rules-topic-content {
+  display: none;
+}
+
+.dnfl-rules-schedule-header {
+  font-weight: 700;
+  font-style: italic;
+  text-decoration: underline;
+  color: var(--dnfl-text-heading);
+  margin: 1rem 0 0.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .dnfl-rules-tabhead {
+    font-size: 0.95rem;
+    padding: 12px 14px;
+  }
+  .dnfl-rules-badge {
+    display: none;
+  }
+  .dnfl-rules-wrapper blockquote {
+    margin-left: 1rem !important;
+  }
+}
+/* ==========================================================================
+   DNFL Native MFL UI Overrides & MFLScripts Decoupling (_mfl-overrides.scss)
+   Duke Networking Fantasy League (DNFL)
+   Source Base: dnfl-global-css.txt (MFL & MFLScripts Style Updates)
+   ========================================================================== */
+.myfantasyleague_menu {
+  border-bottom: 0;
+  border-top: 0;
+  background: var(--accent) !important;
+  box-shadow: none;
+  height: 2.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.mobile-wrap,
+.settings-mobile-wrap,
+#options_45 #container-wrap table.report,
+#body_live_scoring_summary #live_scoring_summary table.scoresummary table,
+#body_live_scoring_summary #live_scoring_summary table.teamscoresummary table,
+#body_live_scoring_summary #live_scoring_summary table[width="90%"],
+#body_live_scoring_summary #live_scoring_summary span.reportnavigation + table {
+  border-radius: var(--dnfl-radius-lg) !important;
+}
+
+.franchiseicon {
+  min-width: 4rem !important;
+  max-width: 4rem !important;
+  width: 4rem !important;
+  min-height: 4rem !important;
+  max-height: 4rem !important;
+  height: 4rem !important;
+  aspect-ratio: 1/1 !important;
+  -o-object-fit: cover !important;
+     object-fit: cover !important;
+  border-radius: 25% !important;
+  border: 0 !important;
+}
+
+.franchiselogo {
+  max-height: 25rem !important;
+  width: auto !important;
+  -o-object-fit: contain !important;
+     object-fit: contain !important;
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.homepagecolumn .homepagemodule caption,
+caption,
+#commissioner_setup table.two_column_layout th {
+  font-size: 1.1rem;
+  text-align: left;
+  background: none;
+  padding: 0.5rem 0.313rem;
+  line-height: 100%;
+  text-transform: capitalize;
+}
+
+.dnfl {
+  --accent: #0577B1;
+}
+
+/* ==========================================================================
+   DNFL Framework Modular Stylesheet Partial (_test_v4_44.scss)
+   Duke Networking Fantasy League (DNFL)
+   Fully aligned with dnfl-global-v3_36.css baseline design tokens.
+   ========================================================================== */
+/* ---------------- Standard 6-Color Chart & Legend Palette ---------------- */
+:root, .dnfl {
+  --dnfl-chart-bg-1: rgba(54, 162, 235, 0.85); /* Sky Blue */
+  --dnfl-chart-border-1: rgb(54, 162, 235);
+  --dnfl-chart-bg-2: rgba(255, 99, 132, 0.85); /* Rose Coral */
+  --dnfl-chart-border-2: rgb(255, 99, 132);
+  --dnfl-chart-bg-3: rgba(75, 192, 192, 0.85); /* Teal Cyan */
+  --dnfl-chart-border-3: rgb(75, 192, 192);
+  --dnfl-chart-bg-4: rgba(255, 159, 64, 0.85); /* Amber Orange */
+  --dnfl-chart-border-4: rgb(255, 159, 64);
+  --dnfl-chart-bg-5: rgba(153, 102, 255, 0.85); /* Lavender Purple */
+  --dnfl-chart-border-5: rgb(153, 102, 255);
+  --dnfl-chart-bg-6: rgba(46, 204, 113, 0.85); /* Emerald Mint */
+  --dnfl-chart-border-6: rgb(46, 204, 113);
+}
+
+/* Swatch & Unified Legend Panel Utility Classes */
+.dnfl-legend-panel,
+.dnfl-rankings-legend,
+.dnfl-standings-legend {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 0.75rem 1.25rem !important;
+  margin-bottom: 1rem !important;
+  padding: 10px 14px !important;
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+.dnfl-legend-panel .dnfl-legend-items,
+.dnfl-legend-panel .dnfl-key-icon-group,
+.dnfl-rankings-legend .dnfl-legend-items,
+.dnfl-rankings-legend .dnfl-key-icon-group,
+.dnfl-standings-legend .dnfl-legend-items,
+.dnfl-standings-legend .dnfl-key-icon-group {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 1.25rem !important;
+}
+.dnfl-legend-panel .dnfl-legend-note,
+.dnfl-legend-panel .dnfl-disclaimer-note,
+.dnfl-rankings-legend .dnfl-legend-note,
+.dnfl-rankings-legend .dnfl-disclaimer-note,
+.dnfl-standings-legend .dnfl-legend-note,
+.dnfl-standings-legend .dnfl-disclaimer-note {
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  color: var(--dnfl-text-subtle, #64748b) !important;
+  margin-left: auto !important;
+}
+@media (max-width: 640px) {
+  .dnfl-legend-panel,
+  .dnfl-rankings-legend,
+  .dnfl-standings-legend {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .dnfl-legend-panel .dnfl-legend-items,
+  .dnfl-legend-panel .dnfl-key-icon-group,
+  .dnfl-rankings-legend .dnfl-legend-items,
+  .dnfl-rankings-legend .dnfl-key-icon-group,
+  .dnfl-standings-legend .dnfl-legend-items,
+  .dnfl-standings-legend .dnfl-key-icon-group {
+    justify-content: center !important;
+  }
+  .dnfl-legend-panel .dnfl-legend-note,
+  .dnfl-legend-panel .dnfl-disclaimer-note,
+  .dnfl-rankings-legend .dnfl-legend-note,
+  .dnfl-rankings-legend .dnfl-disclaimer-note,
+  .dnfl-standings-legend .dnfl-legend-note,
+  .dnfl-standings-legend .dnfl-disclaimer-note {
+    margin-left: 0 !important;
+    text-align: center !important;
+  }
+}
+
+.dnfl-legend-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+}
+
+.dnfl-legend-swatch {
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 3px !important;
+  display: inline-block !important;
+}
+.dnfl-legend-swatch.color-1 {
+  background-color: var(--dnfl-chart-bg-1) !important;
+  border: 1px solid var(--dnfl-chart-border-1) !important;
+}
+.dnfl-legend-swatch.color-2 {
+  background-color: var(--dnfl-chart-bg-2) !important;
+  border: 1px solid var(--dnfl-chart-border-2) !important;
+}
+.dnfl-legend-swatch.color-3 {
+  background-color: var(--dnfl-chart-bg-3) !important;
+  border: 1px solid var(--dnfl-chart-border-3) !important;
+}
+.dnfl-legend-swatch.color-4 {
+  background-color: var(--dnfl-chart-bg-4) !important;
+  border: 1px solid var(--dnfl-chart-border-4) !important;
+}
+.dnfl-legend-swatch.color-5 {
+  background-color: var(--dnfl-chart-bg-5) !important;
+  border: 1px solid var(--dnfl-chart-border-5) !important;
+}
+.dnfl-legend-swatch.color-6 {
+  background-color: var(--dnfl-chart-bg-6) !important;
+  border: 1px solid var(--dnfl-chart-border-6) !important;
+}
+
+/* --------------------------------------------------------------------------
+   1. LEVEL 1: PAGE SHELL CONTAINER & MODULE UN-NESTING RESETS
+   -------------------------------------------------------------------------- */
+#body_content, #reports, .dnfl-page-shell {
+  width: 95% !important;
+  max-width: 1000px !important;
+  margin: 0 auto 2rem auto !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+@media (max-width: 768px) {
+  #body_content, #reports, .homepagecolumn {
+    width: 100% !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+}
+.homepagemodule, div[id^=homepagemodule_], td.homepagecell, .homepagecolumn, .mobile-wrap, .homepagemodule_content, .settings-mobile-wrap {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+/* Standalone Native MFL Wrappers */
+.mobile-wrap:not(:has(.dnfl-card)), .settings-mobile-wrap:not(:has(.dnfl-card)) {
+  width: 95% !important;
+  max-width: 1000px !important;
+  min-width: 0 !important;
+  margin: 0 auto 2rem auto !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+  box-shadow: var(--dnfl-shadow-card, 0 4px 16px rgba(0, 0, 0, 0.4)) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. LEVEL 3: STANDALONE CARD ARCHITECTURE
+   -------------------------------------------------------------------------- */
+.dnfl-card, .dnfl-module-container {
+  width: 95% !important;
+  max-width: 1000px !important;
+  min-width: 0 !important;
+  margin: 0 auto 2rem auto !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+  box-shadow: var(--dnfl-shadow-card, 0 4px 16px rgba(0, 0, 0, 0.4)) !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+.dnfl-card .dnfl-card-header, .dnfl-module-container .dnfl-card-header {
+  padding: 14px 20px !important;
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+.dnfl-card .dnfl-card-header h3, .dnfl-card .dnfl-card-header .dnfl-card-title, .dnfl-module-container .dnfl-card-header h3, .dnfl-module-container .dnfl-card-header .dnfl-card-title {
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  color: var(--dnfl-text-heading, #0f172a) !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+.dnfl-card .dnfl-card-header h3 i, .dnfl-card .dnfl-card-header .dnfl-card-title i, .dnfl-module-container .dnfl-card-header h3 i, .dnfl-module-container .dnfl-card-header .dnfl-card-title i {
+  color: var(--dnfl-primary, #0577B1) !important;
+  font-size: 1rem !important;
+  width: 18px !important;
+  text-align: center !important;
+  display: inline-block !important;
+}
+.dnfl-card .dnfl-card-body, .dnfl-module-container .dnfl-card-body {
+  padding: 1.25rem !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+}
+.dnfl-card .dnfl-card-body .dnfl-table-wrapper,
+.dnfl-card .dnfl-card-body .mobile-wrapper,
+.dnfl-card .dnfl-card-body .dnfl-toolbar,
+.dnfl-card .dnfl-card-body .dnfl-legend-panel,
+.dnfl-card .dnfl-card-body .dnfl-standings-legend, .dnfl-module-container .dnfl-card-body .dnfl-table-wrapper,
+.dnfl-module-container .dnfl-card-body .mobile-wrapper,
+.dnfl-module-container .dnfl-card-body .dnfl-toolbar,
+.dnfl-module-container .dnfl-card-body .dnfl-legend-panel,
+.dnfl-module-container .dnfl-card-body .dnfl-standings-legend {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+.dnfl-card .dnfl-card-body .dnfl-table-wrapper,
+.dnfl-card .dnfl-card-body .mobile-wrapper, .dnfl-module-container .dnfl-card-body .dnfl-table-wrapper,
+.dnfl-module-container .dnfl-card-body .mobile-wrapper {
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+.dnfl-card .dnfl-card-body .dnfl-chart-wrapper, .dnfl-module-container .dnfl-card-body .dnfl-chart-wrapper {
+  width: 100% !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  overflow: hidden !important;
+}
+.dnfl-card .dnfl-card-body .dnfl-toolbar, .dnfl-module-container .dnfl-card-body .dnfl-toolbar {
+  box-shadow: none !important;
+}
+
+.homepagemodule .dnfl-card, .mobile-wrap .dnfl-card, td.homepagecell .dnfl-card {
+  width: 100% !important;
+  margin: 0 auto 2rem auto !important;
+}
+
+/* --------------------------------------------------------------------------
+   3. LEVEL 2: FLEX TOOLBARS, CONTROLS & MODERN BUTTON RESET
+   -------------------------------------------------------------------------- */
+.dnfl-toolbar, .dnfl-controls, .reportnavigation, table.report_navigation {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 1rem !important;
+  margin-bottom: 1rem !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  padding: 0.875rem 1.25rem !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  box-shadow: none !important;
+}
+
+.dnfl-filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+select.dnfl-select {
+  padding: 6px 12px !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  color: var(--dnfl-text-heading, #0f172a) !important;
+  outline: none !important;
+}
+select.dnfl-select:focus {
+  border-color: var(--dnfl-primary, #0577B1) !important;
+  box-shadow: 0 0 0 2px var(--dnfl-primary-light, #b6e2ff) !important;
+}
+
+.dnfl-buttons-right, .dnfl-actions-right {
+  margin-left: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  flex-wrap: wrap !important;
+}
+
+/* Cross-Browser Flat Button Resets */
+button.dnfl-btn i, button.dnfl-btn span, button.dnfl-btn a, button.dnfl-btn label, a.dnfl-btn i, a.dnfl-btn span, a.dnfl-btn a, a.dnfl-btn label, input.dnfl-btn i, input.dnfl-btn span, input.dnfl-btn a, input.dnfl-btn label, .dnfl-btn i, .dnfl-btn span, .dnfl-btn a, .dnfl-btn label {
+  color: inherit !important;
+}
+button.dnfl-btn, a.dnfl-btn, input.dnfl-btn, .dnfl-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  padding: 8px 16px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  cursor: pointer !important;
+  -webkit-user-select: none !important;
+     -moz-user-select: none !important;
+          user-select: none !important;
+  text-decoration: none !important;
+  -moz-appearance: none !important;
+       appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: all var(--dnfl-transition-fast, 0.15s ease) !important;
+}
+
+/* Fix Chart Toggle Button Width Constant Sizing */
+#dnfl_rankings_toggleChartBtn, #dnfl_chartToggleBtn, .dnfl-btn-toggle-chart {
+  min-width: 128px !important;
+  justify-content: center !important;
+}
+
+button.dnfl-btn, a.dnfl-btn, .dnfl-btn, .dnfl-btn-primary {
+  background-color: var(--dnfl-primary, #0577B1) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--dnfl-primary, #0577B1) !important;
+}
+button.dnfl-btn:hover, a.dnfl-btn:hover, .dnfl-btn:hover, .dnfl-btn-primary:hover {
+  background-color: var(--dnfl-primary-hover, #045e8c) !important;
+  border-color: var(--dnfl-primary-hover, #045e8c) !important;
+  color: #ffffff !important;
+}
+
+button.dnfl-btn-secondary, a.dnfl-btn-secondary, .dnfl-btn-secondary {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  color: var(--dnfl-primary, #0577B1) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+}
+button.dnfl-btn-secondary:hover, a.dnfl-btn-secondary:hover, .dnfl-btn-secondary:hover {
+  background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+  border-color: var(--dnfl-primary, #0577B1) !important;
+  color: var(--dnfl-primary-hover, #045e8c) !important;
+}
+
+.dnfl-btn-icon {
+  padding: 4px 8px !important;
+  font-size: 0.85rem !important;
+  cursor: pointer !important;
+}
+
+.btn-text-short {
+  display: none !important;
+}
+
+.btn-text-full {
+  display: inline !important;
+}
+
+@media (max-width: 768px) {
+  .btn-text-full {
+    display: none !important;
+  }
+  .btn-text-short {
+    display: inline !important;
+  }
+  .dnfl-btn {
+    padding: 8px 12px !important;
+  }
+  #dnfl_rankings_toggleChartBtn, #dnfl_chartToggleBtn, .dnfl-btn-toggle-chart {
+    min-width: 85px !important;
+  }
+}
+/* --------------------------------------------------------------------------
+   4. GLOBAL FRANCHISE COLUMN & TEXT WRAPPING
+   -------------------------------------------------------------------------- */
+.dnfl-franchise-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  min-width: 0;
+  width: 100%;
+}
+
+.dnfl-franchise-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.dnfl-team-name {
+  font-weight: 700;
+  color: var(--dnfl-text-heading, #0f172a);
+  font-size: 0.88rem;
+  line-height: 1.25;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal !important;
+  text-decoration: none !important;
+}
+.dnfl-team-name:hover {
+  color: var(--dnfl-primary, #0577B1);
+  text-decoration: underline !important;
+}
+
+.dnfl-owner-name {
+  font-size: 0.75rem;
+  color: var(--dnfl-text-subtle, #64748b);
+  line-height: 1.2;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal !important;
+}
+
+/* Global Pill & Badge System */
+.dnfl-pill, .dnfl-pill-blue, .dnfl-record-badge, .dnfl-records-badge {
+  background-color: var(--dnfl-primary, #0577B1) !important;
+  color: #ffffff !important;
+  padding: 4px 10px !important;
+  border-radius: 9999px !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  display: inline-block !important;
+  text-align: center !important;
+  min-width: 80px !important;
+  box-sizing: border-box !important;
+}
+
+.dnfl-pill-green {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+  padding: 4px 10px !important;
+  border-radius: 9999px !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  display: inline-block !important;
+  text-align: center !important;
+}
+
+.dnfl-pill-red {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+  padding: 4px 10px !important;
+  border-radius: 9999px !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  display: inline-block !important;
+  text-align: center !important;
+}
+
+.dnfl-badge-green {
+  background-color: #dcfce7 !important;
+  color: #15803d !important;
+  border: 1px solid #bbf7d0 !important;
+  padding: 3px 8px !important;
+  border-radius: 9999px !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 82px !important;
+  box-sizing: border-box !important;
+}
+
+.dnfl-badge-red {
+  background-color: #fee2e2 !important;
+  color: #b91c1c !important;
+  border: 1px solid #fecaca !important;
+  padding: 3px 8px !important;
+  border-radius: 9999px !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 82px !important;
+  box-sizing: border-box !important;
+}
+
+.dnfl-badge-gray {
+  background-color: #f1f5f9 !important;
+  color: #64748b !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 3px 8px !important;
+  border-radius: 9999px !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 52px !important;
+  box-sizing: border-box !important;
+}
+
+/* --------------------------------------------------------------------------
+   5. TARGETED NO-WRAP & COLUMN SIZING (DESKTOP)
+   -------------------------------------------------------------------------- */
+.dnfl-col-seed, .dnfl-col-rank, .dnfl-col-change,
+.dnfl-col-pf, .dnfl-col-pa, .dnfl-col-record,
+.dnfl-col-bbid, .dnfl-col-index, .dnfl-col-comment {
+  white-space: nowrap !important;
+}
+
+.dnfl-col-seed, .dnfl-col-rank {
+  width: 56px !important;
+  text-align: center !important;
+}
+
+.dnfl-col-change {
+  width: 62px !important;
+  text-align: center !important;
+}
+
+.dnfl-col-pf, .dnfl-col-pa {
+  width: 110px !important;
+  text-align: center !important;
+}
+
+.dnfl-col-record {
+  width: 95px !important;
+  text-align: center !important;
+}
+
+.dnfl-col-bbid {
+  width: 85px !important;
+  text-align: center !important;
+}
+
+.dnfl-col-index {
+  width: 100px !important;
+  min-width: 100px !important;
+  text-align: center !important;
+}
+
+.dnfl-col-comment {
+  width: 50px !important;
+  text-align: center !important;
+}
+
+/* Dynamic Wrapping Franchise Column */
+.dnfl-col-franchise {
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  width: auto !important;
+  min-width: 180px !important;
+  text-align: left !important;
+}
+
+/* Expanded Wrap Rows */
+.dnfl-comment-row, .dnfl-division-header-cell {
+  white-space: normal !important;
+}
+
+.dnfl-comment-cell {
+  padding: 10px 14px !important;
+  border-left: 3px solid var(--dnfl-primary, #0577B1) !important;
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  text-align: left !important;
+}
+
+.dnfl-comment-box {
+  font-size: 0.85rem !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  font-style: italic !important;
+  line-height: 1.4 !important;
+  overflow-wrap: break-word !important;
+  white-space: normal !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. RESPONSIVE MOBILE FLEX LAYOUT FOR ALL DNFL TABLES WITH FRANCHISE COLUMN
+   -------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  /* Turn table rows into clean responsive flex containers */
+  table.dnfl-table tbody tr:not(.dnfl-division-header):not(.dnfl-comment-row) {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    padding: 8px 10px !important;
+    border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  }
+  /* Hide table header Franchise column on mobile since team name gets top row block */
+  table.dnfl-table thead th.dnfl-col-franchise {
+    display: none !important;
+  }
+  /* Full-width Franchise Header Row Block on Mobile */
+  table.dnfl-table tbody td.dnfl-col-franchise {
+    order: -1 !important;
+    flex: 0 0 100% !important;
+    width: 100% !important;
+    padding: 4px 0 8px 0 !important;
+    border-bottom: 1px dashed var(--dnfl-border-subtle, #e2e8f0) !important;
+    margin-bottom: 6px !important;
+    background: transparent !important;
+  }
+  table.dnfl-table tbody td.dnfl-col-franchise .dnfl-franchise-cell {
+    width: 100% !important;
+  }
+  table.dnfl-table tbody td.dnfl-col-franchise .dnfl-team-name {
+    font-size: 0.92rem !important;
+    font-weight: 700 !important;
+    color: var(--dnfl-text-heading, #0f172a) !important;
+  }
+  table.dnfl-table tbody td.dnfl-col-franchise .dnfl-owner-name {
+    font-size: 0.78rem !important;
+    color: var(--dnfl-text-subtle, #64748b) !important;
+  }
+  /* Stat cells align horizontally below the full-width Franchise block */
+  table.dnfl-table tbody td:not(.dnfl-col-franchise) {
+    flex: 1 1 auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 2px 4px !important;
+    border: none !important;
+  }
+  /* Compact Column Sizes on Mobile */
+  .dnfl-col-seed, .dnfl-col-rank {
+    width: auto !important;
+    min-width: 36px !important;
+  }
+  .dnfl-col-index {
+    width: auto !important;
+    min-width: 58px !important;
+  }
+  .dnfl-col-comment {
+    width: auto !important;
+    min-width: 40px !important;
+  }
+  .dnfl-col-record {
+    width: auto !important;
+    min-width: 75px !important;
+  }
+}
+/* Exporter Specific Protection */
+#dnfl-export-actions[style*="display: none"] {
+  display: none !important;
+}
+
+.dnfl-preview-textarea {
+  width: 100% !important;
+  height: 350px !important;
+  font-family: monospace !important;
+  font-size: 0.85rem !important;
+  padding: 12px !important;
+  box-sizing: border-box !important;
+  background-color: var(--dnfl-bg-subhead, #f8fafc) !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  outline: none !important;
+}
+
+.dnfl-status-loading {
+  color: var(--dnfl-text-subtle, #64748b) !important;
+  font-style: italic !important;
+}
+
+.dnfl-status-success {
+  color: #10b981 !important;
+  font-weight: 600 !important;
+}
+
+.dnfl-status-error {
+  color: #ef4444 !important;
+  font-weight: 600 !important;
+}/*# sourceMappingURL=dnfl-global-TEST.css.map */

@@ -1,4 +1,4 @@
-<!-- DNFL POWER RANKINGS MODULE EMBED v4.20 -->
+<!-- DNFL POWER RANKINGS MODULE EMBED v4.22 -->
 <div class="dnfl-card" id="dnfl-rankings-container">
     <div class="dnfl-card-header">
         <h3 class="dnfl-card-title"><i class="fa-solid fa-ranking-star"></i> DNFL LEAGUE POWER RANKINGS</h3>
@@ -8,22 +8,22 @@
         <!-- Toolbar / Filters -->
         <div class="dnfl-toolbar">
             <div class="dnfl-filter-group">
-                <label for="dnfl_weekSelector">Target Week</label>
-                <select id="dnfl_weekSelector" class="dnfl-select" onchange="DNFL.Rankings.loadWeeklyData()">
+                <label for="dnfl_rankings_weekFilter">Target Week</label>
+                <select id="dnfl_rankings_weekFilter" class="dnfl-select">
                     <option value="latest">Loading Weeks...</option>
                 </select>
             </div>
             <div class="dnfl-filter-group">
-                <label for="dnfl_confFilter">Conference</label>
-                <select id="dnfl_confFilter" class="dnfl-select" onchange="DNFL.Rankings.applyConferenceFilter()">
-                    <option value="All">All Conferences</option>
+                <label for="dnfl_rankings_confFilter">Conference</label>
+                <select id="dnfl_rankings_confFilter" class="dnfl-select">
+                    <option value="all">All Conferences</option>
                 </select>
             </div>
             
             <!-- Right-Aligned Action Buttons -->
             <div class="dnfl-buttons-right">
-                <button class="dnfl-btn dnfl-btn-secondary" id="dnfl_chartToggleBtn" onclick="DNFL.Rankings.toggleElementVisibility('chart')" title="Toggle Chart View">
-                    <i class="fa-solid fa-chart-line"></i> 
+                <button class="dnfl-btn dnfl-btn-secondary" id="dnfl_rankings_toggleChartBtn" title="Toggle Chart View">
+                    <i class="fa-solid fa-chart-bar"></i> 
                     <span class="btn-text-full">Hide Chart</span>
                     <span class="btn-text-short">Chart</span>
                 </button>
@@ -36,25 +36,25 @@
         </div>
         
         <!-- Chart Canvas Wrapper -->
-        <div id="dnfl_chartWrapperContainer" class="dnfl-chart-wrapper" style="margin-bottom: 1.25rem; padding: 1rem; position: relative; height: 380px;">
-            <canvas id="dnfl_powerRankingChart"></canvas>
+        <div id="dnfl_rankings_chartWrapper" class="dnfl-chart-wrapper" style="margin-bottom: 1.25rem; padding: 1rem; position: relative; height: 380px;">
+            <canvas id="dnfl_rankings_chartCanvas"></canvas>
         </div>
         
         <!-- Main Data Table Wrapper -->
         <div class="dnfl-table-wrapper">
-            <table class="dnfl-table" id="dnfl_dataTable">
+            <table class="dnfl-table" id="dnfl_rankings_table">
                 <thead>
                     <tr class="dnfl-table-subheader">
                         <th class="dnfl-col-rank">Rank</th>
                         <th class="dnfl-col-change dnfl-hide-mobile">Change</th>
                         <th class="dnfl-col-franchise">Franchise</th>
                         <th class="dnfl-col-index">Power Index</th>
-                        <th class="dnfl-col-comment">Comments</th>
+                        <th class="dnfl-col-comment" style="text-align: center;">Comments</th>
                         <th class="dnfl-col-record dnfl-hide-mobile">Record</th>
-                        <th class="dnfl-col-pf dnfl-hide-mobile">Points For</th>
+                        <th class="dnfl-col-pf dnfl-hide-mobile">PF</th>
                     </tr>
                 </thead>
-                <tbody id="dnfl_tableBody">
+                <tbody id="dnfl-rankings-tbody">
                     <tr>
                         <td colspan="7" style="text-align: center; padding: 2rem;">
                             <i class="fa-solid fa-spinner fa-spin"></i> Loading Power Rankings Data...
