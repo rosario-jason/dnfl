@@ -556,7 +556,7 @@
     function updateDnflStandingsView() {
         const select = document.getElementById("dnfl_standings_confFilter");
         const tbody = document.getElementById("dnfl-standings-tbody");
-        const titleEl = document.querySelector("#dnfl-standings-container .dnfl-card-title");
+        const titleEl = document.getElementById("dnfl-standings-title");
         if (!select || !tbody) return;
 
         const selectedValue = select.value;

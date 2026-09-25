@@ -302,6 +302,12 @@ button.dnfl-btn, a.dnfl-btn, input.dnfl-btn, .dnfl-btn {
   transition: all var(--dnfl-transition-fast, 0.15s ease) !important;
 }
 
+/* Fix Chart Toggle Button Width Constant Sizing */
+#dnfl_rankings_toggleChartBtn, #dnfl_chartToggleBtn, .dnfl-btn-toggle-chart {
+  min-width: 128px !important;
+  justify-content: center !important;
+}
+
 button.dnfl-btn, a.dnfl-btn, .dnfl-btn, .dnfl-btn-primary {
   background-color: var(--dnfl-primary, #0577B1) !important;
   color: #ffffff !important;

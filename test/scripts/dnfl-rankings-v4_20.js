@@ -387,7 +387,7 @@
         const isFiltered = activeConfFilter && activeConfFilter !== 'All';
 
         // Update Card Title dynamically based on selector using fa-ranking-star
-        const titleEl = document.querySelector('#dnfl-rankings-container .dnfl-card-title, .dnfl-card-title');
+        const titleEl = document.getElementById("dnfl-rankings-title");
         if (titleEl) {
             if (isFiltered) {
                 titleEl.innerHTML = `<i class="fa-solid fa-ranking-star"></i> ${activeConfFilter} Power Rankings`;
