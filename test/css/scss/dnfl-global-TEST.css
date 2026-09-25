@@ -1433,8 +1433,8 @@ button.dnfl-btn, a.dnfl-btn, input.dnfl-btn, .dnfl-btn {
 }
 
 /* Fix Chart Toggle Button Width Constant Sizing */
-#dnfl_rankings_toggleChartBtn, #dnfl_chartToggleBtn, .dnfl-btn-toggle-chart {
-  min-width: 185px !important;
+#dnfl_chartToggleBtn {
+  min-width: 400px !important;
   justify-content: center !important;
 }
 
