@@ -1,0 +1,87 @@
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DNFL Power Rankings Module</title>
+
+<!-- FontAwesome Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+<!-- Chart.js Engine -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<!-- PapaParse CSV Parsing Engine -->
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+<!-- Core Global CSS Framework Baseline & Scoped SCSS Override -->
+<link rel="stylesheet" href="https://dnfl.live/dnfl_global/css/dnfl-global-v3_36.css" />
+<link rel="stylesheet" href="https://dnfl.live/dnfl_global/css/_test_v4_43.scss" />
+
+<!-- DNFL Power Rankings Module Wrapper -->
+<div class="dnfl-card" id="dnfl-rankings-container">
+    <div class="dnfl-card-header">
+        <h3 class="dnfl-card-title"><i class="fa-solid fa-ranking-star"></i> DNFL LEAGUE POWER RANKINGS</h3>
+    </div>
+    
+    <div class="dnfl-card-body">
+        <!-- Toolbar / Filters -->
+        <div class="dnfl-toolbar">
+            <div class="dnfl-filter-group">
+                <label for="dnfl_weekSelector">Target Week</label>
+                <select id="dnfl_weekSelector" class="dnfl-select" onchange="DNFL.Rankings.loadWeeklyData()">
+                    <option value="latest">Loading Weeks...</option>
+                </select>
+            </div>
+            <div class="dnfl-filter-group">
+                <label for="dnfl_confFilter">Conference</label>
+                <select id="dnfl_confFilter" class="dnfl-select" onchange="DNFL.Rankings.applyConferenceFilter()">
+                    <option value="All">All Conferences</option>
+                </select>
+            </div>
+            
+            <!-- Right-Aligned Action Buttons -->
+            <div class="dnfl-buttons-right">
+                <button class="dnfl-btn dnfl-btn-secondary" id="dnfl_chartToggleBtn" onclick="DNFL.Rankings.toggleElementVisibility('chart')" title="Toggle Chart View">
+                    <i class="fa-solid fa-chart-line"></i> 
+                    <span class="btn-text-full">Hide Chart</span>
+                    <span class="btn-text-short">Chart</span>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Legend Panel Container -->
+        <div id="dnfl_rankings_legend" class="dnfl-legend-panel">
+            <div class="dnfl-legend-note">Loading conference keys...</div>
+        </div>
+        
+        <!-- Chart Canvas Wrapper -->
+        <div id="dnfl_chartWrapperContainer" class="dnfl-chart-wrapper" style="margin-bottom: 1.25rem; padding: 1rem; position: relative; height: 380px;">
+            <canvas id="dnfl_powerRankingChart"></canvas>
+        </div>
+        
+        <!-- Main Data Table Wrapper -->
+        <div class="dnfl-table-wrapper">
+            <table class="dnfl-table" id="dnfl_dataTable">
+                <thead>
+                    <tr class="dnfl-table-subheader">
+                        <th class="dnfl-col-rank">Rank</th>
+                        <th class="dnfl-col-change dnfl-hide-mobile">Change</th>
+                        <th class="dnfl-col-franchise">Franchise</th>
+                        <th class="dnfl-col-index">Power Index</th>
+                        <th class="dnfl-col-comment">Comments</th>
+                        <th class="dnfl-col-record dnfl-hide-mobile">Record</th>
+                        <th class="dnfl-col-pf dnfl-hide-mobile">Points For</th>
+                    </tr>
+                </thead>
+                <tbody id="dnfl_tableBody">
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Loading Power Rankings Data...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- DNFL Power Rankings Dynamic Dashboard Script -->
+<script src="https://dnfl.live/dnfl_rankings/js/dnfl-rankings-v4_20.js"></script>
