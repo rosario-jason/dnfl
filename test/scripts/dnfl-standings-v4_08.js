@@ -612,7 +612,7 @@
         if (!conf) return;
 
         if (titleEl) {
-            titleEl.innerHTML = `<i class="fa-solid fa-trophy"></i> ${conf.name} Standings`;
+            titleEl.innerHTML = `<i class="fa-solid fa-list"></i> ${conf.name} Standings`;
         }
 
         const confRules = getConfRules(globalRules, norm(conf.id));
