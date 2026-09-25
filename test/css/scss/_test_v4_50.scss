@@ -1,0 +1,215 @@
+/* ==========================================================================
+   DNFL Framework Modular Stylesheet Sandbox Partial (_test_v4_50.scss)
+   Duke Networking Fantasy League (DNFL)
+   Fully aligned with dnfl-global-v3_36.css baseline design tokens.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   LIVE PRODUCTION SCSS MIGRATION & CONSOLIDATION MANIFEST
+   ==========================================================================
+   When consolidating _test_v4_50.scss into the permanent SCSS manifest 
+   (dnfl-global-TEST.css / dnfl-global.css), rules are mapped to:
+
+   1. Core Framework Foundation
+      - _variables.scss : Standard 6-color chart palette (--dnfl-chart-bg-1..6)
+      - _base.scss      : Upright table th reset (table.dnfl-table th { font-style: normal !important; })
+      - _utilities.scss : DOM state classes (.dnfl-is-hidden), icon color helpers (.dnfl-icon-blue/amber/red/green)
+      - _badges.scss    : Global base badges (.dnfl-badge-*) & pills (.dnfl-pill-*)
+      - _tables.scss    : Dynamic franchise text wrapping (.dnfl-col-franchise) & row hover effects
+
+   2. Feature Modules (Module-Scoped Styles)
+      - modules/_standings.scss : #dnfl-standings-container, .dnfl-seed-badge, left-aligned .dnfl-col-seed (95px)
+      - modules/_rankings.scss  : #dnfl-rankings-container, .color-1..6 rank badges, .dnfl-comment-box
+      - modules/_podcast.scss   : #dnfl-podcast-container, .dnfl-podcast-banner, .dnfl-transcript-raw
+      - modules/_rules.scss     : #dnfl-rules-container, bylaws accordion hierarchy
+      - modules/_exporter.scss  : #dnfl-exporter-container, .dnfl-preview-textarea
+
+   Purged CSS Deprecations & Anti-Patterns (DO NOT MIGRATE TO LIVE):
+      - Universal Badge min-width (stretching badges across modules)
+      - Full-Width Mobile Flex Row Restructuring
+      - Inline style="..." Attribute String Injections
+      - Manual element.style.display Assignments in JS
+   -------------------------------------------------------------------------- */
+
+/* ---------------- 1. Standard 6-Color Chart & Legend Palette ---------------- */
+:root, .dnfl {
+  --dnfl-chart-bg-1: rgba(54, 162, 235, 0.85); /* Sky Blue */
+  --dnfl-chart-border-1: rgb(54, 162, 235);
+  --dnfl-chart-bg-2: rgba(255, 99, 132, 0.85); /* Rose Coral */
+  --dnfl-chart-border-2: rgb(255, 99, 132);
+  --dnfl-chart-bg-3: rgba(75, 192, 192, 0.85); /* Teal Cyan */
+  --dnfl-chart-border-3: rgb(75, 192, 192);
+  --dnfl-chart-bg-4: rgba(255, 159, 64, 0.85); /* Amber Orange */
+  --dnfl-chart-border-4: rgb(255, 159, 64);
+  --dnfl-chart-bg-5: rgba(153, 102, 255, 0.85); /* Lavender Purple */
+  --dnfl-chart-border-5: rgb(153, 102, 255);
+  --dnfl-chart-bg-6: rgba(46, 204, 113, 0.85); /* Emerald Mint */
+  --dnfl-chart-border-6: rgb(46, 204, 113);
+}
+
+/* ---------------- 2. Global DOM State Utility Classes ---------------- */
+.dnfl-is-hidden { display: none !important; }
+.dnfl-is-visible { display: block !important; }
+.dnfl-is-flex { display: flex !important; }
+
+/* ---------------- 3. Global Table Upright Header Reset ---------------- */
+table.dnfl-table th, .dnfl-table th {
+  font-style: normal !important;
+}
+
+/* ---------------- 4. Standings Module Scoped Widths & Circular Seed Badge ---------------- */
+#dnfl-standings-container {
+  .dnfl-col-seed {
+    width: 95px !important;
+    min-width: 95px !important;
+    text-align: left !important;
+    padding-left: 10px !important;
+    white-space: nowrap !important;
+  }
+  .dnfl-col-pf, .dnfl-col-pa {
+    width: 110px !important;
+    text-align: center !important;
+  }
+  .dnfl-col-record {
+    width: 95px !important;
+    text-align: center !important;
+  }
+  .dnfl-col-bbid {
+    width: 85px !important;
+    text-align: center !important;
+  }
+
+  /* Circular Neutral Standings Seed Badge */
+  .dnfl-seed-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    color: var(--dnfl-text-heading, #0f172a) !important;
+    border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    line-height: 1 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Standings Icon Color Utility Helpers */
+  .dnfl-icon-blue  { color: var(--dnfl-badge-blue, #3b82f6) !important; margin-left: 6px; }
+  .dnfl-icon-amber { color: var(--dnfl-badge-amber, #f59e0b) !important; margin-left: 6px; }
+  .dnfl-icon-red   { color: var(--dnfl-alert-red, #ef4444) !important; margin-left: 6px; }
+  .dnfl-icon-green { color: var(--dnfl-success-green, #10b981) !important; margin-left: 6px; }
+}
+
+/* ---------------- 5. Power Rankings Module Scoped Widths & Color Slots ---------------- */
+#dnfl-rankings-container {
+  .dnfl-rank-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    color: #ffffff !important;
+
+    &.color-1 { background-color: var(--dnfl-chart-bg-1) !important; border: 1px solid var(--dnfl-chart-border-1) !important; }
+    &.color-2 { background-color: var(--dnfl-chart-bg-2) !important; border: 1px solid var(--dnfl-chart-border-2) !important; }
+    &.color-3 { background-color: var(--dnfl-chart-bg-3) !important; border: 1px solid var(--dnfl-chart-border-3) !important; }
+    &.color-4 { background-color: var(--dnfl-chart-bg-4) !important; border: 1px solid var(--dnfl-chart-border-4) !important; }
+    &.color-5 { background-color: var(--dnfl-chart-bg-5) !important; border: 1px solid var(--dnfl-chart-border-5) !important; }
+    &.color-6 { background-color: var(--dnfl-chart-bg-6) !important; border: 1px solid var(--dnfl-chart-border-6) !important; }
+  }
+
+  .dnfl-comment-row {
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  }
+  .dnfl-comment-cell {
+    padding: 10px 14px !important;
+    border-left: 3px solid var(--dnfl-primary, #0577B1) !important;
+    text-align: left !important;
+  }
+  .dnfl-comment-box {
+    font-size: 0.85rem !important;
+    color: var(--dnfl-text-main, #121212) !important;
+    font-style: italic !important;
+    line-height: 1.4 !important;
+    overflow-wrap: break-word !important;
+    white-space: normal !important;
+  }
+}
+
+/* ---------------- 6. Podcast Module Container Overrides ---------------- */
+#dnfl-podcast-container {
+  .dnfl-podcast-banner {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: var(--dnfl-radius-md, 8px) !important;
+    margin-bottom: 0.5rem !important;
+    border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  }
+
+  .dnfl-media-player-block {
+    background-color: var(--dnfl-bg-dark, #262626) !important;
+    padding: 1.25rem !important;
+    border-radius: var(--dnfl-radius-md, 8px) !important;
+    margin-bottom: 1.5rem !important;
+    margin-top: 0.5rem !important;
+    border: 1px solid var(--dnfl-border-dark, #444444) !important;
+  }
+
+  .dnfl-now-playing-label {
+    font-size: 1rem !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    display: block !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .dnfl-podcast-date, .dnfl-podcast-desc {
+    color: var(--dnfl-text-muted, #a3a3a3) !important;
+    font-size: 0.85rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .dnfl-audio {
+    width: 100% !important;
+    margin-top: 0.75rem !important;
+  }
+
+  .dnfl-transcript-wrapper {
+    width: 100% !important;
+    background-color: var(--dnfl-bg-card, #ffffff) !important;
+    padding: 1.25rem !important;
+    border-radius: var(--dnfl-radius-md, 8px) !important;
+    border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    max-height: 450px !important;
+    overflow-y: auto !important;
+    line-height: 1.6 !important;
+    margin-top: 1rem !important;
+    font-size: 0.85rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .dnfl-transcript-raw {
+    white-space: pre-wrap !important;
+    font-family: inherit !important;
+    line-height: 1.6 !important;
+  }
+}
+
+/* ---------------- 7. Mobile Media Queries ---------------- */
+@media (max-width: 768px) {
+  #dnfl-standings-container .dnfl-col-seed {
+    width: 90px !important;
+    min-width: 90px !important;
+    padding: 6px 4px !important;
+    white-space: nowrap !important;
+  }
+}
