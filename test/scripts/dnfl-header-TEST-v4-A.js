@@ -10,7 +10,7 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "4_Final-A",
+        VERSION: "4_FinalA",
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
