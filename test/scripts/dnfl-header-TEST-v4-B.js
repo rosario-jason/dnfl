@@ -10,11 +10,11 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "4.63-B",
+        VERSION: "4.64-B",
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
-            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-v4_53.css" }
+            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-v4_54.css" }
         ],
 
         INFRASTRUCTURE: [
