@@ -10,7 +10,7 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "4.61-A",
+        VERSION: "4.62-A",
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
@@ -30,7 +30,7 @@
             { name: "rankings",  url: "dnfl-rankings-v4_22.js" },
             { name: "podcast",   url: "dnfl-podcast-v4_01.js" },
             { name: "rules",     url: "dnfl-rules-v4_01.js" },
-            { name: "exporter",     url: "dnfl-exporter-v4_33.js" }
+            { name: "exporter",     url: "dnfl-exporter-v4_34.js" }
         ],
 
         CONDITIONAL_LIBRARIES: {
