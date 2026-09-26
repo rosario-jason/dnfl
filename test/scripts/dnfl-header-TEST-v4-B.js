@@ -14,7 +14,7 @@
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
-            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-v4_Stage2.css" }
+            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-v4_Stage4.css" }
         ],
 
         INFRASTRUCTURE: [

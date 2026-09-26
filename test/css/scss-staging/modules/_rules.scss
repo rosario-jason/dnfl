@@ -15,8 +15,11 @@
     }
   }
 
-  /* Payout & Scoring Table Captions */
+  /* --- NESTED RULES TABLE STYLING & ALIGNMENTS --- */
   .dnfl-rules-table {
+    margin-bottom: 0.75rem !important;
+
+    /* 1. Table Title / Caption Styling */
     caption {
       font-size: 1rem !important;
       font-weight: 700 !important;
@@ -24,6 +27,72 @@
       text-align: left !important;
       padding: 8px 0 !important;
       caption-side: top !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.5px !important;
+
+      span {
+        display: inline-block;
+        border-bottom: 2px solid var(--dnfl-primary, #0577B1);
+        padding-bottom: 2px;
+      }
+    }
+
+    /* 2. Nested Table Headers (Subtle Tint & Blue Accent Line) */
+    th {
+      background-color: var(--dnfl-bg-subhead, #f1f5f9) !important; /* Soft Slate Header Tint */
+      color: var(--dnfl-text-heading, #0f172a) !important;
+      font-size: 0.8rem !important;
+      font-weight: 700 !important;
+      padding: 8px 12px !important; /* Compact nested header padding */
+      text-transform: uppercase !important;
+      letter-spacing: 0.5px !important;
+      border-bottom: 2px solid var(--dnfl-primary, #0577B1) !important; /* Duke Blue Accent Border */
+    }
+
+    /* 3. Nested Table Data Cells */
+    td {
+      padding: 8px 12px !important;
+      font-size: 0.85rem !important;
+      vertical-align: middle !important;
+    }
+
+    /* 4. Column Alignments for 3-Column Scoring Tables (Event, Range, Points) */
+    th:nth-child(1), td:nth-child(1) { text-align: left !important; }
+    th:nth-child(2), td:nth-child(2) { text-align: center !important; } /* Range (e.g., 0-299) */
+    th:nth-child(3), td:nth-child(3) { text-align: left !important; }   /* Points / Event Details */
+
+    /* 5. Column Alignments for 4-Column Payout Tables (Prize, Payout $, Notes, Total $) */
+    &:has(th:nth-child(4)) {
+      th:nth-child(1), td:nth-child(1) { text-align: left !important; }  /* Prize */
+      th:nth-child(2), td:nth-child(2) { text-align: right !important; } /* Payout $ */
+      th:nth-child(3), td:nth-child(3) { text-align: left !important; }  /* Notes */
+      th:nth-child(4), td:nth-child(4) { text-align: right !important; } /* Total $ */
+    }
+  }
+
+  /* --- AUTOMATED RULE LIST NUMBERING ACROSS HEADERS --- */
+  .dnfl-rules-topic-content {
+    counter-reset: rule-counter;
+  }
+
+  ol.subnum {
+    list-style-type: none !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+
+    li.subtext {
+      counter-increment: rule-counter;
+      position: relative;
+      padding-left: 2rem !important;
+
+      &::before {
+        content: counter(rule-counter) ". ";
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-weight: 600;
+        color: var(--dnfl-text-heading, #0f172a);
+      }
     }
   }
 }
