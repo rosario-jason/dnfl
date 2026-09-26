@@ -10,11 +10,11 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "4.77-A",
+        VERSION: "4_Final-A",
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
-            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-v4_Stage5.css" }
+            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-v4_Final.css" }
         ],
 
         INFRASTRUCTURE: [
@@ -26,11 +26,11 @@
 
         FEATURE_MODULES: [
             // { name: "ui-enhancements", url: "dnfl-ui-enhancements-TEST.js" },
-            { name: "standings", url: "dnfl-standings-v4_10.js" },
-            { name: "rankings",  url: "dnfl-rankings-v4_23.js" },
-            { name: "podcast",   url: "dnfl-podcast-v4_02.js" },
-            { name: "rules",     url: "dnfl-rules-v4_02.js" },
-            { name: "exporter",     url: "dnfl-exporter-v4_35.js" }
+            { name: "standings", url: "dnfl-standings-v4_Final.js" },
+            { name: "rankings",  url: "dnfl-rankings-v4_Final.js" },
+            { name: "podcast",   url: "dnfl-podcast-v4_Final.js" },
+            { name: "rules",     url: "dnfl-rules-v4_Final.js" },
+            { name: "exporter",     url: "dnfl-exporter-v4_Final.js" }
         ],
 
         CONDITIONAL_LIBRARIES: {
