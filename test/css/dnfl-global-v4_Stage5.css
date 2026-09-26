@@ -1,0 +1,2093 @@
+@charset "UTF-8";
+/* ==========================================================================
+   DNFL Master SCSS Entry Manifest File (dnfl-global-Staging.scss)
+   Duke Networking Fantasy League (DNFL)
+   Fully Consolidated Architecture — All Sandbox SCSS Parsed into Partials
+   ========================================================================== */
+/* ==========================================================================
+   DNFL DESIGN SYSTEM - DESIGN TOKENS & GLOBAL CSS VARIABLES
+   ==========================================================================
+   Module: _variables.scss
+   Description: Serves as the single source of truth for design tokens, brand
+                colors, chart palettes, neutral shades, typography colors,
+                status indicator variables, elevation shadows, and motion timing.
+                Fully aligned with ground-truth dnfl-global-v4_58.css.
+   ========================================================================== */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+:root, .dnfl {
+  /* ------------------------------------------------------------------------
+     1. PRIMARY BRAND PALETTE
+     ------------------------------------------------------------------------ */
+  --accent: #0577B1; /* Duke Shale Blue (MFL Native Script Compatibility) */
+  --dnfl-primary: #0577B1; /* Duke Shale Blue (Primary Brand Accent) */
+  --dnfl-primary-hover: #045e8c; /* Deep Ocean Blue (Button & Link Hover) */
+  --dnfl-primary-light: #b6e2ff; /* Ice Blue Tint (Row Hover & Active Highlights) */
+  /* ------------------------------------------------------------------------
+     2. ACCENT & HIGHLIGHT COLORS
+     ------------------------------------------------------------------------ */
+  --dnfl-accent-blue: #36a2eb; /* Bright Sky Blue (Focus Rings & Highlights) */
+  --dnfl-highlight-yellow: #fde68a; /* Soft Canary Yellow (Logged-In Franchise Row Highlight) */
+  --dnfl-highlight-yellow-hover: #fcd34d; /* Warm Gold (Logged-In Row Hover Highlight) */
+  --dnfl-alert-red: #ef4444; /* Coral Red (Relegation & Error Alerts) */
+  --dnfl-success-green: #10b981; /* Emerald Green (Promotion & High Score Highlights) */
+  --dnfl-badge-blue: #3b82f6; /* Cobalt Blue (W-L Record & Metadata Capsules) */
+  --dnfl-badge-amber: #f59e0b; /* Dark Amber (Playoff Trophy Badges) */
+  /* ------------------------------------------------------------------------
+     3. CHART & CONFERENCE COLOR PALETTE (GROUND-TRUTH GROUNDED)
+     ------------------------------------------------------------------------ */
+  --dnfl-chart-1: rgba(54, 162, 235, 0.85); /* Sky Blue (Cameron Crazies Fill) */
+  --dnfl-chart-1-border: rgb(54, 162, 235); /* Sky Blue Border */
+  --dnfl-chart-2: rgba(255, 99, 132, 0.85); /* Rose Pink (K-Ville Fill) */
+  --dnfl-chart-2-border: rgb(255, 99, 132); /* Rose Pink Border */
+  --dnfl-chart-3: rgba(75, 192, 192, 0.85); /* Teal Cyan (Blue Devils Fill) */
+  --dnfl-chart-3-border: rgb(75, 192, 192); /* Teal Cyan Border */
+  --dnfl-chart-4: rgba(255, 205, 86, 0.85); /* Yellow/Gold (Chart Slot 4) */
+  --dnfl-chart-4-border: rgb(255, 205, 86); /* Yellow/Gold Border */
+  --dnfl-chart-5: rgba(153, 102, 255, 0.85); /* Lavender Purple (Chart Slot 5) */
+  --dnfl-chart-5-border: rgb(153, 102, 255); /* Lavender Purple Border */
+  --dnfl-chart-6: rgba(255, 159, 64, 0.85); /* Amber Orange (Chart Slot 6) */
+  --dnfl-chart-6-border: rgb(255, 159, 64); /* Amber Orange Border */
+  /* Chart Background & Border Variable Aliases */
+  --dnfl-chart-bg-1: var(--dnfl-chart-1);
+  --dnfl-chart-border-1: var(--dnfl-chart-1-border);
+  --dnfl-chart-bg-2: var(--dnfl-chart-2);
+  --dnfl-chart-border-2: var(--dnfl-chart-2-border);
+  --dnfl-chart-bg-3: var(--dnfl-chart-3);
+  --dnfl-chart-border-3: var(--dnfl-chart-3-border);
+  --dnfl-chart-bg-4: var(--dnfl-chart-4);
+  --dnfl-chart-border-4: var(--dnfl-chart-4-border);
+  --dnfl-chart-bg-5: var(--dnfl-chart-5);
+  --dnfl-chart-border-5: var(--dnfl-chart-5-border);
+  --dnfl-chart-bg-6: var(--dnfl-chart-6);
+  --dnfl-chart-border-6: var(--dnfl-chart-6-border);
+  /* Legacy Conference Aliases */
+  --dnfl-conf-crazies-bg: var(--dnfl-chart-1);
+  --dnfl-conf-crazies-border: var(--dnfl-chart-1-border);
+  --dnfl-conf-kville-bg: var(--dnfl-chart-2);
+  --dnfl-conf-kville-border: var(--dnfl-chart-2-border);
+  --dnfl-conf-bluedevils-bg: var(--dnfl-chart-3);
+  --dnfl-conf-bluedevils-border: var(--dnfl-chart-3-border);
+  /* ------------------------------------------------------------------------
+     4. NEUTRAL PALETTE & SURFACE CONTAINERS
+     ------------------------------------------------------------------------ */
+  --dnfl-bg-card: #ffffff; /* Pure White (Card Surfaces & Modal Panels) */
+  --dnfl-bg-alt: #fafafa; /* Off-White (Table Zebra Stripe Even Rows) */
+  --dnfl-bg-muted: #f8fafc; /* Cool Slate Tint (Previews, Textareas & Headers) */
+  --dnfl-bg-dark: #262626; /* Dark Charcoal (Media Players & Dark Cards) */
+  --dnfl-bg-subhead: #f1f5f9; /* Soft Slate Gray (Table Subheaders & Control Toolbars) */
+  --dnfl-border-dark: #444444; /* Dark Mineral Gray (Strong Container Borders) */
+  --dnfl-border-medium: #cbd5e1; /* Light Slate Border (Standard Control Borders) */
+  --dnfl-border-light: #e5e7eb; /* Soft Divider Gray (Table Row Dividers) */
+  --dnfl-border-subtle: #e2e8f0; /* Ultra-Light Slate (Card Internal Separators) */
+  /* ------------------------------------------------------------------------
+     5. TYPOGRAPHY COLORS
+     ------------------------------------------------------------------------ */
+  --dnfl-text-main: #121212; /* Obsidian Black (Primary Body & Heading Text) */
+  --dnfl-text-heading: #0f172a; /* Deep Midnight Slate (Section & Card Titles) */
+  --dnfl-text-subhead: #1e293b; /* Dark Charcoal Slate (Subheaders & Accordion Titles) */
+  --dnfl-text-subtle: #555555; /* Medium Charcoal (Secondary Label & Owner Text) */
+  --dnfl-text-muted: #a3a3a3; /* Muted Ash Gray (Timestamp & Secondary Metadata) */
+  --dnfl-text-quote: #475569; /* Slate Blue-Gray (Blockquote Text & Commentary) */
+  /* ------------------------------------------------------------------------
+     6. STATUS INDICATOR COLOR PALETTE
+     ------------------------------------------------------------------------ */
+  --dnfl-green-bg: #dcfce7; /* Mint Tint (Positive Rank Change / High Score) */
+  --dnfl-green-text: #15803d; /* Emerald Green (Positive Indicator Text) */
+  --dnfl-green-border: #bbf7d0; /* Mint Border */
+  --dnfl-red-bg: #fee2e2; /* Rose Tint (Negative Rank Change / Relegation) */
+  --dnfl-red-text: #b91c1c; /* Crimson Red (Negative Indicator Text) */
+  --dnfl-red-border: #fecaca; /* Rose Border */
+  --dnfl-blue-bg: #dbeafe; /* Ice Blue (General Status Badge Background) */
+  --dnfl-blue-text: #1d4ed8; /* Royal Blue (General Status Badge Text) */
+  --dnfl-blue-border: #bfdbfe; /* Ice Blue Border */
+  --dnfl-amber-bg: #fef3c7; /* Soft Amber Tint (Warning & Playoff Qualifier) */
+  --dnfl-amber-text: #b45309; /* Warm Amber Gold (Playoff Indicator Text) */
+  --dnfl-amber-border: #fde68a; /* Amber Border */
+  --dnfl-gray-bg: #f1f5f9; /* Slate Tint (Neutral Unchanged Status Background) */
+  --dnfl-gray-text: #64748b; /* Medium Slate (Neutral Unchanged Status Text) */
+  --dnfl-gray-border: #e2e8f0; /* Slate Border */
+  /* ------------------------------------------------------------------------
+     7. DIMENSIONS, ELEVATION & MOTION
+     ------------------------------------------------------------------------ */
+  --dnfl-radius-lg: 12px; /* Card & Modal Container Corner Curve */
+  --dnfl-radius-md: 8px; /* Control Input & Toolbar Corner Curve */
+  --dnfl-radius-sm: 4px; /* Badge & Button Corner Curve */
+  --dnfl-shadow-card: 0 4px 16px rgba(0, 0, 0, 0.4); /* Card Elevation Shadow */
+  --dnfl-shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle Component Elevation */
+  --dnfl-transition-fast: 0.15s ease; /* Button Hover & Focus Motion */
+  --dnfl-transition-smooth: 0.2s ease; /* Accordion Expansion & Row Hover Motion */
+}
+
+/* ==========================================================================
+   DNFL DESIGN SYSTEM - BASE RESET & TYPOGRAPHY FOUNDATION
+   ==========================================================================
+   Module: _base.scss
+   Description: Resets HTML box model, loads primary web fonts, establishes
+                global body typography defaults, and configures MFL page shell
+                container overrides.
+   ========================================================================== */
+/* ------------------------------------------------------------------------
+   1. EXTERNAL FONT LOADING (INTER SYSTEM FONT FAMILY)
+   ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------------
+   2. GLOBAL BOX MODEL RESET
+   ------------------------------------------------------------------------ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* ------------------------------------------------------------------------
+   3. BASE BODY TYPOGRAPHY & LINK BEHAVIOR
+   ------------------------------------------------------------------------ */
+body {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--dnfl-text-main, #121212); /* Obsidian Black */
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: var(--dnfl-primary, #0577B1); /* Duke Shale Blue */
+  text-decoration: none;
+  transition: color var(--dnfl-transition-fast, 0.15s ease);
+}
+a:hover {
+  color: var(--dnfl-primary-hover, #045e8c); /* Deep Ocean Blue */
+  text-decoration: underline;
+}
+
+/* ------------------------------------------------------------------------
+   4. MFL PAGE SHELL OVERRIDES (TRANSPARENT CONTAINER RESET)
+   ------------------------------------------------------------------------ */
+#body_content,
+#reports,
+.dnfl-page-shell {
+  width: 95% !important;
+  max-width: 1000px !important;
+  margin: 0 auto 2rem auto !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+@media (max-width: 768px) {
+  #body_content,
+  #reports,
+  .homepagecolumn {
+    width: 100% !important;
+    max-width: 100vw !important;
+    margin: 0 !important;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+  .dnfl-hide-mobile {
+    display: none !important; /* Hides desktop-only columns on mobile screens */
+  }
+}
+.homepagemodule,
+div[id^=homepagemodule_],
+td.homepagecell,
+.homepagecolumn,
+.mobile-wrap,
+.homepagemodule_content,
+.settings-mobile-wrap {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+/* Standalone Native MFL Container Wrappers */
+.mobile-wrap:not(:has(.dnfl-card)),
+.settings-mobile-wrap:not(:has(.dnfl-card)) {
+  width: 95% !important;
+  max-width: 1000px !important;
+  min-width: 0 !important;
+  margin: 0 auto 2rem auto !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+  box-shadow: var(--dnfl-shadow-card, 0 4px 16px rgba(0, 0, 0, 0.4)) !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+/* ------------------------------------------------------------------------
+   5. TABLE HEADER UPRIGHT RESET
+   ------------------------------------------------------------------------ */
+table.dnfl-table th,
+.dnfl-table th {
+  font-style: normal !important; /* Overrides native MFL italicized table headers */
+}
+
+/* ==========================================================================
+   DNFL DESIGN SYSTEM - SCSS MIXINS & REUSABLE HELPERS
+   ==========================================================================
+   Module: _mixins.scss
+   Description: Encapsulates reusable SCSS mixins for flexbox alignments,
+                elevation card shadows, control button bases, and responsive
+                container layout logic.
+   ========================================================================== */
+/* Flexbox Layout Helpers */
+/* Card Elevation & Shadow Helpers */
+/* Component Radius Helpers */
+/* ==========================================================================
+   DNFL DESIGN SYSTEM - GLOBAL STATE & UTILITY TOKENS
+   ==========================================================================
+   Module: _utilities.scss
+   Description: Encapsulates global DOM visibility state tokens, accordion
+                expansion state toggles, status bar indicators, icon color
+                helpers, and section header rows.
+   ========================================================================== */
+/* ------------------------------------------------------------------------
+   1. GLOBAL STATE VISIBILITY TOKENS
+   ------------------------------------------------------------------------ */
+.dnfl-is-hidden {
+  display: none !important; /* Enforces clean class-based DOM element hiding */
+}
+
+.dnfl-is-visible {
+  display: block !important;
+}
+
+.dnfl-is-flex {
+  display: flex !important;
+}
+
+/* ------------------------------------------------------------------------
+   2. ACCORDION & COLLAPSIBLE STATE CLASSES
+   ------------------------------------------------------------------------ */
+.dnfl-rules-main-content.is-expanded,
+.dnfl-rules-sub-content.is-expanded,
+.dnfl-rules-topic-content.is-expanded,
+.dnfl-collapsible-content.is-expanded {
+  display: block !important; /* Accordion expanded state */
+}
+.dnfl-rules-main-content.is-collapsed,
+.dnfl-rules-sub-content.is-collapsed,
+.dnfl-rules-topic-content.is-collapsed,
+.dnfl-collapsible-content.is-collapsed {
+  display: none !important; /* Accordion collapsed state */
+}
+
+/* ------------------------------------------------------------------------
+   3. GLOBAL STATUS BAR & MESSAGING TOKENS
+   ------------------------------------------------------------------------ */
+.dnfl-status-loading {
+  color: var(--dnfl-text-subtle, #555555) !important;
+  font-style: italic !important;
+}
+
+.dnfl-status-success {
+  color: var(--dnfl-success-green, #10b981) !important;
+  font-weight: 600 !important;
+}
+
+.dnfl-status-error {
+  color: var(--dnfl-alert-red, #ef4444) !important;
+  font-weight: 600 !important;
+}
+
+/* ------------------------------------------------------------------------
+   4. ICON COLOR UTILITY HELPERS
+   ------------------------------------------------------------------------ */
+.dnfl-icon-blue {
+  color: var(--dnfl-badge-blue, #3b82f6) !important; /* Cobalt Blue Icon */
+  margin-left: 6px;
+}
+
+.dnfl-icon-amber {
+  color: var(--dnfl-badge-amber, #f59e0b) !important; /* Warm Amber Icon */
+  margin-left: 6px;
+}
+
+.dnfl-icon-red {
+  color: var(--dnfl-alert-red, #ef4444) !important; /* Alert Red Icon */
+  margin-left: 6px;
+}
+
+.dnfl-icon-green {
+  color: var(--dnfl-success-green, #10b981) !important; /* Emerald Green Icon */
+  margin-left: 6px;
+}
+
+/* ------------------------------------------------------------------------
+   5. SECTION HEADERS & DISCLAIMERS
+   ------------------------------------------------------------------------ */
+.dnfl-section-header-row {
+  display: flex;
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+.dnfl-disclaimer-text {
+  font-size: 0.8rem;
+  font-style: italic;
+  text-align: center;
+  color: var(--dnfl-text-subtle, #555555);
+  margin-top: 1rem;
+}
+
+.dnfl-disclaimer-note {
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--dnfl-text-subtle, #555555);
+}
+
+/* ==========================================================================
+   DNFL DESIGN SYSTEM - BADGE, PILL & STATUS CAPSULE MODULE
+   ==========================================================================
+   Module: _badges.scss
+   Description: Encapsulates status indicator badges, metadata pill capsules,
+                and solid blue W-L record capsules across Standings and Power Rankings.
+                Fully aligned with dnfl-global-v4_58.css ground-truth.
+   ========================================================================== */
+/* ------------------------------------------------------------------------
+   1. BASE BADGE ARCHITECTURE (COMPACT RECTANGLE - 6px RADIUS)
+   ------------------------------------------------------------------------ */
+.dnfl-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.35rem !important;
+  padding: 3px 6px !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  border: 1px solid transparent !important;
+}
+
+.dnfl-badge-lg,
+.dnfl-badge-record {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  padding: 0.3rem 0.75rem !important;
+}
+
+/* Wired Status Indicator Palette Modifiers */
+.dnfl-badge-green {
+  background-color: var(--dnfl-green-bg, #dcfce7) !important; /* Mint Tint */
+  color: var(--dnfl-green-text, #15803d) !important; /* Emerald Green */
+  border-color: var(--dnfl-green-border, #bbf7d0) !important;
+}
+
+.dnfl-badge-red {
+  background-color: var(--dnfl-red-bg, #fee2e2) !important; /* Rose Tint */
+  color: var(--dnfl-red-text, #b91c1c) !important; /* Crimson Red */
+  border-color: var(--dnfl-red-border, #fecaca) !important;
+}
+
+.dnfl-badge-blue {
+  background-color: var(--dnfl-blue-bg, #dbeafe) !important; /* Ice Blue */
+  color: var(--dnfl-blue-text, #1d4ed8) !important; /* Royal Blue */
+  border-color: var(--dnfl-blue-border, #bfdbfe) !important;
+}
+
+.dnfl-badge-amber {
+  background-color: var(--dnfl-amber-bg, #fef3c7) !important; /* Soft Amber Tint */
+  color: var(--dnfl-amber-text, #b45309) !important; /* Warm Amber Gold */
+  border-color: var(--dnfl-amber-border, #fde68a) !important;
+}
+
+.dnfl-badge-gray {
+  background-color: var(--dnfl-gray-bg, #f1f5f9) !important; /* Slate Tint */
+  color: var(--dnfl-gray-text, #64748b) !important; /* Medium Slate */
+  border-color: var(--dnfl-gray-border, #e2e8f0) !important;
+}
+
+/* ------------------------------------------------------------------------
+   2. SOLID METADATA PILL CAPSULES (GROUND-TRUTH MATCHING v4_58.css)
+   ------------------------------------------------------------------------ */
+.dnfl-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.35rem !important;
+  padding: 4px 10px !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  border-radius: 9999px !important; /* Full capsule curve */
+  text-align: center !important;
+  white-space: nowrap !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+/* Solid Blue W-L Record Pills & Power Index Badges (v4_58.css Exact Match) */
+.dnfl-pill-blue,
+.dnfl-record-pill,
+.dnfl-record-badge {
+  background-color: var(--dnfl-badge-blue, #3b82f6) !important; /* Solid Cobalt Blue */
+  color: #ffffff !important; /* Crisp White Text */
+  display: inline-block !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  padding: 4px 10px !important;
+  border-radius: 9999px !important;
+}
+
+.dnfl-pill-green,
+.dnfl-lts-badge-high-score {
+  background-color: var(--dnfl-success-green, #10b981) !important;
+  color: #ffffff !important;
+}
+
+.dnfl-pill-red,
+.dnfl-lts-badge-knockout {
+  background-color: var(--dnfl-alert-red, #ef4444) !important;
+  color: #ffffff !important;
+}
+
+.dnfl-pill-amber {
+  background-color: var(--dnfl-badge-amber, #f59e0b) !important;
+  color: #ffffff !important;
+}
+
+.dnfl-pill-gray {
+  background-color: var(--dnfl-gray-text, #64748b) !important;
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   DNFL CONTAINER SHELLS, TOOLBARS & CONTROL BOXES
+   ==========================================================================
+   Module: _containers.scss
+   Description: Encapsulates universal card architecture (.dnfl-card), toolbars,
+                filter dropdowns (select.dnfl-select), flat buttons, conference
+                legend panels, and mobile control box hybrid stacking rules.
+   ========================================================================== */
+/* ------------------------------------------------------------------------
+   1. STANDALONE MODULE CARD ARCHITECTURE
+   ------------------------------------------------------------------------ */
+.dnfl-card,
+.dnfl-module-container {
+  width: 95% !important;
+  max-width: 1000px !important;
+  min-width: 0 !important;
+  margin: 0 auto 2rem auto !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+  box-shadow: var(--dnfl-shadow-card, 0 4px 16px rgba(0, 0, 0, 0.4)) !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+.dnfl-card .dnfl-card-header,
+.dnfl-module-container .dnfl-card-header {
+  padding: 14px 20px !important;
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+.dnfl-card .dnfl-card-header h3, .dnfl-card .dnfl-card-header .dnfl-card-title,
+.dnfl-module-container .dnfl-card-header h3,
+.dnfl-module-container .dnfl-card-header .dnfl-card-title {
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  text-transform: uppercase !important;
+  color: var(--dnfl-text-heading, #0f172a) !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+.dnfl-card .dnfl-card-header h3 i, .dnfl-card .dnfl-card-header .dnfl-card-title i,
+.dnfl-module-container .dnfl-card-header h3 i,
+.dnfl-module-container .dnfl-card-header .dnfl-card-title i {
+  color: var(--dnfl-primary, #0577B1) !important;
+  font-size: 1rem !important;
+  width: 18px !important;
+  text-align: center !important;
+  display: inline-block !important;
+}
+.dnfl-card .dnfl-card-body,
+.dnfl-module-container .dnfl-card-body {
+  padding: 1.25rem !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+}
+.dnfl-card .dnfl-card-body .dnfl-table-wrapper,
+.dnfl-card .dnfl-card-body .mobile-wrapper,
+.dnfl-card .dnfl-card-body .dnfl-toolbar,
+.dnfl-card .dnfl-card-body .dnfl-legend-panel,
+.dnfl-card .dnfl-card-body .dnfl-standings-legend,
+.dnfl-module-container .dnfl-card-body .dnfl-table-wrapper,
+.dnfl-module-container .dnfl-card-body .mobile-wrapper,
+.dnfl-module-container .dnfl-card-body .dnfl-toolbar,
+.dnfl-module-container .dnfl-card-body .dnfl-legend-panel,
+.dnfl-module-container .dnfl-card-body .dnfl-standings-legend {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  box-sizing: border-box !important;
+}
+.dnfl-card .dnfl-card-body .dnfl-table-wrapper,
+.dnfl-card .dnfl-card-body .mobile-wrapper,
+.dnfl-module-container .dnfl-card-body .dnfl-table-wrapper,
+.dnfl-module-container .dnfl-card-body .mobile-wrapper {
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+.dnfl-card .dnfl-card-body .dnfl-chart-wrapper,
+.dnfl-module-container .dnfl-card-body .dnfl-chart-wrapper {
+  position: relative !important;
+  min-height: 500px !important;
+  max-height: 1000px !important;
+  height: 100vh !important;
+  width: 100% !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  box-shadow: none !important;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  overflow: hidden !important;
+}
+.dnfl-card .dnfl-card-body .dnfl-toolbar,
+.dnfl-module-container .dnfl-card-body .dnfl-toolbar {
+  box-shadow: none !important;
+}
+
+.homepagemodule .dnfl-card,
+.mobile-wrap .dnfl-card,
+td.homepagecell .dnfl-card {
+  width: 100% !important;
+  margin: 0 auto 2rem auto !important;
+}
+
+/* ------------------------------------------------------------------------
+   2. CONTROL TOOLBARS & FILTER GROUPS
+   ------------------------------------------------------------------------ */
+.dnfl-toolbar,
+.dnfl-controls,
+.reportnavigation,
+table.report_navigation {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 1rem !important;
+  margin-bottom: 1rem !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  padding: 0.875rem 1.25rem !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  box-shadow: none !important;
+}
+
+.dnfl-filter-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.375rem !important;
+}
+.dnfl-filter-group label {
+  font-size: 0.875rem !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  font-weight: 600 !important;
+}
+
+.dnfl-buttons-right,
+.dnfl-actions-right {
+  margin-left: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  flex-wrap: wrap !important;
+}
+
+/* ------------------------------------------------------------------------
+   3. SELECT DROPDOWNS & FLAT BUTTONS
+   ------------------------------------------------------------------------ */
+select.dnfl-select,
+.dnfl-select {
+  padding: 8px 12px !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  outline: none !important;
+  cursor: pointer !important;
+  transition: border-color var(--dnfl-transition-fast, 0.15s ease) !important;
+}
+select.dnfl-select:focus, select.dnfl-select:active,
+.dnfl-select:focus,
+.dnfl-select:active {
+  border-color: var(--dnfl-primary, #0577B1) !important;
+  box-shadow: 0 0 0 2px var(--dnfl-primary-light, #b6e2ff) !important;
+}
+
+button.dnfl-btn i, button.dnfl-btn span, button.dnfl-btn a, button.dnfl-btn label,
+a.dnfl-btn i,
+a.dnfl-btn span,
+a.dnfl-btn a,
+a.dnfl-btn label,
+input.dnfl-btn i,
+input.dnfl-btn span,
+input.dnfl-btn a,
+input.dnfl-btn label,
+.dnfl-btn i,
+.dnfl-btn span,
+.dnfl-btn a,
+.dnfl-btn label {
+  color: inherit !important;
+}
+button.dnfl-btn,
+a.dnfl-btn,
+input.dnfl-btn,
+.dnfl-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  padding: 8px 16px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  cursor: pointer !important;
+  -webkit-user-select: none !important;
+     -moz-user-select: none !important;
+          user-select: none !important;
+  text-decoration: none !important;
+  -moz-appearance: none !important;
+       appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: all var(--dnfl-transition-fast, 0.15s ease) !important;
+}
+
+#dnfl_chartToggleBtn,
+#dnfl_rankings_toggleChartBtn {
+  min-width: 128px !important;
+  justify-content: center !important;
+}
+
+button.dnfl-btn,
+a.dnfl-btn,
+.dnfl-btn,
+.dnfl-btn-primary {
+  background-color: var(--dnfl-primary, #0577B1) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--dnfl-primary, #0577B1) !important;
+}
+button.dnfl-btn:hover,
+a.dnfl-btn:hover,
+.dnfl-btn:hover,
+.dnfl-btn-primary:hover {
+  background-color: var(--dnfl-primary-hover, #045e8c) !important;
+  border-color: var(--dnfl-primary-hover, #045e8c) !important;
+  color: #ffffff !important;
+}
+
+button.dnfl-btn-secondary,
+a.dnfl-btn-secondary,
+.dnfl-btn-secondary {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  color: var(--dnfl-primary, #0577B1) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+}
+button.dnfl-btn-secondary:hover,
+a.dnfl-btn-secondary:hover,
+.dnfl-btn-secondary:hover {
+  background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+  border-color: var(--dnfl-primary, #0577B1) !important;
+  color: var(--dnfl-primary-hover, #045e8c) !important;
+}
+
+.dnfl-btn-icon {
+  padding: 4px 8px !important;
+  font-size: 0.85rem !important;
+  cursor: pointer !important;
+}
+
+.dnfl-visibility-toggle-btn {
+  font-size: 0.7rem !important;
+  font-weight: bold !important;
+  color: var(--dnfl-primary, #0577B1) !important;
+  text-transform: uppercase !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 4px 8px !important;
+  -webkit-user-select: none !important;
+     -moz-user-select: none !important;
+          user-select: none !important;
+  transition: color var(--dnfl-transition-fast, 0.15s ease) !important;
+}
+.dnfl-visibility-toggle-btn:hover {
+  color: var(--dnfl-text-muted, #a3a3a3) !important;
+}
+
+/* ------------------------------------------------------------------------
+   4. SWATCH & UNIFIED LEGEND PANEL UTILITY CLASSES
+   ------------------------------------------------------------------------ */
+.dnfl-legend-panel,
+.dnfl-chart-legend,
+.dnfl-rankings-legend,
+.dnfl-standings-legend {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 0.75rem 1.25rem !important;
+  margin-bottom: 1rem !important;
+  padding: 10px 14px !important;
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+.dnfl-legend-panel .dnfl-legend-items,
+.dnfl-legend-panel .dnfl-key-icon-group,
+.dnfl-chart-legend .dnfl-legend-items,
+.dnfl-chart-legend .dnfl-key-icon-group,
+.dnfl-rankings-legend .dnfl-legend-items,
+.dnfl-rankings-legend .dnfl-key-icon-group,
+.dnfl-standings-legend .dnfl-legend-items,
+.dnfl-standings-legend .dnfl-key-icon-group {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 1.25rem !important;
+}
+.dnfl-legend-panel .dnfl-legend-note,
+.dnfl-legend-panel .dnfl-disclaimer-note,
+.dnfl-chart-legend .dnfl-legend-note,
+.dnfl-chart-legend .dnfl-disclaimer-note,
+.dnfl-rankings-legend .dnfl-legend-note,
+.dnfl-rankings-legend .dnfl-disclaimer-note,
+.dnfl-standings-legend .dnfl-legend-note,
+.dnfl-standings-legend .dnfl-disclaimer-note {
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  color: var(--dnfl-text-subtle, #555555) !important;
+  margin-left: auto !important;
+}
+@media (max-width: 640px) {
+  .dnfl-legend-panel,
+  .dnfl-chart-legend,
+  .dnfl-rankings-legend,
+  .dnfl-standings-legend {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  .dnfl-legend-panel .dnfl-legend-items,
+  .dnfl-legend-panel .dnfl-key-icon-group,
+  .dnfl-chart-legend .dnfl-legend-items,
+  .dnfl-chart-legend .dnfl-key-icon-group,
+  .dnfl-rankings-legend .dnfl-legend-items,
+  .dnfl-rankings-legend .dnfl-key-icon-group,
+  .dnfl-standings-legend .dnfl-legend-items,
+  .dnfl-standings-legend .dnfl-key-icon-group {
+    justify-content: center !important;
+  }
+  .dnfl-legend-panel .dnfl-legend-note,
+  .dnfl-legend-panel .dnfl-disclaimer-note,
+  .dnfl-chart-legend .dnfl-legend-note,
+  .dnfl-chart-legend .dnfl-disclaimer-note,
+  .dnfl-rankings-legend .dnfl-legend-note,
+  .dnfl-rankings-legend .dnfl-disclaimer-note,
+  .dnfl-standings-legend .dnfl-legend-note,
+  .dnfl-standings-legend .dnfl-disclaimer-note {
+    margin-left: 0 !important;
+    text-align: center !important;
+  }
+}
+
+.dnfl-legend-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+}
+
+.dnfl-legend-swatch {
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 3px !important;
+  display: inline-block !important;
+}
+.dnfl-legend-swatch.swatch-1, .dnfl-legend-swatch.conf-00, .dnfl-legend-swatch.crazies, .dnfl-legend-swatch.color-1 {
+  background-color: var(--dnfl-chart-1, rgba(54, 162, 235, 0.85)) !important;
+  border: 1px solid var(--dnfl-chart-1-border, rgb(54, 162, 235)) !important;
+}
+.dnfl-legend-swatch.swatch-2, .dnfl-legend-swatch.conf-01, .dnfl-legend-swatch.kville, .dnfl-legend-swatch.color-2 {
+  background-color: var(--dnfl-chart-2, rgba(255, 99, 132, 0.85)) !important;
+  border: 1px solid var(--dnfl-chart-2-border, rgb(255, 99, 132)) !important;
+}
+.dnfl-legend-swatch.swatch-3, .dnfl-legend-swatch.conf-02, .dnfl-legend-swatch.bluedevils, .dnfl-legend-swatch.color-3 {
+  background-color: var(--dnfl-chart-3, rgba(75, 192, 192, 0.85)) !important;
+  border: 1px solid var(--dnfl-chart-3-border, rgb(75, 192, 192)) !important;
+}
+.dnfl-legend-swatch.swatch-4, .dnfl-legend-swatch.conf-03, .dnfl-legend-swatch.color-4 {
+  background-color: var(--dnfl-chart-4, rgba(255, 205, 86, 0.85)) !important;
+  border: 1px solid var(--dnfl-chart-4-border, rgb(255, 205, 86)) !important;
+}
+.dnfl-legend-swatch.swatch-5, .dnfl-legend-swatch.conf-04, .dnfl-legend-swatch.color-5 {
+  background-color: var(--dnfl-chart-5, rgba(153, 102, 255, 0.85)) !important;
+  border: 1px solid var(--dnfl-chart-5-border, rgb(153, 102, 255)) !important;
+}
+.dnfl-legend-swatch.swatch-6, .dnfl-legend-swatch.conf-05, .dnfl-legend-swatch.color-6 {
+  background-color: var(--dnfl-chart-6, rgba(255, 159, 64, 0.85)) !important;
+  border: 1px solid var(--dnfl-chart-6-border, rgb(255, 159, 64)) !important;
+}
+
+/* ------------------------------------------------------------------------
+   5. MOBILE CONTROL BOX HYBRID STACKING BREAKPOINTS
+   ------------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  .dnfl-btn {
+    padding: 8px 12px !important;
+  }
+  .dnfl-toolbar,
+  .dnfl-controls,
+  .dnfl-action-toolbar,
+  .reportnavigation,
+  table.report_navigation {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+    padding: 0.875rem 1rem !important;
+  }
+  .dnfl-toolbar select.dnfl-select,
+  .dnfl-toolbar .dnfl-select,
+  .dnfl-toolbar .dnfl-filter-group,
+  .dnfl-controls select.dnfl-select,
+  .dnfl-controls .dnfl-select,
+  .dnfl-controls .dnfl-filter-group,
+  .dnfl-action-toolbar select.dnfl-select,
+  .dnfl-action-toolbar .dnfl-select,
+  .dnfl-action-toolbar .dnfl-filter-group,
+  .reportnavigation select.dnfl-select,
+  .reportnavigation .dnfl-select,
+  .reportnavigation .dnfl-filter-group,
+  table.report_navigation select.dnfl-select,
+  table.report_navigation .dnfl-select,
+  table.report_navigation .dnfl-filter-group {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .dnfl-toolbar .dnfl-buttons-right,
+  .dnfl-toolbar .dnfl-actions-right,
+  .dnfl-controls .dnfl-buttons-right,
+  .dnfl-controls .dnfl-actions-right,
+  .dnfl-action-toolbar .dnfl-buttons-right,
+  .dnfl-action-toolbar .dnfl-actions-right,
+  .reportnavigation .dnfl-buttons-right,
+  .reportnavigation .dnfl-actions-right,
+  table.report_navigation .dnfl-buttons-right,
+  table.report_navigation .dnfl-actions-right {
+    margin-left: 0 !important;
+    width: 100% !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+  }
+  .dnfl-toolbar .dnfl-buttons-right .dnfl-btn,
+  .dnfl-toolbar .dnfl-actions-right .dnfl-btn,
+  .dnfl-controls .dnfl-buttons-right .dnfl-btn,
+  .dnfl-controls .dnfl-actions-right .dnfl-btn,
+  .dnfl-action-toolbar .dnfl-buttons-right .dnfl-btn,
+  .dnfl-action-toolbar .dnfl-actions-right .dnfl-btn,
+  .reportnavigation .dnfl-buttons-right .dnfl-btn,
+  .reportnavigation .dnfl-actions-right .dnfl-btn,
+  table.report_navigation .dnfl-buttons-right .dnfl-btn,
+  table.report_navigation .dnfl-actions-right .dnfl-btn {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+}
+/* ==========================================================================
+   DNFL BASE TABLES & RESPONSIVE TOUCH SCROLLING
+   ==========================================================================
+   Module: _tables.scss
+   Description: Encapsulates universal table architecture (.dnfl-table), zebra
+                striping, row hover, logged-in user row highlighting, team link
+                typography (.dnfl-team-name: 0.95rem Obsidian Black), owner typography,
+                and universal touch scrolling wrapper (.dnfl-table-wrapper).
+                Fully aligned with dnfl-global-v4_58.css ground-truth.
+   ========================================================================== */
+/* ------------------------------------------------------------------------
+   1. UNIVERSAL TOUCH-SCROLL CONTAINER WRAPPER
+   ------------------------------------------------------------------------ */
+.dnfl-table-wrapper,
+.mobile-wrapper,
+.mobile-wrap {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important; /* Hardware-accelerated mobile touch momentum */
+  display: block !important;
+  box-sizing: border-box !important;
+  box-shadow: none !important;
+}
+
+.dnfl-table-wrapper,
+.mobile-wrapper {
+  width: 100% !important;
+  max-width: 1000px !important;
+  margin: 0 auto !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+}
+
+.dnfl-card-body .dnfl-table-wrapper,
+.dnfl-card-body .mobile-wrapper {
+  width: 100% !important;
+  box-shadow: none !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  overflow: hidden !important;
+  margin-top: 1rem !important;
+}
+
+/* ------------------------------------------------------------------------
+   2. BASE TABLE ARCHITECTURE & TYPOGRAPHY
+   ------------------------------------------------------------------------ */
+.dnfl-table,
+#dnfl_dataTable,
+#dnfl_standingsTable {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  font-size: 0.85rem !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  text-align: left !important;
+}
+
+.dnfl-table th,
+#dnfl_dataTable th,
+#dnfl_standingsTable th {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  padding: 12px 15px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.5px !important;
+  border-bottom: 2px solid var(--dnfl-border-dark, #444444) !important;
+  font-style: normal !important; /* Upright header reset */
+}
+
+.dnfl-table td,
+#dnfl_dataTable td,
+#dnfl_standingsTable td {
+  padding: 12px 15px !important;
+  border-bottom: 1px solid var(--dnfl-border-light, #e5e7eb) !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  vertical-align: middle !important;
+}
+
+/* Zebra Striping */
+.dnfl-table tbody tr.dnfl-row-even,
+.dnfl-table tbody tr:nth-child(even),
+#dnfl_dataTable tbody tr:nth-child(even),
+#dnfl_dataTable tbody tr.dnfl-row-even,
+#dnfl_standingsTable tbody tr:nth-child(even),
+#dnfl_standingsTable tbody tr.dnfl-row-even {
+  background-color: var(--dnfl-bg-alt, #fafafa) !important;
+}
+
+.dnfl-table tbody tr.dnfl-row-odd,
+.dnfl-table tbody tr:nth-child(odd),
+#dnfl_dataTable tbody tr:nth-child(odd),
+#dnfl_dataTable tbody tr.dnfl-row-odd,
+#dnfl_standingsTable tbody tr:nth-child(odd),
+#dnfl_standingsTable tbody tr.dnfl-row-odd {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+}
+
+/* ------------------------------------------------------------------------
+   3. INTERACTIVE ROW HOVER & LOGGED-IN FRANCHISE HIGHLIGHTING (v4_58.css Match)
+   ------------------------------------------------------------------------ */
+.dnfl-table tbody tr:not(.dnfl-division-header):not(.dnfl-comment-row):not(.dnfl-my-team):not(.myfranchise):hover,
+#dnfl_dataTable tbody tr:not(.dnfl-division-header):not(.dnfl-comment-row):not(.dnfl-my-team):not(.myfranchise):hover,
+#dnfl_standingsTable tbody tr:not(.dnfl-division-header):not(.dnfl-comment-row):not(.dnfl-my-team):not(.myfranchise):hover {
+  background-color: var(--dnfl-primary-light, #b6e2ff) !important; /* Ice Blue Tint Hover */
+  transition: background-color var(--dnfl-transition-smooth, 0.2s ease) !important;
+}
+
+/* Logged-In User Row Highlighting & Hover (v4_58.css Match) */
+.dnfl-table tbody tr.dnfl-my-team,
+.dnfl-table tbody tr.myfranchise,
+#dnfl_dataTable tbody tr.dnfl-my-team,
+#dnfl_dataTable tbody tr.myfranchise,
+#dnfl_standingsTable tbody tr.dnfl-my-team,
+#dnfl_standingsTable tbody tr.myfranchise {
+  background-color: var(--dnfl-highlight-yellow, #fde68a) !important; /* Canary Yellow */
+}
+.dnfl-table tbody tr.dnfl-my-team:hover,
+.dnfl-table tbody tr.myfranchise:hover,
+#dnfl_dataTable tbody tr.dnfl-my-team:hover,
+#dnfl_dataTable tbody tr.myfranchise:hover,
+#dnfl_standingsTable tbody tr.dnfl-my-team:hover,
+#dnfl_standingsTable tbody tr.myfranchise:hover {
+  background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important; /* Warm Gold Hover */
+  transition: background-color var(--dnfl-transition-smooth, 0.2s ease) !important;
+}
+
+/* ------------------------------------------------------------------------
+   4. DYNAMIC FRANCHISE CELL LAYOUT & LINK TYPOGRAPHY (v4_58.css Ground-Truth Match)
+   ------------------------------------------------------------------------ */
+.dnfl-franchise-cell {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  text-align: left !important;
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.dnfl-franchise-info {
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
+}
+
+/* Franchise Team Name Link - Restored 0.95rem Obsidian Black (#121212) with !important */
+.dnfl-team-name {
+  font-weight: 700 !important;
+  font-size: 0.95rem !important; /* Exact ground-truth size */
+  color: var(--dnfl-text-main, #121212) !important; /* Obsidian Black with !important protection */
+  line-height: 1.25 !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+  text-decoration: none !important;
+}
+.dnfl-team-name:hover {
+  color: var(--dnfl-primary, #0577B1) !important; /* Duke Shale Blue Hover */
+  text-decoration: underline !important;
+}
+
+/* Owner Subtext - Restored 0.8rem Medium Charcoal (#555555) with !important */
+.dnfl-owner-name {
+  font-size: 0.8rem !important;
+  color: var(--dnfl-text-subtle, #555555) !important; /* Medium Charcoal */
+  line-height: 1.2 !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+}
+
+/* Shared Global Franchise Column Layout */
+.dnfl-col-franchise {
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  width: auto !important;
+  min-width: 180px !important;
+  text-align: left !important;
+}
+
+/* ------------------------------------------------------------------------
+   5. MOBILE TABLE MINIMUM FOOTPRINT
+   ------------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  table.dnfl-table,
+  table.dnfl-rules-table {
+    min-width: 500px !important;
+    width: -moz-max-content !important;
+    width: max-content !important;
+  }
+  table.dnfl-table th, table.dnfl-table td,
+  table.dnfl-rules-table th,
+  table.dnfl-rules-table td {
+    padding: 6px 4px !important;
+  }
+}
+/* ==========================================================================
+   DNFL STANDINGS MODULE - SCOPED COLUMN ALIGNMENTS & BADGES
+   ==========================================================================
+   Module: modules/_standings.scss
+   Description: Encapsulates scoped styles for #dnfl-standings-container: left-aligned
+                seed column (95px), circular neutral seed badge (.dnfl-seed-badge),
+                green/red PF/PA badges, solid blue W-L record pills, and consolidated
+                BBID dollar column alignment (.dnfl-col-bbid / .dnfl-standings-bbid).
+   ========================================================================== */
+#dnfl-standings-container {
+  /* ------------------------------------------------------------------------
+     1. SCOPED STANDINGS COLUMN ALIGNMENTS & WIDTHS
+     ------------------------------------------------------------------------ */
+  /* Seed Column */
+}
+#dnfl-standings-container .dnfl-col-seed {
+  width: 95px !important;
+  min-width: 95px !important;
+  text-align: left !important;
+  padding-left: 10px !important;
+  white-space: nowrap !important;
+}
+#dnfl-standings-container {
+  /* Points For & Points Against Columns */
+}
+#dnfl-standings-container .dnfl-col-pf,
+#dnfl-standings-container .dnfl-col-pa {
+  width: 110px !important;
+  text-align: center !important;
+}
+#dnfl-standings-container .dnfl-col-pf .dnfl-badge,
+#dnfl-standings-container .dnfl-col-pa .dnfl-badge {
+  min-width: 72px !important; /* Compact badge padding */
+  padding: 2px 6px !important;
+  font-size: 0.8rem !important;
+}
+#dnfl-standings-container {
+  /* Standings PF/PA Cell Text Direct Formatting */
+}
+#dnfl-standings-container .dnfl-standings-pf {
+  color: var(--dnfl-success-green, #10b981) !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  text-align: center !important;
+}
+#dnfl-standings-container .dnfl-standings-pa {
+  color: var(--dnfl-alert-red, #ef4444) !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  text-align: center !important;
+}
+#dnfl-standings-container {
+  /* Record Column (Solid Blue Pill Capsule) */
+}
+#dnfl-standings-container .dnfl-col-record {
+  width: 95px !important;
+  text-align: center !important;
+}
+#dnfl-standings-container .dnfl-col-record .dnfl-pill,
+#dnfl-standings-container .dnfl-col-record .dnfl-pill-blue,
+#dnfl-standings-container .dnfl-col-record .dnfl-record-badge,
+#dnfl-standings-container .dnfl-col-record .dnfl-record-pill {
+  min-width: 80px !important;
+  text-align: center !important;
+  background-color: var(--dnfl-badge-blue, #3b82f6) !important;
+  color: #ffffff !important;
+}
+#dnfl-standings-container {
+  /* Consolidated BBID Column (Header & Cell) */
+}
+#dnfl-standings-container .dnfl-col-bbid,
+#dnfl-standings-container .dnfl-standings-bbid {
+  width: 85px !important;
+  text-align: center !important;
+  font-size: 0.8rem !important;
+  color: var(--dnfl-text-subtle, #555555) !important;
+}
+#dnfl-standings-container {
+  /* ------------------------------------------------------------------------
+     2. CIRCULAR STANDINGS SEED BADGE & ICON UTILITIES
+     ------------------------------------------------------------------------ */
+}
+#dnfl-standings-container .dnfl-seed-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  padding: 0 !important;
+  border-radius: 50% !important; /* Circular neutral badge */
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  color: var(--dnfl-text-heading, #0f172a) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+}
+#dnfl-standings-container {
+  /* Standings Icon Utility Color Helpers */
+}
+#dnfl-standings-container .dnfl-icon-blue {
+  color: var(--dnfl-badge-blue, #3b82f6) !important;
+  margin-left: 6px;
+}
+#dnfl-standings-container .dnfl-icon-amber {
+  color: var(--dnfl-badge-amber, #f59e0b) !important;
+  margin-left: 6px;
+}
+#dnfl-standings-container .dnfl-icon-red {
+  color: var(--dnfl-alert-red, #ef4444) !important;
+  margin-left: 6px;
+}
+#dnfl-standings-container .dnfl-icon-green {
+  color: var(--dnfl-success-green, #10b981) !important;
+  margin-left: 6px;
+}
+#dnfl-standings-container {
+  /* ------------------------------------------------------------------------
+     3. DIVISION HEADER ROWS
+     ------------------------------------------------------------------------ */
+}
+#dnfl-standings-container .dnfl-division-header-cell {
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  border-bottom: 2px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  padding: 10px 16px !important;
+}
+#dnfl-standings-container .dnfl-division-header-content {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+#dnfl-standings-container .dnfl-division-header-content h3 {
+  margin: 0 !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: var(--dnfl-text-heading, #0f172a) !important;
+  text-transform: capitalize !important;
+  letter-spacing: 0.5px !important;
+}
+#dnfl-standings-container tr.dnfl-table-subheader {
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+}
+#dnfl-standings-container tr.dnfl-table-subheader th {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  color: var(--dnfl-text-subtle, #555555) !important;
+  padding: 8px 12px !important;
+  border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+}
+#dnfl-standings-container {
+  /* ------------------------------------------------------------------------
+     4. MOBILE RESPONSIVE TWEAKS FOR STANDINGS
+     ------------------------------------------------------------------------ */
+}
+@media (max-width: 768px) {
+  #dnfl-standings-container table.dnfl-table {
+    min-width: 320px !important;
+    width: 100% !important;
+  }
+  #dnfl-standings-container .dnfl-col-seed {
+    width: 86px !important;
+    min-width: 86px !important;
+    padding: 6px 2px !important;
+    white-space: nowrap !important;
+  }
+  #dnfl-standings-container .dnfl-col-record {
+    width: 86px !important;
+    min-width: 86px !important;
+    padding: 6px 2px !important;
+  }
+  #dnfl-standings-container .dnfl-col-franchise {
+    width: 154px !important;
+    max-width: 154px !important;
+    min-width: 150px !important;
+    padding: 6px 4px !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+  }
+  #dnfl-standings-container .franchiseicon {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    min-width: 2.25rem !important;
+    max-width: 2.25rem !important;
+    min-height: 2.25rem !important;
+    max-height: 2.25rem !important;
+    flex-shrink: 0 !important;
+  }
+}
+
+/* ==========================================================================
+   DNFL POWER RANKINGS MODULE - SCOPED ALIGNMENTS & CONFERENCES
+   ==========================================================================
+   Module: modules/_rankings.scss
+   Description: Encapsulates scoped styles for #dnfl-rankings-container: explicit
+                centered column alignments across headers and cells, conference
+                rank badges (.color-1..6 matching v4_58.css palette), fluid
+                table-layout (table-layout: auto !important), and nested commentary callout boxes.
+   ========================================================================== */
+#dnfl-rankings-container {
+  /* Enforce fluid layout for responsive comment box expansion */
+}
+#dnfl-rankings-container table.dnfl-table {
+  table-layout: auto !important;
+}
+#dnfl-rankings-container {
+  /* ------------------------------------------------------------------------
+     1. EXPLICIT COLUMN ALIGNMENTS & WIDTHS (HEADERS & CELLS CENTERED)
+     ------------------------------------------------------------------------ */
+  /* Rank Column */
+}
+#dnfl-rankings-container th.dnfl-col-rank,
+#dnfl-rankings-container td.dnfl-col-rank,
+#dnfl-rankings-container .dnfl-col-rank {
+  width: 56px !important;
+  text-align: center !important;
+}
+#dnfl-rankings-container {
+  /* Rank Change Column */
+}
+#dnfl-rankings-container th.dnfl-col-change,
+#dnfl-rankings-container td.dnfl-col-change,
+#dnfl-rankings-container .dnfl-col-change {
+  width: 62px !important;
+  text-align: center !important;
+}
+#dnfl-rankings-container th.dnfl-col-change .dnfl-badge,
+#dnfl-rankings-container td.dnfl-col-change .dnfl-badge,
+#dnfl-rankings-container .dnfl-col-change .dnfl-badge {
+  min-width: 52px !important;
+}
+#dnfl-rankings-container {
+  /* Power Index Grade Column */
+}
+#dnfl-rankings-container th.dnfl-col-index,
+#dnfl-rankings-container td.dnfl-col-index,
+#dnfl-rankings-container .dnfl-col-index {
+  width: 100px !important;
+  min-width: 100px !important;
+  text-align: center !important;
+  font-weight: 600 !important;
+}
+#dnfl-rankings-container th.dnfl-col-index .dnfl-pill,
+#dnfl-rankings-container th.dnfl-col-index .dnfl-pill-blue,
+#dnfl-rankings-container td.dnfl-col-index .dnfl-pill,
+#dnfl-rankings-container td.dnfl-col-index .dnfl-pill-blue,
+#dnfl-rankings-container .dnfl-col-index .dnfl-pill,
+#dnfl-rankings-container .dnfl-col-index .dnfl-pill-blue {
+  min-width: 58px !important;
+  background-color: var(--dnfl-badge-blue, #3b82f6) !important;
+  color: #ffffff !important;
+}
+#dnfl-rankings-container {
+  /* Comments Column Header & Cell */
+}
+#dnfl-rankings-container th.dnfl-col-comment,
+#dnfl-rankings-container td.dnfl-col-comment,
+#dnfl-rankings-container .dnfl-col-comment {
+  width: 50px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+}
+#dnfl-rankings-container {
+  /* Projected W-L / Record Column in Rankings */
+}
+#dnfl-rankings-container th.dnfl-col-record,
+#dnfl-rankings-container td.dnfl-col-record,
+#dnfl-rankings-container .dnfl-col-record {
+  width: 95px !important;
+  text-align: center !important;
+}
+#dnfl-rankings-container {
+  /* Points For Column in Rankings */
+}
+#dnfl-rankings-container th.dnfl-col-pf,
+#dnfl-rankings-container td.dnfl-col-pf,
+#dnfl-rankings-container .dnfl-col-pf {
+  width: 100px !important;
+  text-align: center !important;
+}
+#dnfl-rankings-container {
+  /* ------------------------------------------------------------------------
+     2. CONFERENCE RANK BADGES (.color-1..6 v4_58.css Palette Match)
+     ------------------------------------------------------------------------ */
+}
+#dnfl-rankings-container .dnfl-rank-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  padding: 0 !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  color: #ffffff !important;
+}
+#dnfl-rankings-container .dnfl-rank-badge.color-1 {
+  background-color: var(--dnfl-chart-1, rgba(54, 162, 235, 0.85)) !important;
+  border: 1px solid var(--dnfl-chart-1-border, rgb(54, 162, 235)) !important;
+}
+#dnfl-rankings-container .dnfl-rank-badge.color-2 {
+  background-color: var(--dnfl-chart-2, rgba(255, 99, 132, 0.85)) !important;
+  border: 1px solid var(--dnfl-chart-2-border, rgb(255, 99, 132)) !important;
+}
+#dnfl-rankings-container .dnfl-rank-badge.color-3 {
+  background-color: var(--dnfl-chart-3, rgba(75, 192, 192, 0.85)) !important;
+  border: 1px solid var(--dnfl-chart-3-border, rgb(75, 192, 192)) !important;
+}
+#dnfl-rankings-container .dnfl-rank-badge.color-4 {
+  background-color: var(--dnfl-chart-4, rgba(255, 205, 86, 0.85)) !important; /* Yellow/Gold */
+  border: 1px solid var(--dnfl-chart-4-border, rgb(255, 205, 86)) !important;
+}
+#dnfl-rankings-container .dnfl-rank-badge.color-5 {
+  background-color: var(--dnfl-chart-5, rgba(153, 102, 255, 0.85)) !important; /* Lavender Purple */
+  border: 1px solid var(--dnfl-chart-5-border, rgb(153, 102, 255)) !important;
+}
+#dnfl-rankings-container .dnfl-rank-badge.color-6 {
+  background-color: var(--dnfl-chart-6, rgba(255, 159, 64, 0.85)) !important; /* Amber Orange */
+  border: 1px solid var(--dnfl-chart-6-border, rgb(255, 159, 64)) !important;
+}
+#dnfl-rankings-container {
+  /* ------------------------------------------------------------------------
+     3. NESTED COMMENTARY CALLOUT BOX
+     ------------------------------------------------------------------------ */
+}
+#dnfl-rankings-container .dnfl-comment-row {
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+}
+#dnfl-rankings-container .dnfl-comment-row:hover {
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+}
+#dnfl-rankings-container .dnfl-comment-cell {
+  padding: 10px 14px !important;
+  border-left: 3px solid var(--dnfl-primary, #0577B1) !important;
+  text-align: left !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+}
+#dnfl-rankings-container .dnfl-comment-box {
+  font-size: 0.85rem !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  font-style: italic !important;
+  line-height: 1.4 !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  white-space: normal !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+#dnfl-rankings-container.dnfl-preseason .dnfl-col-pf,
+#dnfl-rankings-container.dnfl-preseason .dnfl-col-change {
+  display: none !important;
+}
+#dnfl-rankings-container {
+  /* ------------------------------------------------------------------------
+     4. MOBILE RESPONSIVE TWEAKS FOR POWER RANKINGS
+     ------------------------------------------------------------------------ */
+}
+@media (max-width: 768px) {
+  #dnfl-rankings-container table.dnfl-table {
+    table-layout: auto !important;
+    min-width: 320px !important;
+    width: 100% !important;
+  }
+  #dnfl-rankings-container table.dnfl-table th {
+    vertical-align: middle !important;
+    font-size: 0.75rem !important;
+    padding: 6px 2px !important;
+  }
+  #dnfl-rankings-container .dnfl-col-rank {
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    text-align: center !important;
+  }
+  #dnfl-rankings-container .dnfl-col-index {
+    width: 70px !important;
+    min-width: 70px !important;
+    max-width: 75px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    text-align: center !important;
+    line-height: 1.15 !important;
+  }
+  #dnfl-rankings-container .dnfl-col-comment {
+    width: 60px !important;
+    min-width: 60px !important;
+    max-width: 65px !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+  }
+  #dnfl-rankings-container .dnfl-col-franchise {
+    width: 154px !important;
+    max-width: 154px !important;
+    min-width: 150px !important;
+    padding: 6px 4px !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+  }
+  #dnfl-rankings-container .franchiseicon {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    min-width: 2.25rem !important;
+    max-width: 2.25rem !important;
+    min-height: 2.25rem !important;
+    max-height: 2.25rem !important;
+    flex-shrink: 0 !important;
+  }
+  #dnfl-rankings-container .dnfl-comment-row {
+    width: 100% !important;
+  }
+  #dnfl-rankings-container .dnfl-comment-cell {
+    padding: 10px 12px !important;
+    box-sizing: border-box !important;
+  }
+  #dnfl-rankings-container .dnfl-comment-box {
+    font-size: 0.85rem !important;
+    line-height: 1.4 !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* ==========================================================================
+   DNFL PODCAST MODULE - MEDIA PLAYER & TRANSCRIPT TYPOGRAPHY
+   ==========================================================================
+   Module: modules/_podcast.scss
+   Description: Encapsulates scoped styles for #dnfl-podcast-container: banner,
+                dark media player block (.dnfl-media-player-block), audio player,
+                custom WebKit transcript scrollbars, and restored Markdown transcript
+                child typography overrides (h1-h4, p, strong, em).
+                Fully aligned with dnfl-global-v4_58.css ground-truth.
+   ========================================================================== */
+#dnfl-podcast-container {
+  /* ------------------------------------------------------------------------
+     1. BANNER & MEDIA PLAYER BLOCK
+     ------------------------------------------------------------------------ */
+}
+#dnfl-podcast-container .dnfl-podcast-banner {
+  width: 100% !important;
+  height: auto !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  margin-bottom: 0.5rem !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+}
+#dnfl-podcast-container .dnfl-media-player-block {
+  background-color: var(--dnfl-bg-dark, #262626) !important; /* Dark Charcoal */
+  padding: 1.25rem !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  margin-bottom: 1.5rem !important;
+  margin-top: 0.5rem !important;
+  border: 1px solid var(--dnfl-border-dark, #444444) !important;
+}
+#dnfl-podcast-container .dnfl-now-playing-label {
+  font-size: 1rem !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  display: block !important;
+  margin-bottom: 0.25rem !important;
+}
+#dnfl-podcast-container .dnfl-podcast-date,
+#dnfl-podcast-container .dnfl-podcast-desc {
+  color: var(--dnfl-text-muted, #a3a3a3) !important;
+  font-size: 0.85rem !important;
+  margin-bottom: 0.5rem !important;
+}
+#dnfl-podcast-container .dnfl-audio {
+  width: 100% !important;
+  margin-top: 0.75rem !important;
+}
+#dnfl-podcast-container {
+  /* ------------------------------------------------------------------------
+     2. TRANSCRIPT CONTAINER & CUSTOM SCROLLBARS
+     ------------------------------------------------------------------------ */
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper {
+  width: 100% !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  padding: 1.25rem !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  max-height: 450px !important;
+  overflow-y: auto !important;
+  line-height: 1.6 !important;
+  margin-top: 1rem !important;
+  font-size: 0.85rem !important;
+  box-sizing: border-box !important;
+  /* Custom WebKit Scrollbars */
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper::-webkit-scrollbar-track {
+  background: var(--dnfl-bg-muted, #f8fafc);
+  border-radius: var(--dnfl-radius-sm, 4px);
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper::-webkit-scrollbar-thumb {
+  background: var(--dnfl-border-medium, #cbd5e1);
+  border-radius: var(--dnfl-radius-sm, 4px);
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--dnfl-gray-text, #64748b);
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper {
+  /* ------------------------------------------------------------------------
+     3. RESTORED TRANSCRIPT CHILD TYPOGRAPHY (GROUND-TRUTH MATCH v4_58.css)
+     ------------------------------------------------------------------------ */
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper h1, #dnfl-podcast-container .dnfl-transcript-wrapper h2, #dnfl-podcast-container .dnfl-transcript-wrapper h3, #dnfl-podcast-container .dnfl-transcript-wrapper h4 {
+  color: var(--dnfl-text-main, #121212) !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+  text-align: left !important;
+  text-transform: none !important;
+  background: none !important;
+  font-weight: 700 !important;
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper p, #dnfl-podcast-container .dnfl-transcript-wrapper li {
+  color: var(--dnfl-text-main, #121212) !important;
+  font-size: 0.85rem !important;
+  line-height: 1.6 !important;
+  margin-bottom: 0.5rem !important;
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper strong {
+  color: var(--dnfl-text-main, #121212) !important;
+  font-weight: 700 !important;
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper em {
+  color: var(--dnfl-primary, #0577B1) !important; /* Duke Shale Blue Emphasis */
+  font-style: italic !important;
+}
+#dnfl-podcast-container .dnfl-transcript-raw {
+  white-space: pre-wrap !important;
+  font-family: inherit !important;
+  line-height: 1.6 !important;
+}
+
+/* ==========================================================================
+   DNFL OFFICIAL RULES MODULE - BYLAWS ACCORDION HIERARCHY
+   ==========================================================================
+   Module: modules/_rules.scss
+   Description: Encapsulates scoped styles for #dnfl-rules-container: 3-level bylaws
+                accordion hierarchy (.dnfl-rules-tabhead, .dnfl-rules-subhead,
+                .dnfl-rules-topichead), list hanging indents, blockquotes, and
+                scoring table matrices (table.dnfl-rules-table).
+   ========================================================================== */
+@media (max-width: 768px) {
+  #dnfl-rules-container table {
+    min-width: 550px !important;
+  }
+}
+#dnfl-rules-container {
+  /* --- NESTED RULES TABLE STYLING & ALIGNMENTS --- */
+}
+#dnfl-rules-container .dnfl-rules-table {
+  margin-bottom: 0.75rem !important;
+  /* 1. Table Title / Caption Styling */
+}
+#dnfl-rules-container .dnfl-rules-table caption {
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  color: var(--dnfl-text-heading, #0f172a) !important;
+  text-align: left !important;
+  padding: 8px 12px !important;
+  caption-side: top !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+#dnfl-rules-container .dnfl-rules-table caption span {
+  display: inline-block;
+  border-bottom: 2px solid var(--dnfl-primary, #0577B1);
+  padding-bottom: 2px;
+}
+#dnfl-rules-container .dnfl-rules-table {
+  /* 2. Nested Table Headers (Subtle Tint & Blue Accent Line) */
+}
+#dnfl-rules-container .dnfl-rules-table th {
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important; /* Soft Slate Header Tint */
+  color: var(--dnfl-text-heading, #0f172a) !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  padding: 8px 12px !important; /* Compact nested header padding */
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  border-bottom: 2px solid var(--dnfl-primary, #0577B1) !important; /* Duke Blue Accent Border */
+}
+#dnfl-rules-container .dnfl-rules-table {
+  /* 3. Nested Table Data Cells */
+}
+#dnfl-rules-container .dnfl-rules-table td {
+  padding: 8px 12px !important;
+  font-size: 0.85rem !important;
+  vertical-align: middle !important;
+}
+#dnfl-rules-container .dnfl-rules-table {
+  /* 4. Column Alignments for 3-Column Scoring Tables (Event, Range, Points) */
+}
+#dnfl-rules-container .dnfl-rules-table th:nth-child(1), #dnfl-rules-container .dnfl-rules-table td:nth-child(1) {
+  text-align: left !important;
+}
+#dnfl-rules-container .dnfl-rules-table th:nth-child(2), #dnfl-rules-container .dnfl-rules-table td:nth-child(2) {
+  text-align: center !important;
+}
+#dnfl-rules-container .dnfl-rules-table { /* Range (e.g., 0-299) */ }
+#dnfl-rules-container .dnfl-rules-table th:nth-child(3), #dnfl-rules-container .dnfl-rules-table td:nth-child(3) {
+  text-align: left !important;
+}
+#dnfl-rules-container .dnfl-rules-table { /* Points / Event Details */
+  /* 5. Column Alignments for 4-Column Payout Tables (Prize, Payout $, Notes, Total $) */
+}
+#dnfl-rules-container .dnfl-rules-table:has(th:nth-child(4)) th:nth-child(1), #dnfl-rules-container .dnfl-rules-table:has(th:nth-child(4)) td:nth-child(1) {
+  text-align: left !important;
+}
+#dnfl-rules-container .dnfl-rules-table:has(th:nth-child(4)) { /* Prize */ }
+#dnfl-rules-container .dnfl-rules-table:has(th:nth-child(4)) th:nth-child(2), #dnfl-rules-container .dnfl-rules-table:has(th:nth-child(4)) td:nth-child(2) {
+  text-align: right !important;
+}
+#dnfl-rules-container .dnfl-rules-table:has(th:nth-child(4)) { /* Payout $ */ }
+#dnfl-rules-container .dnfl-rules-table:has(th:nth-child(4)) th:nth-child(3), #dnfl-rules-container .dnfl-rules-table:has(th:nth-child(4)) td:nth-child(3) {
+  text-align: left !important;
+}
+#dnfl-rules-container .dnfl-rules-table:has(th:nth-child(4)) { /* Notes */ }
+#dnfl-rules-container .dnfl-rules-table:has(th:nth-child(4)) th:nth-child(4), #dnfl-rules-container .dnfl-rules-table:has(th:nth-child(4)) td:nth-child(4) {
+  text-align: right !important;
+}
+#dnfl-rules-container .dnfl-rules-table:has(th:nth-child(4)) { /* Total $ */ }
+#dnfl-rules-container {
+  /* --- AUTOMATED RULE LIST NUMBERING ACROSS HEADERS --- */
+}
+#dnfl-rules-container .dnfl-rules-topic-content {
+  counter-reset: rule-counter;
+}
+#dnfl-rules-container ol.subnum {
+  list-style-type: none !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+#dnfl-rules-container ol.subnum li.subtext {
+  counter-increment: rule-counter;
+  position: relative;
+  padding-left: 2rem !important;
+}
+#dnfl-rules-container ol.subnum li.subtext::before {
+  content: counter(rule-counter) ". ";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-weight: 600;
+  color: var(--dnfl-text-heading, #0f172a);
+}
+
+.dnfl-rules-wrapper {
+  width: 100%;
+  margin-top: 1rem;
+  box-sizing: border-box;
+}
+.dnfl-rules-wrapper h1, .dnfl-rules-wrapper h2, .dnfl-rules-wrapper h3, .dnfl-rules-wrapper h4, .dnfl-rules-wrapper h5 {
+  text-align: left !important;
+  margin: 14px 0 6px 0 !important;
+  font-family: inherit !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  background: none !important;
+}
+.dnfl-rules-wrapper ol {
+  margin-left: 1.25rem !important;
+  padding-left: 0.5rem !important;
+}
+.dnfl-rules-wrapper li {
+  margin-bottom: 8px !important;
+}
+.dnfl-rules-wrapper li:last-child {
+  margin-bottom: 0 !important;
+}
+.dnfl-rules-wrapper blockquote {
+  margin: 10px 0 10px 1.75rem !important;
+  padding: 8px 14px !important;
+  background-color: var(--dnfl-bg-muted, #f8fafc) !important;
+  border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
+  color: var(--dnfl-text-quote, #475569) !important;
+  font-style: italic !important;
+  font-size: 0.88rem !important;
+  border-radius: 0 6px 6px 0 !important;
+}
+
+.dnfl-rules-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--dnfl-text-heading, #0f172a);
+}
+
+.dnfl-rules-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* --- LEVEL 1 ACCORDION (# Section) --- */
+.dnfl-rules-tabhead {
+  background-color: var(--dnfl-bg-muted, #f8fafc);
+  color: var(--dnfl-text-main, #121212);
+  padding: 14px 18px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1);
+  border-radius: var(--dnfl-radius-md, 8px);
+  margin-top: 10px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color var(--dnfl-transition-smooth, 0.2s ease), border-color var(--dnfl-transition-smooth, 0.2s ease);
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+}
+.dnfl-rules-tabhead:hover {
+  background-color: var(--dnfl-bg-subhead, #f1f5f9);
+  border-color: var(--dnfl-primary, #0577B1);
+  color: var(--dnfl-primary, #0577B1);
+}
+
+.dnfl-rules-icon {
+  margin-right: 8px;
+  color: var(--dnfl-primary, #0577B1);
+}
+
+.dnfl-rules-badge {
+  font-size: 0.75rem;
+  background-color: var(--dnfl-primary, #0577B1);
+  color: var(--dnfl-bg-card, #ffffff);
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.dnfl-rules-main-content {
+  padding: 12px 16px;
+  background-color: var(--dnfl-bg-card, #ffffff);
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0);
+  border-top: none;
+  border-bottom-left-radius: var(--dnfl-radius-md, 8px);
+  border-bottom-right-radius: var(--dnfl-radius-md, 8px);
+  margin-bottom: 12px;
+}
+
+/* --- LEVEL 2 ACCORDION (## Subsection) --- */
+.dnfl-rules-subhead {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--dnfl-primary, #0577B1);
+  padding: 10px 12px;
+  background-color: var(--dnfl-bg-subhead, #f1f5f9);
+  border-left: 4px solid var(--dnfl-primary, #0577B1);
+  border-radius: var(--dnfl-radius-sm, 4px);
+  margin-top: 8px;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  transition: background-color var(--dnfl-transition-fast, 0.15s ease);
+}
+.dnfl-rules-subhead:hover {
+  background-color: var(--dnfl-border-subtle, #e2e8f0);
+}
+
+.dnfl-sub-icon {
+  margin-right: 6px;
+}
+
+.dnfl-rules-sub-content {
+  padding: 10px 12px 12px 12px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--dnfl-text-subhead, #1e293b);
+}
+
+/* --- LEVEL 3 ACCORDION (### Topic) --- */
+.dnfl-rules-topichead {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--dnfl-text-heading, #0f172a);
+  padding: 8px 10px;
+  background-color: var(--dnfl-bg-muted, #f8fafc);
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0);
+  border-radius: var(--dnfl-radius-sm, 4px);
+  margin-top: 8px;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
+  transition: background-color var(--dnfl-transition-fast, 0.15s ease);
+}
+.dnfl-rules-topichead:hover {
+  background-color: var(--dnfl-bg-subhead, #f1f5f9);
+  color: var(--dnfl-primary, #0577B1);
+}
+
+.dnfl-topic-icon {
+  margin-right: 6px;
+  color: var(--dnfl-primary, #0577B1);
+}
+
+.dnfl-rules-topic-content {
+  padding: 10px 14px;
+  background-color: var(--dnfl-bg-card, #ffffff);
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0);
+  border-top: none;
+  border-bottom-left-radius: var(--dnfl-radius-sm, 4px);
+  border-bottom-right-radius: var(--dnfl-radius-sm, 4px);
+  margin-bottom: 8px;
+}
+.dnfl-rules-topic-content li {
+  margin-bottom: 8px !important;
+}
+.dnfl-rules-topic-content li:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Schedule Sub-Header Utility Class */
+.dnfl-rules-schedule-header {
+  font-weight: 700;
+  font-style: italic;
+  text-decoration: underline;
+  color: var(--dnfl-text-heading, #0f172a);
+  margin: 1rem 0 0.5rem 0;
+}
+
+@media (max-width: 768px) {
+  .dnfl-rules-tabhead {
+    font-size: 0.95rem;
+    padding: 12px 14px;
+  }
+  .dnfl-rules-badge {
+    display: none;
+  }
+  .dnfl-rules-wrapper blockquote {
+    margin-left: 1rem !important;
+  }
+}
+/* ==========================================================================
+   DNFL EXPORTER MODULE - TOOLBAR OVERRIDES & DATA PREVIEW
+   ==========================================================================
+   Module: modules/_exporter.scss
+   Description: Encapsulates scoped styles for #dnfl-exporter-container: action
+                toolbar visibility state overrides (#dnfl-export-actions.dnfl-is-hidden)
+                and monospace preview textarea formatting (.dnfl-preview-textarea).
+   ========================================================================== */
+#dnfl-exporter-container #dnfl-export-actions.dnfl-is-hidden,
+#dnfl-exporter-container #dnfl-export-actions[style*="display: none"] {
+  display: none !important;
+}
+#dnfl-exporter-container .dnfl-preview-textarea {
+  width: 100% !important;
+  height: 350px !important;
+  font-family: monospace !important;
+  font-size: 0.85rem !important;
+  padding: 12px !important;
+  box-sizing: border-box !important;
+  background-color: var(--dnfl-bg-subhead, #f8fafc) !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  outline: none !important;
+  resize: vertical !important;
+}
+@media (max-width: 768px) {
+  #dnfl-exporter-container table {
+    min-width: 650px !important;
+  }
+}
+
+/* ==========================================================================
+   DNFL NATIVE MFL UI OVERRIDES & MFLSCRIPTS DECOUPLING
+   ==========================================================================
+   Module: _mfl-overrides.scss
+   Description: Encapsulates overrides for native MyFantasyLeague (MFL) UI elements:
+                sticky top menu bar (.myfantasyleague_menu), mobile container wrappers,
+                franchise icon square sizing (.franchiseicon: 4rem desktop / 2.25rem mobile),
+                and franchise logo centering (.franchiselogo).
+   ========================================================================== */
+.myfantasyleague_menu {
+  border-bottom: 0;
+  border-top: 0;
+  background: var(--accent, #0577B1) !important; /* Duke Shale Blue */
+  box-shadow: none;
+  height: 2.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.mobile-wrap,
+.settings-mobile-wrap,
+#options_45 #container-wrap table.report,
+#body_live_scoring_summary #live_scoring_summary table.scoresummary table,
+#body_live_scoring_summary #live_scoring_summary table.teamscoresummary table,
+#body_live_scoring_summary #live_scoring_summary table[width="90%"],
+#body_live_scoring_summary #live_scoring_summary span.reportnavigation + table {
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+}
+
+.franchiseicon {
+  min-width: 4rem !important;
+  max-width: 4rem !important;
+  width: 4rem !important;
+  min-height: 4rem !important;
+  max-height: 4rem !important;
+  height: 4rem !important;
+  aspect-ratio: 1/1 !important;
+  -o-object-fit: cover !important;
+     object-fit: cover !important;
+  border-radius: 25% !important;
+  border: 0 !important;
+}
+
+.franchiselogo {
+  max-height: 25rem !important;
+  width: auto !important;
+  -o-object-fit: contain !important;
+     object-fit: contain !important;
+  display: flex;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.homepagecolumn .homepagemodule caption,
+caption,
+#commissioner_setup table.two_column_layout th {
+  font-size: 1.1rem;
+  text-align: left;
+  background: none;
+  padding: 0.5rem 0.313rem;
+  line-height: 100%;
+  text-transform: capitalize;
+}
+
+.dnfl {
+  --accent: #0577B1;
+}/*# sourceMappingURL=dnfl-global-Staging.css.map */
