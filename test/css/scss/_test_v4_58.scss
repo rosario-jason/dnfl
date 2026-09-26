@@ -1,12 +1,41 @@
 /* ==========================================================================
-   DNFL Framework Modular Stylesheet Sandbox Partial (_test_v4_56.scss)
+   DNFL Framework Modular Stylesheet Sandbox Partial (_test_v4_58.scss)
    Duke Networking Fantasy League (DNFL)
    Fully aligned with dnfl-global-v3_36.css baseline design tokens.
    Modular Scoped Architecture: Column widths, badge dimensions, and callouts
    are strictly scoped to their respective module containers.
    Added: Universal Table Touch-Scroll Wrappers & Mobile Width Protections.
-   v4.56: Mobile Table Header Wrapping & Fixed Table-Layout for Rankings.
+   v4.58: Mobile Control Box Hybrid Stacking & Power Rankings Layout Optimization.
    ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   LIVE PRODUCTION SCSS MIGRATION & CONSOLIDATION MANIFEST
+   ==========================================================================
+   When consolidating _test_v4_58.scss into the permanent SCSS manifest 
+   (dnfl-global-TEST.css / dnfl-global.css), rules are mapped to:
+
+   1. Core Framework Foundation
+      - _variables.scss : Standard 6-color chart palette (--dnfl-chart-bg-1..6)
+      - _base.scss      : Upright table th reset (table.dnfl-table th { font-style: normal !important; })
+      - _utilities.scss : DOM state classes (.dnfl-is-hidden), icon color helpers (.dnfl-icon-blue/amber/red/green)
+      - _badges.scss    : Global base badges (.dnfl-badge-*) & pills (.dnfl-pill-*)
+      - _tables.scss    : Dynamic franchise text wrapping (.dnfl-col-franchise), row hover, mobile min-widths,
+                          universal .dnfl-table-wrapper touch scrolling
+      - _containers.scss: Full-width / centered hybrid control toolbars (.dnfl-toolbar, .dnfl-controls) on mobile
+
+   2. Feature Modules (Module-Scoped Styles)
+      - modules/_standings.scss : #dnfl-standings-container, .dnfl-seed-badge, left-aligned .dnfl-col-seed (95px)
+      - modules/_rankings.scss  : #dnfl-rankings-container, .color-1..6 rank badges, .dnfl-comment-box, table-layout: auto
+      - modules/_podcast.scss   : #dnfl-podcast-container, .dnfl-podcast-banner, .dnfl-transcript-raw
+      - modules/_rules.scss     : #dnfl-rules-container, bylaws accordion hierarchy, scoring tables
+      - modules/_exporter.scss  : #dnfl-exporter-container, .dnfl-preview-textarea
+
+   Purged CSS Deprecations & Anti-Patterns (DO NOT MIGRATE TO LIVE):
+      - Universal Badge min-width (stretching badges across modules)
+      - Direct .style.display assignments in JS
+      - Inline style="..." Attribute String Injections
+      - Obsolete .dnfl-rules-table-wrapper wrapper class
+   -------------------------------------------------------------------------- */
 
 /* ---------------- 1. Standard 6-Color Chart & Legend Palette ---------------- */
 :root, .dnfl {
@@ -755,6 +784,43 @@ button.dnfl-btn-secondary, a.dnfl-btn-secondary, .dnfl-btn-secondary {
 
 /* ---------------- 13. Standard Mobile Media Queries ---------------- */
 @media (max-width: 768px) {
+  /* Control Box Hybrid Stacking & Toolbars on Mobile */
+  .dnfl-toolbar, 
+  .dnfl-controls, 
+  .dnfl-action-toolbar,
+  .reportnavigation,
+  table.report_navigation {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+    padding: 0.875rem 1rem !important;
+
+    /* Make dropdowns & selects full thumb-width */
+    select.dnfl-select, 
+    .dnfl-select,
+    .dnfl-filter-group {
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    /* Reset right-alignment push on wrapped button groups */
+    .dnfl-buttons-right, 
+    .dnfl-actions-right {
+      margin-left: 0 !important;
+      width: 100% !important;
+      justify-content: center !important;
+      gap: 0.5rem !important;
+
+      /* Make buttons fill equal width on mobile */
+      .dnfl-btn {
+        flex: 1 1 auto !important;
+        justify-content: center !important;
+        text-align: center !important;
+      }
+    }
+  }
+
   /* Default Minimum Readable Table Footprint */
   table.dnfl-table,
   table.dnfl-rules-table {
