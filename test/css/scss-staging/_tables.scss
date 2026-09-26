@@ -1,22 +1,31 @@
 /* ==========================================================================
-   DNFL Base Tables & Responsive Touch Scrolling (_tables.scss)
-   Duke Networking Fantasy League (DNFL)
+   DNFL BASE TABLES & RESPONSIVE TOUCH SCROLLING
+   ==========================================================================
+   Module: _tables.scss
+   Description: Encapsulates universal table architecture (.dnfl-table), zebra
+                striping, row hover, logged-in user row highlighting, team link
+                typography (.dnfl-team-name: 0.95rem Obsidian Black), owner typography,
+                and universal touch scrolling wrapper (.dnfl-table-wrapper).
+                Fully aligned with dnfl-global-v4_58.css ground-truth.
    ========================================================================== */
 
-/* Universal Table Touch Scroll Container Wrapper */
+/* ------------------------------------------------------------------------
+   1. UNIVERSAL TOUCH-SCROLL CONTAINER WRAPPER
+   ------------------------------------------------------------------------ */
 .dnfl-table-wrapper,
 .mobile-wrapper,
 .mobile-wrap {
   width: 100% !important;
   max-width: 100% !important;
   overflow-x: auto !important;
-  -webkit-overflow-scrolling: touch !important;
+  -webkit-overflow-scrolling: touch !important; /* Hardware-accelerated mobile touch momentum */
   display: block !important;
   box-sizing: border-box !important;
   box-shadow: none !important;
 }
 
-.dnfl-table-wrapper, .mobile-wrapper {
+.dnfl-table-wrapper,
+.mobile-wrapper {
   width: 100% !important;
   max-width: 1000px !important;
   margin: 0 auto !important;
@@ -26,7 +35,8 @@
   box-sizing: border-box !important;
 }
 
-.dnfl-card-body .dnfl-table-wrapper, .dnfl-card-body .mobile-wrapper, .dnfl-card-body .dnfl-chart-wrapper {
+.dnfl-card-body .dnfl-table-wrapper,
+.dnfl-card-body .mobile-wrapper {
   width: 100% !important;
   box-shadow: none !important;
   border-radius: var(--dnfl-radius-md, 8px) !important;
@@ -35,95 +45,133 @@
   margin-top: 1rem !important;
 }
 
-/* Shared Base Table Architecture */
-.dnfl-table, #dnfl_dataTable, #dnfl_standingsTable {
+/* ------------------------------------------------------------------------
+   2. BASE TABLE ARCHITECTURE & TYPOGRAPHY
+   ------------------------------------------------------------------------ */
+.dnfl-table,
+#dnfl_dataTable,
+#dnfl_standingsTable {
   width: 100% !important;
   border-collapse: collapse !important;
   font-size: 0.85rem !important;
   background-color: var(--dnfl-bg-card, #ffffff) !important;
+  text-align: left !important;
+}
 
-  th {
-    background-color: var(--dnfl-bg-card, #ffffff) !important;
-    color: var(--dnfl-text-main, #121212) !important;
-    padding: 12px 15px !important;
-    font-weight: 600 !important;
-    text-transform: uppercase !important;
-    font-size: 0.75rem !important;
-    letter-spacing: 0.5px !important;
-    border-bottom: 2px solid var(--dnfl-border-dark, #444444) !important;
-  }
+.dnfl-table th,
+#dnfl_dataTable th,
+#dnfl_standingsTable th {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  padding: 12px 15px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.5px !important;
+  border-bottom: 2px solid var(--dnfl-border-dark, #444444) !important;
+  font-style: normal !important; /* Upright header reset */
+}
 
-  td {
-    padding: 12px 15px !important;
-    border-bottom: 1px solid var(--dnfl-border-light, #e5e7eb) !important;
-    color: var(--dnfl-text-main, #121212) !important;
-    vertical-align: middle !important;
-  }
+.dnfl-table td,
+#dnfl_dataTable td,
+#dnfl_standingsTable td {
+  padding: 12px 15px !important;
+  border-bottom: 1px solid var(--dnfl-border-light, #e5e7eb) !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  vertical-align: middle !important;
+}
 
-  tbody {
-    tr.dnfl-row-even { background-color: var(--dnfl-bg-alt, #f8fafc) !important; }
-    tr.dnfl-row-odd  { background-color: var(--dnfl-bg-card, #ffffff) !important; }
+/* Zebra Striping */
+.dnfl-table tbody tr.dnfl-row-even,
+.dnfl-table tbody tr:nth-child(even),
+#dnfl_dataTable tbody tr:nth-child(even),
+#dnfl_dataTable tbody tr.dnfl-row-even,
+#dnfl_standingsTable tbody tr:nth-child(even),
+#dnfl_standingsTable tbody tr.dnfl-row-even {
+  background-color: var(--dnfl-bg-alt, #fafafa) !important;
+}
 
-    /* Interactive Row Hover */
-    tr:not(.dnfl-division-header):not(.dnfl-comment-row):not(.dnfl-my-team):not(.myfranchise):hover {
-      background-color: var(--dnfl-primary-light, #b6e2ff) !important;
-      transition: background-color var(--dnfl-transition-smooth, 0.2s ease) !important;
-    }
+.dnfl-table tbody tr.dnfl-row-odd,
+.dnfl-table tbody tr:nth-child(odd),
+#dnfl_dataTable tbody tr:nth-child(odd),
+#dnfl_dataTable tbody tr.dnfl-row-odd,
+#dnfl_standingsTable tbody tr:nth-child(odd),
+#dnfl_standingsTable tbody tr.dnfl-row-odd {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+}
 
-    /* Logged-In User Row Highlighting */
-    tr.dnfl-my-team, tr.myfranchise {
-      background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
+/* ------------------------------------------------------------------------
+   3. INTERACTIVE ROW HOVER & LOGGED-IN FRANCHISE HIGHLIGHTING (v4_58.css Match)
+   ------------------------------------------------------------------------ */
+.dnfl-table tbody tr:not(.dnfl-division-header):not(.dnfl-comment-row):not(.dnfl-my-team):not(.myfranchise):hover,
+#dnfl_dataTable tbody tr:not(.dnfl-division-header):not(.dnfl-comment-row):not(.dnfl-my-team):not(.myfranchise):hover,
+#dnfl_standingsTable tbody tr:not(.dnfl-division-header):not(.dnfl-comment-row):not(.dnfl-my-team):not(.myfranchise):hover {
+  background-color: var(--dnfl-primary-light, #b6e2ff) !important; /* Ice Blue Tint Hover */
+  transition: background-color var(--dnfl-transition-smooth, 0.2s ease) !important;
+}
 
-      &:hover {
-        background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
-        transition: background-color var(--dnfl-transition-smooth, 0.2s ease) !important;
-      }
-    }
+/* Logged-In User Row Highlighting & Hover (v4_58.css Match) */
+.dnfl-table tbody tr.dnfl-my-team,
+.dnfl-table tbody tr.myfranchise,
+#dnfl_dataTable tbody tr.dnfl-my-team,
+#dnfl_dataTable tbody tr.myfranchise,
+#dnfl_standingsTable tbody tr.dnfl-my-team,
+#dnfl_standingsTable tbody tr.myfranchise {
+  background-color: var(--dnfl-highlight-yellow, #fde68a) !important; /* Canary Yellow */
+
+  &:hover {
+    background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important; /* Warm Gold Hover */
+    transition: background-color var(--dnfl-transition-smooth, 0.2s ease) !important;
   }
 }
 
-/* Dynamic Franchise Cell Layout */
+/* ------------------------------------------------------------------------
+   4. DYNAMIC FRANCHISE CELL LAYOUT & LINK TYPOGRAPHY (v4_58.css Ground-Truth Match)
+   ------------------------------------------------------------------------ */
 .dnfl-franchise-cell {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-align: left;
-  min-width: 0;
-  width: 100%;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  text-align: left !important;
+  min-width: 0 !important;
+  width: 100% !important;
 }
 
 .dnfl-franchise-info {
-  display: flex;
-  flex-direction: column;
-  min-width: 0;
-  flex: 1 1 auto;
+  display: flex !important;
+  flex-direction: column !important;
+  min-width: 0 !important;
+  flex: 1 1 auto !important;
 }
 
+/* Franchise Team Name Link - Restored 0.95rem Obsidian Black (#121212) with !important */
 .dnfl-team-name {
-  font-weight: 700;
-  color: var(--dnfl-text-heading, #0f172a);
-  font-size: 0.88rem;
-  line-height: 1.25;
-  overflow-wrap: break-word;
-  word-break: break-word;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;               /* Exact ground-truth size */
+  color: var(--dnfl-text-main, #121212) !important; /* Obsidian Black with !important protection */
+  line-height: 1.25 !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
   white-space: normal !important;
   text-decoration: none !important;
 
   &:hover {
-    color: var(--dnfl-primary, #0577B1);
+    color: var(--dnfl-primary, #0577B1) !important; /* Duke Shale Blue Hover */
     text-decoration: underline !important;
   }
 }
 
+/* Owner Subtext - Restored 0.8rem Medium Charcoal (#555555) with !important */
 .dnfl-owner-name {
-  font-size: 0.75rem;
-  color: var(--dnfl-text-subtle, #64748b);
-  line-height: 1.2;
-  overflow-wrap: break-word;
-  word-break: break-word;
+  font-size: 0.8rem !important;
+  color: var(--dnfl-text-subtle, #555555) !important; /* Medium Charcoal */
+  line-height: 1.2 !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
   white-space: normal !important;
 }
 
+/* Shared Global Franchise Column Layout */
 .dnfl-col-franchise {
   white-space: normal !important;
   overflow-wrap: break-word !important;
@@ -133,7 +181,9 @@
   text-align: left !important;
 }
 
-/* Default Mobile Table Rules */
+/* ------------------------------------------------------------------------
+   5. MOBILE TABLE MINIMUM FOOTPRINT
+   ------------------------------------------------------------------------ */
 @media (max-width: 768px) {
   table.dnfl-table,
   table.dnfl-rules-table {

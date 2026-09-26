@@ -1,11 +1,16 @@
 /* ==========================================================================
-   DNFL Official Rules Bylaws Module Specifics (_rules.scss)
-   Duke Networking Fantasy League (DNFL)
+   DNFL OFFICIAL RULES MODULE - BYLAWS ACCORDION HIERARCHY
+   ==========================================================================
+   Module: modules/_rules.scss
+   Description: Encapsulates scoped styles for #dnfl-rules-container: 3-level bylaws
+                accordion hierarchy (.dnfl-rules-tabhead, .dnfl-rules-subhead,
+                .dnfl-rules-topichead), list hanging indents, blockquotes, and
+                scoring table matrices (table.dnfl-rules-table).
    ========================================================================== */
 
 #dnfl-rules-container {
-  table {
-    @media (max-width: 768px) {
+  @media (max-width: 768px) {
+    table {
       min-width: 550px !important;
     }
   }
@@ -32,7 +37,10 @@
 
   li {
     margin-bottom: 8px !important;
-    &:last-child { margin-bottom: 0 !important; }
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
   }
 
   blockquote {
@@ -59,6 +67,7 @@
   flex-wrap: wrap;
 }
 
+/* --- LEVEL 1 ACCORDION (# Section) --- */
 .dnfl-rules-tabhead {
   background-color: var(--dnfl-bg-muted, #f8fafc);
   color: var(--dnfl-text-main, #121212);
@@ -107,6 +116,7 @@
   margin-bottom: 12px;
 }
 
+/* --- LEVEL 2 ACCORDION (## Subsection) --- */
 .dnfl-rules-subhead {
   font-size: 1rem;
   font-weight: 700;
@@ -136,6 +146,7 @@
   color: var(--dnfl-text-subhead, #1e293b);
 }
 
+/* --- LEVEL 3 ACCORDION (### Topic) --- */
 .dnfl-rules-topichead {
   font-size: 0.95rem;
   font-weight: 700;
@@ -171,10 +182,14 @@
 
   li {
     margin-bottom: 8px !important;
-    &:last-child { margin-bottom: 0 !important; }
+
+    &:last-child {
+      margin-bottom: 0 !important;
+    }
   }
 }
 
+/* Schedule Sub-Header Utility Class */
 .dnfl-rules-schedule-header {
   font-weight: 700;
   font-style: italic;

@@ -1,9 +1,18 @@
 /* ==========================================================================
-   DNFL Standings Module Specifics (_standings.scss)
-   Duke Networking Fantasy League (DNFL)
+   DNFL STANDINGS MODULE - SCOPED COLUMN ALIGNMENTS & BADGES
+   ==========================================================================
+   Module: modules/_standings.scss
+   Description: Encapsulates scoped styles for #dnfl-standings-container: left-aligned
+                seed column (95px), circular neutral seed badge (.dnfl-seed-badge),
+                green/red PF/PA badges, solid blue W-L record pills, and consolidated
+                BBID dollar column alignment (.dnfl-col-bbid / .dnfl-standings-bbid).
    ========================================================================== */
 
 #dnfl-standings-container {
+  /* ------------------------------------------------------------------------
+     1. SCOPED STANDINGS COLUMN ALIGNMENTS & WIDTHS
+     ------------------------------------------------------------------------ */
+  /* Seed Column */
   .dnfl-col-seed {
     width: 95px !important;
     min-width: 95px !important;
@@ -12,24 +21,62 @@
     white-space: nowrap !important;
   }
 
-  .dnfl-col-pf, .dnfl-col-pa {
+  /* Points For & Points Against Columns */
+  .dnfl-col-pf,
+  .dnfl-col-pa {
     width: 110px !important;
     text-align: center !important;
-    .dnfl-badge { min-width: 82px !important; }
+
+    .dnfl-badge {
+      min-width: 72px !important; /* Compact badge padding */
+      padding: 2px 6px !important;
+      font-size: 0.8rem !important;
+    }
   }
 
+  /* Standings PF/PA Cell Text Direct Formatting */
+  .dnfl-standings-pf {
+    color: var(--dnfl-success-green, #10b981) !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    text-align: center !important;
+  }
+
+  .dnfl-standings-pa {
+    color: var(--dnfl-alert-red, #ef4444) !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    text-align: center !important;
+  }
+
+  /* Record Column (Solid Blue Pill Capsule) */
   .dnfl-col-record {
     width: 95px !important;
     text-align: center !important;
-    .dnfl-pill, .dnfl-pill-blue, .dnfl-record-badge { min-width: 80px !important; }
+
+    .dnfl-pill,
+    .dnfl-pill-blue,
+    .dnfl-record-badge,
+    .dnfl-record-pill {
+      min-width: 80px !important;
+      text-align: center !important;
+      background-color: var(--dnfl-badge-blue, #3b82f6) !important;
+      color: #ffffff !important;
+    }
   }
 
-  .dnfl-col-bbid {
+  /* Consolidated BBID Column (Header & Cell) */
+  .dnfl-col-bbid,
+  .dnfl-standings-bbid {
     width: 85px !important;
     text-align: center !important;
+    font-size: 0.8rem !important;
+    color: var(--dnfl-text-subtle, #555555) !important;
   }
 
-  /* Circular Standings Seed Badge */
+  /* ------------------------------------------------------------------------
+     2. CIRCULAR STANDINGS SEED BADGE & ICON UTILITIES
+     ------------------------------------------------------------------------ */
   .dnfl-seed-badge {
     display: inline-flex !important;
     align-items: center !important;
@@ -37,7 +84,7 @@
     width: 28px !important;
     height: 28px !important;
     padding: 0 !important;
-    border-radius: 50% !important;
+    border-radius: 50% !important; /* Circular neutral badge */
     background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
     color: var(--dnfl-text-heading, #0f172a) !important;
     border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
@@ -47,7 +94,15 @@
     box-sizing: border-box !important;
   }
 
-  /* Standings Division Header Rows */
+  /* Standings Icon Utility Color Helpers */
+  .dnfl-icon-blue  { color: var(--dnfl-badge-blue, #3b82f6) !important; margin-left: 6px; }
+  .dnfl-icon-amber { color: var(--dnfl-badge-amber, #f59e0b) !important; margin-left: 6px; }
+  .dnfl-icon-red   { color: var(--dnfl-alert-red, #ef4444) !important; margin-left: 6px; }
+  .dnfl-icon-green { color: var(--dnfl-success-green, #10b981) !important; margin-left: 6px; }
+
+  /* ------------------------------------------------------------------------
+     3. DIVISION HEADER ROWS
+     ------------------------------------------------------------------------ */
   .dnfl-division-header-cell {
     background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
     border-bottom: 2px solid var(--dnfl-border-medium, #cbd5e1) !important;
@@ -77,64 +132,52 @@
       font-weight: 700 !important;
       text-transform: uppercase !important;
       letter-spacing: 0.5px !important;
-      color: var(--dnfl-text-subtle, #64748b) !important;
+      color: var(--dnfl-text-subtle, #555555) !important;
       padding: 8px 12px !important;
       border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
     }
   }
-}
 
-.dnfl-standings-pf {
-  color: var(--dnfl-success-green, #10b981) !important;
-  font-weight: 600;
-}
+  /* ------------------------------------------------------------------------
+     4. MOBILE RESPONSIVE TWEAKS FOR STANDINGS
+     ------------------------------------------------------------------------ */
+  @media (max-width: 768px) {
+    table.dnfl-table {
+      min-width: 320px !important;
+      width: 100% !important;
+    }
 
-.dnfl-standings-pa {
-  color: var(--dnfl-alert-red, #ef4444) !important;
-  font-weight: 600;
-}
+    .dnfl-col-seed {
+      width: 86px !important;
+      min-width: 86px !important;
+      padding: 6px 2px !important;
+      white-space: nowrap !important;
+    }
 
-.dnfl-standings-bbid {
-  color: var(--dnfl-text-subtle, #64748b) !important;
-  font-size: 0.8rem;
-}
+    .dnfl-col-record {
+      width: 86px !important;
+      min-width: 86px !important;
+      padding: 6px 2px !important;
+    }
 
-@media (max-width: 768px) {
-  #dnfl-standings-container table.dnfl-table {
-    min-width: 320px !important;
-    width: 100% !important;
-  }
+    .dnfl-col-franchise {
+      width: 154px !important;
+      max-width: 154px !important;
+      min-width: 150px !important;
+      padding: 6px 4px !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
+      white-space: normal !important;
+    }
 
-  #dnfl-standings-container .dnfl-col-seed {
-    width: 86px !important;
-    min-width: 86px !important;
-    padding: 6px 2px !important;
-    white-space: nowrap !important;
-  }
-
-  #dnfl-standings-container .dnfl-col-record {
-    width: 86px !important;
-    min-width: 86px !important;
-    padding: 6px 2px !important;
-  }
-
-  #dnfl-standings-container .dnfl-col-franchise {
-    width: 154px !important;
-    max-width: 154px !important;
-    min-width: 150px !important;
-    padding: 6px 4px !important;
-    overflow-wrap: break-word !important;
-    word-break: break-word !important;
-    white-space: normal !important;
-  }
-
-  #dnfl-standings-container .franchiseicon {
-    width: 2.25rem !important;
-    height: 2.25rem !important;
-    min-width: 2.25rem !important;
-    max-width: 2.25rem !important;
-    min-height: 2.25rem !important;
-    max-height: 2.25rem !important;
-    flex-shrink: 0 !important;
+    .franchiseicon {
+      width: 2.25rem !important;
+      height: 2.25rem !important;
+      min-width: 2.25rem !important;
+      max-width: 2.25rem !important;
+      min-height: 2.25rem !important;
+      max-height: 2.25rem !important;
+      flex-shrink: 0 !important;
+    }
   }
 }

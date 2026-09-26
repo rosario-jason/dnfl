@@ -1,9 +1,18 @@
 /* ==========================================================================
-   DNFL Podcast Module Specifics (_podcast.scss)
-   Duke Networking Fantasy League (DNFL)
+   DNFL PODCAST MODULE - MEDIA PLAYER & TRANSCRIPT TYPOGRAPHY
+   ==========================================================================
+   Module: modules/_podcast.scss
+   Description: Encapsulates scoped styles for #dnfl-podcast-container: banner,
+                dark media player block (.dnfl-media-player-block), audio player,
+                custom WebKit transcript scrollbars, and restored Markdown transcript
+                child typography overrides (h1-h4, p, strong, em).
+                Fully aligned with dnfl-global-v4_58.css ground-truth.
    ========================================================================== */
 
 #dnfl-podcast-container {
+  /* ------------------------------------------------------------------------
+     1. BANNER & MEDIA PLAYER BLOCK
+     ------------------------------------------------------------------------ */
   .dnfl-podcast-banner {
     width: 100% !important;
     height: auto !important;
@@ -13,7 +22,7 @@
   }
 
   .dnfl-media-player-block {
-    background-color: var(--dnfl-bg-dark, #262626) !important;
+    background-color: var(--dnfl-bg-dark, #262626) !important; /* Dark Charcoal */
     padding: 1.25rem !important;
     border-radius: var(--dnfl-radius-md, 8px) !important;
     margin-bottom: 1.5rem !important;
@@ -30,7 +39,8 @@
     margin-bottom: 0.25rem !important;
   }
 
-  .dnfl-podcast-date, .dnfl-podcast-desc {
+  .dnfl-podcast-date,
+  .dnfl-podcast-desc {
     color: var(--dnfl-text-muted, #a3a3a3) !important;
     font-size: 0.85rem !important;
     margin-bottom: 0.5rem !important;
@@ -41,6 +51,9 @@
     margin-top: 0.75rem !important;
   }
 
+  /* ------------------------------------------------------------------------
+     2. TRANSCRIPT CONTAINER & CUSTOM SCROLLBARS
+     ------------------------------------------------------------------------ */
   .dnfl-transcript-wrapper {
     width: 100% !important;
     background-color: var(--dnfl-bg-card, #ffffff) !important;
@@ -54,6 +67,7 @@
     font-size: 0.85rem !important;
     box-sizing: border-box !important;
 
+    /* Custom WebKit Scrollbars */
     &::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -69,6 +83,37 @@
       &:hover {
         background: var(--dnfl-gray-text, #64748b);
       }
+    }
+
+    /* ------------------------------------------------------------------------
+       3. RESTORED TRANSCRIPT CHILD TYPOGRAPHY (GROUND-TRUTH MATCH v4_58.css)
+       ------------------------------------------------------------------------ */
+    h1, h2, h3, h4 {
+      color: var(--dnfl-text-main, #121212) !important;
+      margin-top: 0.5rem !important;
+      margin-bottom: 0.5rem !important;
+      font-size: 1rem !important;
+      text-align: left !important;
+      text-transform: none !important;
+      background: none !important;
+      font-weight: 700 !important;
+    }
+
+    p, li {
+      color: var(--dnfl-text-main, #121212) !important;
+      font-size: 0.85rem !important;
+      line-height: 1.6 !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    strong {
+      color: var(--dnfl-text-main, #121212) !important;
+      font-weight: 700 !important;
+    }
+
+    em {
+      color: var(--dnfl-primary, #0577B1) !important; /* Duke Shale Blue Emphasis */
+      font-style: italic !important;
     }
   }
 

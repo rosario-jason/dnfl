@@ -1,10 +1,17 @@
 /* ==========================================================================
-   DNFL Container Shells & Control Toolbars (_containers.scss)
-   Duke Networking Fantasy League (DNFL)
+   DNFL CONTAINER SHELLS, TOOLBARS & CONTROL BOXES
+   ==========================================================================
+   Module: _containers.scss
+   Description: Encapsulates universal card architecture (.dnfl-card), toolbars,
+                filter dropdowns (select.dnfl-select), flat buttons, conference
+                legend panels, and mobile control box hybrid stacking rules.
    ========================================================================== */
 
-/* Universal Module Card Architecture */
-.dnfl-card, .dnfl-module-container {
+/* ------------------------------------------------------------------------
+   1. STANDALONE MODULE CARD ARCHITECTURE
+   ------------------------------------------------------------------------ */
+.dnfl-card,
+.dnfl-module-container {
   width: 95% !important;
   max-width: 1000px !important;
   min-width: 0 !important;
@@ -76,6 +83,10 @@
     }
 
     .dnfl-chart-wrapper {
+      position: relative !important;
+      min-height: 500px !important;
+      max-height: 1000px !important;
+      height: 100vh !important;
       width: 100% !important;
       border-radius: var(--dnfl-radius-md, 8px) !important;
       box-shadow: none !important;
@@ -90,13 +101,20 @@
   }
 }
 
-.homepagemodule .dnfl-card, .mobile-wrap .dnfl-card, td.homepagecell .dnfl-card {
+.homepagemodule .dnfl-card,
+.mobile-wrap .dnfl-card,
+td.homepagecell .dnfl-card {
   width: 100% !important;
   margin: 0 auto 2rem auto !important;
 }
 
-/* Toolbars, Select Dropdowns & Buttons */
-.dnfl-toolbar, .dnfl-controls, .reportnavigation, table.report_navigation {
+/* ------------------------------------------------------------------------
+   2. CONTROL TOOLBARS & FILTER GROUPS
+   ------------------------------------------------------------------------ */
+.dnfl-toolbar,
+.dnfl-controls,
+.reportnavigation,
+table.report_navigation {
   display: flex !important;
   flex-wrap: wrap !important;
   align-items: center !important;
@@ -124,7 +142,8 @@
   }
 }
 
-.dnfl-buttons-right, .dnfl-actions-right {
+.dnfl-buttons-right,
+.dnfl-actions-right {
   margin-left: auto !important;
   display: flex !important;
   align-items: center !important;
@@ -132,7 +151,11 @@
   flex-wrap: wrap !important;
 }
 
-select.dnfl-select, .dnfl-select {
+/* ------------------------------------------------------------------------
+   3. SELECT DROPDOWNS & FLAT BUTTONS
+   ------------------------------------------------------------------------ */
+select.dnfl-select,
+.dnfl-select {
   padding: 8px 12px !important;
   font-size: 0.88rem !important;
   font-weight: 600 !important;
@@ -144,14 +167,20 @@ select.dnfl-select, .dnfl-select {
   cursor: pointer !important;
   transition: border-color var(--dnfl-transition-fast, 0.15s ease) !important;
 
-  &:focus, &:active {
+  &:focus,
+  &:active {
     border-color: var(--dnfl-primary, #0577B1) !important;
     box-shadow: 0 0 0 2px var(--dnfl-primary-light, #b6e2ff) !important;
   }
 }
 
-button.dnfl-btn, a.dnfl-btn, input.dnfl-btn, .dnfl-btn {
-  i, span, a, label { color: inherit !important; }
+button.dnfl-btn,
+a.dnfl-btn,
+input.dnfl-btn,
+.dnfl-btn {
+  i, span, a, label {
+    color: inherit !important;
+  }
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -173,12 +202,16 @@ button.dnfl-btn, a.dnfl-btn, input.dnfl-btn, .dnfl-btn {
   transition: all var(--dnfl-transition-fast, 0.15s ease) !important;
 }
 
-#dnfl_chartToggleBtn, #dnfl_rankings_toggleChartBtn {
+#dnfl_chartToggleBtn,
+#dnfl_rankings_toggleChartBtn {
   min-width: 128px !important;
   justify-content: center !important;
 }
 
-button.dnfl-btn, a.dnfl-btn, .dnfl-btn, .dnfl-btn-primary {
+button.dnfl-btn,
+a.dnfl-btn,
+.dnfl-btn,
+.dnfl-btn-primary {
   background-color: var(--dnfl-primary, #0577B1) !important;
   color: #ffffff !important;
   border: 1px solid var(--dnfl-primary, #0577B1) !important;
@@ -190,7 +223,9 @@ button.dnfl-btn, a.dnfl-btn, .dnfl-btn, .dnfl-btn-primary {
   }
 }
 
-button.dnfl-btn-secondary, a.dnfl-btn-secondary, .dnfl-btn-secondary {
+button.dnfl-btn-secondary,
+a.dnfl-btn-secondary,
+.dnfl-btn-secondary {
   background-color: var(--dnfl-bg-card, #ffffff) !important;
   color: var(--dnfl-primary, #0577B1) !important;
   border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
@@ -208,11 +243,31 @@ button.dnfl-btn-secondary, a.dnfl-btn-secondary, .dnfl-btn-secondary {
   cursor: pointer !important;
 }
 
+.dnfl-visibility-toggle-btn {
+  font-size: 0.7rem !important;
+  font-weight: bold !important;
+  color: var(--dnfl-primary, #0577B1) !important;
+  text-transform: uppercase !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  padding: 4px 8px !important;
+  user-select: none !important;
+  transition: color var(--dnfl-transition-fast, 0.15s ease) !important;
+
+  &:hover {
+    color: var(--dnfl-text-muted, #a3a3a3) !important;
+  }
+}
+
 .btn-text-short { display: none !important; }
 .btn-text-full { display: inline !important; }
 
-/* Swatch & Unified Legend Panel Utility Classes */
+/* ------------------------------------------------------------------------
+   4. SWATCH & UNIFIED LEGEND PANEL UTILITY CLASSES
+   ------------------------------------------------------------------------ */
 .dnfl-legend-panel,
+.dnfl-chart-legend,
 .dnfl-rankings-legend,
 .dnfl-standings-legend {
   display: flex !important;
@@ -243,7 +298,7 @@ button.dnfl-btn-secondary, a.dnfl-btn-secondary, .dnfl-btn-secondary {
   .dnfl-disclaimer-note {
     font-size: 0.8rem !important;
     font-weight: 500 !important;
-    color: var(--dnfl-text-subtle, #64748b) !important;
+    color: var(--dnfl-text-subtle, #555555) !important;
     margin-left: auto !important;
   }
 
@@ -280,22 +335,42 @@ button.dnfl-btn-secondary, a.dnfl-btn-secondary, .dnfl-btn-secondary {
   border-radius: 3px !important;
   display: inline-block !important;
 
-  &.color-1 { background-color: var(--dnfl-chart-bg-1) !important; border: 1px solid var(--dnfl-chart-border-1) !important; }
-  &.color-2 { background-color: var(--dnfl-chart-bg-2) !important; border: 1px solid var(--dnfl-chart-border-2) !important; }
-  &.color-3 { background-color: var(--dnfl-chart-bg-3) !important; border: 1px solid var(--dnfl-chart-border-3) !important; }
-  &.color-4 { background-color: var(--dnfl-chart-bg-4) !important; border: 1px solid var(--dnfl-chart-border-4) !important; }
-  &.color-5 { background-color: var(--dnfl-chart-bg-5) !important; border: 1px solid var(--dnfl-chart-border-5) !important; }
-  &.color-6 { background-color: var(--dnfl-chart-bg-6) !important; border: 1px solid var(--dnfl-chart-border-6) !important; }
+  &.swatch-1, &.conf-00, &.crazies, &.color-1 {
+    background-color: var(--dnfl-chart-1, rgba(54, 162, 235, 0.85)) !important;
+    border: 1px solid var(--dnfl-chart-1-border, rgb(54, 162, 235)) !important;
+  }
+  &.swatch-2, &.conf-01, &.kville, &.color-2 {
+    background-color: var(--dnfl-chart-2, rgba(255, 99, 132, 0.85)) !important;
+    border: 1px solid var(--dnfl-chart-2-border, rgb(255, 99, 132)) !important;
+  }
+  &.swatch-3, &.conf-02, &.bluedevils, &.color-3 {
+    background-color: var(--dnfl-chart-3, rgba(75, 192, 192, 0.85)) !important;
+    border: 1px solid var(--dnfl-chart-3-border, rgb(75, 192, 192)) !important;
+  }
+  &.swatch-4, &.conf-03, &.color-4 {
+    background-color: var(--dnfl-chart-4, rgba(255, 205, 86, 0.85)) !important;
+    border: 1px solid var(--dnfl-chart-4-border, rgb(255, 205, 86)) !important;
+  }
+  &.swatch-5, &.conf-04, &.color-5 {
+    background-color: var(--dnfl-chart-5, rgba(153, 102, 255, 0.85)) !important;
+    border: 1px solid var(--dnfl-chart-5-border, rgb(153, 102, 255)) !important;
+  }
+  &.swatch-6, &.conf-05, &.color-6 {
+    background-color: var(--dnfl-chart-6, rgba(255, 159, 64, 0.85)) !important;
+    border: 1px solid var(--dnfl-chart-6-border, rgb(255, 159, 64)) !important;
+  }
 }
 
-/* Mobile Controls & Hybrid Stacking */
+/* ------------------------------------------------------------------------
+   5. MOBILE CONTROL BOX HYBRID STACKING BREAKPOINTS
+   ------------------------------------------------------------------------ */
 @media (max-width: 768px) {
   .btn-text-full { display: none !important; }
   .btn-text-short { display: inline !important; }
   .dnfl-btn { padding: 8px 12px !important; }
 
-  .dnfl-toolbar, 
-  .dnfl-controls, 
+  .dnfl-toolbar,
+  .dnfl-controls,
   .dnfl-action-toolbar,
   .reportnavigation,
   table.report_navigation {
@@ -304,7 +379,7 @@ button.dnfl-btn-secondary, a.dnfl-btn-secondary, .dnfl-btn-secondary {
     gap: 0.75rem !important;
     padding: 0.875rem 1rem !important;
 
-    select.dnfl-select, 
+    select.dnfl-select,
     .dnfl-select,
     .dnfl-filter-group {
       width: 100% !important;
@@ -312,7 +387,7 @@ button.dnfl-btn-secondary, a.dnfl-btn-secondary, .dnfl-btn-secondary {
       box-sizing: border-box !important;
     }
 
-    .dnfl-buttons-right, 
+    .dnfl-buttons-right,
     .dnfl-actions-right {
       margin-left: 0 !important;
       width: 100% !important;

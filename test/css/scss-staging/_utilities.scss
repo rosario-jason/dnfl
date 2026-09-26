@@ -1,43 +1,86 @@
 /* ==========================================================================
-   DNFL Global DOM State & Utility Tokens (_utilities.scss)
-   Duke Networking Fantasy League (DNFL)
+   DNFL DESIGN SYSTEM - GLOBAL STATE & UTILITY TOKENS
+   ==========================================================================
+   Module: _utilities.scss
+   Description: Encapsulates global DOM visibility state tokens, accordion
+                expansion state toggles, status bar indicators, icon color
+                helpers, and section header rows.
    ========================================================================== */
 
-/* Global State Visibility Tokens */
-.dnfl-is-hidden { display: none !important; }
-.dnfl-is-visible { display: block !important; }
-.dnfl-is-flex { display: flex !important; }
+/* ------------------------------------------------------------------------
+   1. GLOBAL STATE VISIBILITY TOKENS
+   ------------------------------------------------------------------------ */
+.dnfl-is-hidden {
+  display: none !important; /* Enforces clean class-based DOM element hiding */
+}
 
-/* Accordion State Classes */
+.dnfl-is-visible {
+  display: block !important;
+}
+
+.dnfl-is-flex {
+  display: flex !important;
+}
+
+/* ------------------------------------------------------------------------
+   2. ACCORDION & COLLAPSIBLE STATE CLASSES
+   ------------------------------------------------------------------------ */
 .dnfl-rules-main-content,
 .dnfl-rules-sub-content,
 .dnfl-rules-topic-content,
 .dnfl-collapsible-content {
-  &.is-expanded { display: block !important; }
-  &.is-collapsed { display: none !important; }
+  &.is-expanded {
+    display: block !important; /* Accordion expanded state */
+  }
+  &.is-collapsed {
+    display: none !important;  /* Accordion collapsed state */
+  }
 }
 
-/* Status Bar & Messaging Tokens */
+/* ------------------------------------------------------------------------
+   3. GLOBAL STATUS BAR & MESSAGING TOKENS
+   ------------------------------------------------------------------------ */
 .dnfl-status-loading {
-  color: var(--dnfl-text-subtle, #64748b) !important;
+  color: var(--dnfl-text-subtle, #555555) !important;
   font-style: italic !important;
 }
+
 .dnfl-status-success {
   color: var(--dnfl-success-green, #10b981) !important;
   font-weight: 600 !important;
 }
+
 .dnfl-status-error {
   color: var(--dnfl-alert-red, #ef4444) !important;
   font-weight: 600 !important;
 }
 
-/* Icon Color Helpers */
-.dnfl-icon-blue  { color: var(--dnfl-badge-blue, #3b82f6) !important; margin-left: 6px; }
-.dnfl-icon-amber { color: var(--dnfl-badge-amber, #f59e0b) !important; margin-left: 6px; }
-.dnfl-icon-red   { color: var(--dnfl-alert-red, #ef4444) !important; margin-left: 6px; }
-.dnfl-icon-green { color: var(--dnfl-success-green, #10b981) !important; margin-left: 6px; }
+/* ------------------------------------------------------------------------
+   4. ICON COLOR UTILITY HELPERS
+   ------------------------------------------------------------------------ */
+.dnfl-icon-blue {
+  color: var(--dnfl-badge-blue, #3b82f6) !important; /* Cobalt Blue Icon */
+  margin-left: 6px;
+}
 
-/* Section Header Row & Disclaimers */
+.dnfl-icon-amber {
+  color: var(--dnfl-badge-amber, #f59e0b) !important;/* Warm Amber Icon */
+  margin-left: 6px;
+}
+
+.dnfl-icon-red {
+  color: var(--dnfl-alert-red, #ef4444) !important;  /* Alert Red Icon */
+  margin-left: 6px;
+}
+
+.dnfl-icon-green {
+  color: var(--dnfl-success-green, #10b981) !important;/* Emerald Green Icon */
+  margin-left: 6px;
+}
+
+/* ------------------------------------------------------------------------
+   5. SECTION HEADERS & DISCLAIMERS
+   ------------------------------------------------------------------------ */
 .dnfl-section-header-row {
   display: flex;
   width: 100%;
@@ -55,5 +98,5 @@
 .dnfl-disclaimer-note {
   font-style: italic;
   font-size: 0.75rem;
-  color: var(--dnfl-text-subtle, #64748b);
+  color: var(--dnfl-text-subtle, #555555);
 }

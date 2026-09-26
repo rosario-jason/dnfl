@@ -1,36 +1,35 @@
 /* ==========================================================================
-   DNFL SCSS Mixins & Reusable Helpers (_mixins.scss)
-   Duke Networking Fantasy League (DNFL)
+   DNFL DESIGN SYSTEM - SCSS MIXINS & REUSABLE HELPERS
+   ==========================================================================
+   Module: _mixins.scss
+   Description: Encapsulates reusable SCSS mixins for flexbox alignments,
+                elevation card shadows, control button bases, and responsive
+                container layout logic.
    ========================================================================== */
 
-@mixin dnfl-card-shadow {
-  box-shadow: var(--dnfl-shadow-card, 0 4px 16px rgba(0, 0, 0, 0.4)) !important;
-}
-
+/* Flexbox Layout Helpers */
 @mixin dnfl-flex-center {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 }
 
-@mixin dnfl-button-base {
-  display: inline-flex !important;
+@mixin dnfl-flex-between {
+  display: flex !important;
   align-items: center !important;
-  justify-content: center !important;
-  gap: 0.5rem !important;
-  padding: 8px 16px !important;
-  font-size: 0.8rem !important;
-  font-weight: 600 !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
+  justify-content: space-between !important;
+}
+
+/* Card Elevation & Shadow Helpers */
+@mixin dnfl-card-shadow {
+  box-shadow: var(--dnfl-shadow-card, 0 4px 16px rgba(0, 0, 0, 0.4)) !important;
+}
+
+/* Component Radius Helpers */
+@mixin dnfl-rounded-card {
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+}
+
+@mixin dnfl-rounded-control {
   border-radius: var(--dnfl-radius-md, 8px) !important;
-  cursor: pointer !important;
-  user-select: none !important;
-  text-decoration: none !important;
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  background-image: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-  transition: all var(--dnfl-transition-fast, 0.15s ease) !important;
 }

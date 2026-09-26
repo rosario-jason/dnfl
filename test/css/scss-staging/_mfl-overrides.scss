@@ -1,12 +1,17 @@
 /* ==========================================================================
-   DNFL Native MFL UI Overrides & MFLScripts Decoupling (_mfl-overrides.scss)
-   Duke Networking Fantasy League (DNFL)
+   DNFL NATIVE MFL UI OVERRIDES & MFLSCRIPTS DECOUPLING
+   ==========================================================================
+   Module: _mfl-overrides.scss
+   Description: Encapsulates overrides for native MyFantasyLeague (MFL) UI elements:
+                sticky top menu bar (.myfantasyleague_menu), mobile container wrappers,
+                franchise icon square sizing (.franchiseicon: 4rem desktop / 2.25rem mobile),
+                and franchise logo centering (.franchiselogo).
    ========================================================================== */
 
 .myfantasyleague_menu {
   border-bottom: 0;
   border-top: 0;
-  background: var(--accent, #0577B1) !important;
+  background: var(--accent, #0577B1) !important; /* Duke Shale Blue */
   box-shadow: none;
   height: 2.5rem;
   position: sticky;

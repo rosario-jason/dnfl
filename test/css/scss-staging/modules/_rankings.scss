@@ -1,23 +1,87 @@
 /* ==========================================================================
-   DNFL Power Rankings Module Specifics (_rankings.scss)
-   Duke Networking Fantasy League (DNFL)
+   DNFL POWER RANKINGS MODULE - SCOPED ALIGNMENTS & CONFERENCES
+   ==========================================================================
+   Module: modules/_rankings.scss
+   Description: Encapsulates scoped styles for #dnfl-rankings-container: explicit
+                centered column alignments across headers and cells, conference
+                rank badges (.color-1..6 matching v4_58.css palette), fluid
+                table-layout (table-layout: auto !important), and nested commentary callout boxes.
    ========================================================================== */
 
 #dnfl-rankings-container {
-  .dnfl-col-rank { width: 56px !important; text-align: center !important; }
+  /* Enforce fluid layout for responsive comment box expansion */
+  table.dnfl-table {
+    table-layout: auto !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     1. EXPLICIT COLUMN ALIGNMENTS & WIDTHS (HEADERS & CELLS CENTERED)
+     ------------------------------------------------------------------------ */
+  /* Rank Column */
+  th.dnfl-col-rank,
+  td.dnfl-col-rank,
+  .dnfl-col-rank {
+    width: 56px !important;
+    text-align: center !important;
+  }
+
+  /* Rank Change Column */
+  th.dnfl-col-change,
+  td.dnfl-col-change,
   .dnfl-col-change {
     width: 62px !important;
     text-align: center !important;
-    .dnfl-badge { min-width: 52px !important; }
+
+    .dnfl-badge {
+      min-width: 52px !important;
+    }
   }
+
+  /* Power Index Grade Column */
+  th.dnfl-col-index,
+  td.dnfl-col-index,
   .dnfl-col-index {
     width: 100px !important;
     min-width: 100px !important;
     text-align: center !important;
-    .dnfl-pill, .dnfl-pill-blue { min-width: 58px !important; }
-  }
-  .dnfl-col-comment { width: 50px !important; text-align: center !important; }
+    font-weight: 600 !important;
 
+    .dnfl-pill,
+    .dnfl-pill-blue {
+      min-width: 58px !important;
+      background-color: var(--dnfl-badge-blue, #3b82f6) !important;
+      color: #ffffff !important;
+    }
+  }
+
+  /* Comments Column Header & Cell */
+  th.dnfl-col-comment,
+  td.dnfl-col-comment,
+  .dnfl-col-comment {
+    width: 50px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+  }
+
+  /* Projected W-L / Record Column in Rankings */
+  th.dnfl-col-record,
+  td.dnfl-col-record,
+  .dnfl-col-record {
+    width: 95px !important;
+    text-align: center !important;
+  }
+
+  /* Points For Column in Rankings */
+  th.dnfl-col-pf,
+  td.dnfl-col-pf,
+  .dnfl-col-pf {
+    width: 100px !important;
+    text-align: center !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     2. CONFERENCE RANK BADGES (.color-1..6 v4_58.css Palette Match)
+     ------------------------------------------------------------------------ */
   .dnfl-rank-badge {
     display: inline-flex !important;
     align-items: center !important;
@@ -30,17 +94,40 @@
     font-size: 0.85rem !important;
     color: #ffffff !important;
 
-    &.color-1 { background-color: var(--dnfl-chart-bg-1) !important; border: 1px solid var(--dnfl-chart-border-1) !important; }
-    &.color-2 { background-color: var(--dnfl-chart-bg-2) !important; border: 1px solid var(--dnfl-chart-border-2) !important; }
-    &.color-3 { background-color: var(--dnfl-chart-bg-3) !important; border: 1px solid var(--dnfl-chart-border-3) !important; }
-    &.color-4 { background-color: var(--dnfl-chart-bg-4) !important; border: 1px solid var(--dnfl-chart-border-4) !important; }
-    &.color-5 { background-color: var(--dnfl-chart-bg-5) !important; border: 1px solid var(--dnfl-chart-border-5) !important; }
-    &.color-6 { background-color: var(--dnfl-chart-bg-6) !important; border: 1px solid var(--dnfl-chart-border-6) !important; }
+    &.color-1 {
+      background-color: var(--dnfl-chart-1, rgba(54, 162, 235, 0.85)) !important;
+      border: 1px solid var(--dnfl-chart-1-border, rgb(54, 162, 235)) !important;
+    }
+    &.color-2 {
+      background-color: var(--dnfl-chart-2, rgba(255, 99, 132, 0.85)) !important;
+      border: 1px solid var(--dnfl-chart-2-border, rgb(255, 99, 132)) !important;
+    }
+    &.color-3 {
+      background-color: var(--dnfl-chart-3, rgba(75, 192, 192, 0.85)) !important;
+      border: 1px solid var(--dnfl-chart-3-border, rgb(75, 192, 192)) !important;
+    }
+    &.color-4 {
+      background-color: var(--dnfl-chart-4, rgba(255, 205, 86, 0.85)) !important; /* Yellow/Gold */
+      border: 1px solid var(--dnfl-chart-4-border, rgb(255, 205, 86)) !important;
+    }
+    &.color-5 {
+      background-color: var(--dnfl-chart-5, rgba(153, 102, 255, 0.85)) !important;/* Lavender Purple */
+      border: 1px solid var(--dnfl-chart-5-border, rgb(153, 102, 255)) !important;
+    }
+    &.color-6 {
+      background-color: var(--dnfl-chart-6, rgba(255, 159, 64, 0.85)) !important; /* Amber Orange */
+      border: 1px solid var(--dnfl-chart-6-border, rgb(255, 159, 64)) !important;
+    }
   }
 
+  /* ------------------------------------------------------------------------
+     3. NESTED COMMENTARY CALLOUT BOX
+     ------------------------------------------------------------------------ */
   .dnfl-comment-row {
     background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
-    &:hover { background-color: var(--dnfl-bg-subhead, #f1f5f9) !important; }
+    &:hover {
+      background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    }
   }
 
   .dnfl-comment-cell {
@@ -65,70 +152,74 @@
   }
 
   &.dnfl-preseason {
-    .dnfl-col-pf, .dnfl-col-change { display: none !important; }
-  }
-}
-
-@media (max-width: 768px) {
-  #dnfl-rankings-container table.dnfl-table {
-    table-layout: auto !important;
-    min-width: 320px !important;
-    width: 100% !important;
-
-    th {
-      vertical-align: middle !important;
-      font-size: 0.75rem !important;
-      padding: 6px 2px !important;
+    .dnfl-col-pf,
+    .dnfl-col-change {
+      display: none !important;
     }
   }
 
-  #dnfl-rankings-container .dnfl-col-rank {
-    width: 44px !important;
-    min-width: 44px !important;
-    max-width: 44px !important;
-    text-align: center !important;
-  }
+  /* ------------------------------------------------------------------------
+     4. MOBILE RESPONSIVE TWEAKS FOR POWER RANKINGS
+     ------------------------------------------------------------------------ */
+  @media (max-width: 768px) {
+    table.dnfl-table {
+      table-layout: auto !important;
+      min-width: 320px !important;
+      width: 100% !important;
 
-  #dnfl-rankings-container .dnfl-col-index {
-    width: 70px !important;
-    min-width: 70px !important;
-    max-width: 75px !important;
-    white-space: normal !important;
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
-    text-align: center !important;
-    line-height: 1.15 !important;
-  }
+      th {
+        vertical-align: middle !important;
+        font-size: 0.75rem !important;
+        padding: 6px 2px !important;
+      }
+    }
 
-  #dnfl-rankings-container .dnfl-col-comment {
-    width: 60px !important;
-    min-width: 60px !important;
-    max-width: 65px !important;
-    white-space: nowrap !important;
-    text-align: center !important;
-  }
+    .dnfl-col-rank {
+      width: 44px !important;
+      min-width: 44px !important;
+      max-width: 44px !important;
+      text-align: center !important;
+    }
 
-  #dnfl-rankings-container .dnfl-col-franchise {
-    width: 154px !important;
-    max-width: 154px !important;
-    min-width: 150px !important;
-    padding: 6px 4px !important;
-    overflow-wrap: break-word !important;
-    word-break: break-word !important;
-    white-space: normal !important;
-  }
+    .dnfl-col-index {
+      width: 70px !important;
+      min-width: 70px !important;
+      max-width: 75px !important;
+      white-space: normal !important;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+      text-align: center !important;
+      line-height: 1.15 !important;
+    }
 
-  #dnfl-rankings-container .franchiseicon {
-    width: 2.25rem !important;
-    height: 2.25rem !important;
-    min-width: 2.25rem !important;
-    max-width: 2.25rem !important;
-    min-height: 2.25rem !important;
-    max-height: 2.25rem !important;
-    flex-shrink: 0 !important;
-  }
+    .dnfl-col-comment {
+      width: 60px !important;
+      min-width: 60px !important;
+      max-width: 65px !important;
+      white-space: nowrap !important;
+      text-align: center !important;
+    }
 
-  #dnfl-rankings-container {
+    .dnfl-col-franchise {
+      width: 154px !important;
+      max-width: 154px !important;
+      min-width: 150px !important;
+      padding: 6px 4px !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
+      white-space: normal !important;
+    }
+
+    .franchiseicon {
+      width: 2.25rem !important;
+      height: 2.25rem !important;
+      min-width: 2.25rem !important;
+      max-width: 2.25rem !important;
+      min-height: 2.25rem !important;
+      max-height: 2.25rem !important;
+      flex-shrink: 0 !important;
+    }
+
     .dnfl-comment-row {
       width: 100% !important;
     }

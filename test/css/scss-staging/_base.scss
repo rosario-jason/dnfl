@@ -1,19 +1,34 @@
 /* ==========================================================================
-   DNFL Base Styles & Element Resets (_base.scss)
-   Duke Networking Fantasy League (DNFL)
+   DNFL DESIGN SYSTEM - BASE RESET & TYPOGRAPHY FOUNDATION
+   ==========================================================================
+   Module: _base.scss
+   Description: Resets HTML box model, loads primary web fonts, establishes
+                global body typography defaults, and configures MFL page shell
+                container overrides.
    ========================================================================== */
 
+/* ------------------------------------------------------------------------
+   1. EXTERNAL FONT LOADING (INTER SYSTEM FONT FAMILY)
+   ------------------------------------------------------------------------ */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+/* ------------------------------------------------------------------------
+   2. GLOBAL BOX MODEL RESET
+   ------------------------------------------------------------------------ */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
+/* ------------------------------------------------------------------------
+   3. BASE BODY TYPOGRAPHY & LINK BEHAVIOR
+   ------------------------------------------------------------------------ */
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 14px;
   line-height: 1.5;
-  color: var(--dnfl-text-main, #121212);
+  color: var(--dnfl-text-main, #121212); /* Obsidian Black */
   margin: 0;
   padding: 0;
   -webkit-font-smoothing: antialiased;
@@ -21,18 +36,22 @@ body {
 }
 
 a {
-  color: var(--dnfl-primary, #0577B1);
+  color: var(--dnfl-primary, #0577B1); /* Duke Shale Blue */
   text-decoration: none;
   transition: color var(--dnfl-transition-fast, 0.15s ease);
 
   &:hover {
-    color: var(--dnfl-primary-hover, #045e8c);
+    color: var(--dnfl-primary-hover, #045e8c); /* Deep Ocean Blue */
     text-decoration: underline;
   }
 }
 
-/* Page Shell & Container Resets */
-#body_content, #reports, .dnfl-page-shell {
+/* ------------------------------------------------------------------------
+   4. MFL PAGE SHELL OVERRIDES (TRANSPARENT CONTAINER RESET)
+   ------------------------------------------------------------------------ */
+#body_content,
+#reports,
+.dnfl-page-shell {
   width: 95% !important;
   max-width: 1000px !important;
   margin: 0 auto 2rem auto !important;
@@ -44,7 +63,9 @@ a {
 }
 
 @media (max-width: 768px) {
-  #body_content, #reports, .homepagecolumn {
+  #body_content,
+  #reports,
+  .homepagecolumn {
     width: 100% !important;
     max-width: 100vw !important;
     margin: 0 !important;
@@ -54,11 +75,17 @@ a {
   }
 
   .dnfl-hide-mobile {
-    display: none !important;
+    display: none !important; /* Hides desktop-only columns on mobile screens */
   }
 }
 
-.homepagemodule, div[id^="homepagemodule_"], td.homepagecell, .homepagecolumn, .mobile-wrap, .homepagemodule_content, .settings-mobile-wrap {
+.homepagemodule,
+div[id^="homepagemodule_"],
+td.homepagecell,
+.homepagecolumn,
+.mobile-wrap,
+.homepagemodule_content,
+.settings-mobile-wrap {
   background: transparent !important;
   background-color: transparent !important;
   border: none !important;
@@ -67,8 +94,9 @@ a {
   overflow: visible !important;
 }
 
-/* Standalone Native MFL Wrappers */
-.mobile-wrap:not(:has(.dnfl-card)), .settings-mobile-wrap:not(:has(.dnfl-card)) {
+/* Standalone Native MFL Container Wrappers */
+.mobile-wrap:not(:has(.dnfl-card)),
+.settings-mobile-wrap:not(:has(.dnfl-card)) {
   width: 95% !important;
   max-width: 1000px !important;
   min-width: 0 !important;
@@ -81,7 +109,10 @@ a {
   overflow: hidden !important;
 }
 
-/* Upright Table Header Reset */
-table.dnfl-table th, .dnfl-table th {
-  font-style: normal !important;
+/* ------------------------------------------------------------------------
+   5. TABLE HEADER UPRIGHT RESET
+   ------------------------------------------------------------------------ */
+table.dnfl-table th,
+.dnfl-table th {
+  font-style: normal !important; /* Overrides native MFL italicized table headers */
 }

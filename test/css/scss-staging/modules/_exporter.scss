@@ -1,6 +1,10 @@
 /* ==========================================================================
-   DNFL Exporter Module Specifics (_exporter.scss)
-   Duke Networking Fantasy League (DNFL)
+   DNFL EXPORTER MODULE - TOOLBAR OVERRIDES & DATA PREVIEW
+   ==========================================================================
+   Module: modules/_exporter.scss
+   Description: Encapsulates scoped styles for #dnfl-exporter-container: action
+                toolbar visibility state overrides (#dnfl-export-actions.dnfl-is-hidden)
+                and monospace preview textarea formatting (.dnfl-preview-textarea).
    ========================================================================== */
 
 #dnfl-exporter-container {
