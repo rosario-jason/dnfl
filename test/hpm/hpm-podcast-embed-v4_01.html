@@ -2,22 +2,30 @@
 <div id="dnfl-podcast-container" class="dnfl-card">
     <!-- Level 2 Card Header -->
     <div class="dnfl-card-header">
-        <h3 id="dnfl-podcast-title" class="dnfl-card-title">
-            <i class="fa-solid fa-microphone"></i>Devil's Advocate
+        <h3 id="dnfl-podcast-card-title" class="dnfl-card-title">
+            <i class="fa-solid fa-microphone"></i> The Devil's Advocate Podcast
         </h3>
     </div>
-
 
     <!-- Level 2 Card Body -->
     <div class="dnfl-card-body">
         <!-- Podcast Logo Banner -->
         <img src="https://dnfl.live/dnfl_podcast/devils_advocate_logo.png" alt="Devil's Advocate Banner" class="dnfl-podcast-banner">
         
-        <!-- Episode Selector Controls -->
-        <div class="dnfl-controls">
+        <!-- Episode Selector Controls & Toolbar -->
+        <div class="dnfl-toolbar">
             <div class="dnfl-filter-group">
-                <label for="dnfl_podcast_selector">Select Episode:</label>
+                <label for="dnfl_podcast_selector">Select Episode</label>
                 <select id="dnfl_podcast_selector" class="dnfl-select"></select>
+            </div>
+
+            <!-- Right-Aligned Action Buttons -->
+            <div class="dnfl-buttons-right">
+                <button id="dnfl_transcriptToggleBtn" class="dnfl-btn dnfl-btn-secondary" onclick="DNFL.Podcast.toggleTranscript()" title="Toggle Transcript View">
+                    <i class="fa-solid fa-scroll"></i>
+                    <span class="btn-text-full">Show Transcript</span>
+                    <span class="btn-text-short">Transcript</span>
+                </button>
             </div>
         </div>
 
@@ -27,13 +35,11 @@
             <div id="dnfl_podcast_date" class="dnfl-podcast-date"></div>
             <div id="dnfl_podcast_desc" class="dnfl-podcast-desc"></div>
             
-            <button id="dnfl_transcriptToggleBtn" class="dnfl-visibility-toggle-btn" onclick="DNFL.Podcast.toggleTranscript()">[ Show Transcript ]</button>
-            
             <audio id="dnfl_podcast_player" class="dnfl-audio" controls preload="metadata">
                 Your browser does not support the audio element.
             </audio>
 
-            <div id="dnfl_podcast_transcript" class="dnfl-transcript-wrapper" style="display: none;">
+            <div id="dnfl_podcast_transcript" class="dnfl-transcript-wrapper dnfl-is-hidden">
                 <p class="dnfl-disclaimer-text">Loading automated transcript file stream...</p>
             </div>
         </div>

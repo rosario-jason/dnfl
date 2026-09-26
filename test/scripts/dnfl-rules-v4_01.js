@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Official Bylaws & Rules Interactive Accordion Engine v3.37
+   DNFL Official Bylaws & Rules Interactive Accordion Engine v4.01
    Duke Networking Fantasy League (DNFL)
    Fully aligned with _test_v4_45.scss state utility classes (.is-expanded, .is-collapsed).
    Pure DOM class-based state management without inline .style manipulation or legacy bloat.
