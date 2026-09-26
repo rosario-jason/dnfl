@@ -1,135 +1,241 @@
-# DNFL Devil's Advocate Podcast Module (`dnfl_podcast/`)
+# Duke Networking Fantasy League (DNFL) - Podcast Player Module Guide
 
-The **DNFL Podcast Module** provides an HTML5 audio player and automated transcript viewer for the *Devil's Advocate* podcast. It features dynamic episode manifest resolution, async markdown transcript rendering via `Marked.js`, and VS Code-compliant JavaScript middleware integration.
+## 1. Executive Summary & System Philosophy
+
+The **DNFL Podcast Player Module** (`scripts/dnfl-podcast.js`) powers *"The Devil's Advocate"* audio player and interactive Markdown transcript engine. It enables league members to stream audio broadcasts, explore season episode archives, and read synced transcripts directly within MyFantasyLeague (MFL) home page embeds.
+
+The module strictly enforces the framework's **Separation of Concerns**:
+* **Zero Inline Styles**: Layout, audio player dark blocks, typography, custom WebKit scrollbars, and card elevations are governed exclusively by `css/dnfl-global.css` (`_podcast.scss`).
+* **Pure Class-Based State Management**: Transcript visibility, episode loading states, and error messaging are managed exclusively by toggling CSS utility classes (`.dnfl-is-hidden`, `.dnfl-status-loading`, `.dnfl-status-error`).
+* **Decoupled Data Feeds**: Episode manifests (`episodes.json`) and Markdown transcripts (`.md`) are decoupled from code and fetched asynchronously via `DNFL.Client.fetchRawText()`.
+* **Resilient Parsing & Fallback Engine**: Transcripts are parsed into rich HTML using Marked.js. If Marked is unavailable or script execution fails, the module seamlessly falls back to pre-formatted raw monospace text (`.dnfl-transcript-raw`), guaranteeing that content is never lost.
 
 ---
 
-## 📁 Repository Directory Location
+## 2. Repository Directory Placement
 
-In accordance with the `rosario-jason/dnfl` GitHub repository structure:
+The Podcast Player module files are located in `dnfl_podcast/` within the repository layout:
 
 ```text
 dnfl.live (rosario-jason GitHub repository: dnfl)
-├── ./scripts/
-│   └── dnfl-podcast-v2.js              # Audio player & markdown transcript engine
-└── ./dnfl_podcast/
-    ├── README.md                       # Podcast Module Developer Guide (This File)
-    ├── devils_advocate_logo.png        # Podcast branding artwork
-    ├── hpm-podcast-embed-v2.html       # HTML embed stub for MFL Home Page Modules
-    └── ./2026/                         # Season Media Directory (Data-Decoupled)
-        ├── episodes.json               # Published episode directory log
-        ├── DA_S1E1.m4a                 # Episode audio file stream
-        └── DA_S1E1.md                  # Episode transcript markdown file
+│
+├── css/
+│   └── dnfl-global.css                 # Master design system stylesheet
+│
+├── dnfl_podcast/
+│   ├── README-dnfl-podcast.md          # Podcast module developer guide (This file)
+│   ├── devils_advocate_logo.png        # Podcast branding header banner
+│   ├── hpm-podcast-embed.html          # HTML embed shell stub for MFL HPM
+│   └── 2026/                           # Season media & transcript asset directory
+│       ├── episodes.json               # Season episode index manifest
+│       ├── DA_S1E1.m4a                 # M4A Audio stream asset
+│       ├── DA_S1E1.md                  # Markdown transcript asset
+│       ├── DA_S1E2.m4a
+│       └── DA_S1E2.md
+│
+└── scripts/
+    ├── dnfl-header.js                  # Framework script loader
+    ├── dnfl-api-client.js              # Central API middleware
+    └── dnfl-podcast.js                 # Podcast player & transcript logic engine
 ```
 
 ---
 
-## ⚙️ Logic Engine Architecture (`dnfl-podcast-v2.js`)
+## 3. System Architecture & Media Flow
 
-The Podcast Module operates within the global `window.DNFL.Podcast` namespace.
-
-### Core Pipeline & Initialization Flow
-1. **Year Context Resolution (`init`)**: Resolves active season year from `mflYear` argument, `window.current_year`, URL path regex (`/20\d{2}/`), or current calendar year.
-2. **Episode Manifest Fetch**: Asynchronously retrieves `https://dnfl.live/dnfl_podcast/{YEAR}/episodes.json` via `DNFLClient.fetchRawText()`.
-3. **Selector Population**: Populates `#dnfl_episodeSelector` dropdown and automatically selects the latest episode.
-4. **Audio Stream Initialization (`loadEpisodeData`)**: Sets `<source id="dnfl_audioSource">` URL to `https://dnfl.live/dnfl_podcast/{YEAR}/{fileId}.m4a` and triggers `player.load()`.
-5. **Transcript Fetch & Parse**: Asynchronously retrieves `https://dnfl.live/dnfl_podcast/{YEAR}/{fileId}.md` via `DNFLClient.fetchRawText()` and parses raw Markdown into HTML using `window.marked.parse()`.
-6. **Visibility Controls (`toggleTranscript`)**: Toggles visibility of `#dnfl_transcriptContainer` between collapsed and expanded states.
-
-### Key Technical Innovations & VS Code Standards
-* **`/* global DNFLClient */` Header**: Eliminates VS Code language server warnings (`DNFLClient is not defined`).
-* **Defensive Scoping**: Uses `const apiClient = window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null)` to guarantee compatibility across window loading states.
-* **Global CSS Status Classes**: Replaced inline `style="..."` attributes with `.dnfl-status-loading` and `.dnfl-status-error` for status feedback.
-* **Unicode Clean Strings**: Replaced multi-byte emoji character codes in JavaScript string literals with clean text to prevent UTF-8 encoding warnings across code editors.
+```text
+[Page Mount: hpm-podcast-embed.html]
+       │
+       ▼
+[DNFL Header Loader: dnfl-header.js] ──► Dispatches 'dnfl:ready' Event
+       │
+       ▼
+[Podcast Logic Engine: dnfl-podcast.js]
+       │
+       ├──► 1. Container Discovery Retry Loop (id="dnfl-podcast-container", maxRetries = 50)
+       │
+       ├──► 2. Fetch Season Manifest via DNFL.Client.fetchRawText()
+       │      URL: 'https://dnfl.live/dnfl_podcast/2026/episodes.json' (TTL: DAILY 24h)
+       │
+       ├──► 3. Populate Episode Selector (#dnfl_podcastEpisodeSelect)
+       │
+       ├──► 4. Load Active Episode Media & Metadata
+       │      ├── Bind Audio Source (<audio src="DA_S1E1.m4a">)
+       │      └── Update Episode Title, Air Date, Duration & Summary
+       │
+       ├──► 5. Fetch Transcript Asset via DNFL.Client.fetchRawText()
+       │      URL: 'https://dnfl.live/dnfl_podcast/2026/DA_S1E1.md' (TTL: DAILY 24h)
+       │
+       └──► 6. Render Transcript Panel (#dnfl_podcastTranscript)
+              ├── Primary: Parse Markdown via Marked.js (marked.parse(mdText))
+              └── Fallback: Render <pre class="dnfl-transcript-raw"> on parsing error
+```
 
 ---
 
-## 🎙️ Data Decoupling & Schemas
+## 4. Data Pipeline & File Standards
 
-### 1. Episode Directory (`episodes.json`)
-Located at `https://dnfl.live/dnfl_podcast/{YEAR}/episodes.json`:
+### 4.1 Season Episode Index Manifest (`episodes.json`)
+The episode manifest defines available media streams and transcript URLs for a given season.
 
+* **Path Standard**: `dnfl_podcast/{YEAR}/episodes.json`
+* **JSON Schema**:
 ```json
-[
-  {
-    "fileId": "DA_S1E1",
-    "title": "S1E1 - No Bling... No Ring"
-  },
-  {
-    "fileId": "DA_S1E2",
-    "title": "S1E2 - Waiver Wire Heist"
-  }
-]
+{
+  "season": 2026,
+  "podcast_title": "The Devil's Advocate",
+  "default_episode_id": "S1E1",
+  "episodes": [
+    {
+      "id": "S1E1",
+      "episode_number": 1,
+      "title": "Season 2026 Kickoff & Draft Analysis",
+      "air_date": "2026-09-01",
+      "duration": "42:15",
+      "audio_url": "https://dnfl.live/dnfl_podcast/2026/DA_S1E1.m4a",
+      "transcript_url": "https://dnfl.live/dnfl_podcast/2026/DA_S1E1.md",
+      "summary": "Deep dive into the 2026 DNFL draft picks, division favorite projections, and week 1 matchup odds.",
+      "tags": ["Draft", "Predictions", "Week 1"]
+    }
+  ]
+}
 ```
 
-### 2. Media Asset Naming Conventions
-For an episode entry with `"fileId": "DA_S1E1"`:
-* **Audio Media Stream**: `https://dnfl.live/dnfl_podcast/{YEAR}/DA_S1E1.m4a` (Format: M4A/AAC Audio)
-* **Markdown Transcript**: `https://dnfl.live/dnfl_podcast/{YEAR}/DA_S1E1.md` (Format: Plaintext Markdown, parsed via `Marked.js`)
+### 4.2 Audio Stream Specifications (`.m4a` / `.mp3`)
+* **Formats**: `.m4a` (AAC) or `.mp3` encoded at `128kbps` or `192kbps` stereo.
+* **CORS Headers**: CDN host must serve audio assets with `Access-Control-Allow-Origin: *` to enable cross-origin HTML5 media playback.
+* **Buffering**: HTML5 `<audio>` element uses `preload="metadata"` for fast initial load speeds.
+
+### 4.3 Markdown Transcript Specifications (`.md`)
+Transcripts are formatted in Markdown with speaker headers, timestamp callouts, and emphasis:
+
+```markdown
+# The Devil's Advocate - Episode 1: Season 2026 Kickoff
+
+**Air Date:** September 1, 2026  
+**Hosts:** Commissioner & Guest Analyst
 
 ---
 
-## 🎨 HTML Embed Shell (`hpm-podcast-embed-v2.html`)
+### [00:00] Intro & League Overview
+Welcome back to *The Devil's Advocate*! Today we break down the 2026 DNFL draft results...
 
-The HTML embed template utilizes global utility classes from `dnfl-global-v2.css`:
+### [05:15] Cameron Crazies Draft Recap
+* **Key Pick:** Marvin Harrison Jr. at 1.04
+* **Analysis:** High upside play that cements their receiving corps.
+```
+
+### 4.4 Data Caching & HTML Response Protection
+All manifest and Markdown requests route through `DNFL.Client.fetchRawText()`:
+* **Caching**: Uses `DNFL.Client.TTL.DAILY` (24 Hours) to optimize CDN bandwidth.
+* **HTML Error Response Guard**: If a CDN or host server returns an HTML error page (`200 OK` with `<!DOCTYPE html>`), `DNFL.Client` detects the HTML tag and rejects the request, preventing raw HTML code from rendering into the transcript box.
+
+---
+
+## 5. UI Components, Audio Controls & Transcript Viewer
+
+### 5.1 Card Architecture (`.dnfl-card`)
+The module mounts inside a standardized 3-level card hierarchy:
 
 ```html
-<!-- DNFL PODCAST MODULE EMBED -->
-<div class="dnfl-module-container">
-    <div class="dnfl-controls">
-        <div class="dnfl-filter-group">
-            <label for="dnfl_episodeSelector">Select Episode:</label>
-            <select id="dnfl_episodeSelector" class="dnfl-select" onchange="DNFL.Podcast.changeEpisode()"></select>
-        </div>
+<div class="dnfl-card" id="dnfl-podcast-container">
+    <div class="dnfl-card-header">
+        <h3 class="dnfl-card-title">
+            <i class="fa-solid fa-podcast"></i> The Devil's Advocate Podcast
+        </h3>
     </div>
-
-    <div class="dnfl-media-player-block">
-        <label id="dnfl_nowPlayingLabel" class="dnfl-now-playing-label">
-            Loading episode details...
-        </label>
-        
-        <button id="dnfl_transcriptToggleBtn" class="dnfl-visibility-toggle-btn" onclick="DNFL.Podcast.toggleTranscript()">[ Show Transcript ]</button>
-        
-        <audio id="dnfl_podcastAudioPlayer" class="dnfl-audio" controls>
-            <source id="dnfl_audioSource" src="" type="audio/mp4">
-            Your browser does not support the audio element.
-        </audio>
-
-        <div id="dnfl_transcriptContainer" class="dnfl-transcript-wrapper" style="display: none;">
-            <p class="dnfl-status-loading">Loading automated transcript file stream...</p>
-        </div>
+    <div class="dnfl-card-body">
+        <!-- Controls, Media Block & Transcript -->
     </div>
-
-    <p class="dnfl-disclaimer-text">
-        The Devil's Advocate podcast is generated entirely using artificial intelligence for entertainment and informational purposes only. The analysis, player projections, and dialogue are synthesized by AI and should not be taken as factual guarantees or professional advice. Check your waivers, verify your stats, and play at your own risk.
-    </p>
 </div>
 ```
 
----
+### 5.2 Dark Media Block (`.dnfl-media-player-block`)
+The media block uses Dark Charcoal (`#262626`) styling for an immersive audio experience:
+* **Branding Banner**: Features `devils_advocate_logo.png` centered at top.
+* **Episode Selector**: Standard `#dnfl_podcastEpisodeSelect` dropdown styled with `.dnfl-select`.
+* **HTML5 Native Controls**: Dark styled native `<audio controls>` player spanning 100% width.
+* **Metadata Summary**: Displays episode air date, duration pill (`.dnfl-pill-blue`), and summary text.
 
-## 🔄 Lifecycle Diagram
-
-```text
-[Init Podcast Module]   ──► Fetch {YEAR}/episodes.json via DNFLClient
-       │
-       ▼
-[Populate Dropdown]     ──► Select latest episode (e.g. DA_S1E1)
-       │
-       ▼
-[Load Audio Stream]     ──► Set <source> src to DA_S1E1.m4a & trigger load()
-       │
-       ▼
-[Fetch Transcript MD]   ──► Fetch DA_S1E1.md via DNFLClient.fetchRawText()
-       │
-       ▼
-[Parse & Render]        ──► Render transcript HTML via Marked.js into #dnfl_transcriptContainer
-```
+### 5.3 Collapsible Transcript Viewer (`.dnfl-transcript-wrapper`)
+* **Transcript Toggle Button**: `#dnfl_podcastTranscriptToggle` uses `.dnfl-visibility-toggle-btn` to expand/collapse transcript content.
+* **Scrollable Container**: Max height `450px` container (`overflow-y: auto`) with custom WebKit scrollbars (`6px` width, slate thumb `#cbd5e1`).
+* **Marked.js Typography**: Renders Markdown headings (`h1-h4`), bold text, lists, and Duke Blue emphasis (`em`).
+* **Raw Fallback Container**: If Markdown parsing fails, text renders in `.dnfl-transcript-raw` (monospace `#f8fafc` background with `white-space: pre-wrap`).
+* **AI Disclaimer Footer**: Displays an automated note clarifying that transcripts are AI-generated for informational purposes.
 
 ---
 
-## 🚀 Annual Rollover & Maintenance
+## 6. HTML Embed Shell (`hpm-podcast-embed.html`)
 
-1. **New Season Media Directory**: Create `./dnfl_podcast/{YEAR}/` on the media server (`dnfl.live`).
-2. **Episode Log Manifest**: Place `episodes.json` inside `{YEAR}/` listing season episodes.
-3. **Episode Uploads**: Upload `.m4a` audio files and `.md` transcript files matching the `fileId` schema.
+Below is the complete, inline-style-free HTML embed shell stub for MFL:
+
+```html
+<!-- DNFL Podcast Player Module Embed Shell -->
+<div class="dnfl-card" id="dnfl-podcast-container">
+    <div class="dnfl-card-header">
+        <h3 class="dnfl-card-title">
+            <i class="fa-solid fa-podcast"></i> The Devil's Advocate Podcast
+        </h3>
+    </div>
+
+    <div class="dnfl-card-body">
+        <!-- Media Player Container Block -->
+        <div class="dnfl-media-player-block">
+            <!-- Branding Banner -->
+            <div class="dnfl-podcast-banner">
+                <img src="https://dnfl.live/dnfl_podcast/devils_advocate_logo.png" 
+                     alt="The Devil's Advocate Logo" 
+                     class="dnfl-podcast-logo" />
+            </div>
+
+            <!-- Toolbar Controls -->
+            <div class="dnfl-toolbar">
+                <div class="dnfl-filter-group">
+                    <label for="dnfl_podcastEpisodeSelect">Select Episode</label>
+                    <select id="dnfl_podcastEpisodeSelect" class="dnfl-select">
+                        <option value="">Loading episodes...</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Audio Player -->
+            <div class="dnfl-audio-wrapper">
+                <audio id="dnfl_podcastAudioPlayer" controls preload="metadata">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
+
+            <!-- Episode Details Card -->
+            <div class="dnfl-episode-details">
+                <div class="dnfl-episode-header-row">
+                    <h4 id="dnfl_podcastEpisodeTitle" class="dnfl-episode-title">Episode Title</h4>
+                    <span id="dnfl_podcastEpisodeDuration" class="dnfl-pill-blue dnfl-pill">00:00</span>
+                </div>
+                <div id="dnfl_podcastEpisodeMeta" class="dnfl-episode-meta">Air Date: --</div>
+                <p id="dnfl_podcastEpisodeSummary" class="dnfl-episode-summary">
+                    Episode summary will appear here.
+                </p>
+            </div>
+        </div>
+
+        <!-- Transcript Section -->
+        <div class="dnfl-transcript-section">
+            <div class="dnfl-transcript-header">
+                <button id="dnfl_podcastTranscriptToggle" class="dnfl-visibility-toggle-btn">
+                    <i class="fa-solid fa-file-lines"></i> Show Transcript
+                </button>
+            </div>
+
+            <!-- Collapsible Transcript Wrapper -->
+            <div id="dnfl_podcastTranscriptWrapper" class="dnfl-transcript-wrapper dnfl-is-hidden">
+                <div id="dnfl_podcastTranscriptContent" class="dnfl-transcript-content">
+                    <!-- Markdown Transcript Rendered Here -->
+                </div>
+                <div class="dnfl-disclaimer-note">
+                    <i class="fa-solid fa-circle-info"></i> Note: Transcripts are AI-generated and may contain minor phonetic inaccuracies.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
