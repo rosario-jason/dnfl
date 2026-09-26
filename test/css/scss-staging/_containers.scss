@@ -1,0 +1,329 @@
+/* ==========================================================================
+   DNFL Container Shells & Control Toolbars (_containers.scss)
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+
+/* Universal Module Card Architecture */
+.dnfl-card, .dnfl-module-container {
+  width: 95% !important;
+  max-width: 1000px !important;
+  min-width: 0 !important;
+  margin: 0 auto 2rem auto !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+  box-shadow: var(--dnfl-shadow-card, 0 4px 16px rgba(0, 0, 0, 0.4)) !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+
+  .dnfl-card-header {
+    padding: 14px 20px !important;
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    h3, .dnfl-card-title {
+      font-size: 1.15rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.5px !important;
+      text-transform: uppercase !important;
+      color: var(--dnfl-text-heading, #0f172a) !important;
+      margin: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.5rem !important;
+
+      i {
+        color: var(--dnfl-primary, #0577B1) !important;
+        font-size: 1rem !important;
+        width: 18px !important;
+        text-align: center !important;
+        display: inline-block !important;
+      }
+    }
+  }
+
+  .dnfl-card-body {
+    padding: 1.25rem !important;
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    background-color: var(--dnfl-bg-card, #ffffff) !important;
+
+    .dnfl-table-wrapper,
+    .mobile-wrapper,
+    .dnfl-toolbar,
+    .dnfl-legend-panel,
+    .dnfl-standings-legend {
+      width: 100% !important;
+      max-width: 100% !important;
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      box-sizing: border-box !important;
+    }
+
+    .dnfl-table-wrapper,
+    .mobile-wrapper {
+      border-radius: var(--dnfl-radius-md, 8px) !important;
+      box-shadow: none !important;
+      border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+      background-color: var(--dnfl-bg-card, #ffffff) !important;
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+    }
+
+    .dnfl-chart-wrapper {
+      width: 100% !important;
+      border-radius: var(--dnfl-radius-md, 8px) !important;
+      box-shadow: none !important;
+      border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+      background-color: var(--dnfl-bg-card, #ffffff) !important;
+      overflow: hidden !important;
+    }
+
+    .dnfl-toolbar {
+      box-shadow: none !important;
+    }
+  }
+}
+
+.homepagemodule .dnfl-card, .mobile-wrap .dnfl-card, td.homepagecell .dnfl-card {
+  width: 100% !important;
+  margin: 0 auto 2rem auto !important;
+}
+
+/* Toolbars, Select Dropdowns & Buttons */
+.dnfl-toolbar, .dnfl-controls, .reportnavigation, table.report_navigation {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 1rem !important;
+  margin-bottom: 1rem !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  padding: 0.875rem 1.25rem !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  box-shadow: none !important;
+}
+
+.dnfl-filter-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.375rem !important;
+
+  label {
+    font-size: 0.875rem !important;
+    color: var(--dnfl-text-main, #121212) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    font-weight: 600 !important;
+  }
+}
+
+.dnfl-buttons-right, .dnfl-actions-right {
+  margin-left: auto !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  flex-wrap: wrap !important;
+}
+
+select.dnfl-select, .dnfl-select {
+  padding: 8px 12px !important;
+  font-size: 0.88rem !important;
+  font-weight: 600 !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  outline: none !important;
+  cursor: pointer !important;
+  transition: border-color var(--dnfl-transition-fast, 0.15s ease) !important;
+
+  &:focus, &:active {
+    border-color: var(--dnfl-primary, #0577B1) !important;
+    box-shadow: 0 0 0 2px var(--dnfl-primary-light, #b6e2ff) !important;
+  }
+}
+
+button.dnfl-btn, a.dnfl-btn, input.dnfl-btn, .dnfl-btn {
+  i, span, a, label { color: inherit !important; }
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  padding: 8px 16px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  text-decoration: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: all var(--dnfl-transition-fast, 0.15s ease) !important;
+}
+
+#dnfl_chartToggleBtn, #dnfl_rankings_toggleChartBtn {
+  min-width: 128px !important;
+  justify-content: center !important;
+}
+
+button.dnfl-btn, a.dnfl-btn, .dnfl-btn, .dnfl-btn-primary {
+  background-color: var(--dnfl-primary, #0577B1) !important;
+  color: #ffffff !important;
+  border: 1px solid var(--dnfl-primary, #0577B1) !important;
+
+  &:hover {
+    background-color: var(--dnfl-primary-hover, #045e8c) !important;
+    border-color: var(--dnfl-primary-hover, #045e8c) !important;
+    color: #ffffff !important;
+  }
+}
+
+button.dnfl-btn-secondary, a.dnfl-btn-secondary, .dnfl-btn-secondary {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  color: var(--dnfl-primary, #0577B1) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+
+  &:hover {
+    background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+    border-color: var(--dnfl-primary, #0577B1) !important;
+    color: var(--dnfl-primary-hover, #045e8c) !important;
+  }
+}
+
+.dnfl-btn-icon {
+  padding: 4px 8px !important;
+  font-size: 0.85rem !important;
+  cursor: pointer !important;
+}
+
+.btn-text-short { display: none !important; }
+.btn-text-full { display: inline !important; }
+
+/* Swatch & Unified Legend Panel Utility Classes */
+.dnfl-legend-panel,
+.dnfl-rankings-legend,
+.dnfl-standings-legend {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+  gap: 0.75rem 1.25rem !important;
+  margin-bottom: 1rem !important;
+  padding: 10px 14px !important;
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+
+  .dnfl-legend-items,
+  .dnfl-key-icon-group {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 1.25rem !important;
+  }
+
+  .dnfl-legend-note,
+  .dnfl-disclaimer-note {
+    font-size: 0.8rem !important;
+    font-weight: 500 !important;
+    color: var(--dnfl-text-subtle, #64748b) !important;
+    margin-left: auto !important;
+  }
+
+  @media (max-width: 640px) {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+
+    .dnfl-legend-items,
+    .dnfl-key-icon-group {
+      justify-content: center !important;
+    }
+
+    .dnfl-legend-note,
+    .dnfl-disclaimer-note {
+      margin-left: 0 !important;
+      text-align: center !important;
+    }
+  }
+}
+
+.dnfl-legend-item {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+}
+
+.dnfl-legend-swatch {
+  width: 12px !important;
+  height: 12px !important;
+  border-radius: 3px !important;
+  display: inline-block !important;
+
+  &.color-1 { background-color: var(--dnfl-chart-bg-1) !important; border: 1px solid var(--dnfl-chart-border-1) !important; }
+  &.color-2 { background-color: var(--dnfl-chart-bg-2) !important; border: 1px solid var(--dnfl-chart-border-2) !important; }
+  &.color-3 { background-color: var(--dnfl-chart-bg-3) !important; border: 1px solid var(--dnfl-chart-border-3) !important; }
+  &.color-4 { background-color: var(--dnfl-chart-bg-4) !important; border: 1px solid var(--dnfl-chart-border-4) !important; }
+  &.color-5 { background-color: var(--dnfl-chart-bg-5) !important; border: 1px solid var(--dnfl-chart-border-5) !important; }
+  &.color-6 { background-color: var(--dnfl-chart-bg-6) !important; border: 1px solid var(--dnfl-chart-border-6) !important; }
+}
+
+/* Mobile Controls & Hybrid Stacking */
+@media (max-width: 768px) {
+  .btn-text-full { display: none !important; }
+  .btn-text-short { display: inline !important; }
+  .dnfl-btn { padding: 8px 12px !important; }
+
+  .dnfl-toolbar, 
+  .dnfl-controls, 
+  .dnfl-action-toolbar,
+  .reportnavigation,
+  table.report_navigation {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+    padding: 0.875rem 1rem !important;
+
+    select.dnfl-select, 
+    .dnfl-select,
+    .dnfl-filter-group {
+      width: 100% !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .dnfl-buttons-right, 
+    .dnfl-actions-right {
+      margin-left: 0 !important;
+      width: 100% !important;
+      justify-content: center !important;
+      gap: 0.5rem !important;
+
+      .dnfl-btn {
+        flex: 1 1 auto !important;
+        justify-content: center !important;
+        text-align: center !important;
+      }
+    }
+  }
+}

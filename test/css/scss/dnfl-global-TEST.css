@@ -1098,12 +1098,42 @@ caption,
 }
 
 /* ==========================================================================
-   DNFL Framework Modular Stylesheet Sandbox Partial (_test_v4_46.scss)
+   DNFL Framework Modular Stylesheet Sandbox Partial (_test_v4_58.scss)
    Duke Networking Fantasy League (DNFL)
    Fully aligned with dnfl-global-v3_36.css baseline design tokens.
    Modular Scoped Architecture: Column widths, badge dimensions, and callouts
    are strictly scoped to their respective module containers.
+   Added: Universal Table Touch-Scroll Wrappers & Mobile Width Protections.
+   v4.58: Mobile Control Box Hybrid Stacking & Power Rankings Layout Optimization.
    ========================================================================== */
+/* --------------------------------------------------------------------------
+   LIVE PRODUCTION SCSS MIGRATION & CONSOLIDATION MANIFEST
+   ==========================================================================
+   When consolidating _test_v4_58.scss into the permanent SCSS manifest 
+   (dnfl-global-TEST.css / dnfl-global.css), rules are mapped to:
+
+   1. Core Framework Foundation
+      - _variables.scss : Standard 6-color chart palette (--dnfl-chart-bg-1..6)
+      - _base.scss      : Upright table th reset (table.dnfl-table th { font-style: normal !important; })
+      - _utilities.scss : DOM state classes (.dnfl-is-hidden), icon color helpers (.dnfl-icon-blue/amber/red/green)
+      - _badges.scss    : Global base badges (.dnfl-badge-*) & pills (.dnfl-pill-*)
+      - _tables.scss    : Dynamic franchise text wrapping (.dnfl-col-franchise), row hover, mobile min-widths,
+                          universal .dnfl-table-wrapper touch scrolling
+      - _containers.scss: Full-width / centered hybrid control toolbars (.dnfl-toolbar, .dnfl-controls) on mobile
+
+   2. Feature Modules (Module-Scoped Styles)
+      - modules/_standings.scss : #dnfl-standings-container, .dnfl-seed-badge, left-aligned .dnfl-col-seed (95px)
+      - modules/_rankings.scss  : #dnfl-rankings-container, .color-1..6 rank badges, .dnfl-comment-box, table-layout: auto
+      - modules/_podcast.scss   : #dnfl-podcast-container, .dnfl-podcast-banner, .dnfl-transcript-raw
+      - modules/_rules.scss     : #dnfl-rules-container, bylaws accordion hierarchy, scoring tables
+      - modules/_exporter.scss  : #dnfl-exporter-container, .dnfl-preview-textarea
+
+   Purged CSS Deprecations & Anti-Patterns (DO NOT MIGRATE TO LIVE):
+      - Universal Badge min-width (stretching badges across modules)
+      - Direct .style.display assignments in JS
+      - Inline style="..." Attribute String Injections
+      - Obsolete .dnfl-rules-table-wrapper wrapper class
+   -------------------------------------------------------------------------- */
 /* ---------------- 1. Standard 6-Color Chart & Legend Palette ---------------- */
 :root, .dnfl {
   --dnfl-chart-bg-1: rgba(54, 162, 235, 0.85); /* Sky Blue */
@@ -1274,6 +1304,19 @@ caption,
   overflow: hidden !important;
 }
 
+/* Universal Table Touch Scroll Container Wrapper */
+.dnfl-table-wrapper,
+.mobile-wrapper,
+.mobile-wrap {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  box-shadow: none !important;
+}
+
 /* ---------------- 3. Level 3: Standalone Card Architecture ---------------- */
 .dnfl-card, .dnfl-module-container {
   width: 95% !important;
@@ -1433,7 +1476,7 @@ button.dnfl-btn, a.dnfl-btn, input.dnfl-btn, .dnfl-btn {
 
 /* Fix Chart Toggle Button Width Constant Sizing */
 #dnfl_chartToggleBtn, #dnfl_rankings_toggleChartBtn {
-  min-width: 140px !important;
+  min-width: 128px !important;
   justify-content: center !important;
 }
 
@@ -1483,9 +1526,6 @@ button.dnfl-btn-secondary:hover, a.dnfl-btn-secondary:hover, .dnfl-btn-secondary
   .dnfl-btn {
     padding: 8px 12px !important;
   }
-  #dnfl_chartToggleBtn, #dnfl_rankings_toggleChartBtn {
-    min-width: 85px !important;
-  }
 }
 /* ---------------- 5. Global DOM State & Visibility Tokens ---------------- */
 .dnfl-is-hidden {
@@ -1531,7 +1571,6 @@ button.dnfl-btn-secondary:hover, a.dnfl-btn-secondary:hover, .dnfl-btn-secondary
 }
 
 /* ---------------- 7. Modular Badge & Pill System (Base Styling Only) ---------------- */
-/* Note: Universal min-widths are avoided globally to allow each module to fit its content */
 .dnfl-pill, .dnfl-pill-blue, .dnfl-record-badge, .dnfl-records-badge {
   background-color: var(--dnfl-primary, #0577B1) !important;
   color: #ffffff !important;
@@ -1648,11 +1687,24 @@ button.dnfl-btn-secondary:hover, a.dnfl-btn-secondary:hover, .dnfl-btn-secondary
   white-space: normal !important;
 }
 
-/* ---------------- 9. Scoped Module Table Column Widths & Badge Min-Widths ---------------- */
-/* --- Standings Module Scoped Widths --- */
+/* Dynamic Wrapping Franchise Column */
+.dnfl-col-franchise {
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  width: auto !important;
+  min-width: 180px !important;
+  text-align: left !important;
+}
+
+/* ---------------- 9. Scoped Module Table Column Widths & Badge Styles ---------------- */
+/* --- Standings Module Scoped Widths & Circular Seed Badge --- */
 #dnfl-standings-container .dnfl-col-seed {
-  width: 56px !important;
-  text-align: center !important;
+  width: 95px !important;
+  min-width: 95px !important;
+  text-align: left !important;
+  padding-left: 10px !important;
+  white-space: nowrap !important;
 }
 #dnfl-standings-container .dnfl-col-pf, #dnfl-standings-container .dnfl-col-pa {
   width: 110px !important;
@@ -1672,16 +1724,43 @@ button.dnfl-btn-secondary:hover, a.dnfl-btn-secondary:hover, .dnfl-btn-secondary
   width: 85px !important;
   text-align: center !important;
 }
-#dnfl-standings-container .dnfl-rank-badge {
+#dnfl-standings-container {
+  /* Circular Standings Seed Badge */
+}
+#dnfl-standings-container .dnfl-seed-badge {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   width: 28px !important;
   height: 28px !important;
   padding: 0 !important;
-  border-radius: 6px !important;
+  border-radius: 50% !important;
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  color: var(--dnfl-text-heading, #0f172a) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
   font-weight: 700 !important;
   font-size: 0.85rem !important;
+  line-height: 1 !important;
+  box-sizing: border-box !important;
+}
+#dnfl-standings-container {
+  /* Standings Icon Color Utility Helpers */
+}
+#dnfl-standings-container .dnfl-icon-blue {
+  color: var(--dnfl-badge-blue, #3b82f6) !important;
+  margin-left: 6px;
+}
+#dnfl-standings-container .dnfl-icon-amber {
+  color: var(--dnfl-badge-amber, #f59e0b) !important;
+  margin-left: 6px;
+}
+#dnfl-standings-container .dnfl-icon-red {
+  color: var(--dnfl-alert-red, #ef4444) !important;
+  margin-left: 6px;
+}
+#dnfl-standings-container .dnfl-icon-green {
+  color: var(--dnfl-success-green, #10b981) !important;
+  margin-left: 6px;
 }
 
 /* --- Power Rankings Module Scoped Widths & Nested Commentary Formatting --- */
@@ -1744,9 +1823,6 @@ button.dnfl-btn-secondary:hover, a.dnfl-btn-secondary:hover, .dnfl-btn-secondary
   background-color: var(--dnfl-chart-bg-6) !important;
   border: 1px solid var(--dnfl-chart-border-6) !important;
 }
-#dnfl-rankings-container {
-  /* Scoped Power Rankings Commentary Callout Box (Prevents style bleed) */
-}
 #dnfl-rankings-container .dnfl-comment-row {
   background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
 }
@@ -1766,24 +1842,69 @@ button.dnfl-btn-secondary:hover, a.dnfl-btn-secondary:hover, .dnfl-btn-secondary
   font-style: italic !important;
   line-height: 1.4 !important;
   overflow-wrap: break-word !important;
+  word-break: break-word !important;
   white-space: normal !important;
   max-width: 100% !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 #dnfl-rankings-container.dnfl-preseason .dnfl-col-pf, #dnfl-rankings-container.dnfl-preseason .dnfl-col-change {
   display: none !important;
 }
 
-/* Dynamic Wrapping Franchise Column */
-.dnfl-col-franchise {
-  white-space: normal !important;
-  overflow-wrap: break-word !important;
-  word-break: break-word !important;
-  width: auto !important;
-  min-width: 180px !important;
-  text-align: left !important;
+/* ---------------- 10. Podcast Module Container Overrides ---------------- */
+#dnfl-podcast-container .dnfl-podcast-banner {
+  width: 100% !important;
+  height: auto !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  margin-bottom: 0.5rem !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+}
+#dnfl-podcast-container .dnfl-media-player-block {
+  background-color: var(--dnfl-bg-dark, #262626) !important;
+  padding: 1.25rem !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  margin-bottom: 1.5rem !important;
+  margin-top: 0.5rem !important;
+  border: 1px solid var(--dnfl-border-dark, #444444) !important;
+}
+#dnfl-podcast-container .dnfl-now-playing-label {
+  font-size: 1rem !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  display: block !important;
+  margin-bottom: 0.25rem !important;
+}
+#dnfl-podcast-container .dnfl-podcast-date, #dnfl-podcast-container .dnfl-podcast-desc {
+  color: var(--dnfl-text-muted, #a3a3a3) !important;
+  font-size: 0.85rem !important;
+  margin-bottom: 0.5rem !important;
+}
+#dnfl-podcast-container .dnfl-audio {
+  width: 100% !important;
+  margin-top: 0.75rem !important;
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper {
+  width: 100% !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  padding: 1.25rem !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  max-height: 450px !important;
+  overflow-y: auto !important;
+  line-height: 1.6 !important;
+  margin-top: 1rem !important;
+  font-size: 0.85rem !important;
+  box-sizing: border-box !important;
+}
+#dnfl-podcast-container .dnfl-transcript-raw {
+  white-space: pre-wrap !important;
+  font-family: inherit !important;
+  line-height: 1.6 !important;
 }
 
-/* ---------------- 10. Exporter Module Overrides ---------------- */
+/* ---------------- 11. Exporter Module Overrides ---------------- */
 #dnfl-exporter-container #dnfl-export-actions.dnfl-is-hidden,
 #dnfl-exporter-container #dnfl-export-actions[style*="display: none"] {
   display: none !important;
@@ -1803,7 +1924,7 @@ button.dnfl-btn-secondary:hover, a.dnfl-btn-secondary:hover, .dnfl-btn-secondary
   resize: vertical !important;
 }
 
-/* ---------------- 11. Standings Division Header Overrides ---------------- */
+/* ---------------- 12. Standings Division Header Overrides ---------------- */
 #dnfl-standings-container .dnfl-division-header-cell {
   background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
   border-bottom: 2px solid var(--dnfl-border-medium, #cbd5e1) !important;
@@ -1835,38 +1956,189 @@ button.dnfl-btn-secondary:hover, a.dnfl-btn-secondary:hover, .dnfl-btn-secondary
   border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
 }
 
-/* ---------------- 12. Standard Mobile Media Queries ---------------- */
+/* ---------------- 13. Standard Mobile Media Queries ---------------- */
 @media (max-width: 768px) {
-  .dnfl-col-seed, .dnfl-col-rank {
-    width: 52px !important;
+  /* Control Box Hybrid Stacking & Toolbars on Mobile */
+  .dnfl-toolbar,
+  .dnfl-controls,
+  .dnfl-action-toolbar,
+  .reportnavigation,
+  table.report_navigation {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 0.75rem !important;
+    padding: 0.875rem 1rem !important;
+    /* Make dropdowns & selects full thumb-width */
+  }
+  .dnfl-toolbar select.dnfl-select,
+  .dnfl-toolbar .dnfl-select,
+  .dnfl-toolbar .dnfl-filter-group,
+  .dnfl-controls select.dnfl-select,
+  .dnfl-controls .dnfl-select,
+  .dnfl-controls .dnfl-filter-group,
+  .dnfl-action-toolbar select.dnfl-select,
+  .dnfl-action-toolbar .dnfl-select,
+  .dnfl-action-toolbar .dnfl-filter-group,
+  .reportnavigation select.dnfl-select,
+  .reportnavigation .dnfl-select,
+  .reportnavigation .dnfl-filter-group,
+  table.report_navigation select.dnfl-select,
+  table.report_navigation .dnfl-select,
+  table.report_navigation .dnfl-filter-group {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  .dnfl-toolbar,
+  .dnfl-controls,
+  .dnfl-action-toolbar,
+  .reportnavigation,
+  table.report_navigation {
+    /* Reset right-alignment push on wrapped button groups */
+  }
+  .dnfl-toolbar .dnfl-buttons-right,
+  .dnfl-toolbar .dnfl-actions-right,
+  .dnfl-controls .dnfl-buttons-right,
+  .dnfl-controls .dnfl-actions-right,
+  .dnfl-action-toolbar .dnfl-buttons-right,
+  .dnfl-action-toolbar .dnfl-actions-right,
+  .reportnavigation .dnfl-buttons-right,
+  .reportnavigation .dnfl-actions-right,
+  table.report_navigation .dnfl-buttons-right,
+  table.report_navigation .dnfl-actions-right {
+    margin-left: 0 !important;
+    width: 100% !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    /* Make buttons fill equal width on mobile */
+  }
+  .dnfl-toolbar .dnfl-buttons-right .dnfl-btn,
+  .dnfl-toolbar .dnfl-actions-right .dnfl-btn,
+  .dnfl-controls .dnfl-buttons-right .dnfl-btn,
+  .dnfl-controls .dnfl-actions-right .dnfl-btn,
+  .dnfl-action-toolbar .dnfl-buttons-right .dnfl-btn,
+  .dnfl-action-toolbar .dnfl-actions-right .dnfl-btn,
+  .reportnavigation .dnfl-buttons-right .dnfl-btn,
+  .reportnavigation .dnfl-actions-right .dnfl-btn,
+  table.report_navigation .dnfl-buttons-right .dnfl-btn,
+  table.report_navigation .dnfl-actions-right .dnfl-btn {
+    flex: 1 1 auto !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+  /* Default Minimum Readable Table Footprint */
+  table.dnfl-table,
+  table.dnfl-rules-table {
+    min-width: 500px !important;
+    width: -moz-max-content !important;
+    width: max-content !important;
+  }
+  table.dnfl-table th, table.dnfl-table td,
+  table.dnfl-rules-table th,
+  table.dnfl-rules-table td {
     padding: 6px 4px !important;
   }
-  .dnfl-col-index {
-    width: 72px !important;
-    min-width: 72px !important;
-    padding: 6px 4px !important;
-  }
-  .dnfl-col-comment {
-    width: 45px !important;
-    padding: 6px 4px !important;
-  }
-  .dnfl-col-record {
-    width: 90px !important;
-    padding: 6px 4px !important;
-  }
-  .dnfl-col-franchise {
-    min-width: 140px !important;
-    padding: 6px 4px !important;
-  }
-  table.dnfl-table {
-    min-width: 100% !important;
+  /* Standings & Rankings Module Mobile Table Dimensions */
+  #dnfl-standings-container table.dnfl-table {
+    min-width: 320px !important;
     width: 100% !important;
   }
-  table.dnfl-table th, table.dnfl-table td {
+  /* Power Rankings Mobile Table Layout */
+  #dnfl-rankings-container table.dnfl-table {
+    table-layout: auto !important;
+    min-width: 320px !important;
+    width: 100% !important;
+  }
+  #dnfl-rankings-container table.dnfl-table th {
+    vertical-align: middle !important;
+    font-size: 0.75rem !important;
+    padding: 6px 2px !important;
+  }
+  /* Mobile Power Rankings Column Width Budget */
+  #dnfl-rankings-container .dnfl-col-rank {
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    text-align: center !important;
+  }
+  #dnfl-rankings-container .dnfl-col-index {
+    width: 70px !important;
+    min-width: 70px !important;
+    max-width: 75px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    text-align: center !important;
+    line-height: 1.15 !important;
+  }
+  #dnfl-rankings-container .dnfl-col-comment {
+    width: 60px !important;
+    min-width: 60px !important;
+    max-width: 65px !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+  }
+  /* Mobile Franchise Column Width & Text Wrapping */
+  #dnfl-standings-container .dnfl-col-franchise,
+  #dnfl-rankings-container .dnfl-col-franchise {
+    width: 154px !important;
+    max-width: 154px !important;
+    min-width: 150px !important;
     padding: 6px 4px !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+  }
+  /* Mobile Scale Down for Franchise Icons */
+  #dnfl-standings-container .franchiseicon,
+  #dnfl-rankings-container .franchiseicon,
+  .dnfl-franchise-cell img {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    min-width: 2.25rem !important;
+    max-width: 2.25rem !important;
+    min-height: 2.25rem !important;
+    max-height: 2.25rem !important;
+    flex-shrink: 0 !important;
+  }
+  /* Power Rankings Comment Box Alignment */
+  #dnfl-rankings-container .dnfl-comment-row {
+    width: 100% !important;
+  }
+  #dnfl-rankings-container .dnfl-comment-cell {
+    padding: 10px 12px !important;
+    box-sizing: border-box !important;
+  }
+  #dnfl-rankings-container .dnfl-comment-box {
+    font-size: 0.85rem !important;
+    line-height: 1.4 !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+    box-sizing: border-box !important;
+  }
+  /* Standings Column Mobile Tweaks */
+  #dnfl-standings-container .dnfl-col-seed {
+    width: 86px !important;
+    min-width: 86px !important;
+    padding: 6px 2px !important;
+    white-space: nowrap !important;
+  }
+  #dnfl-standings-container .dnfl-col-record {
+    width: 86px !important;
+    min-width: 86px !important;
+    padding: 6px 2px !important;
+  }
+  /* Rules Module: Protects Multi-Column Scoring Matrices */
+  #dnfl-rules-container table {
+    min-width: 550px !important;
+  }
+  /* Exporter Module: Protects Data Preview Tables */
+  #dnfl-exporter-container table {
+    min-width: 650px !important;
   }
 }
-/* ---------------- 13. Table States, Highlighting & Font Resets ---------------- */
+/* ---------------- 14. Table States, Highlighting & Font Resets ---------------- */
 .dnfl-table-wrapper, .mobile-wrapper {
   width: 100% !important;
   max-width: 1000px !important;

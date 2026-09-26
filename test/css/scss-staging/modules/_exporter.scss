@@ -1,0 +1,32 @@
+/* ==========================================================================
+   DNFL Exporter Module Specifics (_exporter.scss)
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+
+#dnfl-exporter-container {
+  #dnfl-export-actions.dnfl-is-hidden,
+  #dnfl-export-actions[style*="display: none"] {
+    display: none !important;
+  }
+
+  .dnfl-preview-textarea {
+    width: 100% !important;
+    height: 350px !important;
+    font-family: monospace !important;
+    font-size: 0.85rem !important;
+    padding: 12px !important;
+    box-sizing: border-box !important;
+    background-color: var(--dnfl-bg-subhead, #f8fafc) !important;
+    color: var(--dnfl-text-main, #121212) !important;
+    border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    border-radius: var(--dnfl-radius-md, 8px) !important;
+    outline: none !important;
+    resize: vertical !important;
+  }
+
+  @media (max-width: 768px) {
+    table {
+      min-width: 650px !important;
+    }
+  }
+}

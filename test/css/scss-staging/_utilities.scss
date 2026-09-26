@@ -1,0 +1,59 @@
+/* ==========================================================================
+   DNFL Global DOM State & Utility Tokens (_utilities.scss)
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+
+/* Global State Visibility Tokens */
+.dnfl-is-hidden { display: none !important; }
+.dnfl-is-visible { display: block !important; }
+.dnfl-is-flex { display: flex !important; }
+
+/* Accordion State Classes */
+.dnfl-rules-main-content,
+.dnfl-rules-sub-content,
+.dnfl-rules-topic-content,
+.dnfl-collapsible-content {
+  &.is-expanded { display: block !important; }
+  &.is-collapsed { display: none !important; }
+}
+
+/* Status Bar & Messaging Tokens */
+.dnfl-status-loading {
+  color: var(--dnfl-text-subtle, #64748b) !important;
+  font-style: italic !important;
+}
+.dnfl-status-success {
+  color: var(--dnfl-success-green, #10b981) !important;
+  font-weight: 600 !important;
+}
+.dnfl-status-error {
+  color: var(--dnfl-alert-red, #ef4444) !important;
+  font-weight: 600 !important;
+}
+
+/* Icon Color Helpers */
+.dnfl-icon-blue  { color: var(--dnfl-badge-blue, #3b82f6) !important; margin-left: 6px; }
+.dnfl-icon-amber { color: var(--dnfl-badge-amber, #f59e0b) !important; margin-left: 6px; }
+.dnfl-icon-red   { color: var(--dnfl-alert-red, #ef4444) !important; margin-left: 6px; }
+.dnfl-icon-green { color: var(--dnfl-success-green, #10b981) !important; margin-left: 6px; }
+
+/* Section Header Row & Disclaimers */
+.dnfl-section-header-row {
+  display: flex;
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+.dnfl-disclaimer-text {
+  font-size: 0.8rem;
+  font-style: italic;
+  text-align: center;
+  color: var(--dnfl-text-subtle, #555555);
+  margin-top: 1rem;
+}
+
+.dnfl-disclaimer-note {
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--dnfl-text-subtle, #64748b);
+}

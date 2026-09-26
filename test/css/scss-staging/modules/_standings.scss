@@ -1,0 +1,140 @@
+/* ==========================================================================
+   DNFL Standings Module Specifics (_standings.scss)
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+
+#dnfl-standings-container {
+  .dnfl-col-seed {
+    width: 95px !important;
+    min-width: 95px !important;
+    text-align: left !important;
+    padding-left: 10px !important;
+    white-space: nowrap !important;
+  }
+
+  .dnfl-col-pf, .dnfl-col-pa {
+    width: 110px !important;
+    text-align: center !important;
+    .dnfl-badge { min-width: 82px !important; }
+  }
+
+  .dnfl-col-record {
+    width: 95px !important;
+    text-align: center !important;
+    .dnfl-pill, .dnfl-pill-blue, .dnfl-record-badge { min-width: 80px !important; }
+  }
+
+  .dnfl-col-bbid {
+    width: 85px !important;
+    text-align: center !important;
+  }
+
+  /* Circular Standings Seed Badge */
+  .dnfl-seed-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    color: var(--dnfl-text-heading, #0f172a) !important;
+    border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    line-height: 1 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Standings Division Header Rows */
+  .dnfl-division-header-cell {
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    border-bottom: 2px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    padding: 10px 16px !important;
+  }
+
+  .dnfl-division-header-content {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    h3 {
+      margin: 0 !important;
+      font-size: 1rem !important;
+      font-weight: 700 !important;
+      color: var(--dnfl-text-heading, #0f172a) !important;
+      text-transform: capitalize !important;
+      letter-spacing: 0.5px !important;
+    }
+  }
+
+  tr.dnfl-table-subheader {
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+
+    th {
+      font-size: 0.75rem !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.5px !important;
+      color: var(--dnfl-text-subtle, #64748b) !important;
+      padding: 8px 12px !important;
+      border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    }
+  }
+}
+
+.dnfl-standings-pf {
+  color: var(--dnfl-success-green, #10b981) !important;
+  font-weight: 600;
+}
+
+.dnfl-standings-pa {
+  color: var(--dnfl-alert-red, #ef4444) !important;
+  font-weight: 600;
+}
+
+.dnfl-standings-bbid {
+  color: var(--dnfl-text-subtle, #64748b) !important;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+  #dnfl-standings-container table.dnfl-table {
+    min-width: 320px !important;
+    width: 100% !important;
+  }
+
+  #dnfl-standings-container .dnfl-col-seed {
+    width: 86px !important;
+    min-width: 86px !important;
+    padding: 6px 2px !important;
+    white-space: nowrap !important;
+  }
+
+  #dnfl-standings-container .dnfl-col-record {
+    width: 86px !important;
+    min-width: 86px !important;
+    padding: 6px 2px !important;
+  }
+
+  #dnfl-standings-container .dnfl-col-franchise {
+    width: 154px !important;
+    max-width: 154px !important;
+    min-width: 150px !important;
+    padding: 6px 4px !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+  }
+
+  #dnfl-standings-container .franchiseicon {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    min-width: 2.25rem !important;
+    max-width: 2.25rem !important;
+    min-height: 2.25rem !important;
+    max-height: 2.25rem !important;
+    flex-shrink: 0 !important;
+  }
+}

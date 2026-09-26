@@ -1,0 +1,80 @@
+/* ==========================================================================
+   DNFL Podcast Module Specifics (_podcast.scss)
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+
+#dnfl-podcast-container {
+  .dnfl-podcast-banner {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: var(--dnfl-radius-md, 8px) !important;
+    margin-bottom: 0.5rem !important;
+    border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  }
+
+  .dnfl-media-player-block {
+    background-color: var(--dnfl-bg-dark, #262626) !important;
+    padding: 1.25rem !important;
+    border-radius: var(--dnfl-radius-md, 8px) !important;
+    margin-bottom: 1.5rem !important;
+    margin-top: 0.5rem !important;
+    border: 1px solid var(--dnfl-border-dark, #444444) !important;
+  }
+
+  .dnfl-now-playing-label {
+    font-size: 1rem !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    display: block !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .dnfl-podcast-date, .dnfl-podcast-desc {
+    color: var(--dnfl-text-muted, #a3a3a3) !important;
+    font-size: 0.85rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .dnfl-audio {
+    width: 100% !important;
+    margin-top: 0.75rem !important;
+  }
+
+  .dnfl-transcript-wrapper {
+    width: 100% !important;
+    background-color: var(--dnfl-bg-card, #ffffff) !important;
+    padding: 1.25rem !important;
+    border-radius: var(--dnfl-radius-md, 8px) !important;
+    border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    max-height: 450px !important;
+    overflow-y: auto !important;
+    line-height: 1.6 !important;
+    margin-top: 1rem !important;
+    font-size: 0.85rem !important;
+    box-sizing: border-box !important;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: var(--dnfl-bg-muted, #f8fafc);
+      border-radius: var(--dnfl-radius-sm, 4px);
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--dnfl-border-medium, #cbd5e1);
+      border-radius: var(--dnfl-radius-sm, 4px);
+
+      &:hover {
+        background: var(--dnfl-gray-text, #64748b);
+      }
+    }
+  }
+
+  .dnfl-transcript-raw {
+    white-space: pre-wrap !important;
+    font-family: inherit !important;
+    line-height: 1.6 !important;
+  }
+}

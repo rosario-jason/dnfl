@@ -1,0 +1,89 @@
+/* ==========================================================================
+   DNFL Design Tokens & Global Variables (_variables.scss)
+   Duke Networking Fantasy League (DNFL)
+   Fully aligned with dnfl-global-v3_36.css and _test_v4_58.scss baseline tokens.
+   ========================================================================== */
+
+:root, .dnfl {
+  /* ---------------- Primary Brand Palette ---------------- */
+  --accent: #0577B1;                  /* Duke Shale Blue (MFL compatibility) */
+  --dnfl-primary: #0577B1;            /* Duke Shale Blue */
+  --dnfl-primary-hover: #045e8c;      /* Deep Ocean Blue */
+  --dnfl-primary-light: #b6e2ff;      /* Ice Blue Tint */
+
+  /* ---------------- Accent & Highlight Colors ---------------- */
+  --dnfl-accent-blue: #36a2eb;        /* Bright Sky Blue */
+  --dnfl-highlight-yellow: #fde68a;    /* Soft Canary Yellow */
+  --dnfl-highlight-yellow-hover: #fcd34d; /* Warm Gold */
+  --dnfl-alert-red: #ef4444;          /* Coral Red */
+  --dnfl-success-green: #10b981;      /* Emerald Green */
+  --dnfl-badge-blue: #3b82f6;         /* Cobalt Blue */
+  --dnfl-badge-amber: #f59e0b;        /* Dark Amber */
+
+  /* ---------------- Chart & Conference Color Palette ---------------- */
+  --dnfl-chart-bg-1: rgba(54, 162, 235, 0.85);   /* Sky Blue */
+  --dnfl-chart-border-1: rgb(54, 162, 235);
+  --dnfl-chart-bg-2: rgba(255, 99, 132, 0.85);   /* Rose Coral */
+  --dnfl-chart-border-2: rgb(255, 99, 132);
+  --dnfl-chart-bg-3: rgba(75, 192, 192, 0.85);   /* Teal Cyan */
+  --dnfl-chart-border-3: rgb(75, 192, 192);
+  --dnfl-chart-bg-4: rgba(255, 159, 64, 0.85);   /* Amber Orange */
+  --dnfl-chart-border-4: rgb(255, 159, 64);
+  --dnfl-chart-bg-5: rgba(153, 102, 255, 0.85);  /* Lavender Purple */
+  --dnfl-chart-border-5: rgb(153, 102, 255);
+  --dnfl-chart-bg-6: rgba(46, 204, 113, 0.85);   /* Emerald Mint */
+  --dnfl-chart-border-6: rgb(46, 204, 113);
+
+  /* Legacy Conference Aliases */
+  --dnfl-conf-crazies-bg: var(--dnfl-chart-bg-1);
+  --dnfl-conf-crazies-border: var(--dnfl-chart-border-1);
+  --dnfl-conf-kville-bg: var(--dnfl-chart-bg-2);
+  --dnfl-conf-kville-border: var(--dnfl-chart-border-2);
+  --dnfl-conf-bluedevils-bg: var(--dnfl-chart-bg-3);
+  --dnfl-conf-bluedevils-border: var(--dnfl-chart-border-3);
+
+  /* ---------------- Neutral Palette ---------------- */
+  --dnfl-bg-card: #ffffff;            /* Pure White */
+  --dnfl-bg-alt: #fafafa;             /* Off-White */
+  --dnfl-bg-muted: #f8fafc;           /* Cool Slate Tint */
+  --dnfl-bg-dark: #262626;            /* Dark Charcoal */
+  --dnfl-bg-subhead: #f1f5f9;         /* Soft Slate Gray */
+  --dnfl-border-dark: #444444;        /* Dark Mineral Gray */
+  --dnfl-border-medium: #cbd5e1;      /* Light Slate Border */
+  --dnfl-border-light: #e5e7eb;       /* Soft Divider Gray */
+  --dnfl-border-subtle: #e2e8f0;      /* Ultra-Light Slate */
+
+  /* ---------------- Typography Colors ---------------- */
+  --dnfl-text-main: #121212;          /* Obsidian Black */
+  --dnfl-text-heading: #0f172a;       /* Deep Midnight Slate */
+  --dnfl-text-subhead: #1e293b;       /* Dark Charcoal Slate */
+  --dnfl-text-subtle: #555555;        /* Medium Charcoal */
+  --dnfl-text-muted: #a3a3a3;         /* Muted Ash Gray */
+  --dnfl-text-quote: #475569;         /* Slate Blue-Gray */
+
+  /* ---------------- Status Indicator Colors ---------------- */
+  --dnfl-green-bg: #dcfce7;
+  --dnfl-green-text: #15803d;
+  --dnfl-green-border: #bbf7d0;
+  --dnfl-red-bg: #fee2e2;
+  --dnfl-red-text: #b91c1c;
+  --dnfl-red-border: #fecaca;
+  --dnfl-blue-bg: #dbeafe;
+  --dnfl-blue-text: #1d4ed8;
+  --dnfl-blue-border: #bfdbfe;
+  --dnfl-amber-bg: #fef3c7;
+  --dnfl-amber-text: #b45309;
+  --dnfl-amber-border: #fde68a;
+  --dnfl-gray-bg: #f1f5f9;
+  --dnfl-gray-text: #64748b;
+  --dnfl-gray-border: #e2e8f0;
+
+  /* ---------------- Dimensions, Elevation & Motion ---------------- */
+  --dnfl-radius-lg: 12px;
+  --dnfl-radius-md: 8px;
+  --dnfl-radius-sm: 4px;
+  --dnfl-shadow-card: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --dnfl-shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --dnfl-transition-fast: 0.15s ease;
+  --dnfl-transition-smooth: 0.2s ease;
+}

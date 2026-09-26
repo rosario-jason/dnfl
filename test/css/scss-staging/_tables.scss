@@ -1,0 +1,147 @@
+/* ==========================================================================
+   DNFL Base Tables & Responsive Touch Scrolling (_tables.scss)
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+
+/* Universal Table Touch Scroll Container Wrapper */
+.dnfl-table-wrapper,
+.mobile-wrapper,
+.mobile-wrap {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  display: block !important;
+  box-sizing: border-box !important;
+  box-shadow: none !important;
+}
+
+.dnfl-table-wrapper, .mobile-wrapper {
+  width: 100% !important;
+  max-width: 1000px !important;
+  margin: 0 auto !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+}
+
+.dnfl-card-body .dnfl-table-wrapper, .dnfl-card-body .mobile-wrapper, .dnfl-card-body .dnfl-chart-wrapper {
+  width: 100% !important;
+  box-shadow: none !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  overflow: hidden !important;
+  margin-top: 1rem !important;
+}
+
+/* Shared Base Table Architecture */
+.dnfl-table, #dnfl_dataTable, #dnfl_standingsTable {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  font-size: 0.85rem !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+
+  th {
+    background-color: var(--dnfl-bg-card, #ffffff) !important;
+    color: var(--dnfl-text-main, #121212) !important;
+    padding: 12px 15px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.5px !important;
+    border-bottom: 2px solid var(--dnfl-border-dark, #444444) !important;
+  }
+
+  td {
+    padding: 12px 15px !important;
+    border-bottom: 1px solid var(--dnfl-border-light, #e5e7eb) !important;
+    color: var(--dnfl-text-main, #121212) !important;
+    vertical-align: middle !important;
+  }
+
+  tbody {
+    tr.dnfl-row-even { background-color: var(--dnfl-bg-alt, #f8fafc) !important; }
+    tr.dnfl-row-odd  { background-color: var(--dnfl-bg-card, #ffffff) !important; }
+
+    /* Interactive Row Hover */
+    tr:not(.dnfl-division-header):not(.dnfl-comment-row):not(.dnfl-my-team):not(.myfranchise):hover {
+      background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+      transition: background-color var(--dnfl-transition-smooth, 0.2s ease) !important;
+    }
+
+    /* Logged-In User Row Highlighting */
+    tr.dnfl-my-team, tr.myfranchise {
+      background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
+
+      &:hover {
+        background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
+        transition: background-color var(--dnfl-transition-smooth, 0.2s ease) !important;
+      }
+    }
+  }
+}
+
+/* Dynamic Franchise Cell Layout */
+.dnfl-franchise-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  min-width: 0;
+  width: 100%;
+}
+
+.dnfl-franchise-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.dnfl-team-name {
+  font-weight: 700;
+  color: var(--dnfl-text-heading, #0f172a);
+  font-size: 0.88rem;
+  line-height: 1.25;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal !important;
+  text-decoration: none !important;
+
+  &:hover {
+    color: var(--dnfl-primary, #0577B1);
+    text-decoration: underline !important;
+  }
+}
+
+.dnfl-owner-name {
+  font-size: 0.75rem;
+  color: var(--dnfl-text-subtle, #64748b);
+  line-height: 1.2;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal !important;
+}
+
+.dnfl-col-franchise {
+  white-space: normal !important;
+  overflow-wrap: break-word !important;
+  word-break: break-word !important;
+  width: auto !important;
+  min-width: 180px !important;
+  text-align: left !important;
+}
+
+/* Default Mobile Table Rules */
+@media (max-width: 768px) {
+  table.dnfl-table,
+  table.dnfl-rules-table {
+    min-width: 500px !important;
+    width: max-content !important;
+
+    th, td {
+      padding: 6px 4px !important;
+    }
+  }
+}

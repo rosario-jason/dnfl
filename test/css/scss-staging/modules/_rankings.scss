@@ -1,0 +1,150 @@
+/* ==========================================================================
+   DNFL Power Rankings Module Specifics (_rankings.scss)
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+
+#dnfl-rankings-container {
+  .dnfl-col-rank { width: 56px !important; text-align: center !important; }
+  .dnfl-col-change {
+    width: 62px !important;
+    text-align: center !important;
+    .dnfl-badge { min-width: 52px !important; }
+  }
+  .dnfl-col-index {
+    width: 100px !important;
+    min-width: 100px !important;
+    text-align: center !important;
+    .dnfl-pill, .dnfl-pill-blue { min-width: 58px !important; }
+  }
+  .dnfl-col-comment { width: 50px !important; text-align: center !important; }
+
+  .dnfl-rank-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    color: #ffffff !important;
+
+    &.color-1 { background-color: var(--dnfl-chart-bg-1) !important; border: 1px solid var(--dnfl-chart-border-1) !important; }
+    &.color-2 { background-color: var(--dnfl-chart-bg-2) !important; border: 1px solid var(--dnfl-chart-border-2) !important; }
+    &.color-3 { background-color: var(--dnfl-chart-bg-3) !important; border: 1px solid var(--dnfl-chart-border-3) !important; }
+    &.color-4 { background-color: var(--dnfl-chart-bg-4) !important; border: 1px solid var(--dnfl-chart-border-4) !important; }
+    &.color-5 { background-color: var(--dnfl-chart-bg-5) !important; border: 1px solid var(--dnfl-chart-border-5) !important; }
+    &.color-6 { background-color: var(--dnfl-chart-bg-6) !important; border: 1px solid var(--dnfl-chart-border-6) !important; }
+  }
+
+  .dnfl-comment-row {
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    &:hover { background-color: var(--dnfl-bg-subhead, #f1f5f9) !important; }
+  }
+
+  .dnfl-comment-cell {
+    padding: 10px 14px !important;
+    border-left: 3px solid var(--dnfl-primary, #0577B1) !important;
+    text-align: left !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .dnfl-comment-box {
+    font-size: 0.85rem !important;
+    color: var(--dnfl-text-main, #121212) !important;
+    font-style: italic !important;
+    line-height: 1.4 !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  &.dnfl-preseason {
+    .dnfl-col-pf, .dnfl-col-change { display: none !important; }
+  }
+}
+
+@media (max-width: 768px) {
+  #dnfl-rankings-container table.dnfl-table {
+    table-layout: auto !important;
+    min-width: 320px !important;
+    width: 100% !important;
+
+    th {
+      vertical-align: middle !important;
+      font-size: 0.75rem !important;
+      padding: 6px 2px !important;
+    }
+  }
+
+  #dnfl-rankings-container .dnfl-col-rank {
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
+    text-align: center !important;
+  }
+
+  #dnfl-rankings-container .dnfl-col-index {
+    width: 70px !important;
+    min-width: 70px !important;
+    max-width: 75px !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    text-align: center !important;
+    line-height: 1.15 !important;
+  }
+
+  #dnfl-rankings-container .dnfl-col-comment {
+    width: 60px !important;
+    min-width: 60px !important;
+    max-width: 65px !important;
+    white-space: nowrap !important;
+    text-align: center !important;
+  }
+
+  #dnfl-rankings-container .dnfl-col-franchise {
+    width: 154px !important;
+    max-width: 154px !important;
+    min-width: 150px !important;
+    padding: 6px 4px !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+    white-space: normal !important;
+  }
+
+  #dnfl-rankings-container .franchiseicon {
+    width: 2.25rem !important;
+    height: 2.25rem !important;
+    min-width: 2.25rem !important;
+    max-width: 2.25rem !important;
+    min-height: 2.25rem !important;
+    max-height: 2.25rem !important;
+    flex-shrink: 0 !important;
+  }
+
+  #dnfl-rankings-container {
+    .dnfl-comment-row {
+      width: 100% !important;
+    }
+
+    .dnfl-comment-cell {
+      padding: 10px 12px !important;
+      box-sizing: border-box !important;
+    }
+
+    .dnfl-comment-box {
+      font-size: 0.85rem !important;
+      line-height: 1.4 !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
+      white-space: normal !important;
+      box-sizing: border-box !important;
+    }
+  }
+}

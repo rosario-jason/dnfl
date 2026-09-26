@@ -1,0 +1,36 @@
+/* ==========================================================================
+   DNFL SCSS Mixins & Reusable Helpers (_mixins.scss)
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+
+@mixin dnfl-card-shadow {
+  box-shadow: var(--dnfl-shadow-card, 0 4px 16px rgba(0, 0, 0, 0.4)) !important;
+}
+
+@mixin dnfl-flex-center {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+@mixin dnfl-button-base {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.5rem !important;
+  padding: 8px 16px !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  cursor: pointer !important;
+  user-select: none !important;
+  text-decoration: none !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  transition: all var(--dnfl-transition-fast, 0.15s ease) !important;
+}
