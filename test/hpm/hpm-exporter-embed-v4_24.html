@@ -1,0 +1,61 @@
+<!-- DNFL Exporter Module Shell v4.24 -->
+<div class="dnfl-card" id="dnfl-exporter-container">
+    <div class="dnfl-card-header">
+        <h3 id="dnfl-exporter-title" class="dnfl-card-title">
+            <i class="fa-solid fa-file-export"></i> DNFL Data Exporter
+        </h3>
+    </div>
+    
+    <div class="dnfl-card-body">
+        <div class="dnfl-toolbar">
+            <div class="dnfl-filter-group">
+                <label for="dnfl-export-report-select">Report Type</label>
+                <select id="dnfl-export-report-select" class="dnfl-select">
+                    <option value="standings">1. League Standings</option>
+                    <option value="rosters">2. Franchise Rosters</option>
+                    <option value="matchups">3. Weekly Matchups</option>
+                    <option value="weeklyDetails">4. Weekly Lineups</option>
+                    <option value="powerRankings">5. Power Rankings Calc</option>
+                </select>
+            </div>
+
+            <div class="dnfl-filter-group dnfl-is-hidden" id="dnfl-export-week-group">
+                <label for="dnfl-export-week-select">Target Week</label>
+                <select id="dnfl-export-week-select" class="dnfl-select"></select>
+            </div>
+
+            <div class="dnfl-filter-group">
+                <label for="dnfl-export-format-select">Export Format</label>
+                <select id="dnfl-export-format-select" class="dnfl-select">
+                    <option value="csv">CSV (Spreadsheet)</option>
+                    <option value="json">JSON (Programmatic Data)</option>
+                    <option value="markdown">Markdown (AI Prompt)</option>
+                </select>
+            </div>
+
+            <div class="dnfl-buttons-right">
+                <button id="dnfl-export-generate-btn" class="dnfl-btn dnfl-btn-primary">
+                    <i class="fa-solid fa-bolt"></i> Generate Report
+                </button>
+            </div>
+        </div>
+
+        <!-- Notification / Status Bar -->
+        <div id="dnfl-export-status" class="dnfl-status-loading">
+            Select report options above and click Generate.
+        </div>
+
+        <!-- Action Toolbar -->
+        <div id="dnfl-export-actions" class="dnfl-action-toolbar dnfl-toolbar dnfl-is-hidden">
+            <button id="dnfl-export-copy-btn" class="dnfl-btn dnfl-btn-secondary">
+                <i class="fa-solid fa-copy"></i> Copy to Clipboard
+            </button>
+            <button id="dnfl-export-download-btn" class="dnfl-btn dnfl-btn-secondary">
+                <i class="fa-solid fa-download"></i> Download File
+            </button>
+        </div>
+
+        <!-- Data Preview Region -->
+        <div class="dnfl-table-wrapper" id="dnfl-export-preview-container"></div>
+    </div>
+</div>
