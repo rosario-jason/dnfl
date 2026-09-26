@@ -260,8 +260,6 @@ a.dnfl-btn-secondary,
   }
 }
 
-.btn-text-short { display: none !important; }
-.btn-text-full { display: inline !important; }
 
 /* ------------------------------------------------------------------------
    4. SWATCH & UNIFIED LEGEND PANEL UTILITY CLASSES
@@ -365,8 +363,6 @@ a.dnfl-btn-secondary,
    5. MOBILE CONTROL BOX HYBRID STACKING BREAKPOINTS
    ------------------------------------------------------------------------ */
 @media (max-width: 768px) {
-  .btn-text-full { display: none !important; }
-  .btn-text-short { display: inline !important; }
   .dnfl-btn { padding: 8px 12px !important; }
 
   .dnfl-toolbar,
