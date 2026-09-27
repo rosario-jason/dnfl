@@ -51,7 +51,7 @@
         var host = window.location.hostname || 'www.myfantasyleague.com';
         var url = 'https://' + host + '/' + moduleState.activeYear + '/options?L=' + moduleState.leagueId + '&F=' + fid + '&O=01';
 
-        var iconHtml = iconUrl ? '<img src="' + iconUrl + '" alt="" class="dnfl-team-icon" onerror="this.classList.add('dnfl-is-hidden')" />' : '';
+        var iconHtml = iconUrl ? '<img src="' + iconUrl + '" alt="" class="dnfl-team-icon" onerror="this.classList.add(\'dnfl-is-hidden\')" />' : '';
 
         return '<div class="dnfl-team-cell">' +
             iconHtml +
