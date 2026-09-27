@@ -1767,64 +1767,48 @@ a.dnfl-btn-secondary:hover,
     margin-left: 1rem !important;
   }
 }
-/**
- * Duke Networking Fantasy League (DNFL) - Last Team Standing (LTS) Module Partial
- * File: css/scss/_lts.scss
- * Version: v2_01
- * Strict Container Scoping: #dnfl-lts-container
- */
-#dnfl-lts-container {
-  /* Section Spacing */
-}
+/* ==========================================================================
+   DNFL Last Team Standing (LTS) Module Partial (_lts.scss)
+   Duke Networking Fantasy League (DNFL)
+   Fully scoped under #dnfl-lts-container matching _standings.scss and _rankings.scss.
+   ========================================================================== */
 #dnfl-lts-container .dnfl-lts-section + .dnfl-lts-section {
-  margin-top: 1.75rem;
-}
-#dnfl-lts-container {
-  /* Table Wrapper & Scroll Behavior */
+  margin-top: 1.75rem !important;
 }
 #dnfl-lts-container .dnfl-table-wrapper {
-  border: 1px solid var(--dnfl-border-medium, #cbd5e1);
-  border-radius: 8px;
-  overflow-x: auto;
-  margin-bottom: 1.5rem;
-  background-color: var(--dnfl-bg-card, #ffffff);
-}
-#dnfl-lts-container {
-  /* In-Table Section Header Row Styling */
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  overflow-x: auto !important;
+  margin-bottom: 1.5rem !important;
 }
 #dnfl-lts-container .dnfl-table-section-header {
-  background-color: var(--dnfl-bg-subhead, #f1f5f9);
-  border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1);
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
 }
 #dnfl-lts-container .dnfl-table-section-header .dnfl-table-section-header-cell {
   padding: 0.75rem 1rem !important;
-  text-align: left;
+  text-align: left !important;
 }
 #dnfl-lts-container .dnfl-table-section-header .dnfl-table-section-header-content {
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
 }
 #dnfl-lts-container .dnfl-table-section-header .dnfl-table-section-header-content h3 {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--dnfl-text-heading, #0f172a);
-}
-#dnfl-lts-container {
-  /* Scores & Summary Table Specifications */
+  margin: 0 !important;
+  font-size: 1.05rem !important;
+  font-weight: 700 !important;
+  color: var(--dnfl-text-heading, #0f172a) !important;
 }
 #dnfl-lts-container .dnfl-lts-scores-table,
 #dnfl-lts-container .dnfl-lts-summary-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  /* Franchise Column Widths */
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
 }
 #dnfl-lts-container .dnfl-lts-scores-table .dnfl-col-franchise,
 #dnfl-lts-container .dnfl-lts-summary-table .dnfl-col-franchise {
-  min-width: 150px;
-  max-width: 200px;
-  text-align: left;
+  min-width: 180px !important;
+  text-align: left !important;
 }
 @media (min-width: 769px) {
   #dnfl-lts-container .dnfl-lts-scores-table .dnfl-col-franchise,
@@ -1833,41 +1817,36 @@ a.dnfl-btn-secondary:hover,
     max-width: 280px !important;
   }
 }
-#dnfl-lts-container .dnfl-lts-scores-table,
-#dnfl-lts-container .dnfl-lts-summary-table {
-  /* Sticky Left Column Pinning */
-}
 #dnfl-lts-container .dnfl-lts-scores-table .dnfl-col-franchise.dnfl-sticky-col,
 #dnfl-lts-container .dnfl-lts-summary-table .dnfl-col-franchise.dnfl-sticky-col {
-  position: sticky;
-  left: 0;
-  z-index: 10;
-  background-color: var(--dnfl-bg-card, #ffffff);
-}
-#dnfl-lts-container .dnfl-lts-scores-table,
-#dnfl-lts-container .dnfl-lts-summary-table {
-  /* Column Width Enforcements */
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 10 !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
 }
 #dnfl-lts-container .dnfl-lts-scores-table th.dnfl-text-center,
 #dnfl-lts-container .dnfl-lts-scores-table td.dnfl-text-center,
 #dnfl-lts-container .dnfl-lts-summary-table th.dnfl-text-center,
 #dnfl-lts-container .dnfl-lts-summary-table td.dnfl-text-center {
-  min-width: 105px;
-  white-space: nowrap;
+  min-width: 105px !important;
+  white-space: nowrap !important;
+  text-align: center !important;
 }
 #dnfl-lts-container .dnfl-lts-scores-table th.dnfl-col-week,
 #dnfl-lts-container .dnfl-lts-scores-table td.dnfl-col-week,
 #dnfl-lts-container .dnfl-lts-summary-table th.dnfl-col-week,
 #dnfl-lts-container .dnfl-lts-summary-table td.dnfl-col-week {
-  min-width: 75px;
-  white-space: nowrap;
+  min-width: 75px !important;
+  white-space: nowrap !important;
+  text-align: center !important;
 }
 #dnfl-lts-container .dnfl-lts-scores-table th.dnfl-col-score,
 #dnfl-lts-container .dnfl-lts-scores-table td.dnfl-col-score,
 #dnfl-lts-container .dnfl-lts-summary-table th.dnfl-col-score,
 #dnfl-lts-container .dnfl-lts-summary-table td.dnfl-col-score {
-  min-width: 110px;
-  white-space: nowrap;
+  min-width: 110px !important;
+  white-space: nowrap !important;
+  text-align: center !important;
 }
 #dnfl-lts-container .dnfl-lts-scores-table,
 #dnfl-lts-container .dnfl-lts-summary-table {
@@ -1899,46 +1878,50 @@ a.dnfl-btn-secondary:hover,
 }
 #dnfl-lts-container .dnfl-lts-scores-table,
 #dnfl-lts-container .dnfl-lts-summary-table {
-  /* Uniform Table Cell Badge / Pill Widths */
+  /* Column Scoped Badge & Pill Overrides (Matching _standings.scss and _rankings.scss) */
 }
 #dnfl-lts-container .dnfl-lts-scores-table td .dnfl-pill,
 #dnfl-lts-container .dnfl-lts-scores-table td .dnfl-badge,
 #dnfl-lts-container .dnfl-lts-summary-table td .dnfl-pill,
 #dnfl-lts-container .dnfl-lts-summary-table td .dnfl-badge {
-  min-width: 95px;
-  width: 95px;
-  justify-content: center;
+  min-width: 95px !important;
+  width: 95px !important;
+  justify-content: center !important;
+  display: inline-flex !important;
+  align-items: center !important;
 }
 #dnfl-lts-container {
-  /* Active & Eliminated Sub-Header Division Rows */
+  /* Sub-Header Section Row Styling */
 }
 #dnfl-lts-container .dnfl-subhead-active td {
-  background-color: var(--dnfl-success, #10b981) !important;
+  background-color: var(--dnfl-success-green, #10b981) !important;
   color: #ffffff !important;
-  font-weight: 700;
-  font-size: 0.85rem;
-  padding: 0.5rem 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  padding: 0.5rem 1rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
 }
 #dnfl-lts-container .dnfl-subhead-eliminated td {
   background-color: var(--dnfl-alert-red, #ef4444) !important;
   color: #ffffff !important;
-  font-weight: 700;
-  font-size: 0.85rem;
-  padding: 0.5rem 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  padding: 0.5rem 1rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
 }
 #dnfl-lts-container {
-  /* Dynamic Legend Panel Swatch Enforcement */
+  /* Legend Swatch Width Enforcement */
 }
 #dnfl-lts-container #dnfl-lts-legend .dnfl-pill,
 #dnfl-lts-container #dnfl-lts-legend .dnfl-badge {
-  min-width: 38px;
-  width: 38px;
-  height: 24px;
-  justify-content: center;
+  min-width: 38px !important;
+  width: 38px !important;
+  height: 24px !important;
+  justify-content: center !important;
+  display: inline-flex !important;
+  align-items: center !important;
 }
 
 /* ==========================================================================
