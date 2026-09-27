@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Logic Engine (v5)
+   DNFL Last Team Standing (LTS) Module Logic Engine (v6)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 (function(window, document) {
@@ -24,27 +24,6 @@
         startWeek: 'auto'
     };
 
-    /**
-     * Shared Utility Functions matching DNFL Framework Standards
-     */
-    function norm(val) {
-        if (val === null || val === undefined) return '';
-        const s = String(val).trim();
-        return (s.length === 1 && /^\d$/.test(s)) ? '0' + s : s;
-    }
-
-    function normFranchiseId(val) {
-        if (val === null || val === undefined) return '';
-        const s = String(val).trim();
-        if (!s || s === '0000') return '';
-        return s.padStart(4, '0');
-    }
-
-    function toArray(val) {
-        if (!val) return [];
-        return Array.isArray(val) ? val : [val];
-    }
-
     function getApiClient() {
         const client = (window.DNFL && window.DNFL.Client) || window.DNFLClient;
         if (!client || typeof client.fetchData !== 'function') {
@@ -54,7 +33,34 @@
     }
 
     /**
-     * 5-Tier Logged-In Franchise Session Resolution (matching dnfl-standings & dnfl-exporter)
+     * Shared Helper: Normalizes string value with 2-digit padding if single digit
+     */
+    function norm(val) {
+        if (val === null || val === undefined) return '';
+        const s = String(val).trim();
+        return (s.length === 1 && /^\d$/.test(s)) ? '0' + s : s;
+    }
+
+    /**
+     * Shared Helper: Normalizes Franchise ID to 4 digits
+     */
+    function normFranchiseId(val) {
+        if (val === null || val === undefined) return '';
+        const s = String(val).trim();
+        if (!s || s === '0000') return '';
+        return s.padStart(4, '0');
+    }
+
+    /**
+     * Shared Helper: Safe Array Conversion
+     */
+    function toArray(val) {
+        if (!val) return [];
+        return Array.isArray(val) ? val : [val];
+    }
+
+    /**
+     * Resolves active logged-in user's 4-digit franchise ID (5-Tier Context Lookup)
      */
     function getLoggedInFranchiseId() {
         let fid = (window.DNFL && window.DNFL.currentFranchiseId) || window.franchise_id || window.mflFranchiseId || window.login_franchise_id || window.current_franchise_id;
@@ -101,21 +107,14 @@
             const client = getApiClient();
             const ctx = (client.getContext && typeof client.getContext === 'function') ? client.getContext() : {};
             
-            // Context resolution matching exporter & standings
-            let leagueId = ctx.leagueId || window.league_id || '';
-            let activeYear = ctx.year || window.current_year || '';
-
-            if (!leagueId && window.location && window.location.search) {
-                const params = new URLSearchParams(window.location.search);
-                leagueId = params.get('L') || params.get('LEAGUE_ID') || '';
+            // Year & League Context Resolution
+            let yearVal = ctx.year || window.current_year || window.year;
+            if (!yearVal && window.location && window.location.pathname) {
+                const yearMatch = window.location.pathname.match(/\/(20\d{2})\//);
+                if (yearMatch) yearVal = yearMatch[1];
             }
-            if (!activeYear && window.location && window.location.pathname) {
-                const yearMatch = window.location.pathname.match(/\/(\d{4})\//);
-                if (yearMatch) activeYear = yearMatch[1];
-            }
-
-            moduleState.leagueId = leagueId || '22883';
-            moduleState.activeYear = activeYear || new Date().getFullYear().toString();
+            moduleState.activeYear = String(yearVal || new Date().getFullYear());
+            moduleState.leagueId = String(ctx.leagueId || window.league_id || '22883');
 
             // 1. Fetch League Structure (7 Days TTL)
             const leagueData = await client.fetchData('league', {
@@ -126,12 +125,43 @@
             moduleState.leagueData = leagueData;
 
             // 2. Fetch Weekly Results (1 Hour TTL)
-            const weeklyResultsData = await client.fetchData('weeklyResults', {
-                W: 'ALL',
-                L: moduleState.leagueId
-            }, {
-                ttl: client.TTL.HOURLY
-            });
+            let weeklyResultsData = null;
+            try {
+                weeklyResultsData = await client.fetchData('weeklyResults', {
+                    W: 'ALL',
+                    L: moduleState.leagueId
+                }, {
+                    ttl: client.TTL.HOURLY
+                });
+            } catch (err) {
+                console.warn("[DNFL LTS] Fetching W=ALL failed, trying week-by-week fallback...", err);
+            }
+
+            // Fallback: If W=ALL returns no usable matchup data, query individual weeks
+            let extractedWeeks = extractMatchupWeeks(weeklyResultsData);
+            if (!extractedWeeks || extractedWeeks.length === 0) {
+                const endWeek = parseInt(leagueData?.league?.lastRegularSeasonWeek || '14', 10);
+                const weekPromises = [];
+                for (let w = 1; w <= endWeek; w++) {
+                    weekPromises.push(
+                        client.fetchData('weeklyResults', { W: String(w), L: moduleState.leagueId }, { ttl: client.TTL.HOURLY })
+                            .catch(() => null)
+                    );
+                }
+                const results = await Promise.all(weekPromises);
+                const compiledWeeks = [];
+                results.forEach((res, idx) => {
+                    if (res) {
+                        const parsed = extractMatchupWeeks(res);
+                        if (parsed.length > 0) {
+                            compiledWeeks.push(...parsed);
+                        } else if (res.weeklyResults) {
+                            compiledWeeks.push({ week: String(idx + 1), ...res.weeklyResults });
+                        }
+                    }
+                });
+                weeklyResultsData = { weeklyResults: compiledWeeks };
+            }
             moduleState.weeklyResultsData = weeklyResultsData;
 
             // 3. Fetch Sparse Exception Overrides (24 Hours TTL, with Catch Fallback)
@@ -170,7 +200,6 @@
         const config = {};
         const confs = toArray(leagueData?.league?.conferences?.conference);
 
-        // Apply Default Configuration to All Discovered Conferences
         confs.forEach(c => {
             const cid = norm(c.id);
             config[cid] = {
@@ -178,6 +207,14 @@
                 conference_name: c.name || ('Conference ' + cid)
             };
         });
+
+        // If no conferences defined in league data, default conference 00
+        if (Object.keys(config).length === 0) {
+            config['00'] = {
+                ...DEFAULT_CONFERENCE_RULES,
+                conference_name: 'Main Conference'
+            };
+        }
 
         // Top-Level League Overrides from JSON
         if (rawRules) {
@@ -207,13 +244,10 @@
         return config;
     }
 
-    /**
-     * Resolves default conference dropdown based on logged-in user's division/conference mapping
-     */
     function setupConferenceSelection(client) {
         const userFranchiseId = getLoggedInFranchiseId();
         const league = moduleState.leagueData?.league;
-        
+
         // Build Division -> Conference Map
         const divToConfMap = {};
         const divisions = toArray(league?.divisions?.division);
@@ -224,7 +258,7 @@
         // Get User Franchise
         const franchises = toArray(league?.franchises?.franchise);
         const userFranchise = userFranchiseId ? franchises.find(f => normFranchiseId(f.id) === userFranchiseId) : null;
-        
+
         let defaultConf = '00';
         if (userFranchise) {
             const fDivNorm = norm(userFranchise.division || userFranchise.div);
@@ -270,23 +304,36 @@
     }
 
     /**
-     * Safely extracts matchup weeks from multi-format MFL weeklyResults responses
+     * Safely extracts matchup weeks matching Exporter property fallbacks
      */
     function extractMatchupWeeks(weeklyResultsData) {
         if (!weeklyResultsData) return [];
-        let weeksRaw = null;
+        let list = [];
 
-        if (weeklyResultsData.allWeeklyResults?.weeklyResults) {
-            weeksRaw = weeklyResultsData.allWeeklyResults.weeklyResults;
-        } else if (weeklyResultsData.weeklyResults) {
-            weeksRaw = weeklyResultsData.weeklyResults.matchupWeek || weeklyResultsData.weeklyResults.matchup || weeklyResultsData.weeklyResults;
-        } else if (weeklyResultsData.matchupWeek) {
-            weeksRaw = weeklyResultsData.matchupWeek;
-        } else if (Array.isArray(weeklyResultsData)) {
-            weeksRaw = weeklyResultsData;
-        }
+        // Support all MFL wrapper structures (allWeeklyResults, weeklyResults, matchupWeek, arrays)
+        const root = weeklyResultsData.allWeeklyResults?.weeklyResults
+                  || weeklyResultsData.weeklyResults
+                  || weeklyResultsData.matchupWeek
+                  || weeklyResultsData;
 
-        return toArray(weeksRaw).filter(mw => mw && mw.week !== undefined && mw.week !== null);
+        const weeksArray = toArray(root);
+
+        weeksArray.forEach(wObj => {
+            if (!wObj) return;
+            // Case 1: Week wrapper object containing matchup/matchUp/schedule
+            if (wObj.week !== undefined) {
+                list.push(wObj);
+            }
+            // Case 2: Array of matchup objects without explicit week wrapper
+            else if (wObj.matchupWeek) {
+                list.push(...toArray(wObj.matchupWeek));
+            }
+            else if (wObj.matchup || wObj.matchUp) {
+                list.push(wObj);
+            }
+        });
+
+        return list;
     }
 
     /**
@@ -304,7 +351,7 @@
             divToConfMap[norm(d.id)] = norm(d.conference);
         });
 
-        // Get Franchises in Selected Conference with division fallback
+        // Filter Franchises by Conference with division fallback
         const allFranchises = toArray(league?.franchises?.franchise);
         const franchises = allFranchises.filter(f => {
             const fDivNorm = norm(f.division || f.div);
@@ -334,10 +381,12 @@
                 if (!w) return;
                 scoresMap[w] = scoresMap[w] || {};
 
-                // Path A: Matchups
-                if (mw.matchup) {
+                // Exporter Multi-Casing Property Inspection
+                const rawMatchups = mw.matchup || mw.matchUp || mw.schedule?.matchup || mw.schedule?.matchUp;
+
+                if (rawMatchups) {
                     if (w > maxCompletedWeek) maxCompletedWeek = w;
-                    const matchups = toArray(mw.matchup);
+                    const matchups = toArray(rawMatchups);
                     matchups.forEach(m => {
                         const frs = toArray(m.franchise);
                         frs.forEach(f => {
@@ -345,9 +394,7 @@
                             if (fid) scoresMap[w][fid] = parseFloat(f.score || '0.00');
                         });
                     });
-                }
-                // Path B: Standalone Franchise Score List
-                else if (mw.franchise) {
+                } else if (mw.franchise) {
                     if (w > maxCompletedWeek) maxCompletedWeek = w;
                     const frs = toArray(mw.franchise);
                     frs.forEach(f => {
@@ -369,7 +416,7 @@
             const weekScores = scoresMap[w];
             const confTeamIds = franchises.map(f => normFranchiseId(f.id));
 
-            // Identify Weekly High Scorer for the Conference
+            // Identify Weekly High Scorer
             let maxScore = -1;
             let maxScorerFid = null;
             confTeamIds.forEach(fid => {
@@ -383,7 +430,7 @@
                 highScorersMap[w] = maxScorerFid;
             }
 
-            // Perform LTS Elimination if w >= startWeek
+            // Perform LTS Elimination
             let eliminatedThisWeek = null;
             let eliminatedScore = 0;
 
@@ -473,30 +520,35 @@
     }
 
     /**
-     * Renders Module Views with Auto-Mounting DOM Fallback
+     * Renders Module Views inside #dnfl-lts-content without modifying outer card shell
      */
     function renderLTS(container) {
         const confId = moduleState.selectedConference;
         
-        // Auto-Mount Container Wrappers if missing or replaced by loading placeholders
         let contentEl = container.querySelector('#dnfl-lts-content');
         if (!contentEl) {
-            contentEl = container;
+            // Ensure content wrapper exists inside card
+            contentEl = document.createElement('div');
+            contentEl.id = 'dnfl-lts-content';
+            contentEl.className = 'dnfl-card-body';
+            container.appendChild(contentEl);
         }
 
-        let gridContainer = container.querySelector('#dnfl-lts-grid-container');
-        let summaryContainer = container.querySelector('#dnfl-lts-summary-container');
+        let gridContainer = contentEl.querySelector('#dnfl-lts-grid-container');
+        let summaryContainer = contentEl.querySelector('#dnfl-lts-summary-container');
 
         if (!gridContainer || !summaryContainer) {
             contentEl.innerHTML = `
                 <div id="dnfl-lts-grid-container" class="dnfl-lts-view"></div>
                 <div id="dnfl-lts-summary-container" class="dnfl-lts-view dnfl-mt-4"></div>
             `;
+            gridContainer = contentEl.querySelector('#dnfl-lts-grid-container');
+            summaryContainer = contentEl.querySelector('#dnfl-lts-summary-container');
         }
 
         const data = calculateLTSData(confId);
 
-        // Render Conference Select Dropdown
+        // Render Conference Select Dropdown options
         const confSelect = container.querySelector('#dnfl-lts-conference-select');
         if (confSelect) {
             let optionsHtml = '';
@@ -508,7 +560,7 @@
             confSelect.innerHTML = optionsHtml;
         }
 
-        // Offseason / Pre-Season Check
+        // Pre-Season / Zero Completed Weeks Check
         if (data.maxCompletedWeek === 0) {
             const preSeasonHtml = `
                 <div class="dnfl-status-loading">
@@ -516,10 +568,8 @@
                     <span>Survival eliminations will activate once Week 1 scores are finalized.</span>
                 </div>
             `;
-            const gridEl = container.querySelector('#dnfl-lts-grid-container');
-            if (gridEl) gridEl.innerHTML = preSeasonHtml;
-            const sumEl = container.querySelector('#dnfl-lts-summary-container');
-            if (sumEl) sumEl.innerHTML = '';
+            if (gridContainer) gridContainer.innerHTML = preSeasonHtml;
+            if (summaryContainer) summaryContainer.innerHTML = '';
             return;
         }
 
@@ -653,10 +703,11 @@
     }
 
     function renderErrorState(container, err) {
-        const content = container.querySelector('#dnfl-lts-content');
-        if (content) {
-            content.innerHTML = '<div class="dnfl-status-error">Failed to load Last Team Standing data.</div>';
+        let content = container.querySelector('#dnfl-lts-content');
+        if (!content) {
+            content = container;
         }
+        content.innerHTML = '<div class="dnfl-status-error"><i class="fa-solid fa-triangle-exclamation dnfl-mr-2"></i>Failed to load Last Team Standing data.</div>';
     }
 
     // Public API
@@ -689,3 +740,4 @@
         init();
     }
 })(window, document);
+`,TargetFile:
