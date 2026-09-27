@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Logic Engine (v13)
+   DNFL Last Team Standing (LTS) Module Logic Engine (v14)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 (function(window, document) {
@@ -22,6 +22,48 @@
         lts_isEnabled: true,
         highScore_isEnabled: true,
         startWeek: 'auto'
+    };
+
+    // Public API Methods exported IMMEDIATELY so handlers never fail
+    window.DNFL.LTS = {
+        init: init,
+        updateView: function() {
+            const container = document.getElementById('dnfl-lts-container');
+            if (!container) return;
+            const confSelect = container.querySelector('#dnfl-lts-conference-select');
+            if (confSelect) {
+                moduleState.selectedConference = norm(confSelect.value);
+            }
+            renderLTS(container);
+        },
+        toggleGrid: function() {
+            const container = document.getElementById('dnfl-lts-container');
+            if (!container) return;
+            const gridSection = container.querySelector('#dnfl-lts-grid-section');
+            const btn = container.querySelector('#dnfl-btn-lts-grid');
+            if (gridSection) {
+                const isHidden = gridSection.classList.toggle('dnfl-is-hidden');
+                if (btn) {
+                    btn.innerHTML = isHidden 
+                        ? '<i class="fa-solid fa-table-cells"></i> Show Grid' 
+                        : '<i class="fa-solid fa-table-cells"></i> Hide Grid';
+                }
+            }
+        },
+        toggleSummary: function() {
+            const container = document.getElementById('dnfl-lts-container');
+            if (!container) return;
+            const summarySection = container.querySelector('#dnfl-lts-summary-section');
+            const btn = container.querySelector('#dnfl-btn-lts-summary');
+            if (summarySection) {
+                const isHidden = summarySection.classList.toggle('dnfl-is-hidden');
+                if (btn) {
+                    btn.innerHTML = isHidden 
+                        ? '<i class="fa-solid fa-list-check"></i> Show Summary' 
+                        : '<i class="fa-solid fa-list-check"></i> Hide Summary';
+                }
+            }
+        }
     };
 
     function norm(val) {
@@ -52,8 +94,11 @@
 
     function getLoggedInFranchiseId() {
         let fid = (window.DNFL && window.DNFL.currentFranchiseId) || window.franchise_id || window.mflFranchiseId || window.login_franchise_id || window.current_franchise_id;
-        if (!fid && window.DNFLClient && typeof window.DNFLClient.getFranchiseId === 'function') {
-            fid = window.DNFLClient.getFranchiseId();
+        if (!fid && window.DNFLClient && typeof window.DNFLClient.getFranchise === 'function') {
+            const client = getApiClient();
+            if (client && typeof client.getLoggedInFranchiseId === 'function') {
+                fid = client.getLoggedInFranchiseId();
+            }
         }
         if (!fid && window.location && window.location.search) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -81,6 +126,36 @@
         return normFranchiseId(fid);
     }
 
+    function setupEventListeners(container) {
+        if (!container) return;
+        
+        const confSelect = container.querySelector('#dnfl-lts-conference-select');
+        if (confSelect && !confSelect._dnflBound) {
+            confSelect._dnflBound = true;
+            confSelect.addEventListener('change', function() {
+                window.DNFL.LTS.updateView();
+            });
+        }
+
+        const gridBtn = container.querySelector('#dnfl-btn-lts-grid');
+        if (gridBtn && !gridBtn._dnflBound) {
+            gridBtn._dnflBound = true;
+            gridBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.DNFL.LTS.toggleGrid();
+            });
+        }
+
+        const summaryBtn = container.querySelector('#dnfl-btn-lts-summary');
+        if (summaryBtn && !summaryBtn._dnflBound) {
+            summaryBtn._dnflBound = true;
+            summaryBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.DNFL.LTS.toggleSummary();
+            });
+        }
+    }
+
     async function init() {
         const container = document.getElementById('dnfl-lts-container');
         if (!container) {
@@ -91,13 +166,15 @@
             return;
         }
 
+        setupEventListeners(container);
+
         try {
             const client = getApiClient();
             const ctx = (client.getContext && typeof client.getContext === 'function') ? client.getContext() : {};
 
             let yearVal = ctx.year || window.current_year || window.year;
             if (!yearVal && window.location && window.location.pathname) {
-                const yearMatch = window.location.pathname.match(new RegExp('/(20\\d{2})/'));
+                const yearMatch = window.location.pathname.match(new RegExp('/(20\d{2})/'));
                 if (yearMatch) yearVal = yearMatch[1];
             }
             moduleState.activeYear = String(yearVal || new Date().getFullYear());
@@ -467,27 +544,10 @@
     }
 
     function renderLTS(container) {
+        setupEventListeners(container);
+
         const confId = moduleState.selectedConference;
         const data = calculateLTSData(confId);
-
-        let contentEl = container.querySelector('#dnfl-lts-content');
-        if (!contentEl) contentEl = container;
-
-        let gridContainer = container.querySelector('#dnfl-lts-grid-container');
-        let summaryContainer = container.querySelector('#dnfl-lts-summary-container');
-
-        if (!gridContainer || !summaryContainer) {
-            contentEl.innerHTML = `
-                <div id="dnfl-lts-grid-section" class="dnfl-lts-section">
-                    <div id="dnfl-lts-grid-container" class="dnfl-lts-view"></div>
-                </div>
-                <div id="dnfl-lts-summary-section" class="dnfl-lts-section">
-                    <div id="dnfl-lts-summary-container" class="dnfl-lts-view"></div>
-                </div>
-            `;
-            gridContainer = container.querySelector('#dnfl-lts-grid-container');
-            summaryContainer = container.querySelector('#dnfl-lts-summary-container');
-        }
 
         // Render Conference Select Dropdown Options
         const confSelect = container.querySelector('#dnfl-lts-conference-select');
@@ -503,6 +563,9 @@
 
         // Render Dynamic Legend
         renderLegend(container, data);
+
+        const gridContainer = container.querySelector('#dnfl-lts-grid-container');
+        const summaryContainer = container.querySelector('#dnfl-lts-summary-container');
 
         // Offseason / Pre-Season Check
         if (data.maxCompletedWeek === 0) {
@@ -531,7 +594,7 @@
         const ltsOn = !!data.confRules.lts_isEnabled;
         const hsOn = !!data.confRules.highScore_isEnabled;
 
-        let itemsHtml = '<div class="dnfl-legend-items">';
+        let itemsHtml = '';
         if (hsOn) {
             itemsHtml += `
                 <div class="dnfl-legend-item">
@@ -552,11 +615,11 @@
             itemsHtml += `
                 <div class="dnfl-legend-item">
                     <span class="dnfl-pill dnfl-pill-red">88.50 <i class="fa-solid fa-skull"></i></span>
-                    <span class="dnfl-legend-label">LTS Knockout</span>
+                    <span class="dnfl-legend-label">LTS Knockout Score</span>
                 </div>
                 <div class="dnfl-legend-item">
                     <span class="dnfl-badge dnfl-badge-red">88.50</span>
-                    <span class="dnfl-legend-label">Low Score (Pre-LTS / LTS Disabled)</span>
+                    <span class="dnfl-legend-label">Weekly Low Score</span>
                 </div>
                 <div class="dnfl-legend-item">
                     <span class="dnfl-text-muted">72.30 <i class="fa-solid fa-skull"></i></span>
@@ -567,18 +630,22 @@
             itemsHtml += `
                 <div class="dnfl-legend-item">
                     <span class="dnfl-badge dnfl-badge-red">88.50</span>
-                    <span class="dnfl-legend-label">Low Score</span>
+                    <span class="dnfl-legend-label">Weekly Low Score</span>
                 </div>
             `;
         }
-        itemsHtml += '</div>';
 
+        let noteText = '';
         if (ltsOn) {
-            const endW = data.endWeek || 14;
-            itemsHtml += `<div class="dnfl-legend-note">*LTS eliminations active Weeks ${data.startWeek}-${endW}</div>`;
+            noteText = `*LTS eliminations active Weeks ${data.startWeek}-${data.endWeek}`;
+        } else {
+            noteText = `*LTS eliminations disabled for this conference`;
         }
 
-        legendEl.innerHTML = itemsHtml;
+        legendEl.innerHTML = `
+            <div class="dnfl-legend-items">${itemsHtml}</div>
+            <div class="dnfl-legend-note">${noteText}</div>
+        `;
     }
 
     function buildFranchiseCell(f, client) {
@@ -617,28 +684,19 @@
         const eliminatedFranchises = data.franchises.filter(f => eliminatedFids.includes(normFranchiseId(f.id)));
 
         const endWeek = data.endWeek || 14;
-        const totalCols = endWeek + 1;
 
-        let html = `
-            <div id="dnfl-lts-grid-wrapper" class="dnfl-table-wrapper">
-                <table class="dnfl-table dnfl-lts-grid-table">
-                    <thead>
-                        <tr class="dnfl-table-section-header">
-                            <td colspan="${totalCols}" class="dnfl-table-section-header-cell">
-                                <div class="dnfl-table-section-header-content">
-                                    <h3>Survival Cross-Grid Matrix</h3>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="dnfl-col-franchise dnfl-sticky-col">Franchise</th>
-        `;
+        let tableHtml = `<div class="dnfl-table-wrapper"><table class="dnfl-table dnfl-lts-grid-table"><thead>`;
+        
+        // In-Table Section Header Row (Matching Standings Division Headers)
+        const totalCols = endWeek + 1;
+        tableHtml += `<tr class="dnfl-table-section-header"><td colspan="${totalCols}" class="dnfl-table-section-header-cell"><div class="dnfl-table-section-header-content"><h3>Survival Cross-Grid Matrix</h3></div></td></tr>`;
+        tableHtml += `<tr class="dnfl-table-subheader"><th class="dnfl-col-franchise dnfl-sticky-col">Franchise</th>`;
 
         for (let w = 1; w <= endWeek; w++) {
             const isLTSWeek = data.confRules.lts_isEnabled && w >= data.startWeek;
-            html += `<th class="dnfl-text-center">W${w}${isLTSWeek ? ' <i class="fa-solid fa-skull dnfl-text-red dnfl-ml-1"></i>' : ''}</th>`;
+            tableHtml += `<th class="dnfl-text-center">W${w}${isLTSWeek ? ' <i class="fa-solid fa-skull dnfl-text-red dnfl-ml-1"></i>' : ''}</th>`;
         }
-        html += `</tr></thead><tbody>`;
+        tableHtml += `</tr></thead><tbody>`;
 
         let rowCounter = 0;
         function buildRow(f, isEliminated) {
@@ -688,18 +746,18 @@
         }
 
         activeFranchises.forEach(f => {
-            html += buildRow(f, false);
+            tableHtml += buildRow(f, false);
         });
 
         if (eliminatedFranchises.length > 0) {
-            html += `<tr class="dnfl-divider-row"><td colspan="${totalCols}">LTS Eliminated Teams</td></tr>`;
+            tableHtml += `<tr class="dnfl-divider-row"><td colspan="${totalCols}">LTS Eliminated Teams</td></tr>`;
             eliminatedFranchises.forEach(f => {
-                html += buildRow(f, true);
+                tableHtml += buildRow(f, true);
             });
         }
 
-        html += `</tbody></table></div>`;
-        gridContainer.innerHTML = html;
+        tableHtml += `</tbody></table></div>`;
+        gridContainer.innerHTML = tableHtml;
     }
 
     function renderSummaryTable(container, data) {
@@ -723,44 +781,35 @@
         if (ltsOn) totalCols += 2;
         if (hsOn) totalCols += 2;
 
-        let html = `
-            <div id="dnfl-lts-summary-wrapper" class="dnfl-table-wrapper">
-                <table class="dnfl-table dnfl-lts-summary-table">
-                    <thead>
-                        <tr class="dnfl-table-section-header">
-                            <td colspan="${totalCols}" class="dnfl-table-section-header-cell">
-                                <div class="dnfl-table-section-header-content">
-                                    <h3>Weekly Survival Summary</h3>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="dnfl-col-week dnfl-text-center">Week</th>
-        `;
+        let tableHtml = `<div class="dnfl-table-wrapper"><table class="dnfl-table dnfl-lts-summary-table"><thead>`;
+        
+        // In-Table Section Header Row
+        tableHtml += `<tr class="dnfl-table-section-header"><td colspan="${totalCols}" class="dnfl-table-section-header-cell"><div class="dnfl-table-section-header-content"><h3>Weekly Survival Summary</h3></div></td></tr>`;
+        tableHtml += `<tr class="dnfl-table-subheader"><th class="dnfl-col-week dnfl-text-center">Week</th>`;
 
         if (ltsOn) {
-            html += `<th class="dnfl-col-franchise">Eliminated Franchise</th><th class="dnfl-col-score dnfl-text-center">Knockout Score</th>`;
+            tableHtml += `<th class="dnfl-col-franchise">Eliminated Franchise</th><th class="dnfl-col-score dnfl-text-center">Knockout Score</th>`;
         }
         if (hsOn) {
-            html += `<th class="dnfl-col-franchise">Weekly High Scorer</th><th class="dnfl-col-score dnfl-text-center">High Score</th>`;
+            tableHtml += `<th class="dnfl-col-franchise">Weekly High Scorer</th><th class="dnfl-col-score dnfl-text-center">High Score</th>`;
         }
-        html += `</tr></thead><tbody>`;
+        tableHtml += `</tr></thead><tbody>`;
 
         let rowCounter = 0;
         data.weeklySummaries.forEach(s => {
             rowCounter++;
             const rowStriping = (rowCounter % 2 === 1) ? 'dnfl-row-odd' : 'dnfl-row-even';
-            html += `<tr class="${rowStriping}">`;
-            html += `<td class="dnfl-col-week dnfl-text-center dnfl-font-bold">Week ${s.week}</td>`;
+            tableHtml += `<tr class="${rowStriping}">`;
+            tableHtml += `<td class="dnfl-col-week dnfl-text-center dnfl-font-bold">Week ${s.week}</td>`;
 
             // LTS Column Logic
             if (ltsOn) {
                 if (s.isLTSWeek && s.eliminatedFid) {
                     const f = client.getFranchise ? client.getFranchise(s.eliminatedFid) : { id: s.eliminatedFid };
-                    html += `<td class="dnfl-col-franchise">${buildFranchiseCell(f, client)}</td>`;
-                    html += `<td class="dnfl-col-score dnfl-text-center"><span class="dnfl-pill dnfl-pill-red">${s.eliminatedScore.toFixed(2)} <i class="fa-solid fa-skull"></i></span></td>`;
+                    tableHtml += `<td class="dnfl-col-franchise">${buildFranchiseCell(f, client)}</td>`;
+                    tableHtml += `<td class="dnfl-col-score dnfl-text-center"><span class="dnfl-pill dnfl-pill-red">${s.eliminatedScore.toFixed(2)} <i class="fa-solid fa-skull"></i></span></td>`;
                 } else {
-                    html += `<td class="dnfl-col-franchise dnfl-text-muted">—</td><td class="dnfl-col-score dnfl-text-center dnfl-text-muted">—</td>`;
+                    tableHtml += `<td class="dnfl-col-franchise dnfl-text-muted">—</td><td class="dnfl-col-score dnfl-text-center dnfl-text-muted">—</td>`;
                 }
             }
 
@@ -768,17 +817,17 @@
             if (hsOn) {
                 if (s.highScoreFid) {
                     const f = client.getFranchise ? client.getFranchise(s.highScoreFid) : { id: s.highScoreFid };
-                    html += `<td class="dnfl-col-franchise">${buildFranchiseCell(f, client)}</td>`;
-                    html += `<td class="dnfl-col-score dnfl-text-center"><span class="dnfl-pill dnfl-pill-green">${s.highScore.toFixed(2)} <i class="fa-solid fa-star"></i></span></td>`;
+                    tableHtml += `<td class="dnfl-col-franchise">${buildFranchiseCell(f, client)}</td>`;
+                    tableHtml += `<td class="dnfl-col-score dnfl-text-center"><span class="dnfl-pill dnfl-pill-green">${s.highScore.toFixed(2)} <i class="fa-solid fa-star"></i></span></td>`;
                 } else {
-                    html += `<td class="dnfl-col-franchise dnfl-text-muted">—</td><td class="dnfl-col-score dnfl-text-center dnfl-text-muted">—</td>`;
+                    tableHtml += `<td class="dnfl-col-franchise dnfl-text-muted">—</td><td class="dnfl-col-score dnfl-text-center dnfl-text-muted">—</td>`;
                 }
             }
-            html += `</tr>`;
+            tableHtml += `</tr>`;
         });
 
-        html += `</tbody></table></div>`;
-        summaryContainer.innerHTML = html;
+        tableHtml += `</tbody></table></div>`;
+        summaryContainer.innerHTML = tableHtml;
     }
 
     function renderErrorState(container, err) {
@@ -787,48 +836,6 @@
             content.innerHTML = '<div class="dnfl-status-error">Failed to load Last Team Standing data.</div>';
         }
     }
-
-    // Public API
-    window.DNFL.LTS = {
-        init: init,
-        updateView: function() {
-            const container = document.getElementById('dnfl-lts-container');
-            if (!container) return;
-            const confSelect = container.querySelector('#dnfl-lts-conference-select');
-            if (confSelect) {
-                moduleState.selectedConference = norm(confSelect.value);
-            }
-            renderLTS(container);
-        },
-        toggleGrid: function() {
-            const container = document.getElementById('dnfl-lts-container');
-            if (!container) return;
-            const gridSection = container.querySelector('#dnfl-lts-grid-section');
-            const btn = container.querySelector('#dnfl-btn-lts-grid');
-            if (gridSection) {
-                const isHidden = gridSection.classList.toggle('dnfl-is-hidden');
-                if (btn) {
-                    btn.innerHTML = isHidden 
-                        ? '<i class="fa-solid fa-table-cells"></i> Show Grid' 
-                        : '<i class="fa-solid fa-table-cells"></i> Hide Grid';
-                }
-            }
-        },
-        toggleSummary: function() {
-            const container = document.getElementById('dnfl-lts-container');
-            if (!container) return;
-            const summarySection = container.querySelector('#dnfl-lts-summary-section');
-            const btn = container.querySelector('#dnfl-btn-lts-summary');
-            if (summarySection) {
-                const isHidden = summarySection.classList.toggle('dnfl-is-hidden');
-                if (btn) {
-                    btn.innerHTML = isHidden 
-                        ? '<i class="fa-solid fa-list-check"></i> Show Summary' 
-                        : '<i class="fa-solid fa-list-check"></i> Hide Summary';
-                }
-            }
-        }
-    };
 
     window.addEventListener('dnfl:ready', init);
     if (document.readyState === 'loading') {
