@@ -1768,8 +1768,10 @@ a.dnfl-btn-secondary:hover,
   }
 }
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module SCSS Styles (v7)
+   DNFL Last Team Standing (LTS) Module SCSS Styles (v9)
    Duke Networking Fantasy League (DNFL)
+   Fully scoped under #dnfl-lts-container to guarantee zero style leakage.
+   Relying 100% on global framework design tokens from dnfl-global.css.
    ========================================================================== */
 #dnfl-lts-container {
   /* Section Separation */
@@ -1782,7 +1784,7 @@ a.dnfl-btn-secondary:hover,
 }
 #dnfl-lts-container .dnfl-table-wrapper {
   border: 1px solid var(--dnfl-border-medium, #cbd5e1);
-  border-radius: 8px;
+  border-radius: var(--dnfl-radius-md, 8px);
   overflow-x: auto;
   margin-bottom: 1.5rem;
 }
@@ -1814,7 +1816,7 @@ a.dnfl-btn-secondary:hover,
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  /* Mobile / Base Franchise Column Standards */
+  /* Mobile / Base Franchise Column Standards matching Standings */
 }
 #dnfl-lts-container .dnfl-lts-grid-table .dnfl-col-franchise,
 #dnfl-lts-container .dnfl-lts-summary-table .dnfl-col-franchise {
@@ -1912,48 +1914,6 @@ a.dnfl-btn-secondary:hover,
   letter-spacing: 0.05em;
   border-top: 1px solid var(--dnfl-border-medium, #cbd5e1);
   border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1);
-}
-#dnfl-lts-container {
-  /* Indicator Utility Styling: Pills & Badges */
-}
-#dnfl-lts-container .dnfl-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  padding: 0.25rem 0.6rem;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  line-height: 1;
-  white-space: nowrap;
-}
-#dnfl-lts-container .dnfl-pill-green {
-  background-color: var(--dnfl-success, #10b981);
-  color: #ffffff !important;
-}
-#dnfl-lts-container .dnfl-pill-red {
-  background-color: var(--dnfl-danger, #ef4444);
-  color: #ffffff !important;
-}
-#dnfl-lts-container .dnfl-badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.2rem 0.5rem;
-  border-radius: 0.375rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  line-height: 1;
-  white-space: nowrap;
-}
-#dnfl-lts-container .dnfl-badge-green {
-  background-color: rgba(16, 185, 129, 0.15);
-  color: var(--dnfl-success-dark, #065f46);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-#dnfl-lts-container .dnfl-badge-red {
-  background-color: rgba(239, 68, 68, 0.15);
-  color: var(--dnfl-danger-dark, #991b1b);
-  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 /* ==========================================================================
