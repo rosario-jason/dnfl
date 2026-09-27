@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Logic Engine (v14)
+   DNFL Last Team Standing (LTS) Module Logic Engine (v15)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 (function(window, document) {
@@ -24,48 +24,6 @@
         startWeek: 'auto'
     };
 
-    // Public API Methods exported IMMEDIATELY so handlers never fail
-    window.DNFL.LTS = {
-        init: init,
-        updateView: function() {
-            const container = document.getElementById('dnfl-lts-container');
-            if (!container) return;
-            const confSelect = container.querySelector('#dnfl-lts-conference-select');
-            if (confSelect) {
-                moduleState.selectedConference = norm(confSelect.value);
-            }
-            renderLTS(container);
-        },
-        toggleGrid: function() {
-            const container = document.getElementById('dnfl-lts-container');
-            if (!container) return;
-            const gridSection = container.querySelector('#dnfl-lts-grid-section');
-            const btn = container.querySelector('#dnfl-btn-lts-grid');
-            if (gridSection) {
-                const isHidden = gridSection.classList.toggle('dnfl-is-hidden');
-                if (btn) {
-                    btn.innerHTML = isHidden 
-                        ? '<i class="fa-solid fa-table-cells"></i> Show Grid' 
-                        : '<i class="fa-solid fa-table-cells"></i> Hide Grid';
-                }
-            }
-        },
-        toggleSummary: function() {
-            const container = document.getElementById('dnfl-lts-container');
-            if (!container) return;
-            const summarySection = container.querySelector('#dnfl-lts-summary-section');
-            const btn = container.querySelector('#dnfl-btn-lts-summary');
-            if (summarySection) {
-                const isHidden = summarySection.classList.toggle('dnfl-is-hidden');
-                if (btn) {
-                    btn.innerHTML = isHidden 
-                        ? '<i class="fa-solid fa-list-check"></i> Show Summary' 
-                        : '<i class="fa-solid fa-list-check"></i> Hide Summary';
-                }
-            }
-        }
-    };
-
     function norm(val) {
         if (val === null || val === undefined) return '';
         const s = String(val).trim();
@@ -80,13 +38,13 @@
     }
 
     function toArray(val) {
-        if (!val) return [];
+        if (val === null || val === undefined) return [];
         return Array.isArray(val) ? val : [val];
     }
 
     function getApiClient() {
         const client = (window.DNFL && window.DNFL.Client) || window.DNFLClient;
-        if (!client || typeof client.fetchData !== 'function') {
+        if (!client) {
             throw new Error("[DNFL LTS] DNFL.Client API middleware is unavailable.");
         }
         return client;
@@ -94,11 +52,8 @@
 
     function getLoggedInFranchiseId() {
         let fid = (window.DNFL && window.DNFL.currentFranchiseId) || window.franchise_id || window.mflFranchiseId || window.login_franchise_id || window.current_franchise_id;
-        if (!fid && window.DNFLClient && typeof window.DNFLClient.getFranchise === 'function') {
-            const client = getApiClient();
-            if (client && typeof client.getLoggedInFranchiseId === 'function') {
-                fid = client.getLoggedInFranchiseId();
-            }
+        if (!fid && window.DNFLClient && typeof window.DNFLClient.getFranchiseId === 'function') {
+            fid = window.DNFLClient.getFranchiseId();
         }
         if (!fid && window.location && window.location.search) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -126,36 +81,6 @@
         return normFranchiseId(fid);
     }
 
-    function setupEventListeners(container) {
-        if (!container) return;
-        
-        const confSelect = container.querySelector('#dnfl-lts-conference-select');
-        if (confSelect && !confSelect._dnflBound) {
-            confSelect._dnflBound = true;
-            confSelect.addEventListener('change', function() {
-                window.DNFL.LTS.updateView();
-            });
-        }
-
-        const gridBtn = container.querySelector('#dnfl-btn-lts-grid');
-        if (gridBtn && !gridBtn._dnflBound) {
-            gridBtn._dnflBound = true;
-            gridBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                window.DNFL.LTS.toggleGrid();
-            });
-        }
-
-        const summaryBtn = container.querySelector('#dnfl-btn-lts-summary');
-        if (summaryBtn && !summaryBtn._dnflBound) {
-            summaryBtn._dnflBound = true;
-            summaryBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                window.DNFL.LTS.toggleSummary();
-            });
-        }
-    }
-
     async function init() {
         const container = document.getElementById('dnfl-lts-container');
         if (!container) {
@@ -166,15 +91,13 @@
             return;
         }
 
-        setupEventListeners(container);
-
         try {
             const client = getApiClient();
             const ctx = (client.getContext && typeof client.getContext === 'function') ? client.getContext() : {};
 
             let yearVal = ctx.year || window.current_year || window.year;
             if (!yearVal && window.location && window.location.pathname) {
-                const yearMatch = window.location.pathname.match(new RegExp('/(20\d{2})/'));
+                const yearMatch = window.location.pathname.match(new RegExp('/(20\\d{2})/'));
                 if (yearMatch) yearVal = yearMatch[1];
             }
             moduleState.activeYear = String(yearVal || new Date().getFullYear());
@@ -276,31 +199,14 @@
             };
         });
 
-        if (Object.keys(config).length === 0) {
-            config['00'] = {
-                ...DEFAULT_CONFERENCE_RULES,
-                conference_name: 'Main Conference'
-            };
-        }
-
-        if (rawRules) {
-            if (typeof rawRules.lts_isEnabled === 'boolean') {
-                Object.keys(config).forEach(k => config[k].lts_isEnabled = rawRules.lts_isEnabled);
-            }
-            if (typeof rawRules.highScore_isEnabled === 'boolean') {
-                Object.keys(config).forEach(k => config[k].highScore_isEnabled = rawRules.highScore_isEnabled);
-            }
-            if (rawRules.startWeek !== undefined) {
-                Object.keys(config).forEach(k => config[k].startWeek = rawRules.startWeek);
-            }
-
-            if (rawRules.exceptions && typeof rawRules.exceptions === 'object') {
-                Object.keys(rawRules.exceptions).forEach(cid => {
-                    const paddedCid = norm(cid);
-                    if (config[paddedCid]) {
-                        config[paddedCid] = {
-                            ...config[paddedCid],
-                            ...rawRules.exceptions[cid]
+        if (rawRules && typeof rawRules === 'object') {
+            if (rawRules.conferences && typeof rawRules.conferences === 'object') {
+                Object.keys(rawRules.conferences).forEach(cid => {
+                    const normCid = norm(cid);
+                    if (config[normCid]) {
+                        config[normCid] = {
+                            ...config[normCid],
+                            ...rawRules.conferences[cid]
                         };
                     }
                 });
@@ -338,42 +244,39 @@
 
     function extractMatchupWeeks(weeklyResultsData) {
         if (!weeklyResultsData) return [];
-        let weeksRaw = null;
-
-        if (weeklyResultsData.allWeeklyResults?.weeklyResults) {
-            weeksRaw = weeklyResultsData.allWeeklyResults.weeklyResults;
-        } else if (weeklyResultsData.weeklyResults) {
-            weeksRaw = weeklyResultsData.weeklyResults.matchupWeek || weeklyResultsData.weeklyResults.matchUpWeek || weeklyResultsData.weeklyResults.matchup || weeklyResultsData.weeklyResults.matchUp || weeklyResultsData.weeklyResults;
-        } else if (weeklyResultsData.matchupWeek || weeklyResultsData.matchUpWeek) {
-            weeksRaw = weeklyResultsData.matchupWeek || weeklyResultsData.matchUpWeek;
-        } else if (Array.isArray(weeklyResultsData)) {
-            weeksRaw = weeklyResultsData;
+        if (Array.isArray(weeklyResultsData)) return weeklyResultsData;
+        if (weeklyResultsData.weeklyResults) {
+            if (Array.isArray(weeklyResultsData.weeklyResults)) return weeklyResultsData.weeklyResults;
+            if (weeklyResultsData.weeklyResults.matchupWeek) return toArray(weeklyResultsData.weeklyResults.matchupWeek);
+            if (weeklyResultsData.weeklyResults.matchUpWeek) return toArray(weeklyResultsData.weeklyResults.matchUpWeek);
+            return [weeklyResultsData.weeklyResults];
         }
-
-        return toArray(weeksRaw).filter(mw => mw && mw.week !== undefined && mw.week !== null);
+        if (weeklyResultsData.allWeeklyResults && weeklyResultsData.allWeeklyResults.weeklyResults) {
+            return toArray(weeklyResultsData.allWeeklyResults.weeklyResults);
+        }
+        return [];
     }
 
     function calculateLTSData(confId) {
-        const client = getApiClient();
         const league = moduleState.leagueData?.league;
-        const confRules = moduleState.rulesConfig[confId] || DEFAULT_CONFERENCE_RULES;
-
+        const allFranchises = toArray(league?.franchises?.franchise);
+        
         const divToConfMap = {};
         const divisions = toArray(league?.divisions?.division);
         divisions.forEach(d => {
             divToConfMap[norm(d.id)] = norm(d.conference);
         });
 
-        const allFranchises = toArray(league?.franchises?.franchise);
         const franchises = allFranchises.filter(f => {
             const fDivNorm = norm(f.division || f.div);
             const fConfNorm = norm(f.conference || f.conf || divToConfMap[fDivNorm]);
-            return fConfNorm === norm(confId);
+            return fConfNorm === confId;
         });
 
+        const confRules = moduleState.rulesConfig[confId] || DEFAULT_CONFERENCE_RULES;
         const totalTeams = franchises.length;
         const endWeek = parseInt(league?.lastRegularSeasonWeek || '14', 10);
-
+        
         let startWeek = confRules.startWeek;
         if (startWeek === 'auto' || !startWeek) {
             startWeek = Math.max(1, endWeek - (totalTeams - 1) + 1);
@@ -544,8 +447,6 @@
     }
 
     function renderLTS(container) {
-        setupEventListeners(container);
-
         const confId = moduleState.selectedConference;
         const data = calculateLTSData(confId);
 
@@ -615,7 +516,7 @@
             itemsHtml += `
                 <div class="dnfl-legend-item">
                     <span class="dnfl-pill dnfl-pill-red">88.50 <i class="fa-solid fa-skull"></i></span>
-                    <span class="dnfl-legend-label">LTS Knockout Score</span>
+                    <span class="dnfl-legend-label">LTS Knockout</span>
                 </div>
                 <div class="dnfl-legend-item">
                     <span class="dnfl-badge dnfl-badge-red">88.50</span>
@@ -656,15 +557,16 @@
         const iconUrl = f?.icon || (franchise ? franchise.icon : '') || 'https://dnfl.live/images/ficon-dnfl.png';
         const activeYear = moduleState.activeYear || new Date().getFullYear();
         const leagueId = moduleState.leagueId || '22883';
-        const teamUrl = `https://www.myfantasyleague.com/${activeYear}/options?L=${leagueId}&F=${fid}&O=01`;
+        const activeHost = window.location.hostname || "myfantasyleague.com";
+        const teamUrl = `https://${activeHost}/${activeYear}/options?L=${leagueId}&F=${fid}&O=01`;
 
         return `
             <div class="dnfl-franchise-cell">
-                <a href="${teamUrl}" target="_blank">
+                <a href="${teamUrl}">
                     <img src="${iconUrl}" class="franchiseicon" alt="icon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';">
                 </a>
                 <div class="dnfl-franchise-info">
-                    <a class="dnfl-team-name" href="${teamUrl}" target="_blank">${teamName}</a>
+                    <a class="dnfl-team-name" href="${teamUrl}">${teamName}</a>
                     <span class="dnfl-owner-name">${ownerName}</span>
                 </div>
             </div>
@@ -813,7 +715,6 @@
                 }
             }
 
-            // High Score Column Logic
             if (hsOn) {
                 if (s.highScoreFid) {
                     const f = client.getFranchise ? client.getFranchise(s.highScoreFid) : { id: s.highScoreFid };
@@ -833,9 +734,59 @@
     function renderErrorState(container, err) {
         const content = container.querySelector('#dnfl-lts-content');
         if (content) {
-            content.innerHTML = '<div class="dnfl-status-error">Failed to load Last Team Standing data.</div>';
+            content.innerHTML = `
+                <div class="dnfl-status-error">
+                    <i class="fa-solid fa-circle-exclamation dnfl-mr-2"></i>
+                    <span>Unable to load Last Team Standing data: ${err.message || 'Network error'}</span>
+                </div>
+            `;
         }
     }
+
+    // Direct, clean toggle handlers matching Podcast/Rankings pattern
+    function updateView() {
+        const container = document.getElementById('dnfl-lts-container');
+        if (!container) return;
+        const confSelect = container.querySelector('#dnfl-lts-conference-select');
+        if (confSelect) {
+            moduleState.selectedConference = norm(confSelect.value);
+        }
+        renderLTS(container);
+    }
+
+    function toggleGrid() {
+        const wrapper = document.getElementById('dnfl-lts-grid-section');
+        const btn = document.getElementById('dnfl-btn-lts-grid');
+        if (!wrapper) return;
+
+        const isHidden = wrapper.classList.toggle('dnfl-is-hidden');
+        if (btn) {
+            btn.innerHTML = isHidden 
+                ? '<i class="fa-solid fa-table-cells"></i> Show Grid' 
+                : '<i class="fa-solid fa-table-cells"></i> Hide Grid';
+        }
+    }
+
+    function toggleSummary() {
+        const wrapper = document.getElementById('dnfl-lts-summary-section');
+        const btn = document.getElementById('dnfl-btn-lts-summary');
+        if (!wrapper) return;
+
+        const isHidden = wrapper.classList.toggle('dnfl-is-hidden');
+        if (btn) {
+            btn.innerHTML = isHidden 
+                ? '<i class="fa-solid fa-list-check"></i> Show Summary' 
+                : '<i class="fa-solid fa-list-check"></i> Hide Summary';
+        }
+    }
+
+    // Public API Export (matching Standings, Rankings, Podcast)
+    window.DNFL.LTS = {
+        init: init,
+        updateView: updateView,
+        toggleGrid: toggleGrid,
+        toggleSummary: toggleSummary
+    };
 
     window.addEventListener('dnfl:ready', init);
     if (document.readyState === 'loading') {
