@@ -1,0 +1,104 @@
+/* ==========================================================================
+   DNFL Last Team Standing (LTS) Module SCSS Styles (v4)
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   TEMPORARY TESTING STYLES - FRAMEWORK MIGRATION NOTICE:
+   
+   The following  classes are generic framework-wide
+   table section header styles. They are placed in this file temporarily for
+   LTS testing purposes.
+   
+   MIGRATION TARGET:
+   These rules SHOULD BE MOVED to  (and compiled into
+   ) under the Table Components section so all DNFL table
+   modules (Standings, Rankings, Exporter, LTS, etc.) can share the exact same
+   section header styling.
+   -------------------------------------------------------------------------- */
+
+.dnfl-table-section-header {
+    background-color: var(--dnfl-bg-subhead, #f1f5f9);
+    border-bottom: 2px solid var(--dnfl-border-medium, #cbd5e1);
+
+    .dnfl-table-section-header-cell {
+        padding: 0.75rem 1rem !important;
+        text-align: left;
+    }
+
+    .dnfl-table-section-header-content {
+        display: flex;
+        align-items: center;
+
+        h3 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--dnfl-text-heading, #0f172a);
+            letter-spacing: 0.5px;
+            text-transform: none;
+        }
+    }
+}
+
+/* --------------------------------------------------------------------------
+   DNFL LTS MODULE SPECIFIC STYLES (SCOPED UNDER CONTAINER ID)
+   Reference: README-dnfl-css.md (Section 10, Step 2)
+   -------------------------------------------------------------------------- */
+
+#dnfl-lts-container {
+    .dnfl-lts-grid-table,
+    .dnfl-lts-summary-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+
+        .dnfl-sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            background-color: var(--dnfl-bg-card, #ffffff);
+        }
+
+        /* Sticky Column Row Background States */
+        tbody tr.dnfl-row-even .dnfl-sticky-col {
+            background-color: var(--dnfl-bg-alt, #fafafa) !important;
+        }
+
+        tbody tr.dnfl-row-odd .dnfl-sticky-col {
+            background-color: var(--dnfl-bg-card, #ffffff) !important;
+        }
+
+        tbody tr:hover .dnfl-sticky-col {
+            background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+        }
+
+        tbody tr.dnfl-my-team .dnfl-sticky-col,
+        tbody tr.myfranchise .dnfl-sticky-col {
+            background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
+        }
+
+        tbody tr.dnfl-my-team:hover .dnfl-sticky-col,
+        tbody tr.myfranchise:hover .dnfl-sticky-col {
+            background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
+        }
+    }
+
+    /* Row states */
+    .dnfl-row-muted {
+        opacity: 0.65;
+    }
+
+    /* Divider row for eliminated teams */
+    .dnfl-divider-row td {
+        background-color: var(--dnfl-bg-subhead, #f1f5f9);
+        color: var(--dnfl-text-subtle, #555555);
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-top: 1px solid var(--dnfl-border-medium, #cbd5e1);
+        border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1);
+    }
+}

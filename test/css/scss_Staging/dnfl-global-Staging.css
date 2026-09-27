@@ -1,6 +1,8 @@
+@charset "UTF-8";
 /* ==========================================================================
-   DNFL Master Entry File
+   DNFL Master SCSS Entry Manifest File (dnfl-global-Staging.scss)
    Duke Networking Fantasy League (DNFL)
+   Fully Consolidated Architecture — All Sandbox SCSS Parsed into Partials
    ========================================================================== */
 /* ==========================================================================
    DNFL DESIGN SYSTEM - DESIGN TOKENS & GLOBAL CSS VARIABLES
@@ -240,6 +242,228 @@ table.dnfl-table th,
 /* Flexbox Layout Helpers */
 /* Card Elevation & Shadow Helpers */
 /* Component Radius Helpers */
+/* ==========================================================================
+   DNFL DESIGN SYSTEM - GLOBAL STATE & UTILITY TOKENS
+   ==========================================================================
+   Module: _utilities.scss
+   Description: Encapsulates global DOM visibility state tokens, accordion
+                expansion state toggles, status bar indicators, icon color
+                helpers, and section header rows.
+   ========================================================================== */
+/* ------------------------------------------------------------------------
+   1. GLOBAL STATE VISIBILITY TOKENS
+   ------------------------------------------------------------------------ */
+.dnfl-is-hidden {
+  display: none !important; /* Enforces clean class-based DOM element hiding */
+}
+
+.dnfl-is-visible {
+  display: block !important;
+}
+
+.dnfl-is-flex {
+  display: flex !important;
+}
+
+/* ------------------------------------------------------------------------
+   2. ACCORDION & COLLAPSIBLE STATE CLASSES
+   ------------------------------------------------------------------------ */
+.dnfl-rules-main-content.is-expanded,
+.dnfl-rules-sub-content.is-expanded,
+.dnfl-rules-topic-content.is-expanded,
+.dnfl-collapsible-content.is-expanded {
+  display: block !important; /* Accordion expanded state */
+}
+.dnfl-rules-main-content.is-collapsed,
+.dnfl-rules-sub-content.is-collapsed,
+.dnfl-rules-topic-content.is-collapsed,
+.dnfl-collapsible-content.is-collapsed {
+  display: none !important; /* Accordion collapsed state */
+}
+
+/* ------------------------------------------------------------------------
+   3. GLOBAL STATUS BAR & MESSAGING TOKENS
+   ------------------------------------------------------------------------ */
+.dnfl-status-loading {
+  color: var(--dnfl-text-subtle, #555555) !important;
+  font-style: italic !important;
+}
+
+.dnfl-status-success {
+  color: var(--dnfl-success-green, #10b981) !important;
+  font-weight: 600 !important;
+}
+
+.dnfl-status-error {
+  color: var(--dnfl-alert-red, #ef4444) !important;
+  font-weight: 600 !important;
+}
+
+/* ------------------------------------------------------------------------
+   4. ICON COLOR UTILITY HELPERS
+   ------------------------------------------------------------------------ */
+.dnfl-icon-blue {
+  color: var(--dnfl-badge-blue, #3b82f6) !important; /* Cobalt Blue Icon */
+  margin-left: 6px;
+}
+
+.dnfl-icon-amber {
+  color: var(--dnfl-badge-amber, #f59e0b) !important; /* Warm Amber Icon */
+  margin-left: 6px;
+}
+
+.dnfl-icon-red {
+  color: var(--dnfl-alert-red, #ef4444) !important; /* Alert Red Icon */
+  margin-left: 6px;
+}
+
+.dnfl-icon-green {
+  color: var(--dnfl-success-green, #10b981) !important; /* Emerald Green Icon */
+  margin-left: 6px;
+}
+
+/* ------------------------------------------------------------------------
+   5. SECTION HEADERS & DISCLAIMERS
+   ------------------------------------------------------------------------ */
+.dnfl-section-header-row {
+  display: flex;
+  width: 100%;
+  margin-bottom: 0.75rem;
+}
+
+.dnfl-disclaimer-text {
+  font-size: 0.8rem;
+  font-style: italic;
+  text-align: center;
+  color: var(--dnfl-text-subtle, #555555);
+  margin-top: 1rem;
+}
+
+.dnfl-disclaimer-note {
+  font-style: italic;
+  font-size: 0.75rem;
+  color: var(--dnfl-text-subtle, #555555);
+}
+
+/* ==========================================================================
+   DNFL DESIGN SYSTEM - BADGE, PILL & STATUS CAPSULE MODULE
+   ==========================================================================
+   Module: _badges.scss
+   Description: Encapsulates status indicator badges, metadata pill capsules,
+                and solid blue W-L record capsules across Standings and Power Rankings.
+                Fully aligned with dnfl-global-v4_58.css ground-truth.
+   ========================================================================== */
+/* ------------------------------------------------------------------------
+   1. BASE BADGE ARCHITECTURE (COMPACT RECTANGLE - 6px RADIUS)
+   ------------------------------------------------------------------------ */
+.dnfl-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.35rem !important;
+  padding: 3px 6px !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  border: 1px solid transparent !important;
+}
+
+.dnfl-badge-lg,
+.dnfl-badge-record {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  padding: 0.3rem 0.75rem !important;
+}
+
+/* Wired Status Indicator Palette Modifiers */
+.dnfl-badge-green {
+  background-color: var(--dnfl-green-bg, #dcfce7) !important; /* Mint Tint */
+  color: var(--dnfl-green-text, #15803d) !important; /* Emerald Green */
+  border-color: var(--dnfl-green-border, #bbf7d0) !important;
+}
+
+.dnfl-badge-red {
+  background-color: var(--dnfl-red-bg, #fee2e2) !important; /* Rose Tint */
+  color: var(--dnfl-red-text, #b91c1c) !important; /* Crimson Red */
+  border-color: var(--dnfl-red-border, #fecaca) !important;
+}
+
+.dnfl-badge-blue {
+  background-color: var(--dnfl-blue-bg, #dbeafe) !important; /* Ice Blue */
+  color: var(--dnfl-blue-text, #1d4ed8) !important; /* Royal Blue */
+  border-color: var(--dnfl-blue-border, #bfdbfe) !important;
+}
+
+.dnfl-badge-amber {
+  background-color: var(--dnfl-amber-bg, #fef3c7) !important; /* Soft Amber Tint */
+  color: var(--dnfl-amber-text, #b45309) !important; /* Warm Amber Gold */
+  border-color: var(--dnfl-amber-border, #fde68a) !important;
+}
+
+.dnfl-badge-gray {
+  background-color: var(--dnfl-gray-bg, #f1f5f9) !important; /* Slate Tint */
+  color: var(--dnfl-gray-text, #64748b) !important; /* Medium Slate */
+  border-color: var(--dnfl-gray-border, #e2e8f0) !important;
+}
+
+/* ------------------------------------------------------------------------
+   2. SOLID METADATA PILL CAPSULES (GROUND-TRUTH MATCHING v4_58.css)
+   ------------------------------------------------------------------------ */
+.dnfl-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.35rem !important;
+  padding: 4px 10px !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  border-radius: 9999px !important; /* Full capsule curve */
+  text-align: center !important;
+  white-space: nowrap !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+/* Solid Blue W-L Record Pills & Power Index Badges (v4_58.css Exact Match) */
+.dnfl-pill-blue,
+.dnfl-record-pill,
+.dnfl-record-badge {
+  background-color: var(--dnfl-badge-blue, #3b82f6) !important; /* Solid Cobalt Blue */
+  color: #ffffff !important; /* Crisp White Text */
+  display: inline-block !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  padding: 4px 10px !important;
+  border-radius: 9999px !important;
+}
+
+.dnfl-pill-green,
+.dnfl-lts-badge-high-score {
+  background-color: var(--dnfl-success-green, #10b981) !important;
+  color: #ffffff !important;
+}
+
+.dnfl-pill-red,
+.dnfl-lts-badge-knockout {
+  background-color: var(--dnfl-alert-red, #ef4444) !important;
+  color: #ffffff !important;
+}
+
+.dnfl-pill-amber {
+  background-color: var(--dnfl-badge-amber, #f59e0b) !important;
+  color: #ffffff !important;
+}
+
+.dnfl-pill-gray {
+  background-color: var(--dnfl-gray-text, #64748b) !important;
+  color: #ffffff !important;
+}
+
 /* ==========================================================================
    DNFL CONTAINER SHELLS, TOOLBARS & CONTROL BOXES
    ==========================================================================
@@ -1108,123 +1332,6 @@ a.dnfl-btn-secondary:hover,
 }
 
 /* ==========================================================================
-   DNFL PODCAST MODULE - MEDIA PLAYER & TRANSCRIPT TYPOGRAPHY
-   ==========================================================================
-   Module: modules/_podcast.scss
-   Description: Encapsulates scoped styles for #dnfl-podcast-container: banner,
-                dark media player block (.dnfl-media-player-block), audio player,
-                custom WebKit transcript scrollbars, and restored Markdown transcript
-                child typography overrides (h1-h4, p, strong, em).
-                Fully aligned with dnfl-global-v4_58.css ground-truth.
-   ========================================================================== */
-#dnfl-podcast-container {
-  /* ------------------------------------------------------------------------
-     1. BANNER & MEDIA PLAYER BLOCK
-     ------------------------------------------------------------------------ */
-}
-#dnfl-podcast-container .dnfl-podcast-banner {
-  width: 100% !important;
-  height: auto !important;
-  border-radius: var(--dnfl-radius-md, 8px) !important;
-  margin-bottom: 0.5rem !important;
-  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
-}
-#dnfl-podcast-container .dnfl-media-player-block {
-  background-color: var(--dnfl-bg-dark, #262626) !important; /* Dark Charcoal */
-  padding: 1.25rem !important;
-  border-radius: var(--dnfl-radius-md, 8px) !important;
-  margin-bottom: 1.5rem !important;
-  margin-top: 0.5rem !important;
-  border: 1px solid var(--dnfl-border-dark, #444444) !important;
-}
-#dnfl-podcast-container .dnfl-now-playing-label {
-  font-size: 1rem !important;
-  color: #ffffff !important;
-  font-weight: 700 !important;
-  letter-spacing: 0.5px !important;
-  display: block !important;
-  margin-bottom: 0.25rem !important;
-}
-#dnfl-podcast-container .dnfl-podcast-date,
-#dnfl-podcast-container .dnfl-podcast-desc {
-  color: var(--dnfl-text-muted, #a3a3a3) !important;
-  font-size: 0.85rem !important;
-  margin-bottom: 0.5rem !important;
-}
-#dnfl-podcast-container .dnfl-audio {
-  width: 100% !important;
-  margin-top: 0.75rem !important;
-}
-#dnfl-podcast-container {
-  /* ------------------------------------------------------------------------
-     2. TRANSCRIPT CONTAINER & CUSTOM SCROLLBARS
-     ------------------------------------------------------------------------ */
-}
-#dnfl-podcast-container .dnfl-transcript-wrapper {
-  width: 100% !important;
-  background-color: var(--dnfl-bg-card, #ffffff) !important;
-  padding: 1.25rem !important;
-  border-radius: var(--dnfl-radius-md, 8px) !important;
-  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
-  max-height: 450px !important;
-  overflow-y: auto !important;
-  line-height: 1.6 !important;
-  margin-top: 1rem !important;
-  font-size: 0.85rem !important;
-  box-sizing: border-box !important;
-  /* Custom WebKit Scrollbars */
-}
-#dnfl-podcast-container .dnfl-transcript-wrapper::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-#dnfl-podcast-container .dnfl-transcript-wrapper::-webkit-scrollbar-track {
-  background: var(--dnfl-bg-muted, #f8fafc);
-  border-radius: var(--dnfl-radius-sm, 4px);
-}
-#dnfl-podcast-container .dnfl-transcript-wrapper::-webkit-scrollbar-thumb {
-  background: var(--dnfl-border-medium, #cbd5e1);
-  border-radius: var(--dnfl-radius-sm, 4px);
-}
-#dnfl-podcast-container .dnfl-transcript-wrapper::-webkit-scrollbar-thumb:hover {
-  background: var(--dnfl-gray-text, #64748b);
-}
-#dnfl-podcast-container .dnfl-transcript-wrapper {
-  /* ------------------------------------------------------------------------
-     3. RESTORED TRANSCRIPT CHILD TYPOGRAPHY (GROUND-TRUTH MATCH v4_58.css)
-     ------------------------------------------------------------------------ */
-}
-#dnfl-podcast-container .dnfl-transcript-wrapper h1, #dnfl-podcast-container .dnfl-transcript-wrapper h2, #dnfl-podcast-container .dnfl-transcript-wrapper h3, #dnfl-podcast-container .dnfl-transcript-wrapper h4 {
-  color: var(--dnfl-text-main, #121212) !important;
-  margin-top: 0.5rem !important;
-  margin-bottom: 0.5rem !important;
-  font-size: 1rem !important;
-  text-align: left !important;
-  text-transform: none !important;
-  background: none !important;
-  font-weight: 700 !important;
-}
-#dnfl-podcast-container .dnfl-transcript-wrapper p, #dnfl-podcast-container .dnfl-transcript-wrapper li {
-  color: var(--dnfl-text-main, #121212) !important;
-  font-size: 0.85rem !important;
-  line-height: 1.6 !important;
-  margin-bottom: 0.5rem !important;
-}
-#dnfl-podcast-container .dnfl-transcript-wrapper strong {
-  color: var(--dnfl-text-main, #121212) !important;
-  font-weight: 700 !important;
-}
-#dnfl-podcast-container .dnfl-transcript-wrapper em {
-  color: var(--dnfl-primary, #0577B1) !important; /* Duke Shale Blue Emphasis */
-  font-style: italic !important;
-}
-#dnfl-podcast-container .dnfl-transcript-raw {
-  white-space: pre-wrap !important;
-  font-family: inherit !important;
-  line-height: 1.6 !important;
-}
-
-/* ==========================================================================
    DNFL POWER RANKINGS MODULE - SCOPED ALIGNMENTS & CONFERENCES
    ==========================================================================
    Module: modules/_rankings.scss
@@ -1461,6 +1568,123 @@ a.dnfl-btn-secondary:hover,
     white-space: normal !important;
     box-sizing: border-box !important;
   }
+}
+
+/* ==========================================================================
+   DNFL PODCAST MODULE - MEDIA PLAYER & TRANSCRIPT TYPOGRAPHY
+   ==========================================================================
+   Module: modules/_podcast.scss
+   Description: Encapsulates scoped styles for #dnfl-podcast-container: banner,
+                dark media player block (.dnfl-media-player-block), audio player,
+                custom WebKit transcript scrollbars, and restored Markdown transcript
+                child typography overrides (h1-h4, p, strong, em).
+                Fully aligned with dnfl-global-v4_58.css ground-truth.
+   ========================================================================== */
+#dnfl-podcast-container {
+  /* ------------------------------------------------------------------------
+     1. BANNER & MEDIA PLAYER BLOCK
+     ------------------------------------------------------------------------ */
+}
+#dnfl-podcast-container .dnfl-podcast-banner {
+  width: 100% !important;
+  height: auto !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  margin-bottom: 0.5rem !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+}
+#dnfl-podcast-container .dnfl-media-player-block {
+  background-color: var(--dnfl-bg-dark, #262626) !important; /* Dark Charcoal */
+  padding: 1.25rem !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  margin-bottom: 1.5rem !important;
+  margin-top: 0.5rem !important;
+  border: 1px solid var(--dnfl-border-dark, #444444) !important;
+}
+#dnfl-podcast-container .dnfl-now-playing-label {
+  font-size: 1rem !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.5px !important;
+  display: block !important;
+  margin-bottom: 0.25rem !important;
+}
+#dnfl-podcast-container .dnfl-podcast-date,
+#dnfl-podcast-container .dnfl-podcast-desc {
+  color: var(--dnfl-text-muted, #a3a3a3) !important;
+  font-size: 0.85rem !important;
+  margin-bottom: 0.5rem !important;
+}
+#dnfl-podcast-container .dnfl-audio {
+  width: 100% !important;
+  margin-top: 0.75rem !important;
+}
+#dnfl-podcast-container {
+  /* ------------------------------------------------------------------------
+     2. TRANSCRIPT CONTAINER & CUSTOM SCROLLBARS
+     ------------------------------------------------------------------------ */
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper {
+  width: 100% !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  padding: 1.25rem !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  max-height: 450px !important;
+  overflow-y: auto !important;
+  line-height: 1.6 !important;
+  margin-top: 1rem !important;
+  font-size: 0.85rem !important;
+  box-sizing: border-box !important;
+  /* Custom WebKit Scrollbars */
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper::-webkit-scrollbar-track {
+  background: var(--dnfl-bg-muted, #f8fafc);
+  border-radius: var(--dnfl-radius-sm, 4px);
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper::-webkit-scrollbar-thumb {
+  background: var(--dnfl-border-medium, #cbd5e1);
+  border-radius: var(--dnfl-radius-sm, 4px);
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--dnfl-gray-text, #64748b);
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper {
+  /* ------------------------------------------------------------------------
+     3. RESTORED TRANSCRIPT CHILD TYPOGRAPHY (GROUND-TRUTH MATCH v4_58.css)
+     ------------------------------------------------------------------------ */
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper h1, #dnfl-podcast-container .dnfl-transcript-wrapper h2, #dnfl-podcast-container .dnfl-transcript-wrapper h3, #dnfl-podcast-container .dnfl-transcript-wrapper h4 {
+  color: var(--dnfl-text-main, #121212) !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+  font-size: 1rem !important;
+  text-align: left !important;
+  text-transform: none !important;
+  background: none !important;
+  font-weight: 700 !important;
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper p, #dnfl-podcast-container .dnfl-transcript-wrapper li {
+  color: var(--dnfl-text-main, #121212) !important;
+  font-size: 0.85rem !important;
+  line-height: 1.6 !important;
+  margin-bottom: 0.5rem !important;
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper strong {
+  color: var(--dnfl-text-main, #121212) !important;
+  font-weight: 700 !important;
+}
+#dnfl-podcast-container .dnfl-transcript-wrapper em {
+  color: var(--dnfl-primary, #0577B1) !important; /* Duke Shale Blue Emphasis */
+  font-style: italic !important;
+}
+#dnfl-podcast-container .dnfl-transcript-raw {
+  white-space: pre-wrap !important;
+  font-family: inherit !important;
+  line-height: 1.6 !important;
 }
 
 /* ==========================================================================
@@ -1768,102 +1992,35 @@ a.dnfl-btn-secondary:hover,
   }
 }
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module SCSS Partial (_lts.scss)
+   DNFL EXPORTER MODULE - TOOLBAR OVERRIDES & DATA PREVIEW
+   ==========================================================================
+   Module: modules/_exporter.scss
+   Description: Encapsulates scoped styles for #dnfl-exporter-container: action
+                toolbar visibility state overrides (#dnfl-export-actions.dnfl-is-hidden)
+                and monospace preview textarea formatting (.dnfl-preview-textarea).
    ========================================================================== */
-#dnfl-lts-container {
-  /* Table Wrapper & Mobile Touch Scroll */
+#dnfl-exporter-container #dnfl-export-actions.dnfl-is-hidden,
+#dnfl-exporter-container #dnfl-export-actions[style*="display: none"] {
+  display: none !important;
 }
-#dnfl-lts-container .dnfl-table-wrapper {
-  position: relative;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  margin-bottom: 1.5rem;
-}
-#dnfl-lts-container {
-  /* Cross-Grid Matrix Table */
-}
-#dnfl-lts-container .dnfl-lts-grid-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  /* Sticky Left Column for Franchise Details */
-}
-#dnfl-lts-container .dnfl-lts-grid-table th.dnfl-sticky-col,
-#dnfl-lts-container .dnfl-lts-grid-table td.dnfl-sticky-col {
-  position: sticky;
-  left: 0;
-  z-index: 10;
-  background-color: var(--dnfl-bg-card, #ffffff);
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.05);
-  min-width: 200px;
-  max-width: 260px;
-}
-#dnfl-lts-container .dnfl-lts-grid-table tr:nth-child(even) td.dnfl-sticky-col {
-  background-color: var(--dnfl-bg-even, #fafafa);
-}
-#dnfl-lts-container .dnfl-lts-grid-table tr.dnfl-my-team td.dnfl-sticky-col,
-#dnfl-lts-container .dnfl-lts-grid-table tr.myfranchise td.dnfl-sticky-col {
-  background-color: var(--dnfl-highlight-yellow, #fde68a);
-}
-#dnfl-lts-container .dnfl-lts-grid-table th, #dnfl-lts-container .dnfl-lts-grid-table td {
-  text-align: center;
-  vertical-align: middle;
-  padding: 0.6rem 0.5rem;
-  white-space: nowrap;
-}
-#dnfl-lts-container .dnfl-lts-grid-table th.dnfl-sticky-col,
-#dnfl-lts-container .dnfl-lts-grid-table td.dnfl-sticky-col {
-  text-align: left;
-}
-#dnfl-lts-container {
-  /* Section Divider Row for Eliminated Teams */
-}
-#dnfl-lts-container .dnfl-divider-row td {
-  background-color: var(--dnfl-gray-bg, #f1f5f9) !important;
-  color: var(--dnfl-gray-text, #64748b) !important;
-  font-weight: 700 !important;
+#dnfl-exporter-container .dnfl-preview-textarea {
+  width: 100% !important;
+  height: 350px !important;
+  font-family: monospace !important;
   font-size: 0.85rem !important;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 0.65rem 1rem !important;
-  text-align: left !important;
-  border-top: 2px solid var(--dnfl-border-subtle, #e2e8f0);
-  border-bottom: 2px solid var(--dnfl-border-subtle, #e2e8f0);
+  padding: 12px !important;
+  box-sizing: border-box !important;
+  background-color: var(--dnfl-bg-subhead, #f8fafc) !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+  outline: none !important;
+  resize: vertical !important;
 }
-#dnfl-lts-container {
-  /* Post-Elimination Muted Cell Styling */
-}
-#dnfl-lts-container .dnfl-text-muted {
-  color: var(--dnfl-gray-text, #94a3b8) !important;
-  font-size: 0.85rem;
-  opacity: 0.7;
-}
-#dnfl-lts-container .dnfl-text-muted .dnfl-skull-icon {
-  font-size: 0.75rem;
-  margin-left: 2px;
-  color: var(--dnfl-gray-text, #94a3b8);
-}
-#dnfl-lts-container {
-  /* Summary Table Heading */
-}
-#dnfl-lts-container .dnfl-summary-heading {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--dnfl-text-heading, #0f172a);
-  margin: 1.5rem 0 0.75rem 0;
-  padding-bottom: 0.35rem;
-  border-bottom: 2px solid var(--dnfl-primary, #0577B1);
-}
-#dnfl-lts-container {
-  /* Summary Table Alignment */
-}
-#dnfl-lts-container .dnfl-lts-summary-table th, #dnfl-lts-container .dnfl-lts-summary-table td {
-  vertical-align: middle;
-}
-#dnfl-lts-container .dnfl-lts-summary-table .dnfl-team-cell {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+@media (max-width: 768px) {
+  #dnfl-exporter-container table {
+    min-width: 650px !important;
+  }
 }
 
 /* ==========================================================================
@@ -1933,4 +2090,4 @@ caption,
 
 .dnfl {
   --accent: #0577B1;
-}/*# sourceMappingURL=dnfl-global-TEST.css.map */
+}/*# sourceMappingURL=dnfl-global-Staging.css.map */

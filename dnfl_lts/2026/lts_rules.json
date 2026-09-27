@@ -1,0 +1,7 @@
+{
+  "season": 2026,
+  "comment": "Sparse exceptions configuration. Omitted values automatically default to lts_isEnabled: true, highScore_isEnabled: true, startWeek: 'auto'",
+  "exceptions": {
+
+  }
+}
