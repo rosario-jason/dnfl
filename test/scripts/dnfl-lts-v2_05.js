@@ -1,8 +1,9 @@
 /**
- * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module
- * File: scripts/dnfl-lts-v2_06.js
- * Version: v2_06
+ * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module v2_05
+ * File: scripts/dnfl-lts-v2_05.js
+ * Version: v2_05
  * Module Namespace: DNFL.LTS
+ * Architecture aligned with dnfl-exporter-v4_Final.js, dnfl-standings-v4_Final.js & dnfl-api-client-v4_Final.js
  */
 (function() {
     'use strict';
@@ -37,11 +38,7 @@
     }
 
     function getApiClient() {
-        var client = (window.DNFL && window.DNFL.Client) || window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
-        if (!client || typeof client.fetchData !== 'function') {
-            throw new Error("[DNFL LTS] DNFL.Client API middleware is required but unavailable.");
-        }
-        return client;
+        return (window.DNFL && window.DNFL.Client) || window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
     }
 
     function getLeagueId() {
@@ -94,18 +91,17 @@
     var cachedRulesConfig = {};
     var cachedEndWeek = 14;
     var cachedMaxCompletedWeek = 0;
-    var selectedConference = null;
     var retryCount = 0;
     var maxRetries = 50;
 
     /**
-     * Build Franchise Name Cell Component with Dynamic Host Link (Template Literal Aligned)
+     * Build Franchise Name Cell Component with Dynamic Host Link
      */
-    function buildFranchiseCell(franchise) {
+        function buildFranchiseCell(franchise) {
         if (!franchise) return '<span class="dnfl-text-muted">—</span>';
 
         var fid = normFranchiseId(franchise.id);
-        var name = franchise.name || (`Franchise ${fid}`);
+        var name = franchise.name || ('Franchise ' + fid);
         var ownerName = franchise.owner_name || franchise.username || '';
         var iconUrl = franchise.icon ? franchise.icon.toString().trim() : 'https://dnfl.live/images/ficon-dnfl.png';
         var activeLeagueId = getLeagueId();
@@ -152,17 +148,15 @@
         if (!confSelect) return;
 
         var selectedConf = confSelect.value;
-        selectedConference = selectedConf;
-
         var rules = getConferenceRules(selectedConf);
         var ltsOn = rules.lts_isEnabled;
         var hsOn = rules.highScore_isEnabled;
 
-        // Extract teams in selected conference (using divToConfMap resolution)
+        // Extract teams in selected conference using divToConfMap mapping
         var confTeams = cachedFranchises.filter(function(f) {
-            if (!selectedConf || selectedConf === 'ALL') return true;
             var divIdNorm = norm(f.division || f.div);
             var confIdNorm = norm(f.conference || f.conf || divToConfMap[divIdNorm]);
+            if (!selectedConf || selectedConf === 'ALL') return true;
             return confIdNorm === norm(selectedConf);
         });
 
@@ -378,7 +372,7 @@
     }
 
     /**
-     * Render Single Team Scoring Row (Badges Only - Architecture Aligned)
+     * Render Single Team Scoring Row
      */
     function renderTeamRow(franchise, fid, rowIdx, myFid, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries) {
         var isMyTeam = (myFid && fid === myFid);
@@ -409,13 +403,13 @@
                 cellContent = '<span class="dnfl-text-muted dnfl-italic">' + score + '</span>';
             } else if (ltsOn && w === endLtsW && !elimInfo && isHighScore) {
                 // Final Week Champion
-                cellContent = '<span class="dnfl-badge dnfl-badge-blue">' + score + ' <i class="fa-solid fa-medal"></i></span>';
+                cellContent = '<span class="dnfl-pill dnfl-pill-blue">' + score + ' <i class="fa-solid fa-medal"></i></span>';
             } else if (isEliminatedThisWeek) {
                 // Knockout score
-                cellContent = '<span class="dnfl-badge dnfl-badge-red">' + score + ' <i class="fa-solid fa-skull"></i></span>';
+                cellContent = '<span class="dnfl-pill dnfl-pill-red">' + score + ' <i class="fa-solid fa-skull"></i></span>';
             } else if (isHighScore && hsOn) {
                 // Weekly High Score
-                cellContent = '<span class="dnfl-badge dnfl-badge-green">' + score + ' <i class="fa-solid fa-star"></i></span>';
+                cellContent = '<span class="dnfl-pill dnfl-pill-green">' + score + ' <i class="fa-solid fa-star"></i></span>';
             } else if (isHighScore && !hsOn) {
                 cellContent = '<span class="dnfl-badge dnfl-badge-green">' + score + '</span>';
             } else {
@@ -430,7 +424,7 @@
     }
 
     /**
-     * Render Table 2: Weekly Summary Table (Badges Only - Architecture Aligned)
+     * Render Table 2: Weekly Summary Table
      */
     function renderWeeklySummaryTable(confTeams, ltsOn, hsOn, weeklySummaries) {
         var summarySection = document.getElementById('dnfl-lts-summary-section');
@@ -479,7 +473,7 @@
             if (ltsOn) {
                 var elimFranchise = confTeams.find(function(f) { return normFranchiseId(f.id) === s.eliminatedFid; });
                 var elimCell = elimFranchise ? buildFranchiseCell(elimFranchise) : '<span class="dnfl-text-muted">—</span>';
-                var scoreCell = s.knockoutScore !== null ? '<span class="dnfl-badge dnfl-badge-red">' + parseFloat(s.knockoutScore).toFixed(2) + ' <i class="fa-solid fa-skull"></i></span>' : '<span class="dnfl-text-muted">—</span>';
+                var scoreCell = s.knockoutScore !== null ? '<span class="dnfl-pill dnfl-pill-red">' + parseFloat(s.knockoutScore).toFixed(2) + ' <i class="fa-solid fa-skull"></i></span>' : '<span class="dnfl-text-muted">—</span>';
 
                 html += '<td class="dnfl-col-franchise">' + elimCell + '</td>' +
                     '<td class="dnfl-col-score">' + scoreCell + '</td>';
@@ -488,7 +482,7 @@
             if (hsOn) {
                 var highFranchise = confTeams.find(function(f) { return normFranchiseId(f.id) === s.highScorerFid; });
                 var highCell = highFranchise ? buildFranchiseCell(highFranchise) : '<span class="dnfl-text-muted">—</span>';
-                var scoreCell = s.highScore > 0 ? '<span class="dnfl-badge dnfl-badge-green">' + parseFloat(s.highScore).toFixed(2) + ' <i class="fa-solid fa-star"></i></span>' : '<span class="dnfl-text-muted">—</span>';
+                var scoreCell = s.highScore > 0 ? '<span class="dnfl-pill dnfl-pill-green">' + parseFloat(s.highScore).toFixed(2) + ' <i class="fa-solid fa-star"></i></span>' : '<span class="dnfl-text-muted">—</span>';
 
                 html += '<td class="dnfl-col-franchise">' + highCell + '</td>' +
                     '<td class="dnfl-col-score">' + scoreCell + '</td>';
@@ -502,18 +496,18 @@
     }
 
     /**
-     * Render Dynamic Legend Panel (Icons Only, No Pills, Clean Labels)
+     * Render Dynamic Legend Panel
      */
     function renderLegendPanel(ltsOn, hsOn, startW, endLtsW) {
         var legendContainer = document.getElementById('dnfl-lts-legend');
         if (!legendContainer) return;
 
         var html = '<div class="dnfl-legend-items">' +
-            '<div class="dnfl-legend-item"><i class="fa-solid fa-medal dnfl-icon-amber"></i><span class="dnfl-legend-label">LTS Champion</span></div>' +
-            '<div class="dnfl-legend-item"><i class="fa-solid fa-star dnfl-icon-green"></i><span class="dnfl-legend-label">High Score</span></div>' +
-            '<div class="dnfl-legend-item"><i class="fa-solid fa-skull dnfl-icon-red"></i><span class="dnfl-legend-label">LTS Elimination</span></div>' +
-            '<div class="dnfl-legend-item"><span class="dnfl-badge dnfl-badge-green">&nbsp;</span><span class="dnfl-legend-label">High Score</span></div>' +
-            '<div class="dnfl-legend-item"><span class="dnfl-badge dnfl-badge-red">&nbsp;</span><span class="dnfl-legend-label">Low Score</span></div>' +
+            '<div class="dnfl-legend-item"><span class="dnfl-pill dnfl-pill-blue"><i class="fa-solid fa-medal"></i></span><span class="dnfl-legend-label">LTS Champion</span></div>' +
+            '<div class="dnfl-legend-item"><span class="dnfl-pill dnfl-pill-green"><i class="fa-solid fa-star"></i></span><span class="dnfl-legend-label">High Score</span></div>' +
+            '<div class="dnfl-legend-item"><span class="dnfl-pill dnfl-pill-red"><i class="fa-solid fa-skull"></i></span><span class="dnfl-legend-label">LTS Elimination</span></div>' +
+            '<div class="dnfl-legend-item"><span class="dnfl-badge dnfl-badge-green">&nbsp;</span><span class="dnfl-legend-label">High Score (Off)</span></div>' +
+            '<div class="dnfl-legend-item"><span class="dnfl-badge dnfl-badge-red">&nbsp;</span><span class="dnfl-legend-label">Low Score (Safe)</span></div>' +
             '</div>';
 
         if (ltsOn) {
@@ -566,13 +560,12 @@
         // Auto-select user conference
         var userFid = getLoggedInFranchiseId();
         if (userFid && cachedFranchises.length > 0) {
-            var myFid = normFranchiseId(userFid);
-            var myFranchise = cachedFranchises.find(function(f) { return normFranchiseId(f.id) === myFid; });
+            var myFranchise = cachedFranchises.find(function(f) { return normFranchiseId(f.id) === userFid; });
             if (myFranchise) {
-                var divIdNorm = norm(myFranchise.division || myFranchise.div);
-                var confIdNorm = norm(myFranchise.conference || myFranchise.conf || divToConfMap[divIdNorm]);
-                if (confIdNorm) {
-                    select.value = confIdNorm;
+                var myDiv = norm(myFranchise.division || myFranchise.div);
+                var myConf = norm(myFranchise.conference || myFranchise.conf || divToConfMap[myDiv]);
+                if (myConf) {
+                    select.value = myConf;
                 }
             }
         }
@@ -643,7 +636,7 @@
                         .then(function(data) {
                             var weeklyObj = (data && data.weeklyResults) ? data.weeklyResults : (data || {});
                             var rawMatchups = weeklyObj.matchup || weeklyObj.matchUp || (weeklyObj.schedule ? weeklyObj.schedule.matchup : null);
-                            var matchups = rawMatchups ? toArray(rawMatchups) : [];
+                            var matchups = toArray(rawMatchups);
 
                             if (matchups.length === 0 && weeklyObj.franchise) {
                                 var fList = toArray(weeklyObj.franchise);
@@ -654,7 +647,7 @@
 
                             var scores = [];
                             matchups.forEach(function(m) {
-                                var franchises = (m && m.franchise) ? toArray(m.franchise) : [];
+                                var franchises = toArray(m.franchise);
                                 franchises.forEach(function(f) {
                                     if (f && f.id) {
                                         scores.push({ franchiseId: normFranchiseId(f.id), score: f.score || '0' });
