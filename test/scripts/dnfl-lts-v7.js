@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Logic Engine (v6)
+   DNFL Last Team Standing (LTS) Module Logic Engine (v7)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 (function(window, document) {
@@ -740,4 +740,3 @@
         init();
     }
 })(window, document);
-`,TargetFile:
