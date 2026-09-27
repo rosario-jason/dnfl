@@ -1,6 +1,7 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Logic Engine (v7)
+   DNFL Last Team Standing (LTS) Module Logic Engine (v8)
    Duke Networking Fantasy League (DNFL)
+   Fully aligned with DNFL Master SCSS/CSS Design System & Standard Modules
    ========================================================================== */
 (function(window, document) {
     'use strict';
@@ -33,17 +34,14 @@
     }
 
     /**
-     * Shared Helper: Normalizes string value with 2-digit padding if single digit
+     * Standard framework normalization helpers
      */
     function norm(val) {
         if (val === null || val === undefined) return '';
         const s = String(val).trim();
-        return (s.length === 1 && /^\d$/.test(s)) ? '0' + s : s;
+        return s.length === 1 && /^\d$/.test(s) ? '0' + s : s;
     }
 
-    /**
-     * Shared Helper: Normalizes Franchise ID to 4 digits
-     */
     function normFranchiseId(val) {
         if (val === null || val === undefined) return '';
         const s = String(val).trim();
@@ -51,16 +49,13 @@
         return s.padStart(4, '0');
     }
 
-    /**
-     * Shared Helper: Safe Array Conversion
-     */
     function toArray(val) {
         if (!val) return [];
         return Array.isArray(val) ? val : [val];
     }
 
     /**
-     * Resolves active logged-in user's 4-digit franchise ID (5-Tier Context Lookup)
+     * Resolves the active logged-in user's 4-digit franchise ID across 5 context layers
      */
     function getLoggedInFranchiseId() {
         let fid = (window.DNFL && window.DNFL.currentFranchiseId) || window.franchise_id || window.mflFranchiseId || window.login_franchise_id || window.current_franchise_id;
@@ -106,7 +101,7 @@
         try {
             const client = getApiClient();
             const ctx = (client.getContext && typeof client.getContext === 'function') ? client.getContext() : {};
-            
+
             // Year & League Context Resolution
             let yearVal = ctx.year || window.current_year || window.year;
             if (!yearVal && window.location && window.location.pathname) {
@@ -244,10 +239,13 @@
         return config;
     }
 
+    /**
+     * Resolves default conference dropdown based on logged-in user's division/conference mapping
+     */
     function setupConferenceSelection(client) {
         const userFranchiseId = getLoggedInFranchiseId();
         const league = moduleState.leagueData?.league;
-
+        
         // Build Division -> Conference Map
         const divToConfMap = {};
         const divisions = toArray(league?.divisions?.division);
@@ -258,7 +256,7 @@
         // Get User Franchise
         const franchises = toArray(league?.franchises?.franchise);
         const userFranchise = userFranchiseId ? franchises.find(f => normFranchiseId(f.id) === userFranchiseId) : null;
-
+        
         let defaultConf = '00';
         if (userFranchise) {
             const fDivNorm = norm(userFranchise.division || userFranchise.div);
@@ -304,36 +302,24 @@
     }
 
     /**
-     * Safely extracts matchup weeks matching Exporter property fallbacks
+     * Safely extracts matchup weeks from multi-format MFL weeklyResults responses
+     * Handles: mw.matchup, mw.matchUp, mw.schedule.matchup, mw.franchise
      */
     function extractMatchupWeeks(weeklyResultsData) {
         if (!weeklyResultsData) return [];
-        let list = [];
+        let weeksRaw = null;
 
-        // Support all MFL wrapper structures (allWeeklyResults, weeklyResults, matchupWeek, arrays)
-        const root = weeklyResultsData.allWeeklyResults?.weeklyResults
-                  || weeklyResultsData.weeklyResults
-                  || weeklyResultsData.matchupWeek
-                  || weeklyResultsData;
+        if (weeklyResultsData.allWeeklyResults?.weeklyResults) {
+            weeksRaw = weeklyResultsData.allWeeklyResults.weeklyResults;
+        } else if (weeklyResultsData.weeklyResults) {
+            weeksRaw = weeklyResultsData.weeklyResults.matchupWeek || weeklyResultsData.weeklyResults.matchup || weeklyResultsData.weeklyResults.matchUp || weeklyResultsData.weeklyResults;
+        } else if (weeklyResultsData.matchupWeek) {
+            weeksRaw = weeklyResultsData.matchupWeek;
+        } else if (Array.isArray(weeklyResultsData)) {
+            weeksRaw = weeklyResultsData;
+        }
 
-        const weeksArray = toArray(root);
-
-        weeksArray.forEach(wObj => {
-            if (!wObj) return;
-            // Case 1: Week wrapper object containing matchup/matchUp/schedule
-            if (wObj.week !== undefined) {
-                list.push(wObj);
-            }
-            // Case 2: Array of matchup objects without explicit week wrapper
-            else if (wObj.matchupWeek) {
-                list.push(...toArray(wObj.matchupWeek));
-            }
-            else if (wObj.matchup || wObj.matchUp) {
-                list.push(wObj);
-            }
-        });
-
-        return list;
+        return toArray(weeksRaw).filter(mw => mw && mw.week !== undefined && mw.week !== null);
     }
 
     /**
@@ -351,7 +337,7 @@
             divToConfMap[norm(d.id)] = norm(d.conference);
         });
 
-        // Filter Franchises by Conference with division fallback
+        // Get Franchises in Selected Conference with division fallback
         const allFranchises = toArray(league?.franchises?.franchise);
         const franchises = allFranchises.filter(f => {
             const fDivNorm = norm(f.division || f.div);
@@ -381,12 +367,12 @@
                 if (!w) return;
                 scoresMap[w] = scoresMap[w] || {};
 
-                // Exporter Multi-Casing Property Inspection
-                const rawMatchups = mw.matchup || mw.matchUp || mw.schedule?.matchup || mw.schedule?.matchUp;
+                const matchupsRaw = mw.matchup || mw.matchUp || mw.schedule?.matchup || mw.schedule?.matchUp;
 
-                if (rawMatchups) {
+                // Path A: Matchups Array
+                if (matchupsRaw) {
                     if (w > maxCompletedWeek) maxCompletedWeek = w;
-                    const matchups = toArray(rawMatchups);
+                    const matchups = toArray(matchupsRaw);
                     matchups.forEach(m => {
                         const frs = toArray(m.franchise);
                         frs.forEach(f => {
@@ -394,7 +380,9 @@
                             if (fid) scoresMap[w][fid] = parseFloat(f.score || '0.00');
                         });
                     });
-                } else if (mw.franchise) {
+                }
+                // Path B: Standalone Franchise Score List
+                else if (mw.franchise) {
                     if (w > maxCompletedWeek) maxCompletedWeek = w;
                     const frs = toArray(mw.franchise);
                     frs.forEach(f => {
@@ -416,7 +404,7 @@
             const weekScores = scoresMap[w];
             const confTeamIds = franchises.map(f => normFranchiseId(f.id));
 
-            // Identify Weekly High Scorer
+            // Identify Weekly High Scorer for the Conference
             let maxScore = -1;
             let maxScorerFid = null;
             confTeamIds.forEach(fid => {
@@ -430,7 +418,7 @@
                 highScorersMap[w] = maxScorerFid;
             }
 
-            // Perform LTS Elimination
+            // Perform LTS Elimination if w >= startWeek
             let eliminatedThisWeek = null;
             let eliminatedScore = 0;
 
@@ -472,7 +460,7 @@
                     if (ytdTiedScorers.length === 1) {
                         eliminatedThisWeek = ytdTiedScorers[0];
                     } else {
-                        // Secondary Tiebreaker: Prior week score comparison, then franchise ID order
+                        // Secondary Tiebreaker: Prior week score comparison
                         let lowestPriorScore = Infinity;
                         let finalEliminated = ytdTiedScorers[0];
 
@@ -510,6 +498,7 @@
             franchises,
             confRules,
             startWeek,
+            endWeek,
             maxCompletedWeek,
             scoresMap,
             activeTeams,
@@ -520,35 +509,32 @@
     }
 
     /**
-     * Renders Module Views inside #dnfl-lts-content without modifying outer card shell
+     * Renders Module Views with Preserved Card Architecture
      */
     function renderLTS(container) {
         const confId = moduleState.selectedConference;
         
         let contentEl = container.querySelector('#dnfl-lts-content');
         if (!contentEl) {
-            // Ensure content wrapper exists inside card
-            contentEl = document.createElement('div');
-            contentEl.id = 'dnfl-lts-content';
-            contentEl.className = 'dnfl-card-body';
-            container.appendChild(contentEl);
+            contentEl = container;
         }
 
-        let gridContainer = contentEl.querySelector('#dnfl-lts-grid-container');
-        let summaryContainer = contentEl.querySelector('#dnfl-lts-summary-container');
+        // Auto-Mount Container Wrappers inside #dnfl-lts-content without wiping parent header
+        let gridContainer = container.querySelector('#dnfl-lts-grid-container');
+        let summaryContainer = container.querySelector('#dnfl-lts-summary-container');
 
         if (!gridContainer || !summaryContainer) {
             contentEl.innerHTML = `
                 <div id="dnfl-lts-grid-container" class="dnfl-lts-view"></div>
                 <div id="dnfl-lts-summary-container" class="dnfl-lts-view dnfl-mt-4"></div>
             `;
-            gridContainer = contentEl.querySelector('#dnfl-lts-grid-container');
-            summaryContainer = contentEl.querySelector('#dnfl-lts-summary-container');
+            gridContainer = container.querySelector('#dnfl-lts-grid-container');
+            summaryContainer = container.querySelector('#dnfl-lts-summary-container');
         }
 
         const data = calculateLTSData(confId);
 
-        // Render Conference Select Dropdown options
+        // Render Conference Select Dropdown
         const confSelect = container.querySelector('#dnfl-lts-conference-select');
         if (confSelect) {
             let optionsHtml = '';
@@ -560,10 +546,10 @@
             confSelect.innerHTML = optionsHtml;
         }
 
-        // Pre-Season / Zero Completed Weeks Check
+        // Offseason / Pre-Season Check
         if (data.maxCompletedWeek === 0) {
             const preSeasonHtml = `
-                <div class="dnfl-status-loading">
+                <div class="dnfl-status-loading dnfl-p-4 dnfl-text-center">
                     <i class="fa-solid fa-clock-rotate-left dnfl-icon-amber dnfl-mr-2"></i>
                     <span>Survival eliminations will activate once Week 1 scores are finalized.</span>
                 </div>
@@ -573,13 +559,17 @@
             return;
         }
 
-        // Render View A: Cross-Grid Matrix
+        // Render View A: Cross-Grid Matrix (All Regular Season Weeks)
         renderScoresGrid(container, data);
 
         // Render View B: Summary Table
         renderSummaryTable(container, data);
     }
 
+    /**
+     * Renders View A: Survival Cross-Grid Matrix
+     * Covers ALL regular season weeks (1 to endWeek)
+     */
     function renderScoresGrid(container, data) {
         const client = getApiClient();
         const gridContainer = container.querySelector('#dnfl-lts-grid-container');
@@ -593,16 +583,28 @@
         const activeFranchises = data.franchises.filter(f => activeFids.includes(normFranchiseId(f.id)));
         const eliminatedFranchises = data.franchises.filter(f => eliminatedFids.includes(normFranchiseId(f.id)));
 
-        let tableHtml = `<div class="dnfl-table-wrapper"><table class="dnfl-table dnfl-lts-grid-table"><thead><tr>`;
-        tableHtml += `<th class="dnfl-sticky-col">Franchise</th>`;
+        // Base Dynamic URL
+        const baseURLDynamic = window.baseURLDynamic || (window.location ? window.location.origin : 'https://www22.myfantasyleague.com');
 
-        for (let w = 1; w <= data.maxCompletedWeek; w++) {
+        let html = `
+            <div class="dnfl-section-header dnfl-mb-2">
+                <h4 class="dnfl-card-title"><i class="fa-solid fa-table-cells dnfl-icon-blue"></i> Survival Cross-Grid Matrix</h4>
+            </div>
+            <div class="dnfl-table-wrapper">
+                <table class="dnfl-table dnfl-lts-grid-table">
+                    <thead>
+                        <tr>
+                            <th class="dnfl-col-franchise dnfl-sticky-col">Franchise</th>
+        `;
+
+        // Render Column Headers for ALL Regular Season Weeks (1 to endWeek)
+        for (let w = 1; w <= data.endWeek; w++) {
             const isLTSWeek = data.confRules.lts_isEnabled && w >= data.startWeek;
-            tableHtml += `<th class="dnfl-text-center">W${w}${isLTSWeek ? ' 💀' : ''}</th>`;
+            html += `<th class="dnfl-text-center">W${w}${isLTSWeek ? ' 💀' : ''}</th>`;
         }
-        tableHtml += `</tr></thead><tbody>`;
+        html += `</tr></thead><tbody>`;
 
-        // Helper to render team row with fallback icon
+        // Helper to render team row matching Standings / Rankings typography
         function buildRow(f, isEliminated) {
             const fid = normFranchiseId(f.id);
             const isMyTeam = (fid === userFid) ? 'dnfl-my-team' : '';
@@ -610,104 +612,170 @@
             const teamName = f.name || (franchise ? franchise.name : ('Franchise ' + fid));
             const ownerName = f.owner_name || (franchise ? franchise.owner_name : '');
             const iconUrl = f.icon || (franchise ? franchise.icon : '') || 'https://dnfl.live/images/ficon-dnfl.png';
+            const teamUrl = `${baseURLDynamic}/${moduleState.activeYear}/options?L=${moduleState.leagueId}&F=${fid}&O=01`;
 
             let rowHtml = `<tr class="${isMyTeam} ${isEliminated ? 'dnfl-row-muted' : ''}">`;
-            rowHtml += `<td class="dnfl-sticky-col"><div class="dnfl-team-cell">`;
-            rowHtml += `<img src="${iconUrl}" class="franchiseicon" alt="icon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';">`;
-            rowHtml += `<div><div class="dnfl-team-name">${teamName}</div><div class="dnfl-owner-name">${ownerName}</div></div></div></td>`;
+            rowHtml += `
+                <td class="dnfl-col-franchise dnfl-sticky-col">
+                    <div class="dnfl-franchise-cell">
+                        <img src="${iconUrl}" class="franchiseicon" alt="icon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';">
+                        <div class="dnfl-franchise-info">
+                            <a class="dnfl-team-name" href="${teamUrl}" target="_blank">${teamName}</a>
+                            <span class="dnfl-owner-name">${ownerName}</span>
+                        </div>
+                    </div>
+                </td>
+            `;
 
             const elimInfo = data.eliminations[fid];
 
-            for (let w = 1; w <= data.maxCompletedWeek; w++) {
-                const scoreVal = (data.scoresMap[w] && data.scoresMap[w][fid] !== undefined) ? data.scoresMap[w][fid] : null;
-                const score = (scoreVal !== null) ? scoreVal.toFixed(2) : '—';
-                const isHighScore = (data.highScorersMap[w] === fid);
-                const isKnockout = elimInfo && (elimInfo.week === w);
-                const isPostElim = elimInfo && (w > elimInfo.week);
-
+            // Render Scores for ALL Regular Season Weeks (1 to endWeek)
+            for (let w = 1; w <= data.endWeek; w++) {
                 rowHtml += `<td class="dnfl-text-center">`;
-                if (isHighScore && data.confRules.highScore_isEnabled) {
-                    rowHtml += `<span class="dnfl-pill-green" title="Weekly High Score">⭐ ${score}</span>`;
-                } else if (isKnockout && data.confRules.lts_isEnabled) {
-                    rowHtml += `<span class="dnfl-pill-red" title="LTS Knockout Score">💀 ${score}</span>`;
-                } else if (isPostElim) {
-                    rowHtml += `<span class="dnfl-text-muted" title="Post-Elimination Score">💀 ${score}</span>`;
+
+                if (w <= data.maxCompletedWeek) {
+                    const scoreVal = (data.scoresMap[w] && data.scoresMap[w][fid] !== undefined) ? data.scoresMap[w][fid] : null;
+                    const scoreStr = (scoreVal !== null) ? scoreVal.toFixed(2) : '—';
+                    const isHighScore = (data.highScorersMap[w] === fid);
+                    const isKnockout = elimInfo && (elimInfo.week === w);
+                    const isPostElim = elimInfo && (w > elimInfo.week);
+
+                    if (isHighScore && data.confRules.highScore_isEnabled) {
+                        rowHtml += `<span class="dnfl-pill dnfl-pill-green" title="Weekly High Score">${scoreStr} <i class="fa-solid fa-star"></i></span>`;
+                    } else if (isKnockout && data.confRules.lts_isEnabled) {
+                        rowHtml += `<span class="dnfl-pill dnfl-pill-red" title="LTS Knockout Score">${scoreStr} <i class="fa-solid fa-skull"></i></span>`;
+                    } else if (isPostElim) {
+                        rowHtml += `<span class="dnfl-text-muted" title="Post-Elimination Score">${scoreStr} <i class="fa-solid fa-skull"></i></span>`;
+                    } else {
+                        rowHtml += scoreStr;
+                    }
                 } else {
-                    rowHtml += `${score}`;
+                    // Future / Unplayed Weeks
+                    rowHtml += `<span class="dnfl-text-muted">—</span>`;
                 }
+
                 rowHtml += `</td>`;
             }
             rowHtml += `</tr>`;
             return rowHtml;
         }
 
-        // Active Teams
+        // Active Survival Teams
         activeFranchises.forEach(f => {
-            tableHtml += buildRow(f, false);
+            html += buildRow(f, false);
         });
 
         // LTS Eliminated Teams Divider & Rows
         if (eliminatedFranchises.length > 0) {
-            const totalCols = data.maxCompletedWeek + 1;
-            tableHtml += `<tr class="dnfl-divider-row"><td colspan="${totalCols}">LTS Eliminated Teams</td></tr>`;
+            const totalCols = data.endWeek + 1;
+            html += `<tr class="dnfl-divider-row"><td colspan="${totalCols}">LTS Eliminated Teams</td></tr>`;
             eliminatedFranchises.forEach(f => {
-                tableHtml += buildRow(f, true);
+                html += buildRow(f, true);
             });
         }
 
-        tableHtml += `</tbody></table></div>`;
-        gridContainer.innerHTML = tableHtml;
+        html += `</tbody></table></div>`;
+        gridContainer.innerHTML = html;
     }
 
+    /**
+     * Renders View B: Weekly Survival Summary Table
+     */
     function renderSummaryTable(container, data) {
         const client = getApiClient();
         const summaryContainer = container.querySelector('#dnfl-lts-summary-container');
         if (!summaryContainer) return;
 
-        let tableHtml = `<div class="dnfl-table-wrapper"><table class="dnfl-table dnfl-lts-summary-table"><thead><tr>`;
-        tableHtml += `<th>Week</th><th>Eliminated Franchise</th><th class="dnfl-text-center">Knockout Score</th><th>Weekly High Scorer</th><th class="dnfl-text-center">High Score</th>`;
-        tableHtml += `</tr></thead><tbody>`;
+        const baseURLDynamic = window.baseURLDynamic || (window.location ? window.location.origin : 'https://www22.myfantasyleague.com');
+
+        let html = `
+            <div class="dnfl-section-header dnfl-mt-4 dnfl-mb-2">
+                <h4 class="dnfl-card-title"><i class="fa-solid fa-list-check dnfl-icon-blue"></i> Weekly Survival Summary</h4>
+            </div>
+            <div class="dnfl-table-wrapper">
+                <table class="dnfl-table dnfl-lts-summary-table">
+                    <thead>
+                        <tr>
+                            <th>Week</th>
+                            <th>Eliminated Franchise</th>
+                            <th class="dnfl-text-center">Knockout Score</th>
+                            <th>Weekly High Scorer</th>
+                            <th class="dnfl-text-center">High Score</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
 
         data.weeklySummaries.forEach(s => {
-            tableHtml += `<tr>`;
-            tableHtml += `<td class="dnfl-font-bold">Week ${s.week}</td>`;
+            html += `<tr>`;
+            html += `<td class="dnfl-font-bold">Week ${s.week}</td>`;
 
-            // Eliminated Franchise
+            // 1. Eliminated Franchise
             if (s.eliminatedFid) {
-                const f = client.getFranchise ? client.getFranchise(s.eliminatedFid) : null;
-                const tName = f ? f.name : ('Franchise ' + s.eliminatedFid);
+                const fid = s.eliminatedFid;
+                const f = client.getFranchise ? client.getFranchise(fid) : null;
+                const tName = f ? f.name : ('Franchise ' + fid);
+                const ownerName = f ? (f.owner_name || '') : '';
                 const iconUrl = (f && f.icon) ? f.icon : 'https://dnfl.live/images/ficon-dnfl.png';
-                const iconHtml = `<img src="${iconUrl}" class="franchiseicon" alt="icon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';">`;
-                tableHtml += `<td><div class="dnfl-team-cell">${iconHtml}<span>${tName}</span></div></td>`;
-                tableHtml += `<td class="dnfl-text-center"><span class="dnfl-pill-red">💀 ${s.eliminatedScore.toFixed(2)}</span></td>`;
+                const teamUrl = `${baseURLDynamic}/${moduleState.activeYear}/options?L=${moduleState.leagueId}&F=${fid}&O=01`;
+
+                html += `
+                    <td class="dnfl-col-franchise">
+                        <div class="dnfl-franchise-cell">
+                            <img src="${iconUrl}" class="franchiseicon" alt="icon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';">
+                            <div class="dnfl-franchise-info">
+                                <a class="dnfl-team-name" href="${teamUrl}" target="_blank">${tName}</a>
+                                <span class="dnfl-owner-name">${ownerName}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="dnfl-text-center">
+                        <span class="dnfl-pill dnfl-pill-red" title="LTS Knockout Score">${s.eliminatedScore.toFixed(2)} <i class="fa-solid fa-skull"></i></span>
+                    </td>
+                `;
             } else {
-                tableHtml += `<td class="dnfl-text-muted">—</td><td class="dnfl-text-center dnfl-text-muted">—</td>`;
+                html += `<td class="dnfl-text-muted">—</td><td class="dnfl-text-center dnfl-text-muted">—</td>`;
             }
 
-            // Weekly High Scorer
+            // 2. Weekly High Scorer
             if (s.highScoreFid) {
-                const f = client.getFranchise ? client.getFranchise(s.highScoreFid) : null;
-                const tName = f ? f.name : ('Franchise ' + s.highScoreFid);
+                const fid = s.highScoreFid;
+                const f = client.getFranchise ? client.getFranchise(fid) : null;
+                const tName = f ? f.name : ('Franchise ' + fid);
+                const ownerName = f ? (f.owner_name || '') : '';
                 const iconUrl = (f && f.icon) ? f.icon : 'https://dnfl.live/images/ficon-dnfl.png';
-                const iconHtml = `<img src="${iconUrl}" class="franchiseicon" alt="icon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';">`;
-                tableHtml += `<td><div class="dnfl-team-cell">${iconHtml}<span>${tName}</span></div></td>`;
-                tableHtml += `<td class="dnfl-text-center"><span class="dnfl-pill-green">⭐ ${s.highScore.toFixed(2)}</span></td>`;
+                const teamUrl = `${baseURLDynamic}/${moduleState.activeYear}/options?L=${moduleState.leagueId}&F=${fid}&O=01`;
+
+                html += `
+                    <td class="dnfl-col-franchise">
+                        <div class="dnfl-franchise-cell">
+                            <img src="${iconUrl}" class="franchiseicon" alt="icon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';">
+                            <div class="dnfl-franchise-info">
+                                <a class="dnfl-team-name" href="${teamUrl}" target="_blank">${tName}</a>
+                                <span class="dnfl-owner-name">${ownerName}</span>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="dnfl-text-center">
+                        <span class="dnfl-pill dnfl-pill-green" title="Weekly High Score">${s.highScore.toFixed(2)} <i class="fa-solid fa-star"></i></span>
+                    </td>
+                `;
             } else {
-                tableHtml += `<td class="dnfl-text-muted">—</td><td class="dnfl-text-center dnfl-text-muted">—</td>`;
+                html += `<td class="dnfl-text-muted">—</td><td class="dnfl-text-center dnfl-text-muted">—</td>`;
             }
-            tableHtml += `</tr>`;
+
+            html += `</tr>`;
         });
 
-        tableHtml += `</tbody></table></div>`;
-        summaryContainer.innerHTML = tableHtml;
+        html += `</tbody></table></div>`;
+        summaryContainer.innerHTML = html;
     }
 
     function renderErrorState(container, err) {
-        let content = container.querySelector('#dnfl-lts-content');
-        if (!content) {
-            content = container;
+        const content = container.querySelector('#dnfl-lts-content') || container;
+        if (content) {
+            content.innerHTML = '<div class="dnfl-status-error dnfl-p-4 dnfl-text-center"><i class="fa-solid fa-triangle-exclamation dnfl-mr-2"></i> Failed to load Last Team Standing data.</div>';
         }
-        content.innerHTML = '<div class="dnfl-status-error"><i class="fa-solid fa-triangle-exclamation dnfl-mr-2"></i>Failed to load Last Team Standing data.</div>';
     }
 
     // Public API
