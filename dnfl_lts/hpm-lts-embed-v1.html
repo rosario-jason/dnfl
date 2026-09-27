@@ -1,0 +1,66 @@
+<!-- ==========================================================================
+   Duke Networking Fantasy League (DNFL) - Last Team Standing (LTS) Embed Shell v1.0
+   ========================================================================== -->
+<div class="dnfl-card" id="dnfl-lts-container">
+    <!-- Level 1: Card Header -->
+    <div class="dnfl-card-header">
+        <h3 class="dnfl-card-title">
+            <i class="fa-solid fa-medal"></i> Last Team Standing
+        </h3>
+    </div>
+
+    <!-- Level 2: Card Body -->
+    <div class="dnfl-card-body">
+        <!-- Level 3: Control Toolbar -->
+        <div class="dnfl-toolbar">
+            <div class="dnfl-filter-group">
+                <label for="dnfl-lts-conference-select">Conference:</label>
+                <select id="dnfl-lts-conference-select" class="dnfl-select">
+                    <option value="">Loading Conferences...</option>
+                </select>
+            </div>
+            <div class="dnfl-buttons-right">
+                <button id="dnfl-lts-toggle-grid" class="dnfl-btn dnfl-btn-secondary">Hide Grid</button>
+                <button id="dnfl-lts-toggle-summary" class="dnfl-btn dnfl-btn-secondary">Hide Summary</button>
+            </div>
+        </div>
+
+        <!-- Status Indicator -->
+        <div id="dnfl-lts-status" class="dnfl-status-loading">
+            Loading Last Team Standing data...
+        </div>
+
+        <!-- View A: Survival Cross-Grid Matrix Wrapper -->
+        <div id="dnfl-lts-grid-wrapper" class="dnfl-table-wrapper">
+            <table id="dnfl-lts-grid-table" class="dnfl-table dnfl-lts-grid-table">
+                <thead>
+                    <tr id="dnfl-lts-grid-thead">
+                        <!-- Dynamic Headings -->
+                    </tr>
+                </thead>
+                <tbody id="dnfl-lts-grid-tbody">
+                    <!-- Dynamic Grid Rows -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- View B: Weekly Summary Table Wrapper -->
+        <div id="dnfl-lts-summary-wrapper" class="dnfl-table-wrapper">
+            <h4 class="dnfl-summary-heading">Weekly Survival Summary</h4>
+            <table id="dnfl-lts-summary-table" class="dnfl-table dnfl-lts-summary-table">
+                <thead>
+                    <tr>
+                        <th>Week</th>
+                        <th>Eliminated Franchise</th>
+                        <th>Knockout / Low Score</th>
+                        <th>Weekly High Scorer</th>
+                        <th>High Score</th>
+                    </tr>
+                </thead>
+                <tbody id="dnfl-lts-summary-tbody">
+                    <!-- Dynamic Summary Rows -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

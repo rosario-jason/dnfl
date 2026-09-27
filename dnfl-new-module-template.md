@@ -1,17 +1,17 @@
 # DNFL New Module Requirements & Prompt Specification Template
 
-Use this template to define the specifications for creating a new Duke Networking Fantasy League (DNFL) web module. Fill out each section with as much detail as possible, then submit this document alongside the DNFL Core Infrastructure source files (`README-dnfl.md`, `README-dnfl-css.md`, `README-dnfl-api.md`) to generate the module logic engine (`scripts/dnfl-[module-name].js`), HTML embed shell (`dnfl_[module_name]/hpm-[module-name]-embed.html`), and developer documentation (`dnfl_[module_name]/README-dnfl-[module-name].md`).
+Use this template to define the specifications for creating a new Duke Networking Fantasy League (DNFL) web module. Fill out each section with as much detail as possible, then submit this document alongside the DNFL Core Infrastructure source files (`README-dnfl.md`, `README-dnfl-css.md`, `README-dnfl-api.md`) to generate the module logic engine (`scripts/dnfl-lts.js`), HTML embed shell (`dnfl_[module_name]/hpm-lts-embed.html`), and developer documentation (`dnfl_[module_name]/README-dnfl-lts.md`).
 
 ---
 
 ## 1. Module Overview & Metadata
 
-* **Module Name (Kebab-Case)**: `dnfl-[module-name]` (e.g., `dnfl-scoreboard`, `dnfl-draft-history`)
+* **Module Name (Kebab-Case)**: `dnfl-lts` (e.g., `dnfl-scoreboard`, `dnfl-draft-history`)
 * **Module Name (CamelCase / Namespace)**: `DNFL.[ModuleName]` (e.g., `DNFL.Scoreboard`)
 * **Directory Name**: `dnfl_[module_name]/`
-* **Container ID**: `#dnfl-[module-name]-container`
-* **Embed File Name**: `hpm-[module-name]-embed.html`
-* **Script File Name**: `dnfl-[module-name].js`
+* **Container ID**: `#dnfl-lts-container`
+* **Embed File Name**: `hpm-lts-embed.html`
+* **Script File Name**: `dnfl-lts.js`
 * **Primary Objective**: Brief 1–2 sentence description of what this module does and why it exists.
 * **Target MFL Embed Page**: (e.g., Homepage Module, Custom Page 01, Standings Tab)
 
@@ -20,11 +20,11 @@ Use this template to define the specifications for creating a new Duke Networkin
 ## 2. Architectural & Core Constraints (Mandatory)
 
 All DNFL modules must strictly adhere to these framework rules:
-1. **Zero Inline Styles**: All styling must be handled via global CSS classes in `css/dnfl-global.css` or the module partial `css/scss/_[module-name].scss`. No `style="..."` attributes or `.style.display` assignments in JS.
+1. **Zero Inline Styles**: All styling must be handled via global CSS classes in `css/dnfl-global.css` or the module partial `css/scss/_lts.scss`. No `style="..."` attributes or `.style.display` assignments in JS.
 2. **API Middleware Only**: All network communication must use `DNFL.Client` (`window.DNFLClient`). No raw `fetch()` or `jQuery.ajax()` calls allowed.
 3. **Class-Based State Management**: Visibility and UI states must use framework utility classes (`.dnfl-is-hidden`, `.dnfl-is-visible`, `.dnfl-is-flex`, `.is-expanded`, `.is-collapsed`).
 4. **Lifecycle Event Binding**: Logic must bind to `window.addEventListener('dnfl:ready', init)` and include retry guards (`maxRetries = 50`, `100ms` intervals) for DOM mounting.
-5. **Component Scoping**: All CSS rules must be strictly scoped under `#dnfl-[module-name]-container`.
+5. **Component Scoping**: All CSS rules must be strictly scoped under `#dnfl-lts-container`.
 
 ---
 
@@ -64,7 +64,7 @@ List any custom JSON manifests, CSV files, or Markdown transcripts:
 
 ### 4.2 Toolbar Controls & Filters (`.dnfl-toolbar`)
 List all dropdowns, toggle buttons, or search fields:
-* **Filter 1**: (e.g., Week Selector `<select id="dnfl-[module-name]-week">`)
+* **Filter 1**: (e.g., Week Selector `<select id="dnfl-lts-week">`)
 * **Filter 2**: (e.g., Conference / Division Selector `<select>`)
 * **Action Buttons**: (e.g., "Expand All", "Export CSV", "Toggle Chart")
 
@@ -78,7 +78,7 @@ Specify how the primary data should be rendered:
   * Sub-card layout details: (e.g., Team A vs Team B, live score badges)
 * [ ] **Visualizations / Charts**:
   * Chart.js type: (Horizontal Bar, Line Chart, Pie)
-  * Target canvas ID: `#dnfl_[module-name]_chart`
+  * Target canvas ID: `#dnfl_lts_chart`
 * [ ] **Accordions / Expandable Callouts**:
   * Level hierarchy and toggle behavior (`.is-expanded` / `.is-collapsed`)
 
@@ -113,7 +113,7 @@ List the public methods that should be exposed on `window.DNFL.[ModuleName]`:
 ## 7. Expected Artifact Deliverables
 
 When generating this module, the output should include:
-1. **Module Logic Script**: `scripts/dnfl-[module-name].js` (IIFE with safe middleware resolution and retry loop)
-2. **HTML Embed Shell**: `dnfl_[module_name]/hpm-[module-name]-embed.html` (Semantic, 100% inline-style-free HTML stub)
-3. **Developer Documentation**: `dnfl_[module_name]/README-dnfl-[module-name].md` (Architectural guide, data pipeline, and maintenance checklist)
-4. **SCSS Partial (Optional)**: `css/scss/_[module-name].scss` (If custom module-specific styling beyond `_containers.scss` is required)
+1. **Module Logic Script**: `scripts/dnfl-lts.js` (IIFE with safe middleware resolution and retry loop)
+2. **HTML Embed Shell**: `dnfl_[module_name]/hpm-lts-embed.html` (Semantic, 100% inline-style-free HTML stub)
+3. **Developer Documentation**: `dnfl_[module_name]/README-dnfl-lts.md` (Architectural guide, data pipeline, and maintenance checklist)
+4. **SCSS Partial (Optional)**: `css/scss/_lts.scss` (If custom module-specific styling beyond `_containers.scss` is required)

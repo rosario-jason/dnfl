@@ -1,15 +1,9 @@
 {
-  "_comment": "DNFL Last Team Standing (LTS) & Weekly High/Low Scores Rules Configuration",
-  "default": {
-    "ltsEnabled": true,
-    "highLowEnabled": true,
-    "startWeek": "auto",
-    "cellActiveBg": "var(--dnfl-bg-card, #ffffff)",
-    "cellEliminatedBg": "var(--dnfl-lts-bg-eliminated, #f1f5f9)",
-    "textEliminatedColor": "var(--dnfl-lts-text-eliminated, #64748b)",
-    "badgeHighScoreClass": "dnfl-lts-badge-high-score",
-    "badgeKnockoutClass": "dnfl-lts-badge-knockout",
-    "textPostElimLowClass": "dnfl-lts-text-post-elim-low",
-    "tableClass": "dnfl-table dnfl-lts-table"
+  "season": 2026,
+  "comment": "Sparse exceptions configuration. Omitted values automatically default to lts_isEnabled: true, highScore_isEnabled: true, startWeek: 'auto'",
+  "exceptions": {
+    "01": {
+      "highScore_isEnabled": false
+    }
   }
 }

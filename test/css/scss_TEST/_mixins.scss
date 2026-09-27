@@ -1,0 +1,35 @@
+/* ==========================================================================
+   DNFL DESIGN SYSTEM - SCSS MIXINS & REUSABLE HELPERS
+   ==========================================================================
+   Module: _mixins.scss
+   Description: Encapsulates reusable SCSS mixins for flexbox alignments,
+                elevation card shadows, control button bases, and responsive
+                container layout logic.
+   ========================================================================== */
+
+/* Flexbox Layout Helpers */
+@mixin dnfl-flex-center {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+@mixin dnfl-flex-between {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+/* Card Elevation & Shadow Helpers */
+@mixin dnfl-card-shadow {
+  box-shadow: var(--dnfl-shadow-card, 0 4px 16px rgba(0, 0, 0, 0.4)) !important;
+}
+
+/* Component Radius Helpers */
+@mixin dnfl-rounded-card {
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+}
+
+@mixin dnfl-rounded-control {
+  border-radius: var(--dnfl-radius-md, 8px) !important;
+}

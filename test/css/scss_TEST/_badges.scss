@@ -1,0 +1,119 @@
+/* ==========================================================================
+   DNFL DESIGN SYSTEM - BADGE, PILL & STATUS CAPSULE MODULE
+   ==========================================================================
+   Module: _badges.scss
+   Description: Encapsulates status indicator badges, metadata pill capsules,
+                and solid blue W-L record capsules across Standings and Power Rankings.
+                Fully aligned with dnfl-global-v4_58.css ground-truth.
+   ========================================================================== */
+
+/* ------------------------------------------------------------------------
+   1. BASE BADGE ARCHITECTURE (COMPACT RECTANGLE - 6px RADIUS)
+   ------------------------------------------------------------------------ */
+.dnfl-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.35rem !important;
+  padding: 3px 6px !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  border-radius: 6px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  border: 1px solid transparent !important;
+}
+
+.dnfl-badge-lg,
+.dnfl-badge-record {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  padding: 0.3rem 0.75rem !important;
+}
+
+/* Wired Status Indicator Palette Modifiers */
+.dnfl-badge-green {
+  background-color: var(--dnfl-green-bg, #dcfce7) !important;   /* Mint Tint */
+  color: var(--dnfl-green-text, #15803d) !important;             /* Emerald Green */
+  border-color: var(--dnfl-green-border, #bbf7d0) !important;
+}
+
+.dnfl-badge-red {
+  background-color: var(--dnfl-red-bg, #fee2e2) !important;     /* Rose Tint */
+  color: var(--dnfl-red-text, #b91c1c) !important;               /* Crimson Red */
+  border-color: var(--dnfl-red-border, #fecaca) !important;
+}
+
+.dnfl-badge-blue {
+  background-color: var(--dnfl-blue-bg, #dbeafe) !important;    /* Ice Blue */
+  color: var(--dnfl-blue-text, #1d4ed8) !important;              /* Royal Blue */
+  border-color: var(--dnfl-blue-border, #bfdbfe) !important;
+}
+
+.dnfl-badge-amber {
+  background-color: var(--dnfl-amber-bg, #fef3c7) !important;   /* Soft Amber Tint */
+  color: var(--dnfl-amber-text, #b45309) !important;             /* Warm Amber Gold */
+  border-color: var(--dnfl-amber-border, #fde68a) !important;
+}
+
+.dnfl-badge-gray {
+  background-color: var(--dnfl-gray-bg, #f1f5f9) !important;    /* Slate Tint */
+  color: var(--dnfl-gray-text, #64748b) !important;              /* Medium Slate */
+  border-color: var(--dnfl-gray-border, #e2e8f0) !important;
+}
+
+/* ------------------------------------------------------------------------
+   2. SOLID METADATA PILL CAPSULES (GROUND-TRUTH MATCHING v4_58.css)
+   ------------------------------------------------------------------------ */
+.dnfl-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.35rem !important;
+  padding: 4px 10px !important;
+  font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  border-radius: 9999px !important; /* Full capsule curve */
+  text-align: center !important;
+  white-space: nowrap !important;
+  color: #ffffff !important;
+  border: none !important;
+}
+
+/* Solid Blue W-L Record Pills & Power Index Badges (v4_58.css Exact Match) */
+.dnfl-pill-blue,
+.dnfl-record-pill,
+.dnfl-record-badge {
+  background-color: var(--dnfl-badge-blue, #3b82f6) !important; /* Solid Cobalt Blue */
+  color: #ffffff !important;                                    /* Crisp White Text */
+  display: inline-block !important;
+  text-align: center !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  padding: 4px 10px !important;
+  border-radius: 9999px !important;
+}
+
+.dnfl-pill-green,
+.dnfl-lts-badge-high-score {
+  background-color: var(--dnfl-success-green, #10b981) !important;
+  color: #ffffff !important;
+}
+
+.dnfl-pill-red,
+.dnfl-lts-badge-knockout {
+  background-color: var(--dnfl-alert-red, #ef4444) !important;
+  color: #ffffff !important;
+}
+
+.dnfl-pill-amber {
+  background-color: var(--dnfl-badge-amber, #f59e0b) !important;
+  color: #ffffff !important;
+}
+
+.dnfl-pill-gray {
+  background-color: var(--dnfl-gray-text, #64748b) !important;
+  color: #ffffff !important;
+}
