@@ -1768,71 +1768,113 @@ a.dnfl-btn-secondary:hover,
   }
 }
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module SCSS Styles (v4)
+   DNFL Last Team Standing (LTS) Module SCSS Styles (v6)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 /* --------------------------------------------------------------------------
    TEMPORARY TESTING STYLES - FRAMEWORK MIGRATION NOTICE:
 
-   The following  classes are generic framework-wide
+   The following `.dnfl-section-header` classes are generic framework-wide
    table section header styles. They are placed in this file temporarily for
    LTS testing purposes.
 
    MIGRATION TARGET:
-   These rules SHOULD BE MOVED to  (and compiled into
-   ) under the Table Components section so all DNFL table
-   modules (Standings, Rankings, Exporter, LTS, etc.) can share the exact same
-   section header styling.
+   These rules SHOULD BE MOVED to `css/scss/_tables.scss` under the Table
+   Components section so all DNFL table modules (Standings, Rankings, Exporter,
+   LTS, etc.) can share the exact same section header styling.
    -------------------------------------------------------------------------- */
-.dnfl-table-section-header {
+.dnfl-section-header {
   background-color: var(--dnfl-bg-subhead, #f1f5f9);
-  border-bottom: 2px solid var(--dnfl-border-medium, #cbd5e1);
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1);
+  border-bottom: none;
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding: 0.75rem 1rem;
 }
-.dnfl-table-section-header .dnfl-table-section-header-cell {
-  padding: 0.75rem 1rem !important;
-  text-align: left;
-}
-.dnfl-table-section-header .dnfl-table-section-header-content {
+.dnfl-section-header .dnfl-section-header-content {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 }
-.dnfl-table-section-header .dnfl-table-section-header-content h3 {
+.dnfl-section-header .dnfl-section-header-content .dnfl-section-title {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1.05rem;
   font-weight: 700;
   color: var(--dnfl-text-heading, #0f172a);
-  letter-spacing: 0.5px;
+  letter-spacing: 0.01em;
   text-transform: none;
 }
 
 /* --------------------------------------------------------------------------
    DNFL LTS MODULE SPECIFIC STYLES (SCOPED UNDER CONTAINER ID)
-   Reference: README-dnfl-css.md (Section 10, Step 2)
+   Reference: README-dnfl-css.md
    -------------------------------------------------------------------------- */
+#dnfl-lts-container {
+  /* Integrated Table Card Wrapper */
+}
+#dnfl-lts-container .dnfl-table-wrapper {
+  border: 1px solid var(--dnfl-border-medium, #cbd5e1);
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: 1.5rem;
+}
 #dnfl-lts-container .dnfl-lts-grid-table,
 #dnfl-lts-container .dnfl-lts-summary-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
+  /* Franchise Column Standards matching Standings */
 }
-#dnfl-lts-container .dnfl-lts-grid-table .dnfl-sticky-col,
-#dnfl-lts-container .dnfl-lts-summary-table .dnfl-sticky-col {
+#dnfl-lts-container .dnfl-lts-grid-table .dnfl-col-franchise,
+#dnfl-lts-container .dnfl-lts-summary-table .dnfl-col-franchise {
+  min-width: 180px;
+  max-width: 220px;
+  text-align: left;
+}
+#dnfl-lts-container .dnfl-lts-grid-table .dnfl-col-franchise.dnfl-sticky-col,
+#dnfl-lts-container .dnfl-lts-summary-table .dnfl-col-franchise.dnfl-sticky-col {
   position: sticky;
   left: 0;
-  z-index: 2;
+  z-index: 10;
   background-color: var(--dnfl-bg-card, #ffffff);
+}
+#dnfl-lts-container .dnfl-lts-grid-table,
+#dnfl-lts-container .dnfl-lts-summary-table {
+  /* Score & Week Column Widths & No-Wrap Rules */
+}
+#dnfl-lts-container .dnfl-lts-grid-table th.dnfl-text-center,
+#dnfl-lts-container .dnfl-lts-grid-table td.dnfl-text-center,
+#dnfl-lts-container .dnfl-lts-summary-table th.dnfl-text-center,
+#dnfl-lts-container .dnfl-lts-summary-table td.dnfl-text-center {
+  min-width: 105px;
+  white-space: nowrap;
+}
+#dnfl-lts-container .dnfl-lts-grid-table th.dnfl-col-week,
+#dnfl-lts-container .dnfl-lts-grid-table td.dnfl-col-week,
+#dnfl-lts-container .dnfl-lts-summary-table th.dnfl-col-week,
+#dnfl-lts-container .dnfl-lts-summary-table td.dnfl-col-week {
+  min-width: 75px;
+  white-space: nowrap;
+}
+#dnfl-lts-container .dnfl-lts-grid-table th.dnfl-col-score,
+#dnfl-lts-container .dnfl-lts-grid-table td.dnfl-col-score,
+#dnfl-lts-container .dnfl-lts-summary-table th.dnfl-col-score,
+#dnfl-lts-container .dnfl-lts-summary-table td.dnfl-col-score {
+  min-width: 110px;
+  white-space: nowrap;
 }
 #dnfl-lts-container .dnfl-lts-grid-table,
 #dnfl-lts-container .dnfl-lts-summary-table {
   /* Sticky Column Row Background States */
 }
-#dnfl-lts-container .dnfl-lts-grid-table tbody tr.dnfl-row-even .dnfl-sticky-col,
-#dnfl-lts-container .dnfl-lts-summary-table tbody tr.dnfl-row-even .dnfl-sticky-col {
-  background-color: var(--dnfl-bg-alt, #fafafa) !important;
-}
 #dnfl-lts-container .dnfl-lts-grid-table tbody tr.dnfl-row-odd .dnfl-sticky-col,
 #dnfl-lts-container .dnfl-lts-summary-table tbody tr.dnfl-row-odd .dnfl-sticky-col {
   background-color: var(--dnfl-bg-card, #ffffff) !important;
+}
+#dnfl-lts-container .dnfl-lts-grid-table tbody tr.dnfl-row-even .dnfl-sticky-col,
+#dnfl-lts-container .dnfl-lts-summary-table tbody tr.dnfl-row-even .dnfl-sticky-col {
+  background-color: var(--dnfl-bg-alt, #fafafa) !important;
 }
 #dnfl-lts-container .dnfl-lts-grid-table tbody tr:hover .dnfl-sticky-col,
 #dnfl-lts-container .dnfl-lts-summary-table tbody tr:hover .dnfl-sticky-col {
@@ -1869,6 +1911,84 @@ a.dnfl-btn-secondary:hover,
   letter-spacing: 0.05em;
   border-top: 1px solid var(--dnfl-border-medium, #cbd5e1);
   border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1);
+}
+#dnfl-lts-container {
+  /* Indicator Utility Styling: Pills & Badges */
+}
+#dnfl-lts-container .dnfl-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+#dnfl-lts-container .dnfl-pill-green {
+  background-color: var(--dnfl-success, #10b981);
+  color: #ffffff !important;
+}
+#dnfl-lts-container .dnfl-pill-red {
+  background-color: var(--dnfl-danger, #ef4444);
+  color: #ffffff !important;
+}
+#dnfl-lts-container .dnfl-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.5rem;
+  border-radius: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+#dnfl-lts-container .dnfl-badge-green {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--dnfl-success-dark, #065f46);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+#dnfl-lts-container .dnfl-badge-red {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: var(--dnfl-danger-dark, #991b1b);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+#dnfl-lts-container {
+  /* Dynamic Legend Panel */
+}
+#dnfl-lts-container .dnfl-legend-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding: 0.75rem 1rem;
+  background-color: var(--dnfl-bg-alt, #fafafa);
+  border: 1px solid var(--dnfl-border-light, #e2e8f0);
+  border-radius: 6px;
+}
+#dnfl-lts-container .dnfl-legend-panel .dnfl-legend-items {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+#dnfl-lts-container .dnfl-legend-panel .dnfl-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+#dnfl-lts-container .dnfl-legend-panel .dnfl-legend-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--dnfl-text-secondary, #475569);
+}
+#dnfl-lts-container .dnfl-legend-panel .dnfl-legend-note {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--dnfl-text-muted, #64748b);
 }
 
 /* ==========================================================================

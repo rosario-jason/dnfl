@@ -1,0 +1,223 @@
+/* ==========================================================================
+   DNFL Last Team Standing (LTS) Module SCSS Styles (v6)
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   TEMPORARY TESTING STYLES - FRAMEWORK MIGRATION NOTICE:
+   
+   The following `.dnfl-section-header` classes are generic framework-wide
+   table section header styles. They are placed in this file temporarily for
+   LTS testing purposes.
+   
+   MIGRATION TARGET:
+   These rules SHOULD BE MOVED to `css/scss/_tables.scss` under the Table
+   Components section so all DNFL table modules (Standings, Rankings, Exporter,
+   LTS, etc.) can share the exact same section header styling.
+   -------------------------------------------------------------------------- */
+
+.dnfl-section-header {
+    background-color: var(--dnfl-bg-subhead, #f1f5f9);
+    border: 1px solid var(--dnfl-border-medium, #cbd5e1);
+    border-bottom: none;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    padding: 0.75rem 1rem;
+
+    .dnfl-section-header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .dnfl-section-title {
+            margin: 0;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--dnfl-text-heading, #0f172a);
+            letter-spacing: 0.01em;
+            text-transform: none;
+        }
+    }
+}
+
+/* --------------------------------------------------------------------------
+   DNFL LTS MODULE SPECIFIC STYLES (SCOPED UNDER CONTAINER ID)
+   Reference: README-dnfl-css.md
+   -------------------------------------------------------------------------- */
+
+#dnfl-lts-container {
+    /* Integrated Table Card Wrapper */
+    .dnfl-table-wrapper {
+        border: 1px solid var(--dnfl-border-medium, #cbd5e1);
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        overflow-x: auto;
+        margin-bottom: 1.5rem;
+    }
+
+    .dnfl-lts-grid-table,
+    .dnfl-lts-summary-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+
+        /* Franchise Column Standards matching Standings */
+        .dnfl-col-franchise {
+            min-width: 180px;
+            max-width: 220px;
+            text-align: left;
+        }
+
+        .dnfl-col-franchise.dnfl-sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 10;
+            background-color: var(--dnfl-bg-card, #ffffff);
+        }
+
+        /* Score & Week Column Widths & No-Wrap Rules */
+        th.dnfl-text-center,
+        td.dnfl-text-center {
+            min-width: 105px;
+            white-space: nowrap;
+        }
+
+        th.dnfl-col-week,
+        td.dnfl-col-week {
+            min-width: 75px;
+            white-space: nowrap;
+        }
+
+        th.dnfl-col-score,
+        td.dnfl-col-score {
+            min-width: 110px;
+            white-space: nowrap;
+        }
+
+        /* Sticky Column Row Background States */
+        tbody tr.dnfl-row-odd .dnfl-sticky-col {
+            background-color: var(--dnfl-bg-card, #ffffff) !important;
+        }
+
+        tbody tr.dnfl-row-even .dnfl-sticky-col {
+            background-color: var(--dnfl-bg-alt, #fafafa) !important;
+        }
+
+        tbody tr:hover .dnfl-sticky-col {
+            background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+        }
+
+        tbody tr.dnfl-my-team .dnfl-sticky-col,
+        tbody tr.myfranchise .dnfl-sticky-col {
+            background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
+        }
+
+        tbody tr.dnfl-my-team:hover .dnfl-sticky-col,
+        tbody tr.myfranchise:hover .dnfl-sticky-col {
+            background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
+        }
+    }
+
+    /* Row states */
+    .dnfl-row-muted {
+        opacity: 0.65;
+    }
+
+    /* Divider row for eliminated teams */
+    .dnfl-divider-row td {
+        background-color: var(--dnfl-bg-subhead, #f1f5f9);
+        color: var(--dnfl-text-subtle, #555555);
+        font-weight: 600;
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-top: 1px solid var(--dnfl-border-medium, #cbd5e1);
+        border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1);
+    }
+
+    /* Indicator Utility Styling: Pills & Badges */
+    .dnfl-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .dnfl-pill-green {
+        background-color: var(--dnfl-success, #10b981);
+        color: #ffffff !important;
+    }
+
+    .dnfl-pill-red {
+        background-color: var(--dnfl-danger, #ef4444);
+        color: #ffffff !important;
+    }
+
+    .dnfl-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.2rem 0.5rem;
+        border-radius: 0.375rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1;
+        white-space: nowrap;
+    }
+
+    .dnfl-badge-green {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--dnfl-success-dark, #065f46);
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .dnfl-badge-red {
+        background-color: rgba(239, 68, 68, 0.15);
+        color: var(--dnfl-danger-dark, #991b1b);
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    /* Dynamic Legend Panel */
+    .dnfl-legend-panel {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.25rem;
+        padding: 0.75rem 1rem;
+        background-color: var(--dnfl-bg-alt, #fafafa);
+        border: 1px solid var(--dnfl-border-light, #e2e8f0);
+        border-radius: 6px;
+
+        .dnfl-legend-items {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.25rem;
+        }
+
+        .dnfl-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .dnfl-legend-label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--dnfl-text-secondary, #475569);
+        }
+
+        .dnfl-legend-note {
+            font-size: 0.75rem;
+            font-style: italic;
+            color: var(--dnfl-text-muted, #64748b);
+        }
+    }
+}

@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Logic Engine (v11)
+   DNFL Last Team Standing (LTS) Module Logic Engine (v12)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 (function(window, document) {
@@ -150,20 +150,24 @@
             }
             moduleState.weeklyResultsData = weeklyResultsData;
 
-            // 3. Fetch Sparse Exception Overrides (Dynamic API Middleware with CDN Fallback via client)
+            // 3. Fetch Sparse Exception Overrides via API Middleware
             let rawRules = {};
             const rulesPath = 'dnfl_lts/' + moduleState.activeYear + '/lts_rules.json';
             try {
-                const jsonText = await client.fetchRawText(rulesPath, { ttl: client.TTL.DAILY });
+                const jsonText = await client.fetchRawText(rulesPath, {
+                    ttl: client.TTL.DAILY
+                });
                 if (jsonText && typeof jsonText === 'string') {
                     rawRules = JSON.parse(jsonText);
                 }
             } catch (err1) {
                 try {
-                    const cdnPath = 'https://dnfl.live/' + rulesPath;
-                    const jsonTextCdn = await client.fetchRawText(cdnPath, { ttl: client.TTL.DAILY });
-                    if (jsonTextCdn && typeof jsonTextCdn === 'string') {
-                        rawRules = JSON.parse(jsonTextCdn);
+                    const cdnUrl = 'https://dnfl.live/' + rulesPath;
+                    const jsonText = await client.fetchRawText(cdnUrl, {
+                        ttl: client.TTL.DAILY
+                    });
+                    if (jsonText && typeof jsonText === 'string') {
+                        rawRules = JSON.parse(jsonText);
                     }
                 } catch (err2) {
                     console.info("[DNFL LTS] No sparse rules JSON override found for " + moduleState.activeYear + ". Operating on built-in default rules.");
@@ -174,10 +178,7 @@
             // 4. Resolve Initial Conference Selection
             setupConferenceSelection(client);
 
-            // 5. Setup Action Toolbar Listeners
-            setupToolbarListeners(container);
-
-            // 6. Render Module Views
+            // 5. Render Views
             renderLTS(container);
 
         } catch (err) {
@@ -256,16 +257,6 @@
             defaultConf = confKeys[0];
         }
         moduleState.selectedConference = defaultConf;
-    }
-
-    function setupToolbarListeners(container) {
-        const confSelect = container.querySelector('#dnfl-lts-conference-select');
-        if (confSelect) {
-            confSelect.addEventListener('change', function(e) {
-                moduleState.selectedConference = norm(e.target.value);
-                renderLTS(container);
-            });
-        }
     }
 
     function extractMatchupWeeks(weeklyResultsData) {
@@ -370,7 +361,7 @@
                 highScorersMap[w] = maxScorerFid;
             }
 
-            // Identify Low Scorer (for all teams in conference)
+            // Identify Low Scorer (across all conference teams)
             let minScoreWeek = Infinity;
             let lowScorerFid = null;
             confTeamIds.forEach(fid => {
@@ -475,6 +466,118 @@
         };
     }
 
+    function renderLTS(container) {
+        const confId = moduleState.selectedConference;
+        const data = calculateLTSData(confId);
+
+        let contentEl = container.querySelector('#dnfl-lts-content');
+        if (!contentEl) contentEl = container;
+
+        let gridContainer = container.querySelector('#dnfl-lts-grid-container');
+        let summaryContainer = container.querySelector('#dnfl-lts-summary-container');
+
+        if (!gridContainer || !summaryContainer) {
+            contentEl.innerHTML = `
+                <div id="dnfl-lts-grid-container" class="dnfl-lts-view"></div>
+                <div id="dnfl-lts-summary-container" class="dnfl-lts-view dnfl-mt-4"></div>
+            `;
+            gridContainer = container.querySelector('#dnfl-lts-grid-container');
+            summaryContainer = container.querySelector('#dnfl-lts-summary-container');
+        }
+
+        // Render Conference Select Dropdown Options
+        const confSelect = container.querySelector('#dnfl-lts-conference-select');
+        if (confSelect) {
+            let optionsHtml = '';
+            Object.keys(moduleState.rulesConfig).forEach(cid => {
+                const cfg = moduleState.rulesConfig[cid];
+                const isSelected = cid === confId ? 'selected' : '';
+                optionsHtml += `<option value="${cid}" ${isSelected}>${cfg.conference_name}</option>`;
+            });
+            confSelect.innerHTML = optionsHtml;
+        }
+
+        // Render Dynamic Legend
+        renderLegend(container, data);
+
+        // Offseason / Pre-Season Check
+        if (data.maxCompletedWeek === 0) {
+            const preSeasonHtml = `
+                <div class="dnfl-status-loading">
+                    <i class="fa-solid fa-clock-rotate-left dnfl-icon-amber dnfl-mr-2"></i>
+                    <span>Survival eliminations will activate once Week 1 scores are finalized.</span>
+                </div>
+            `;
+            if (gridContainer) gridContainer.innerHTML = preSeasonHtml;
+            if (summaryContainer) summaryContainer.innerHTML = '';
+            return;
+        }
+
+        // Render View A: Cross-Grid Matrix
+        renderScoresGrid(container, data);
+
+        // Render View B: Summary Table
+        renderSummaryTable(container, data);
+    }
+
+    function renderLegend(container, data) {
+        let legendEl = container.querySelector('#dnfl-lts-legend');
+        if (!legendEl) return;
+
+        const ltsOn = !!data.confRules.lts_isEnabled;
+        const hsOn = !!data.confRules.highScore_isEnabled;
+
+        let itemsHtml = '';
+        if (hsOn) {
+            itemsHtml += `
+                <div class="dnfl-legend-item">
+                    <span class="dnfl-pill dnfl-pill-green">145.20 <i class="fa-solid fa-star"></i></span>
+                    <span class="dnfl-legend-label">Weekly High Score</span>
+                </div>
+            `;
+        } else {
+            itemsHtml += `
+                <div class="dnfl-legend-item">
+                    <span class="dnfl-badge dnfl-badge-green">145.20</span>
+                    <span class="dnfl-legend-label">Weekly High Score</span>
+                </div>
+            `;
+        }
+
+        if (ltsOn) {
+            itemsHtml += `
+                <div class="dnfl-legend-item">
+                    <span class="dnfl-pill dnfl-pill-red">88.50 <i class="fa-solid fa-skull"></i></span>
+                    <span class="dnfl-legend-label">LTS Knockout Score</span>
+                </div>
+                <div class="dnfl-legend-item">
+                    <span class="dnfl-badge dnfl-badge-red">88.50</span>
+                    <span class="dnfl-legend-label">Weekly Low Score</span>
+                </div>
+                <div class="dnfl-legend-item">
+                    <span class="dnfl-text-muted">72.30 <i class="fa-solid fa-skull"></i></span>
+                    <span class="dnfl-legend-label">Post-Elimination Score</span>
+                </div>
+            `;
+        } else {
+            itemsHtml += `
+                <div class="dnfl-legend-item">
+                    <span class="dnfl-badge dnfl-badge-red">88.50</span>
+                    <span class="dnfl-legend-label">Weekly Low Score</span>
+                </div>
+            `;
+        }
+
+        const noteText = ltsOn 
+            ? `*LTS eliminations active Weeks ${data.startWeek}-${data.endWeek}` 
+            : `*LTS eliminations disabled for this conference`;
+
+        legendEl.innerHTML = `
+            <div class="dnfl-legend-items">${itemsHtml}</div>
+            <div class="dnfl-legend-note">${noteText}</div>
+        `;
+    }
+
     function buildFranchiseCell(f, client) {
         const fid = normFranchiseId(f ? f.id : '');
         const franchise = (client && client.getFranchise && fid) ? client.getFranchise(fid) : null;
@@ -498,134 +601,6 @@
         `;
     }
 
-    function renderLegend(container, confRules, startWeek, endWeek) {
-        const legendContainer = container.querySelector('#dnfl-lts-legend');
-        if (!legendContainer) return;
-
-        const ltsOn = !!confRules.lts_isEnabled;
-        const hsOn = !!confRules.highScore_isEnabled;
-
-        let itemsHtml = '<div class="dnfl-legend-items">';
-
-        // High Score Key
-        if (hsOn) {
-            itemsHtml += `
-                <span class="dnfl-legend-item">
-                    <span class="dnfl-pill dnfl-pill-green">145.20 <i class="fa-solid fa-star"></i></span>
-                    <span>Weekly High Score</span>
-                </span>
-            `;
-        } else {
-            itemsHtml += `
-                <span class="dnfl-legend-item">
-                    <span class="dnfl-badge dnfl-badge-green">145.20</span>
-                    <span>Weekly High Score</span>
-                </span>
-            `;
-        }
-
-        // LTS Knockout & Low Score Keys
-        if (ltsOn) {
-            itemsHtml += `
-                <span class="dnfl-legend-item">
-                    <span class="dnfl-pill dnfl-pill-red">88.50 <i class="fa-solid fa-skull"></i></span>
-                    <span>LTS Knockout Score</span>
-                </span>
-                <span class="dnfl-legend-item">
-                    <span class="dnfl-badge dnfl-badge-red">88.50</span>
-                    <span>Weekly Low Score (Non-LTS)</span>
-                </span>
-                <span class="dnfl-legend-item">
-                    <span class="dnfl-text-muted">72.30 <i class="fa-solid fa-skull"></i></span>
-                    <span>Post-Elimination Score</span>
-                </span>
-            `;
-        } else {
-            itemsHtml += `
-                <span class="dnfl-legend-item">
-                    <span class="dnfl-badge dnfl-badge-red">88.50</span>
-                    <span>Weekly Low Score</span>
-                </span>
-            `;
-        }
-
-        itemsHtml += '</div>';
-
-        // Note side
-        let noteText = '';
-        if (ltsOn) {
-            noteText = `*LTS Eliminations active Weeks ${startWeek}-${endWeek}`;
-        } else {
-            noteText = `*LTS Eliminations inactive for this conference`;
-        }
-
-        itemsHtml += `<div class="dnfl-legend-note">${noteText}</div>`;
-        legendContainer.innerHTML = itemsHtml;
-    }
-
-    function renderLTS(container) {
-        const confId = moduleState.selectedConference;
-        const data = calculateLTSData(confId);
-
-        let contentEl = container.querySelector('#dnfl-lts-content');
-        if (!contentEl) {
-            const cardBody = container.querySelector('.dnfl-card-body');
-            if (cardBody) {
-                contentEl = document.createElement('div');
-                contentEl.id = 'dnfl-lts-content';
-                cardBody.appendChild(contentEl);
-            } else {
-                contentEl = container;
-            }
-        }
-
-        let gridContainer = container.querySelector('#dnfl-lts-grid-container');
-        let summaryContainer = container.querySelector('#dnfl-lts-summary-container');
-
-        if (!gridContainer || !summaryContainer) {
-            contentEl.innerHTML = `
-                <div id="dnfl-lts-grid-container" class="dnfl-lts-view"></div>
-                <div id="dnfl-lts-summary-container" class="dnfl-lts-view dnfl-mt-4"></div>
-            `;
-            gridContainer = container.querySelector('#dnfl-lts-grid-container');
-            summaryContainer = container.querySelector('#dnfl-lts-summary-container');
-        }
-
-        // Render Conference Select Dropdown
-        const confSelect = container.querySelector('#dnfl-lts-conference-select');
-        if (confSelect) {
-            let optionsHtml = '';
-            Object.keys(moduleState.rulesConfig).forEach(cid => {
-                const cfg = moduleState.rulesConfig[cid];
-                const isSelected = cid === confId ? 'selected' : '';
-                optionsHtml += `<option value="${cid}" ${isSelected}>${cfg.conference_name}</option>`;
-            });
-            confSelect.innerHTML = optionsHtml;
-        }
-
-        // Render Dynamic Legend
-        renderLegend(container, data.confRules, data.startWeek, data.endWeek);
-
-        // Offseason / Pre-Season Check
-        if (data.maxCompletedWeek === 0) {
-            const preSeasonHtml = `
-                <div class="dnfl-status-loading">
-                    <i class="fa-solid fa-clock-rotate-left dnfl-icon-amber dnfl-mr-2"></i>
-                    <span>Survival eliminations will activate once Week 1 scores are finalized.</span>
-                </div>
-            `;
-            if (gridContainer) gridContainer.innerHTML = preSeasonHtml;
-            if (summaryContainer) summaryContainer.innerHTML = '';
-            return;
-        }
-
-        // Render View A: Cross-Grid Matrix
-        renderScoresGrid(container, data);
-
-        // Render View B: Summary Table
-        renderSummaryTable(container, data);
-    }
-
     function renderScoresGrid(container, data) {
         const client = getApiClient();
         const gridContainer = container.querySelector('#dnfl-lts-grid-container');
@@ -640,7 +615,7 @@
 
         const endWeek = data.endWeek || 14;
 
-        // Section Header OUTSIDE table-wrapper so it NEVER scrolls horizontally
+        // Section Header OUTSIDE table wrapper so it NEVER scrolls horizontally
         let html = `
             <div class="dnfl-section-header">
                 <div class="dnfl-section-header-content">
@@ -663,13 +638,15 @@
         }
         html += `</tr></thead><tbody>`;
 
-        function buildRow(f, isEliminated, rowIdx) {
+        let rowCounter = 0;
+        function buildRow(f, isEliminated) {
+            rowCounter++;
             const fid = normFranchiseId(f.id);
             const isMyTeam = (fid === userFid) ? 'dnfl-my-team myfranchise' : '';
-            const stripeClass = (rowIdx % 2 === 1) ? 'dnfl-row-even' : 'dnfl-row-odd';
-            let rowHtml = `<tr class="${isMyTeam} ${stripeClass} ${isEliminated ? 'dnfl-row-muted' : ''}">`;
-            
-            // Sticky Franchise Column
+            const rowStriping = (rowCounter % 2 === 1) ? 'dnfl-row-odd' : 'dnfl-row-even';
+            const mutedClass = isEliminated ? 'dnfl-row-muted' : '';
+
+            let rowHtml = `<tr class="${rowStriping} ${isMyTeam} ${mutedClass}">`;
             rowHtml += `<td class="dnfl-col-franchise dnfl-sticky-col">${buildFranchiseCell(f, client)}</td>`;
 
             const elimInfo = data.eliminations[fid];
@@ -708,15 +685,15 @@
             return rowHtml;
         }
 
-        activeFranchises.forEach((f, idx) => {
-            html += buildRow(f, false, idx);
+        activeFranchises.forEach(f => {
+            html += buildRow(f, false);
         });
 
         if (eliminatedFranchises.length > 0) {
             const totalCols = endWeek + 1;
             html += `<tr class="dnfl-divider-row"><td colspan="${totalCols}">LTS Eliminated Teams</td></tr>`;
-            eliminatedFranchises.forEach((f, idx) => {
-                html += buildRow(f, true, idx);
+            eliminatedFranchises.forEach(f => {
+                html += buildRow(f, true);
             });
         }
 
@@ -755,30 +732,32 @@
                 <table class="dnfl-table dnfl-lts-summary-table">
                     <thead>
                         <tr>
-                            <th>Week</th>
+                            <th class="dnfl-col-week dnfl-text-center">Week</th>
         `;
 
         if (ltsOn) {
-            html += `<th>Eliminated Franchise</th><th class="dnfl-text-center">Knockout Score</th>`;
+            html += `<th class="dnfl-col-franchise">Eliminated Franchise</th><th class="dnfl-col-score dnfl-text-center">Knockout Score</th>`;
         }
         if (hsOn) {
-            html += `<th>Weekly High Scorer</th><th class="dnfl-text-center">High Score</th>`;
+            html += `<th class="dnfl-col-franchise">Weekly High Scorer</th><th class="dnfl-col-score dnfl-text-center">High Score</th>`;
         }
         html += `</tr></thead><tbody>`;
 
-        data.weeklySummaries.forEach((s, idx) => {
-            const stripeClass = (idx % 2 === 1) ? 'dnfl-row-even' : 'dnfl-row-odd';
-            html += `<tr class="${stripeClass}">`;
-            html += `<td class="dnfl-font-bold">Week ${s.week}</td>`;
+        let rowCounter = 0;
+        data.weeklySummaries.forEach(s => {
+            rowCounter++;
+            const rowStriping = (rowCounter % 2 === 1) ? 'dnfl-row-odd' : 'dnfl-row-even';
+            html += `<tr class="${rowStriping}">`;
+            html += `<td class="dnfl-col-week dnfl-text-center dnfl-font-bold">Week ${s.week}</td>`;
 
             // LTS Column Logic
             if (ltsOn) {
                 if (s.isLTSWeek && s.eliminatedFid) {
                     const f = client.getFranchise ? client.getFranchise(s.eliminatedFid) : { id: s.eliminatedFid };
-                    html += `<td>${buildFranchiseCell(f, client)}</td>`;
-                    html += `<td class="dnfl-text-center"><span class="dnfl-pill dnfl-pill-red">${s.eliminatedScore.toFixed(2)} <i class="fa-solid fa-skull"></i></span></td>`;
+                    html += `<td class="dnfl-col-franchise">${buildFranchiseCell(f, client)}</td>`;
+                    html += `<td class="dnfl-col-score dnfl-text-center"><span class="dnfl-pill dnfl-pill-red">${s.eliminatedScore.toFixed(2)} <i class="fa-solid fa-skull"></i></span></td>`;
                 } else {
-                    html += `<td class="dnfl-text-muted">—</td><td class="dnfl-text-center dnfl-text-muted">—</td>`;
+                    html += `<td class="dnfl-col-franchise dnfl-text-muted">—</td><td class="dnfl-col-score dnfl-text-center dnfl-text-muted">—</td>`;
                 }
             }
 
@@ -786,14 +765,10 @@
             if (hsOn) {
                 if (s.highScoreFid) {
                     const f = client.getFranchise ? client.getFranchise(s.highScoreFid) : { id: s.highScoreFid };
-                    html += `<td>${buildFranchiseCell(f, client)}</td>`;
-                    if (hsOn) {
-                        html += `<td class="dnfl-text-center"><span class="dnfl-pill dnfl-pill-green">${s.highScore.toFixed(2)} <i class="fa-solid fa-star"></i></span></td>`;
-                    } else {
-                        html += `<td class="dnfl-text-center"><span class="dnfl-badge dnfl-badge-green">${s.highScore.toFixed(2)}</span></td>`;
-                    }
+                    html += `<td class="dnfl-col-franchise">${buildFranchiseCell(f, client)}</td>`;
+                    html += `<td class="dnfl-col-score dnfl-text-center"><span class="dnfl-pill dnfl-pill-green">${s.highScore.toFixed(2)} <i class="fa-solid fa-star"></i></span></td>`;
                 } else {
-                    html += `<td class="dnfl-text-muted">—</td><td class="dnfl-text-center dnfl-text-muted">—</td>`;
+                    html += `<td class="dnfl-col-franchise dnfl-text-muted">—</td><td class="dnfl-col-score dnfl-text-center dnfl-text-muted">—</td>`;
                 }
             }
             html += `</tr>`;
@@ -815,31 +790,38 @@
         init: init,
         updateView: function() {
             const container = document.getElementById('dnfl-lts-container');
-            if (container) renderLTS(container);
+            if (!container) return;
+            const confSelect = container.querySelector('#dnfl-lts-conference-select');
+            if (confSelect) {
+                moduleState.selectedConference = norm(confSelect.value);
+            }
+            renderLTS(container);
         },
         toggleGrid: function() {
             const container = document.getElementById('dnfl-lts-container');
             if (!container) return;
-            const wrapper = container.querySelector('#dnfl-lts-grid-wrapper');
+            const gridWrapper = container.querySelector('#dnfl-lts-grid-wrapper');
             const btn = container.querySelector('#dnfl-btn-lts-grid');
-            if (wrapper) {
-                wrapper.classList.toggle('dnfl-is-hidden');
-                const isHidden = wrapper.classList.contains('dnfl-is-hidden');
+            if (gridWrapper) {
+                const isHidden = gridWrapper.classList.toggle('dnfl-is-hidden');
                 if (btn) {
-                    btn.innerHTML = isHidden ? '<i class="fa-solid fa-eye"></i> Show' : '<i class="fa-solid fa-eye-slash"></i> Hide';
+                    btn.innerHTML = isHidden 
+                        ? '<i class="fa-solid fa-eye"></i> Show' 
+                        : '<i class="fa-solid fa-eye-slash"></i> Hide';
                 }
             }
         },
         toggleSummary: function() {
             const container = document.getElementById('dnfl-lts-container');
             if (!container) return;
-            const wrapper = container.querySelector('#dnfl-lts-summary-wrapper');
+            const summaryWrapper = container.querySelector('#dnfl-lts-summary-wrapper');
             const btn = container.querySelector('#dnfl-btn-lts-summary');
-            if (wrapper) {
-                wrapper.classList.toggle('dnfl-is-hidden');
-                const isHidden = wrapper.classList.contains('dnfl-is-hidden');
+            if (summaryWrapper) {
+                const isHidden = summaryWrapper.classList.toggle('dnfl-is-hidden');
                 if (btn) {
-                    btn.innerHTML = isHidden ? '<i class="fa-solid fa-eye"></i> Show' : '<i class="fa-solid fa-eye-slash"></i> Hide';
+                    btn.innerHTML = isHidden 
+                        ? '<i class="fa-solid fa-eye"></i> Show' 
+                        : '<i class="fa-solid fa-eye-slash"></i> Hide';
                 }
             }
         }
