@@ -3,9 +3,11 @@
   "comment": "Sparse exceptions configuration. Omitted values automatically default to lts_isEnabled: true, highScore_isEnabled: true, startWeek: 'auto'",
   "exceptions": {
     "00": {
+      "lts_isEnabled": false,
       "startWeek": 2
     },
     "01": {
+      "lts_isEnabled": false,
       "startWeek": 2
     }
   }
