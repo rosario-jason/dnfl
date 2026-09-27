@@ -1,49 +1,86 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module SCSS Styles (v4)
+   DNFL Last Team Standing (LTS) Module SCSS Styles (v5)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
    TEMPORARY TESTING STYLES - FRAMEWORK MIGRATION NOTICE:
    
-   The following  classes are generic framework-wide
-   table section header styles. They are placed in this file temporarily for
-   LTS testing purposes.
+   The following `.dnfl-table-section-header` and `.dnfl-legend-panel` classes are
+   generic framework-wide table section header and legend styles. They are placed in
+   this file temporarily for LTS testing purposes.
    
    MIGRATION TARGET:
-   These rules SHOULD BE MOVED to  (and compiled into
-   ) under the Table Components section so all DNFL table
-   modules (Standings, Rankings, Exporter, LTS, etc.) can share the exact same
-   section header styling.
+   These rules SHOULD BE MOVED to `css/scss/_tables.scss` (under Table Components)
+   in the core framework so all DNFL table modules (Standings, Rankings, Exporter,
+   LTS, etc.) can share the exact same section header styling.
    -------------------------------------------------------------------------- */
 
-.dnfl-table-section-header {
+.dnfl-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     background-color: var(--dnfl-bg-subhead, #f1f5f9);
     border-bottom: 2px solid var(--dnfl-border-medium, #cbd5e1);
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border-radius: var(--dnfl-radius-sm, 4px) var(--dnfl-radius-sm, 4px) 0 0;
 
-    .dnfl-table-section-header-cell {
-        padding: 0.75rem 1rem !important;
-        text-align: left;
-    }
-
-    .dnfl-table-section-header-content {
+    .dnfl-section-header-content {
         display: flex;
         align-items: center;
+        justify-content: space-between;
+        width: 100%;
 
-        h3 {
+        .dnfl-section-title {
             margin: 0;
-            font-size: 1rem;
+            font-size: 1.1rem;
             font-weight: 700;
             color: var(--dnfl-text-heading, #0f172a);
-            letter-spacing: 0.5px;
+            letter-spacing: 0.02em;
             text-transform: none;
         }
     }
 }
 
+.dnfl-legend-panel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.625rem 1rem;
+    margin-bottom: 1rem;
+    background-color: var(--dnfl-bg-alt, #f8fafc);
+    border: 1px solid var(--dnfl-border-light, #e2e8f0);
+    border-radius: var(--dnfl-radius-md, 6px);
+    font-size: 0.85rem;
+
+    .dnfl-legend-items {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .dnfl-legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        color: var(--dnfl-text-body, #334155);
+        font-weight: 500;
+    }
+
+    .dnfl-legend-note {
+        color: var(--dnfl-text-muted, #64748b);
+        font-style: italic;
+        font-size: 0.8rem;
+    }
+}
+
 /* --------------------------------------------------------------------------
    DNFL LTS MODULE SPECIFIC STYLES (SCOPED UNDER CONTAINER ID)
-   Reference: README-dnfl-css.md (Section 10, Step 2)
+   Reference: README-dnfl-css.md
    -------------------------------------------------------------------------- */
 
 #dnfl-lts-container {
@@ -61,12 +98,12 @@
         }
 
         /* Sticky Column Row Background States */
-        tbody tr.dnfl-row-even .dnfl-sticky-col {
-            background-color: var(--dnfl-bg-alt, #fafafa) !important;
-        }
-
         tbody tr.dnfl-row-odd .dnfl-sticky-col {
             background-color: var(--dnfl-bg-card, #ffffff) !important;
+        }
+
+        tbody tr.dnfl-row-even .dnfl-sticky-col {
+            background-color: var(--dnfl-bg-alt, #fafafa) !important;
         }
 
         tbody tr:hover .dnfl-sticky-col {

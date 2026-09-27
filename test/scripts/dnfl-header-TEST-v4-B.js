@@ -10,11 +10,11 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "4_LTS_v10-B",
+        VERSION: "4_LTS_v11-B",
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
-            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-LTS_v4.css" }
+            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-LTS_v5.css" }
         ],
 
         INFRASTRUCTURE: [
@@ -31,7 +31,7 @@
             { name: "podcast",   url: "dnfl-podcast-v4_Final.js" },
             { name: "rules",     url: "dnfl-rules-v4_Final.js" },
             { name: "exporter",  url: "dnfl-exporter-v4_Final.js" },
-            { name: "lts",     url: "dnfl-lts-v10.js" }
+            { name: "lts",     url: "dnfl-lts-v11.js" }
         ],
 
         CONDITIONAL_LIBRARIES: {

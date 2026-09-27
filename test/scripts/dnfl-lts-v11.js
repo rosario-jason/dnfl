@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Logic Engine (v10)
+   DNFL Last Team Standing (LTS) Module Logic Engine (v11)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 (function(window, document) {
@@ -52,8 +52,7 @@
 
     function getLoggedInFranchiseId() {
         let fid = (window.DNFL && window.DNFL.currentFranchiseId) || window.franchise_id || window.mflFranchiseId || window.login_franchise_id || window.current_franchise_id;
-        if (!fid && window.DNFLClient && typeof (window.DNFLClient.getLoggedInFranchiseId || window.DNFLClient.getFranchiseId) === 'function') {
-            fid = (window.DNFLClient.getLoggedInFranchiseId || window.DNFLClient.getFranchiseId)();
+        if (!fid && window.DNFLClient && typeof window.DNFLClient.getFranchiseId === 'function') {
             fid = window.DNFLClient.getFranchiseId();
         }
         if (!fid && window.location && window.location.search) {
@@ -151,22 +150,20 @@
             }
             moduleState.weeklyResultsData = weeklyResultsData;
 
-            // 3. Fetch Sparse Exception Overrides (Dynamic Path with CDN Fallback)
+            // 3. Fetch Sparse Exception Overrides (Dynamic API Middleware with CDN Fallback via client)
             let rawRules = {};
             const rulesPath = 'dnfl_lts/' + moduleState.activeYear + '/lts_rules.json';
             try {
-                const jsonText = await client.fetchRawText(rulesPath, {
-                    ttl: client.TTL.DAILY
-                });
+                const jsonText = await client.fetchRawText(rulesPath, { ttl: client.TTL.DAILY });
                 if (jsonText && typeof jsonText === 'string') {
                     rawRules = JSON.parse(jsonText);
                 }
             } catch (err1) {
                 try {
-                    const cdnUrl = 'https://dnfl.live/' + rulesPath;
-                    const jsonText2 = await client.fetchRawText(cdnUrl, { ttl: client.TTL.DAILY });
-                    if (jsonText2 && typeof jsonText2 === 'string') {
-                        rawRules = JSON.parse(jsonText2);
+                    const cdnPath = 'https://dnfl.live/' + rulesPath;
+                    const jsonTextCdn = await client.fetchRawText(cdnPath, { ttl: client.TTL.DAILY });
+                    if (jsonTextCdn && typeof jsonTextCdn === 'string') {
+                        rawRules = JSON.parse(jsonTextCdn);
                     }
                 } catch (err2) {
                     console.info("[DNFL LTS] No sparse rules JSON override found for " + moduleState.activeYear + ". Operating on built-in default rules.");
@@ -267,26 +264,6 @@
             confSelect.addEventListener('change', function(e) {
                 moduleState.selectedConference = norm(e.target.value);
                 renderLTS(container);
-            });
-        }
-
-        const toggleGridBtn = container.querySelector('#dnfl-lts-toggle-grid');
-        if (toggleGridBtn) {
-            toggleGridBtn.addEventListener('click', function() {
-                const gridWrapper = container.querySelector('#dnfl-lts-grid-container');
-                if (gridWrapper) {
-                    gridWrapper.classList.toggle('dnfl-is-hidden');
-                }
-            });
-        }
-
-        const toggleSummaryBtn = container.querySelector('#dnfl-lts-toggle-summary');
-        if (toggleSummaryBtn) {
-            toggleSummaryBtn.addEventListener('click', function() {
-                const summaryWrapper = container.querySelector('#dnfl-lts-summary-container');
-                if (summaryWrapper) {
-                    summaryWrapper.classList.toggle('dnfl-is-hidden');
-                }
             });
         }
     }
@@ -447,6 +424,7 @@
 
                     if (ytdTiedScorers.length === 1) {
                         eliminatedThisWeek = ytdTiedScorers[0];
+                        eliminatedScore = minScore;
                     } else {
                         let lowestPriorScore = Infinity;
                         let finalEliminated = ytdTiedScorers[0];
@@ -459,8 +437,8 @@
                             }
                         });
                         eliminatedThisWeek = finalEliminated;
+                        eliminatedScore = minScore;
                     }
-                    eliminatedScore = minScore;
                 }
 
                 if (eliminatedThisWeek) {
@@ -497,12 +475,109 @@
         };
     }
 
+    function buildFranchiseCell(f, client) {
+        const fid = normFranchiseId(f ? f.id : '');
+        const franchise = (client && client.getFranchise && fid) ? client.getFranchise(fid) : null;
+        const teamName = f?.name || (franchise ? franchise.name : ('Franchise ' + fid));
+        const ownerName = f?.owner_name || f?.owner || (franchise ? (franchise.owner || franchise.owner_name) : '');
+        const iconUrl = f?.icon || (franchise ? franchise.icon : '') || 'https://dnfl.live/images/ficon-dnfl.png';
+        const activeYear = moduleState.activeYear || new Date().getFullYear();
+        const leagueId = moduleState.leagueId || '22883';
+        const teamUrl = `https://www.myfantasyleague.com/${activeYear}/options?L=${leagueId}&F=${fid}&O=01`;
+
+        return `
+            <div class="dnfl-franchise-cell">
+                <a href="${teamUrl}" target="_blank">
+                    <img src="${iconUrl}" class="franchiseicon" alt="icon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';">
+                </a>
+                <div class="dnfl-franchise-info">
+                    <a class="dnfl-team-name" href="${teamUrl}" target="_blank">${teamName}</a>
+                    <span class="dnfl-owner-name">${ownerName}</span>
+                </div>
+            </div>
+        `;
+    }
+
+    function renderLegend(container, confRules, startWeek, endWeek) {
+        const legendContainer = container.querySelector('#dnfl-lts-legend');
+        if (!legendContainer) return;
+
+        const ltsOn = !!confRules.lts_isEnabled;
+        const hsOn = !!confRules.highScore_isEnabled;
+
+        let itemsHtml = '<div class="dnfl-legend-items">';
+
+        // High Score Key
+        if (hsOn) {
+            itemsHtml += `
+                <span class="dnfl-legend-item">
+                    <span class="dnfl-pill dnfl-pill-green">145.20 <i class="fa-solid fa-star"></i></span>
+                    <span>Weekly High Score</span>
+                </span>
+            `;
+        } else {
+            itemsHtml += `
+                <span class="dnfl-legend-item">
+                    <span class="dnfl-badge dnfl-badge-green">145.20</span>
+                    <span>Weekly High Score</span>
+                </span>
+            `;
+        }
+
+        // LTS Knockout & Low Score Keys
+        if (ltsOn) {
+            itemsHtml += `
+                <span class="dnfl-legend-item">
+                    <span class="dnfl-pill dnfl-pill-red">88.50 <i class="fa-solid fa-skull"></i></span>
+                    <span>LTS Knockout Score</span>
+                </span>
+                <span class="dnfl-legend-item">
+                    <span class="dnfl-badge dnfl-badge-red">88.50</span>
+                    <span>Weekly Low Score (Non-LTS)</span>
+                </span>
+                <span class="dnfl-legend-item">
+                    <span class="dnfl-text-muted">72.30 <i class="fa-solid fa-skull"></i></span>
+                    <span>Post-Elimination Score</span>
+                </span>
+            `;
+        } else {
+            itemsHtml += `
+                <span class="dnfl-legend-item">
+                    <span class="dnfl-badge dnfl-badge-red">88.50</span>
+                    <span>Weekly Low Score</span>
+                </span>
+            `;
+        }
+
+        itemsHtml += '</div>';
+
+        // Note side
+        let noteText = '';
+        if (ltsOn) {
+            noteText = `*LTS Eliminations active Weeks ${startWeek}-${endWeek}`;
+        } else {
+            noteText = `*LTS Eliminations inactive for this conference`;
+        }
+
+        itemsHtml += `<div class="dnfl-legend-note">${noteText}</div>`;
+        legendContainer.innerHTML = itemsHtml;
+    }
+
     function renderLTS(container) {
         const confId = moduleState.selectedConference;
         const data = calculateLTSData(confId);
 
         let contentEl = container.querySelector('#dnfl-lts-content');
-        if (!contentEl) contentEl = container;
+        if (!contentEl) {
+            const cardBody = container.querySelector('.dnfl-card-body');
+            if (cardBody) {
+                contentEl = document.createElement('div');
+                contentEl.id = 'dnfl-lts-content';
+                cardBody.appendChild(contentEl);
+            } else {
+                contentEl = container;
+            }
+        }
 
         let gridContainer = container.querySelector('#dnfl-lts-grid-container');
         let summaryContainer = container.querySelector('#dnfl-lts-summary-container');
@@ -528,6 +603,9 @@
             confSelect.innerHTML = optionsHtml;
         }
 
+        // Render Dynamic Legend
+        renderLegend(container, data.confRules, data.startWeek, data.endWeek);
+
         // Offseason / Pre-Season Check
         if (data.maxCompletedWeek === 0) {
             const preSeasonHtml = `
@@ -548,29 +626,6 @@
         renderSummaryTable(container, data);
     }
 
-    function buildFranchiseCell(f, client) {
-        const fid = normFranchiseId(f ? f.id : '');
-        const franchise = (client && client.getFranchise && fid) ? client.getFranchise(fid) : null;
-        const teamName = f?.name || (franchise ? franchise.name : ('Franchise ' + fid));
-        const ownerName = f?.owner_name || f?.owner || (franchise ? (franchise.owner || franchise.owner_name) : '');
-        const iconUrl = f?.icon || (franchise ? franchise.icon : '') || 'https://dnfl.live/images/ficon-dnfl.png';
-        const activeYear = moduleState.activeYear || new Date().getFullYear();
-        const leagueId = moduleState.leagueId || '22883';
-        const teamUrl = `https://www.myfantasyleague.com/${activeYear}/options?L=${leagueId}&F=${fid}&O=01`;
-
-        return `
-            <div class="dnfl-franchise-cell">
-                <a href="${teamUrl}" target="_blank">
-                    <img src="${iconUrl}" class="franchiseicon" alt="icon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';">
-                </a>
-                <div class="dnfl-franchise-info">
-                    <a class="dnfl-team-name" href="${teamUrl}" target="_blank">${teamName}</a>
-                    <span class="dnfl-owner-name">${ownerName}</span>
-                </div>
-            </div>
-        `;
-    }
-
     function renderScoresGrid(container, data) {
         const client = getApiClient();
         const gridContainer = container.querySelector('#dnfl-lts-grid-container');
@@ -584,24 +639,35 @@
         const eliminatedFranchises = data.franchises.filter(f => eliminatedFids.includes(normFranchiseId(f.id)));
 
         const endWeek = data.endWeek || 14;
-        const totalCols = endWeek + 1;
 
-        let tableHtml = `<div class="dnfl-table-wrapper"><table class="dnfl-table dnfl-lts-grid-table"><thead>`;
-        
-        // Standings-Style Section Header Row (No Icons, Generic Class)
-        tableHtml += `<tr class="dnfl-table-section-header"><td colspan="${totalCols}" class="dnfl-table-section-header-cell"><div class="dnfl-table-section-header-content"><h3>Survival Cross-Grid Matrix</h3></div></td></tr>`;
-        tableHtml += `<tr><th class="dnfl-col-franchise dnfl-sticky-col">Franchise</th>`;
+        // Section Header OUTSIDE table-wrapper so it NEVER scrolls horizontally
+        let html = `
+            <div class="dnfl-section-header">
+                <div class="dnfl-section-header-content">
+                    <h3 class="dnfl-section-title">Survival Cross-Grid Matrix</h3>
+                    <button id="dnfl-btn-lts-grid" class="dnfl-btn dnfl-btn-secondary dnfl-btn-icon" onclick="DNFL.LTS.toggleGrid()" title="Toggle Grid Matrix">
+                        <i class="fa-solid fa-eye-slash"></i> Hide
+                    </button>
+                </div>
+            </div>
+            <div id="dnfl-lts-grid-wrapper" class="dnfl-table-wrapper">
+                <table class="dnfl-table dnfl-lts-grid-table">
+                    <thead>
+                        <tr>
+                            <th class="dnfl-col-franchise dnfl-sticky-col">Franchise</th>
+        `;
 
         for (let w = 1; w <= endWeek; w++) {
             const isLTSWeek = data.confRules.lts_isEnabled && w >= data.startWeek;
-            tableHtml += `<th class="dnfl-text-center">W${w}${isLTSWeek ? ' <i class="fa-solid fa-skull dnfl-text-red dnfl-ml-1"></i>' : ''}</th>`;
+            html += `<th class="dnfl-text-center">W${w}${isLTSWeek ? ' <i class="fa-solid fa-skull dnfl-text-red dnfl-ml-1"></i>' : ''}</th>`;
         }
-        tableHtml += `</tr></thead><tbody>`;
+        html += `</tr></thead><tbody>`;
 
-        function buildRow(f, isEliminated) {
+        function buildRow(f, isEliminated, rowIdx) {
             const fid = normFranchiseId(f.id);
-            const isMyTeam = (fid === userFid) ? 'dnfl-my-team' : '';
-            let rowHtml = `<tr class="${isMyTeam} ${isEliminated ? 'dnfl-row-muted' : ''}">`;
+            const isMyTeam = (fid === userFid) ? 'dnfl-my-team myfranchise' : '';
+            const stripeClass = (rowIdx % 2 === 1) ? 'dnfl-row-even' : 'dnfl-row-odd';
+            let rowHtml = `<tr class="${isMyTeam} ${stripeClass} ${isEliminated ? 'dnfl-row-muted' : ''}">`;
             
             // Sticky Franchise Column
             rowHtml += `<td class="dnfl-col-franchise dnfl-sticky-col">${buildFranchiseCell(f, client)}</td>`;
@@ -625,6 +691,8 @@
                 rowHtml += `<td class="dnfl-text-center">`;
                 if (isHighScore && data.confRules.highScore_isEnabled) {
                     rowHtml += `<span class="dnfl-pill dnfl-pill-green" title="Weekly High Score">${score} <i class="fa-solid fa-star"></i></span>`;
+                } else if (isHighScore && !data.confRules.highScore_isEnabled) {
+                    rowHtml += `<span class="dnfl-badge dnfl-badge-green" title="Weekly High Score">${score}</span>`;
                 } else if (isKnockout && isLTSWeek && data.confRules.lts_isEnabled) {
                     rowHtml += `<span class="dnfl-pill dnfl-pill-red" title="LTS Knockout Score">${score} <i class="fa-solid fa-skull"></i></span>`;
                 } else if (isLowScore && (!isLTSWeek || !data.confRules.lts_isEnabled)) {
@@ -640,19 +708,20 @@
             return rowHtml;
         }
 
-        activeFranchises.forEach(f => {
-            tableHtml += buildRow(f, false);
+        activeFranchises.forEach((f, idx) => {
+            html += buildRow(f, false, idx);
         });
 
         if (eliminatedFranchises.length > 0) {
-            tableHtml += `<tr class="dnfl-divider-row"><td colspan="${totalCols}">LTS Eliminated Teams</td></tr>`;
-            eliminatedFranchises.forEach(f => {
-                tableHtml += buildRow(f, true);
+            const totalCols = endWeek + 1;
+            html += `<tr class="dnfl-divider-row"><td colspan="${totalCols}">LTS Eliminated Teams</td></tr>`;
+            eliminatedFranchises.forEach((f, idx) => {
+                html += buildRow(f, true, idx);
             });
         }
 
-        tableHtml += `</tbody></table></div>`;
-        gridContainer.innerHTML = tableHtml;
+        html += `</tbody></table></div>`;
+        gridContainer.innerHTML = html;
     }
 
     function renderSummaryTable(container, data) {
@@ -672,36 +741,44 @@
             summaryContainer.classList.remove('dnfl-is-hidden');
         }
 
-        let totalCols = 1;
-        if (ltsOn) totalCols += 2;
-        if (hsOn) totalCols += 2;
-
-        let tableHtml = `<div class="dnfl-table-wrapper"><table class="dnfl-table dnfl-lts-summary-table"><thead>`;
-        
-        // Standings-Style Section Header Row
-        tableHtml += `<tr class="dnfl-table-section-header"><td colspan="${totalCols}" class="dnfl-table-section-header-cell"><div class="dnfl-table-section-header-content"><h3>Weekly Survival Summary</h3></div></td></tr>`;
-        tableHtml += `<tr><th>Week</th>`;
+        // Section Header OUTSIDE table wrapper so it NEVER scrolls horizontally
+        let html = `
+            <div class="dnfl-section-header">
+                <div class="dnfl-section-header-content">
+                    <h3 class="dnfl-section-title">Weekly Survival Summary</h3>
+                    <button id="dnfl-btn-lts-summary" class="dnfl-btn dnfl-btn-secondary dnfl-btn-icon" onclick="DNFL.LTS.toggleSummary()" title="Toggle Summary Table">
+                        <i class="fa-solid fa-eye-slash"></i> Hide
+                    </button>
+                </div>
+            </div>
+            <div id="dnfl-lts-summary-wrapper" class="dnfl-table-wrapper">
+                <table class="dnfl-table dnfl-lts-summary-table">
+                    <thead>
+                        <tr>
+                            <th>Week</th>
+        `;
 
         if (ltsOn) {
-            tableHtml += `<th>Eliminated Franchise</th><th class="dnfl-text-center">Knockout Score</th>`;
+            html += `<th>Eliminated Franchise</th><th class="dnfl-text-center">Knockout Score</th>`;
         }
         if (hsOn) {
-            tableHtml += `<th>Weekly High Scorer</th><th class="dnfl-text-center">High Score</th>`;
+            html += `<th>Weekly High Scorer</th><th class="dnfl-text-center">High Score</th>`;
         }
-        tableHtml += `</tr></thead><tbody>`;
+        html += `</tr></thead><tbody>`;
 
-        data.weeklySummaries.forEach(s => {
-            tableHtml += `<tr>`;
-            tableHtml += `<td class="dnfl-font-bold">Week ${s.week}</td>`;
+        data.weeklySummaries.forEach((s, idx) => {
+            const stripeClass = (idx % 2 === 1) ? 'dnfl-row-even' : 'dnfl-row-odd';
+            html += `<tr class="${stripeClass}">`;
+            html += `<td class="dnfl-font-bold">Week ${s.week}</td>`;
 
             // LTS Column Logic
             if (ltsOn) {
                 if (s.isLTSWeek && s.eliminatedFid) {
                     const f = client.getFranchise ? client.getFranchise(s.eliminatedFid) : { id: s.eliminatedFid };
-                    tableHtml += `<td>${buildFranchiseCell(f, client)}</td>`;
-                    tableHtml += `<td class="dnfl-text-center"><span class="dnfl-pill dnfl-pill-red">${s.eliminatedScore.toFixed(2)} <i class="fa-solid fa-skull"></i></span></td>`;
+                    html += `<td>${buildFranchiseCell(f, client)}</td>`;
+                    html += `<td class="dnfl-text-center"><span class="dnfl-pill dnfl-pill-red">${s.eliminatedScore.toFixed(2)} <i class="fa-solid fa-skull"></i></span></td>`;
                 } else {
-                    tableHtml += `<td class="dnfl-text-muted">—</td><td class="dnfl-text-center dnfl-text-muted">—</td>`;
+                    html += `<td class="dnfl-text-muted">—</td><td class="dnfl-text-center dnfl-text-muted">—</td>`;
                 }
             }
 
@@ -709,17 +786,21 @@
             if (hsOn) {
                 if (s.highScoreFid) {
                     const f = client.getFranchise ? client.getFranchise(s.highScoreFid) : { id: s.highScoreFid };
-                    tableHtml += `<td>${buildFranchiseCell(f, client)}</td>`;
-                    tableHtml += `<td class="dnfl-text-center"><span class="dnfl-pill dnfl-pill-green">${s.highScore.toFixed(2)} <i class="fa-solid fa-star"></i></span></td>`;
+                    html += `<td>${buildFranchiseCell(f, client)}</td>`;
+                    if (hsOn) {
+                        html += `<td class="dnfl-text-center"><span class="dnfl-pill dnfl-pill-green">${s.highScore.toFixed(2)} <i class="fa-solid fa-star"></i></span></td>`;
+                    } else {
+                        html += `<td class="dnfl-text-center"><span class="dnfl-badge dnfl-badge-green">${s.highScore.toFixed(2)}</span></td>`;
+                    }
                 } else {
-                    tableHtml += `<td class="dnfl-text-muted">—</td><td class="dnfl-text-center dnfl-text-muted">—</td>`;
+                    html += `<td class="dnfl-text-muted">—</td><td class="dnfl-text-center dnfl-text-muted">—</td>`;
                 }
             }
-            tableHtml += `</tr>`;
+            html += `</tr>`;
         });
 
-        tableHtml += `</tbody></table></div>`;
-        summaryContainer.innerHTML = tableHtml;
+        html += `</tbody></table></div>`;
+        summaryContainer.innerHTML = html;
     }
 
     function renderErrorState(container, err) {
@@ -738,16 +819,28 @@
         },
         toggleGrid: function() {
             const container = document.getElementById('dnfl-lts-container');
-            if (container) {
-                const g = container.querySelector('#dnfl-lts-grid-container');
-                if (g) g.classList.toggle('dnfl-is-hidden');
+            if (!container) return;
+            const wrapper = container.querySelector('#dnfl-lts-grid-wrapper');
+            const btn = container.querySelector('#dnfl-btn-lts-grid');
+            if (wrapper) {
+                wrapper.classList.toggle('dnfl-is-hidden');
+                const isHidden = wrapper.classList.contains('dnfl-is-hidden');
+                if (btn) {
+                    btn.innerHTML = isHidden ? '<i class="fa-solid fa-eye"></i> Show' : '<i class="fa-solid fa-eye-slash"></i> Hide';
+                }
             }
         },
         toggleSummary: function() {
             const container = document.getElementById('dnfl-lts-container');
-            if (container) {
-                const s = container.querySelector('#dnfl-lts-summary-container');
-                if (s) s.classList.toggle('dnfl-is-hidden');
+            if (!container) return;
+            const wrapper = container.querySelector('#dnfl-lts-summary-wrapper');
+            const btn = container.querySelector('#dnfl-btn-lts-summary');
+            if (wrapper) {
+                wrapper.classList.toggle('dnfl-is-hidden');
+                const isHidden = wrapper.classList.contains('dnfl-is-hidden');
+                if (btn) {
+                    btn.innerHTML = isHidden ? '<i class="fa-solid fa-eye"></i> Show' : '<i class="fa-solid fa-eye-slash"></i> Hide';
+                }
             }
         }
     };

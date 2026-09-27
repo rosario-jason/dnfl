@@ -1,0 +1,29 @@
+<!-- DNFL LAST TEAM STANDING MODULE EMBED SHELL (v4) -->
+<div class="dnfl-card" id="dnfl-lts-container">
+    <!-- Card Header -->
+    <div class="dnfl-card-header">
+        <h3 id="dnfl-lts-title" class="dnfl-card-title">
+            <i class="fa-solid fa-medal dnfl-icon-amber"></i> Last Team Standing
+        </h3>
+    </div>
+
+    <!-- Card Body -->
+    <div class="dnfl-card-body">
+        <!-- Controls Toolbar -->
+        <div class="dnfl-toolbar">
+            <div class="dnfl-filter-group">
+                <label for="dnfl-lts-conference-select">Conference Filter</label>
+                <select id="dnfl-lts-conference-select" class="dnfl-select" onchange="DNFL.LTS.updateView()"></select>
+            </div>
+        </div>
+
+        <!-- Dynamic Legend Panel -->
+        <div id="dnfl-lts-legend" class="dnfl-legend-panel"></div>
+
+        <!-- Data Content Area -->
+        <div id="dnfl-lts-content">
+            <div id="dnfl-lts-grid-container" class="dnfl-lts-view"></div>
+            <div id="dnfl-lts-summary-container" class="dnfl-lts-view dnfl-mt-4"></div>
+        </div>
+    </div>
+</div>
