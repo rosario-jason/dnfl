@@ -1,7 +1,7 @@
 /**
  * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module
- * File: scripts/dnfl-lts-v2_02.js
- * Version: v2_02
+ * File: scripts/dnfl-lts-v2_03.js
+ * Version: v2_03
  * Module Namespace: DNFL.LTS
  */
 (function() {
@@ -62,6 +62,46 @@
     /**
      * Conference Rules Resolver (3-Tier Cascading)
      */
+
+    function getApiClient() {
+        return (window.DNFL && window.DNFL.Client) || window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
+    }
+
+    function getLoggedInFranchiseId() {
+        var fid = window.franchise_id || window.mflFranchiseId || window.login_franchise_id || window.current_franchise_id;
+        if (!fid && window.DNFL && window.DNFL.currentFranchiseId) {
+            fid = window.DNFL.currentFranchiseId;
+        }
+        if (!fid && window.DNFLClient && typeof window.DNFLClient.getFranchiseId === 'function') {
+            fid = window.DNFLClient.getFranchiseId();
+        }
+        if (!fid && window.location && window.location.search) {
+            var urlParams = new URLSearchParams(window.location.search);
+            fid = urlParams.get('F') || urlParams.get('FRANCHISE_ID') || urlParams.get('f');
+        }
+        if (!fid && document.cookie) {
+            var cookieMatch = document.cookie.match(/(?:MFL_USER_ID|MFL_FRANCHISE_ID|franchise_id)=([^;]+)/i);
+            if (cookieMatch && cookieMatch[1]) {
+                var rawCookieVal = decodeURIComponent(cookieMatch[1]);
+                var idMatch = rawCookieVal.match(/(?:u%3D|u=)?(\d{4})/i);
+                if (idMatch && idMatch[1]) fid = idMatch[1];
+            }
+        }
+        if (!fid) {
+            var myTeamLink = document.querySelector('a[href*="O=01"], a[href*="O=02"], a[href*="F="]');
+            if (myTeamLink && myTeamLink.href) {
+                var hrefMatch = myTeamLink.href.match(/[?&]F=(\d{4})/i);
+                if (hrefMatch && hrefMatch[1]) fid = hrefMatch[1];
+            }
+        }
+        if (!fid) {
+            var inputEl = document.querySelector('input[name="FRANCHISE_ID"], select[name="FRANCHISE_ID"]');
+            if (inputEl) fid = inputEl.value;
+        }
+        var normalized = normFranchiseId(fid);
+        return (normalized && normalized !== '0000') ? normalized : null;
+    }
+
     function getConferenceRules(confId) {
         var confKey = String(confId || 'default');
         var overrides = (moduleState.rulesConfig && moduleState.rulesConfig.conferenceOverrides && moduleState.rulesConfig.conferenceOverrides[confKey]) 
@@ -522,22 +562,30 @@
     function startInitProcess() {
         moduleState.initialized = true;
 
-        var ctx = client ? client.getContext() : {};
+        var apiClient = getApiClient();
+        var ctx = apiClient && typeof apiClient.getContext === 'function' ? apiClient.getContext() : {};
         moduleState.activeYear = ctx.year || window.current_year || window.year || new Date().getFullYear();
         moduleState.leagueId = ctx.leagueId || window.league_id || '22883';
-        moduleState.userFranchiseId = client ? client.getFranchiseId() : null;
+        moduleState.userFranchiseId = getLoggedInFranchiseId();
+
+        if (!apiClient) {
+            console.error('[DNFL.LTS] API Client middleware is unavailable.');
+            return;
+        }
 
         // Fetch League Metadata
-        client.fetchData('league', { L: moduleState.leagueId }, client.TTL.WEEKLY).then(function(leagueData) {
-            moduleState.league = leagueData;
-            moduleState.endWeek = Number(leagueData.lastRegularSeasonWeek || 14);
+        apiClient.fetchData('league', { L: moduleState.leagueId }, { ttl: apiClient.TTL.WEEKLY }).then(function(leagueData) {
+            moduleState.league = leagueData && leagueData.league ? leagueData.league : (leagueData || {});
+            moduleState.endWeek = Number(moduleState.league.lastRegularSeasonWeek || 14);
 
             // Populate Conference Dropdown
-            populateConferenceSelect(leagueData);
+            populateConferenceSelect(moduleState.league);
 
-            // Fetch lts_rules.json with fallback
-            var rulesPath = 'dnfl_lts/' + moduleState.activeYear + '/lts_rules.json';
-            return client.fetchData('custom', { url: rulesPath }, client.TTL.DAILY).catch(function() { return {}; });
+            // Fetch lts_rules.json with fallback via fetchRawText
+            var rulesUrl = 'https://dnfl.live/dnfl_lts/' + moduleState.activeYear + '/lts_rules.json';
+            return apiClient.fetchRawText(rulesUrl, { ttl: apiClient.TTL.DAILY })
+                .then(function(rawText) { return rawText ? JSON.parse(rawText) : {}; })
+                .catch(function() { return {}; });
         }).then(function(rules) {
             moduleState.rulesConfig = rules || {};
 
@@ -545,15 +593,25 @@
             var fetchPromises = [];
             for (var w = 1; w <= moduleState.endWeek; w++) {
                 (function(weekNum) {
-                    var p = client.fetchData('weeklyResults', { W: String(weekNum), L: moduleState.leagueId }, client.TTL.HOURLY)
+                    var p = apiClient.fetchData('weeklyResults', { W: String(weekNum), L: moduleState.leagueId }, { ttl: apiClient.TTL.HOURLY })
                         .then(function(data) {
-                            var matchups = (data && data.matchup) ? (Array.isArray(data.matchup) ? data.matchup : [data.matchup]) : [];
+                            var weeklyObj = (data && data.weeklyResults) ? data.weeklyResults : (data || {});
+                            var rawMatchups = weeklyObj.matchup || weeklyObj.matchUp || (weeklyObj.schedule ? weeklyObj.schedule.matchup : null);
+                            var matchups = rawMatchups ? (Array.isArray(rawMatchups) ? rawMatchups : [rawMatchups]) : [];
+                            
+                            if (matchups.length === 0 && weeklyObj.franchise) {
+                                var fList = Array.isArray(weeklyObj.franchise) ? weeklyObj.franchise : [weeklyObj.franchise];
+                                fList.forEach(function(f) {
+                                    if (f && f.id) matchups.push({ franchise: [f] });
+                                });
+                            }
+
                             var scores = [];
                             matchups.forEach(function(m) {
                                 var franchises = (m && m.franchise) ? (Array.isArray(m.franchise) ? m.franchise : [m.franchise]) : [];
                                 franchises.forEach(function(f) {
                                     if (f && f.id) {
-                                        scores.push({ franchiseId: f.id, score: f.score || '0' });
+                                        scores.push({ franchiseId: normFranchiseId(f.id), score: f.score || '0' });
                                     }
                                 });
                             });
