@@ -1,25 +1,26 @@
-/* ==========================================================================
-   DNFL Last Team Standing (LTS) Module SCSS Styles (v9)
-   Duke Networking Fantasy League (DNFL)
-   Fully scoped under #dnfl-lts-container to guarantee zero style leakage.
-   Relying 100% on global framework design tokens from dnfl-global.css.
-   ========================================================================== */
+/**
+ * Duke Networking Fantasy League (DNFL) - Last Team Standing (LTS) Module Partial
+ * File: css/scss/_lts.scss
+ * Version: v2_01
+ * Strict Container Scoping: #dnfl-lts-container
+ */
 
 #dnfl-lts-container {
-    /* Section Separation */
+    /* Section Spacing */
     .dnfl-lts-section + .dnfl-lts-section {
         margin-top: 1.75rem;
     }
 
-    /* Integrated Table Card Wrapper */
+    /* Table Wrapper & Scroll Behavior */
     .dnfl-table-wrapper {
         border: 1px solid var(--dnfl-border-medium, #cbd5e1);
-        border-radius: var(--dnfl-radius-md, 8px);
+        border-radius: 8px;
         overflow-x: auto;
         margin-bottom: 1.5rem;
+        background-color: var(--dnfl-bg-card, #ffffff);
     }
 
-    /* Table Section Header Row (In-Table Header matching Standings Division Headers) */
+    /* In-Table Section Header Row Styling */
     .dnfl-table-section-header {
         background-color: var(--dnfl-bg-subhead, #f1f5f9);
         border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1);
@@ -38,26 +39,24 @@
                 font-size: 1.05rem;
                 font-weight: 700;
                 color: var(--dnfl-text-heading, #0f172a);
-                letter-spacing: 0.01em;
-                text-transform: none;
             }
         }
     }
 
-    .dnfl-lts-grid-table,
+    /* Scores & Summary Table Specifications */
+    .dnfl-lts-scores-table,
     .dnfl-lts-summary-table {
         width: 100%;
         border-collapse: separate;
         border-spacing: 0;
 
-        /* Mobile / Base Franchise Column Standards matching Standings */
+        /* Franchise Column Widths */
         .dnfl-col-franchise {
             min-width: 150px;
             max-width: 200px;
             text-align: left;
         }
 
-        /* Desktop Franchise Column Override (LTS Specific) */
         @media (min-width: 769px) {
             .dnfl-col-franchise {
                 min-width: 240px !important;
@@ -65,6 +64,7 @@
             }
         }
 
+        /* Sticky Left Column Pinning */
         .dnfl-col-franchise.dnfl-sticky-col {
             position: sticky;
             left: 0;
@@ -72,7 +72,7 @@
             background-color: var(--dnfl-bg-card, #ffffff);
         }
 
-        /* Score & Week Column Widths & No-Wrap Rules */
+        /* Column Width Enforcements */
         th.dnfl-text-center,
         td.dnfl-text-center {
             min-width: 105px;
@@ -91,7 +91,7 @@
             white-space: nowrap;
         }
 
-        /* Sticky Column Row Background States */
+        /* Sticky Column Row Background Mappings */
         tbody tr.dnfl-row-odd .dnfl-sticky-col {
             background-color: var(--dnfl-bg-card, #ffffff) !important;
         }
@@ -113,23 +113,45 @@
         tbody tr.myfranchise:hover .dnfl-sticky-col {
             background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
         }
+
+        /* Uniform Table Cell Badge / Pill Widths */
+        td .dnfl-pill,
+        td .dnfl-badge {
+            min-width: 95px;
+            width: 95px;
+            justify-content: center;
+        }
     }
 
-    /* Row states */
-    .dnfl-row-muted {
-        opacity: 0.65;
-    }
-
-    /* Divider row for eliminated teams */
-    .dnfl-divider-row td {
-        background-color: var(--dnfl-bg-subhead, #f1f5f9);
-        color: var(--dnfl-text-subtle, #555555);
-        font-weight: 600;
+    /* Active & Eliminated Sub-Header Division Rows */
+    .dnfl-subhead-active td {
+        background-color: var(--dnfl-success, #10b981) !important;
+        color: #ffffff !important;
+        font-weight: 700;
         font-size: 0.85rem;
         padding: 0.5rem 1rem;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        border-top: 1px solid var(--dnfl-border-medium, #cbd5e1);
-        border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1);
+    }
+
+    .dnfl-subhead-eliminated td {
+        background-color: var(--dnfl-alert-red, #ef4444) !important;
+        color: #ffffff !important;
+        font-weight: 700;
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /* Dynamic Legend Panel Swatch Enforcement */
+    #dnfl-lts-legend {
+        .dnfl-pill,
+        .dnfl-badge {
+            min-width: 38px;
+            width: 38px;
+            height: 24px;
+            justify-content: center;
+        }
     }
 }

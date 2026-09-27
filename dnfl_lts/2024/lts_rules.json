@@ -1,12 +1,8 @@
 {
-  "season": 2024,
-  "comment": "Sparse exceptions configuration. Omitted values automatically default to lts_isEnabled: true, highScore_isEnabled: true, startWeek: 'auto'",
-  "exceptions": {
-    "00": {
-      "startWeek": 2
-    },
-    "01": {
-      "startWeek": 2
-    }
+  "default": {
+    "lts_isEnabled": true,
+    "highScore_isEnabled": true,
+    "lts_startWeek": 2,
+    "lts_endWeek": "auto"
   }
 }

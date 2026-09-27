@@ -1767,29 +1767,30 @@ a.dnfl-btn-secondary:hover,
     margin-left: 1rem !important;
   }
 }
-/* ==========================================================================
-   DNFL Last Team Standing (LTS) Module SCSS Styles (v9)
-   Duke Networking Fantasy League (DNFL)
-   Fully scoped under #dnfl-lts-container to guarantee zero style leakage.
-   Relying 100% on global framework design tokens from dnfl-global.css.
-   ========================================================================== */
+/**
+ * Duke Networking Fantasy League (DNFL) - Last Team Standing (LTS) Module Partial
+ * File: css/scss/_lts.scss
+ * Version: v2_01
+ * Strict Container Scoping: #dnfl-lts-container
+ */
 #dnfl-lts-container {
-  /* Section Separation */
+  /* Section Spacing */
 }
 #dnfl-lts-container .dnfl-lts-section + .dnfl-lts-section {
   margin-top: 1.75rem;
 }
 #dnfl-lts-container {
-  /* Integrated Table Card Wrapper */
+  /* Table Wrapper & Scroll Behavior */
 }
 #dnfl-lts-container .dnfl-table-wrapper {
   border: 1px solid var(--dnfl-border-medium, #cbd5e1);
-  border-radius: var(--dnfl-radius-md, 8px);
+  border-radius: 8px;
   overflow-x: auto;
   margin-bottom: 1.5rem;
+  background-color: var(--dnfl-bg-card, #ffffff);
 }
 #dnfl-lts-container {
-  /* Table Section Header Row (In-Table Header matching Standings Division Headers) */
+  /* In-Table Section Header Row Styling */
 }
 #dnfl-lts-container .dnfl-table-section-header {
   background-color: var(--dnfl-bg-subhead, #f1f5f9);
@@ -1808,112 +1809,136 @@ a.dnfl-btn-secondary:hover,
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--dnfl-text-heading, #0f172a);
-  letter-spacing: 0.01em;
-  text-transform: none;
 }
-#dnfl-lts-container .dnfl-lts-grid-table,
+#dnfl-lts-container {
+  /* Scores & Summary Table Specifications */
+}
+#dnfl-lts-container .dnfl-lts-scores-table,
 #dnfl-lts-container .dnfl-lts-summary-table {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  /* Mobile / Base Franchise Column Standards matching Standings */
+  /* Franchise Column Widths */
 }
-#dnfl-lts-container .dnfl-lts-grid-table .dnfl-col-franchise,
+#dnfl-lts-container .dnfl-lts-scores-table .dnfl-col-franchise,
 #dnfl-lts-container .dnfl-lts-summary-table .dnfl-col-franchise {
   min-width: 150px;
   max-width: 200px;
   text-align: left;
 }
-#dnfl-lts-container .dnfl-lts-grid-table,
-#dnfl-lts-container .dnfl-lts-summary-table {
-  /* Desktop Franchise Column Override (LTS Specific) */
-}
 @media (min-width: 769px) {
-  #dnfl-lts-container .dnfl-lts-grid-table .dnfl-col-franchise,
+  #dnfl-lts-container .dnfl-lts-scores-table .dnfl-col-franchise,
   #dnfl-lts-container .dnfl-lts-summary-table .dnfl-col-franchise {
     min-width: 240px !important;
     max-width: 280px !important;
   }
 }
-#dnfl-lts-container .dnfl-lts-grid-table .dnfl-col-franchise.dnfl-sticky-col,
+#dnfl-lts-container .dnfl-lts-scores-table,
+#dnfl-lts-container .dnfl-lts-summary-table {
+  /* Sticky Left Column Pinning */
+}
+#dnfl-lts-container .dnfl-lts-scores-table .dnfl-col-franchise.dnfl-sticky-col,
 #dnfl-lts-container .dnfl-lts-summary-table .dnfl-col-franchise.dnfl-sticky-col {
   position: sticky;
   left: 0;
   z-index: 10;
   background-color: var(--dnfl-bg-card, #ffffff);
 }
-#dnfl-lts-container .dnfl-lts-grid-table,
+#dnfl-lts-container .dnfl-lts-scores-table,
 #dnfl-lts-container .dnfl-lts-summary-table {
-  /* Score & Week Column Widths & No-Wrap Rules */
+  /* Column Width Enforcements */
 }
-#dnfl-lts-container .dnfl-lts-grid-table th.dnfl-text-center,
-#dnfl-lts-container .dnfl-lts-grid-table td.dnfl-text-center,
+#dnfl-lts-container .dnfl-lts-scores-table th.dnfl-text-center,
+#dnfl-lts-container .dnfl-lts-scores-table td.dnfl-text-center,
 #dnfl-lts-container .dnfl-lts-summary-table th.dnfl-text-center,
 #dnfl-lts-container .dnfl-lts-summary-table td.dnfl-text-center {
   min-width: 105px;
   white-space: nowrap;
 }
-#dnfl-lts-container .dnfl-lts-grid-table th.dnfl-col-week,
-#dnfl-lts-container .dnfl-lts-grid-table td.dnfl-col-week,
+#dnfl-lts-container .dnfl-lts-scores-table th.dnfl-col-week,
+#dnfl-lts-container .dnfl-lts-scores-table td.dnfl-col-week,
 #dnfl-lts-container .dnfl-lts-summary-table th.dnfl-col-week,
 #dnfl-lts-container .dnfl-lts-summary-table td.dnfl-col-week {
   min-width: 75px;
   white-space: nowrap;
 }
-#dnfl-lts-container .dnfl-lts-grid-table th.dnfl-col-score,
-#dnfl-lts-container .dnfl-lts-grid-table td.dnfl-col-score,
+#dnfl-lts-container .dnfl-lts-scores-table th.dnfl-col-score,
+#dnfl-lts-container .dnfl-lts-scores-table td.dnfl-col-score,
 #dnfl-lts-container .dnfl-lts-summary-table th.dnfl-col-score,
 #dnfl-lts-container .dnfl-lts-summary-table td.dnfl-col-score {
   min-width: 110px;
   white-space: nowrap;
 }
-#dnfl-lts-container .dnfl-lts-grid-table,
+#dnfl-lts-container .dnfl-lts-scores-table,
 #dnfl-lts-container .dnfl-lts-summary-table {
-  /* Sticky Column Row Background States */
+  /* Sticky Column Row Background Mappings */
 }
-#dnfl-lts-container .dnfl-lts-grid-table tbody tr.dnfl-row-odd .dnfl-sticky-col,
+#dnfl-lts-container .dnfl-lts-scores-table tbody tr.dnfl-row-odd .dnfl-sticky-col,
 #dnfl-lts-container .dnfl-lts-summary-table tbody tr.dnfl-row-odd .dnfl-sticky-col {
   background-color: var(--dnfl-bg-card, #ffffff) !important;
 }
-#dnfl-lts-container .dnfl-lts-grid-table tbody tr.dnfl-row-even .dnfl-sticky-col,
+#dnfl-lts-container .dnfl-lts-scores-table tbody tr.dnfl-row-even .dnfl-sticky-col,
 #dnfl-lts-container .dnfl-lts-summary-table tbody tr.dnfl-row-even .dnfl-sticky-col {
   background-color: var(--dnfl-bg-alt, #fafafa) !important;
 }
-#dnfl-lts-container .dnfl-lts-grid-table tbody tr:hover .dnfl-sticky-col,
+#dnfl-lts-container .dnfl-lts-scores-table tbody tr:hover .dnfl-sticky-col,
 #dnfl-lts-container .dnfl-lts-summary-table tbody tr:hover .dnfl-sticky-col {
   background-color: var(--dnfl-primary-light, #b6e2ff) !important;
 }
-#dnfl-lts-container .dnfl-lts-grid-table tbody tr.dnfl-my-team .dnfl-sticky-col,
-#dnfl-lts-container .dnfl-lts-grid-table tbody tr.myfranchise .dnfl-sticky-col,
+#dnfl-lts-container .dnfl-lts-scores-table tbody tr.dnfl-my-team .dnfl-sticky-col,
+#dnfl-lts-container .dnfl-lts-scores-table tbody tr.myfranchise .dnfl-sticky-col,
 #dnfl-lts-container .dnfl-lts-summary-table tbody tr.dnfl-my-team .dnfl-sticky-col,
 #dnfl-lts-container .dnfl-lts-summary-table tbody tr.myfranchise .dnfl-sticky-col {
   background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
 }
-#dnfl-lts-container .dnfl-lts-grid-table tbody tr.dnfl-my-team:hover .dnfl-sticky-col,
-#dnfl-lts-container .dnfl-lts-grid-table tbody tr.myfranchise:hover .dnfl-sticky-col,
+#dnfl-lts-container .dnfl-lts-scores-table tbody tr.dnfl-my-team:hover .dnfl-sticky-col,
+#dnfl-lts-container .dnfl-lts-scores-table tbody tr.myfranchise:hover .dnfl-sticky-col,
 #dnfl-lts-container .dnfl-lts-summary-table tbody tr.dnfl-my-team:hover .dnfl-sticky-col,
 #dnfl-lts-container .dnfl-lts-summary-table tbody tr.myfranchise:hover .dnfl-sticky-col {
   background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
 }
+#dnfl-lts-container .dnfl-lts-scores-table,
+#dnfl-lts-container .dnfl-lts-summary-table {
+  /* Uniform Table Cell Badge / Pill Widths */
+}
+#dnfl-lts-container .dnfl-lts-scores-table td .dnfl-pill,
+#dnfl-lts-container .dnfl-lts-scores-table td .dnfl-badge,
+#dnfl-lts-container .dnfl-lts-summary-table td .dnfl-pill,
+#dnfl-lts-container .dnfl-lts-summary-table td .dnfl-badge {
+  min-width: 95px;
+  width: 95px;
+  justify-content: center;
+}
 #dnfl-lts-container {
-  /* Row states */
+  /* Active & Eliminated Sub-Header Division Rows */
 }
-#dnfl-lts-container .dnfl-row-muted {
-  opacity: 0.65;
-}
-#dnfl-lts-container {
-  /* Divider row for eliminated teams */
-}
-#dnfl-lts-container .dnfl-divider-row td {
-  background-color: var(--dnfl-bg-subhead, #f1f5f9);
-  color: var(--dnfl-text-subtle, #555555);
-  font-weight: 600;
+#dnfl-lts-container .dnfl-subhead-active td {
+  background-color: var(--dnfl-success, #10b981) !important;
+  color: #ffffff !important;
+  font-weight: 700;
   font-size: 0.85rem;
   padding: 0.5rem 1rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-top: 1px solid var(--dnfl-border-medium, #cbd5e1);
-  border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1);
+}
+#dnfl-lts-container .dnfl-subhead-eliminated td {
+  background-color: var(--dnfl-alert-red, #ef4444) !important;
+  color: #ffffff !important;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.5rem 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+#dnfl-lts-container {
+  /* Dynamic Legend Panel Swatch Enforcement */
+}
+#dnfl-lts-container #dnfl-lts-legend .dnfl-pill,
+#dnfl-lts-container #dnfl-lts-legend .dnfl-badge {
+  min-width: 38px;
+  width: 38px;
+  height: 24px;
+  justify-content: center;
 }
 
 /* ==========================================================================
