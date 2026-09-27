@@ -1,7 +1,7 @@
 /**
- * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module v2_04
- * File: scripts/dnfl-lts-v2_04.js
- * Version: v2_04
+ * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module v2_05
+ * File: scripts/dnfl-lts-v2_05.js
+ * Version: v2_05
  * Module Namespace: DNFL.LTS
  * Architecture aligned with dnfl-exporter-v4_Final.js, dnfl-standings-v4_Final.js & dnfl-api-client-v4_Final.js
  */
@@ -97,7 +97,7 @@
     /**
      * Build Franchise Name Cell Component with Dynamic Host Link
      */
-    function buildFranchiseCell(franchise) {
+        function buildFranchiseCell(franchise) {
         if (!franchise) return '<span class="dnfl-text-muted">—</span>';
 
         var fid = normFranchiseId(franchise.id);
@@ -105,19 +105,21 @@
         var ownerName = franchise.owner_name || franchise.username || '';
         var iconUrl = franchise.icon ? franchise.icon.toString().trim() : 'https://dnfl.live/images/ficon-dnfl.png';
         var activeLeagueId = getLeagueId();
-        var url = 'https://' + activeHost + '/' + targetYear + '/options?L=' + activeLeagueId + '&F=' + fid + '&O=01';
+        var url = `https://${activeHost}/${targetYear}/options?L=${activeLeagueId}&F=${fid}&O=01`;
 
-        var ownerHtml = ownerName ? '<span class="dnfl-owner-name">' + ownerName + '</span>' : '';
+        var ownerHtml = ownerName ? `<span class="dnfl-owner-name">${ownerName}</span>` : '';
 
-        return '<div class="dnfl-franchise-cell">' +
-            '<a href="' + url + '" title="View Franchise Page">' +
-            '<img src="' + iconUrl + '" alt="' + name + '" class="franchiseicon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';" />' +
-            '</a>' +
-            '<div class="dnfl-franchise-info">' +
-            '<a href="' + url + '" class="dnfl-team-name">' + name + '</a>' +
-            ownerHtml +
-            '</div>' +
-            '</div>';
+        return `
+            <div class="dnfl-franchise-cell">
+                <a href="${url}" title="View Franchise Page">
+                    <img src="${iconUrl}" alt="${name}" class="franchiseicon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';" />
+                </a>
+                <div class="dnfl-franchise-info">
+                    <a href="${url}" class="dnfl-team-name">${name}</a>
+                    ${ownerHtml}
+                </div>
+            </div>
+        `;
     }
 
     /**
