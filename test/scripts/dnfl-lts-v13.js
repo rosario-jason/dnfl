@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Logic Engine (v12)
+   DNFL Last Team Standing (LTS) Module Logic Engine (v13)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 (function(window, document) {
@@ -163,11 +163,11 @@
             } catch (err1) {
                 try {
                     const cdnUrl = 'https://dnfl.live/' + rulesPath;
-                    const jsonText = await client.fetchRawText(cdnUrl, {
+                    const jsonTextFallback = await client.fetchRawText(cdnUrl, {
                         ttl: client.TTL.DAILY
                     });
-                    if (jsonText && typeof jsonText === 'string') {
-                        rawRules = JSON.parse(jsonText);
+                    if (jsonTextFallback && typeof jsonTextFallback === 'string') {
+                        rawRules = JSON.parse(jsonTextFallback);
                     }
                 } catch (err2) {
                     console.info("[DNFL LTS] No sparse rules JSON override found for " + moduleState.activeYear + ". Operating on built-in default rules.");
@@ -178,7 +178,7 @@
             // 4. Resolve Initial Conference Selection
             setupConferenceSelection(client);
 
-            // 5. Render Views
+            // 5. Render Module Views
             renderLTS(container);
 
         } catch (err) {
@@ -478,8 +478,12 @@
 
         if (!gridContainer || !summaryContainer) {
             contentEl.innerHTML = `
-                <div id="dnfl-lts-grid-container" class="dnfl-lts-view"></div>
-                <div id="dnfl-lts-summary-container" class="dnfl-lts-view dnfl-mt-4"></div>
+                <div id="dnfl-lts-grid-section" class="dnfl-lts-section">
+                    <div id="dnfl-lts-grid-container" class="dnfl-lts-view"></div>
+                </div>
+                <div id="dnfl-lts-summary-section" class="dnfl-lts-section">
+                    <div id="dnfl-lts-summary-container" class="dnfl-lts-view"></div>
+                </div>
             `;
             gridContainer = container.querySelector('#dnfl-lts-grid-container');
             summaryContainer = container.querySelector('#dnfl-lts-summary-container');
@@ -527,7 +531,7 @@
         const ltsOn = !!data.confRules.lts_isEnabled;
         const hsOn = !!data.confRules.highScore_isEnabled;
 
-        let itemsHtml = '';
+        let itemsHtml = '<div class="dnfl-legend-items">';
         if (hsOn) {
             itemsHtml += `
                 <div class="dnfl-legend-item">
@@ -548,34 +552,33 @@
             itemsHtml += `
                 <div class="dnfl-legend-item">
                     <span class="dnfl-pill dnfl-pill-red">88.50 <i class="fa-solid fa-skull"></i></span>
-                    <span class="dnfl-legend-label">LTS Knockout Score</span>
+                    <span class="dnfl-legend-label">LTS Knockout</span>
                 </div>
                 <div class="dnfl-legend-item">
                     <span class="dnfl-badge dnfl-badge-red">88.50</span>
-                    <span class="dnfl-legend-label">Weekly Low Score</span>
+                    <span class="dnfl-legend-label">Low Score (Pre-LTS / LTS Disabled)</span>
                 </div>
                 <div class="dnfl-legend-item">
                     <span class="dnfl-text-muted">72.30 <i class="fa-solid fa-skull"></i></span>
-                    <span class="dnfl-legend-label">Post-Elimination Score</span>
+                    <span class="dnfl-legend-label">Post-Elimination</span>
                 </div>
             `;
         } else {
             itemsHtml += `
                 <div class="dnfl-legend-item">
                     <span class="dnfl-badge dnfl-badge-red">88.50</span>
-                    <span class="dnfl-legend-label">Weekly Low Score</span>
+                    <span class="dnfl-legend-label">Low Score</span>
                 </div>
             `;
         }
+        itemsHtml += '</div>';
 
-        const noteText = ltsOn 
-            ? `*LTS eliminations active Weeks ${data.startWeek}-${data.endWeek}` 
-            : `*LTS eliminations disabled for this conference`;
+        if (ltsOn) {
+            const endW = data.endWeek || 14;
+            itemsHtml += `<div class="dnfl-legend-note">*LTS eliminations active Weeks ${data.startWeek}-${endW}</div>`;
+        }
 
-        legendEl.innerHTML = `
-            <div class="dnfl-legend-items">${itemsHtml}</div>
-            <div class="dnfl-legend-note">${noteText}</div>
-        `;
+        legendEl.innerHTML = itemsHtml;
     }
 
     function buildFranchiseCell(f, client) {
@@ -614,20 +617,19 @@
         const eliminatedFranchises = data.franchises.filter(f => eliminatedFids.includes(normFranchiseId(f.id)));
 
         const endWeek = data.endWeek || 14;
+        const totalCols = endWeek + 1;
 
-        // Section Header OUTSIDE table wrapper so it NEVER scrolls horizontally
         let html = `
-            <div class="dnfl-section-header">
-                <div class="dnfl-section-header-content">
-                    <h3 class="dnfl-section-title">Survival Cross-Grid Matrix</h3>
-                    <button id="dnfl-btn-lts-grid" class="dnfl-btn dnfl-btn-secondary dnfl-btn-icon" onclick="DNFL.LTS.toggleGrid()" title="Toggle Grid Matrix">
-                        <i class="fa-solid fa-eye-slash"></i> Hide
-                    </button>
-                </div>
-            </div>
             <div id="dnfl-lts-grid-wrapper" class="dnfl-table-wrapper">
                 <table class="dnfl-table dnfl-lts-grid-table">
                     <thead>
+                        <tr class="dnfl-table-section-header">
+                            <td colspan="${totalCols}" class="dnfl-table-section-header-cell">
+                                <div class="dnfl-table-section-header-content">
+                                    <h3>Survival Cross-Grid Matrix</h3>
+                                </div>
+                            </td>
+                        </tr>
                         <tr>
                             <th class="dnfl-col-franchise dnfl-sticky-col">Franchise</th>
         `;
@@ -690,7 +692,6 @@
         });
 
         if (eliminatedFranchises.length > 0) {
-            const totalCols = endWeek + 1;
             html += `<tr class="dnfl-divider-row"><td colspan="${totalCols}">LTS Eliminated Teams</td></tr>`;
             eliminatedFranchises.forEach(f => {
                 html += buildRow(f, true);
@@ -718,19 +719,21 @@
             summaryContainer.classList.remove('dnfl-is-hidden');
         }
 
-        // Section Header OUTSIDE table wrapper so it NEVER scrolls horizontally
+        let totalCols = 1;
+        if (ltsOn) totalCols += 2;
+        if (hsOn) totalCols += 2;
+
         let html = `
-            <div class="dnfl-section-header">
-                <div class="dnfl-section-header-content">
-                    <h3 class="dnfl-section-title">Weekly Survival Summary</h3>
-                    <button id="dnfl-btn-lts-summary" class="dnfl-btn dnfl-btn-secondary dnfl-btn-icon" onclick="DNFL.LTS.toggleSummary()" title="Toggle Summary Table">
-                        <i class="fa-solid fa-eye-slash"></i> Hide
-                    </button>
-                </div>
-            </div>
             <div id="dnfl-lts-summary-wrapper" class="dnfl-table-wrapper">
                 <table class="dnfl-table dnfl-lts-summary-table">
                     <thead>
+                        <tr class="dnfl-table-section-header">
+                            <td colspan="${totalCols}" class="dnfl-table-section-header-cell">
+                                <div class="dnfl-table-section-header-content">
+                                    <h3>Weekly Survival Summary</h3>
+                                </div>
+                            </td>
+                        </tr>
                         <tr>
                             <th class="dnfl-col-week dnfl-text-center">Week</th>
         `;
@@ -800,28 +803,28 @@
         toggleGrid: function() {
             const container = document.getElementById('dnfl-lts-container');
             if (!container) return;
-            const gridWrapper = container.querySelector('#dnfl-lts-grid-wrapper');
+            const gridSection = container.querySelector('#dnfl-lts-grid-section');
             const btn = container.querySelector('#dnfl-btn-lts-grid');
-            if (gridWrapper) {
-                const isHidden = gridWrapper.classList.toggle('dnfl-is-hidden');
+            if (gridSection) {
+                const isHidden = gridSection.classList.toggle('dnfl-is-hidden');
                 if (btn) {
                     btn.innerHTML = isHidden 
-                        ? '<i class="fa-solid fa-eye"></i> Show' 
-                        : '<i class="fa-solid fa-eye-slash"></i> Hide';
+                        ? '<i class="fa-solid fa-table-cells"></i> Show Grid' 
+                        : '<i class="fa-solid fa-table-cells"></i> Hide Grid';
                 }
             }
         },
         toggleSummary: function() {
             const container = document.getElementById('dnfl-lts-container');
             if (!container) return;
-            const summaryWrapper = container.querySelector('#dnfl-lts-summary-wrapper');
+            const summarySection = container.querySelector('#dnfl-lts-summary-section');
             const btn = container.querySelector('#dnfl-btn-lts-summary');
-            if (summaryWrapper) {
-                const isHidden = summaryWrapper.classList.toggle('dnfl-is-hidden');
+            if (summarySection) {
+                const isHidden = summarySection.classList.toggle('dnfl-is-hidden');
                 if (btn) {
                     btn.innerHTML = isHidden 
-                        ? '<i class="fa-solid fa-eye"></i> Show' 
-                        : '<i class="fa-solid fa-eye-slash"></i> Hide';
+                        ? '<i class="fa-solid fa-list-check"></i> Show Summary' 
+                        : '<i class="fa-solid fa-list-check"></i> Hide Summary';
                 }
             }
         }

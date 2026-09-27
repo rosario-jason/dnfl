@@ -1,58 +1,45 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module SCSS Styles (v6)
+   DNFL Last Team Standing (LTS) Module SCSS Styles (v7)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 
-/* --------------------------------------------------------------------------
-   TEMPORARY TESTING STYLES - FRAMEWORK MIGRATION NOTICE:
-   
-   The following `.dnfl-section-header` classes are generic framework-wide
-   table section header styles. They are placed in this file temporarily for
-   LTS testing purposes.
-   
-   MIGRATION TARGET:
-   These rules SHOULD BE MOVED to `css/scss/_tables.scss` under the Table
-   Components section so all DNFL table modules (Standings, Rankings, Exporter,
-   LTS, etc.) can share the exact same section header styling.
-   -------------------------------------------------------------------------- */
-
-.dnfl-section-header {
-    background-color: var(--dnfl-bg-subhead, #f1f5f9);
-    border: 1px solid var(--dnfl-border-medium, #cbd5e1);
-    border-bottom: none;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
-    padding: 0.75rem 1rem;
-
-    .dnfl-section-header-content {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-
-        .dnfl-section-title {
-            margin: 0;
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: var(--dnfl-text-heading, #0f172a);
-            letter-spacing: 0.01em;
-            text-transform: none;
-        }
-    }
-}
-
-/* --------------------------------------------------------------------------
-   DNFL LTS MODULE SPECIFIC STYLES (SCOPED UNDER CONTAINER ID)
-   Reference: README-dnfl-css.md
-   -------------------------------------------------------------------------- */
-
 #dnfl-lts-container {
+    /* Section Separation */
+    .dnfl-lts-section + .dnfl-lts-section {
+        margin-top: 1.75rem;
+    }
+
     /* Integrated Table Card Wrapper */
     .dnfl-table-wrapper {
         border: 1px solid var(--dnfl-border-medium, #cbd5e1);
-        border-bottom-left-radius: 8px;
-        border-bottom-right-radius: 8px;
+        border-radius: 8px;
         overflow-x: auto;
         margin-bottom: 1.5rem;
+    }
+
+    /* Table Section Header Row (In-Table Header matching Standings Division Headers) */
+    .dnfl-table-section-header {
+        background-color: var(--dnfl-bg-subhead, #f1f5f9);
+        border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1);
+
+        .dnfl-table-section-header-cell {
+            padding: 0.75rem 1rem !important;
+            text-align: left;
+        }
+
+        .dnfl-table-section-header-content {
+            display: flex;
+            align-items: center;
+
+            h3 {
+                margin: 0;
+                font-size: 1.05rem;
+                font-weight: 700;
+                color: var(--dnfl-text-heading, #0f172a);
+                letter-spacing: 0.01em;
+                text-transform: none;
+            }
+        }
     }
 
     .dnfl-lts-grid-table,
@@ -61,11 +48,19 @@
         border-collapse: separate;
         border-spacing: 0;
 
-        /* Franchise Column Standards matching Standings */
+        /* Mobile / Base Franchise Column Standards */
         .dnfl-col-franchise {
-            min-width: 180px;
-            max-width: 220px;
+            min-width: 150px;
+            max-width: 200px;
             text-align: left;
+        }
+
+        /* Desktop Franchise Column Override (LTS Specific) */
+        @media (min-width: 769px) {
+            .dnfl-col-franchise {
+                min-width: 240px !important;
+                max-width: 280px !important;
+            }
         }
 
         .dnfl-col-franchise.dnfl-sticky-col {
@@ -180,44 +175,5 @@
         background-color: rgba(239, 68, 68, 0.15);
         color: var(--dnfl-danger-dark, #991b1b);
         border: 1px solid rgba(239, 68, 68, 0.3);
-    }
-
-    /* Dynamic Legend Panel */
-    .dnfl-legend-panel {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        flex-wrap: wrap;
-        gap: 1rem;
-        margin-bottom: 1.25rem;
-        padding: 0.75rem 1rem;
-        background-color: var(--dnfl-bg-alt, #fafafa);
-        border: 1px solid var(--dnfl-border-light, #e2e8f0);
-        border-radius: 6px;
-
-        .dnfl-legend-items {
-            display: flex;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1.25rem;
-        }
-
-        .dnfl-legend-item {
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-        }
-
-        .dnfl-legend-label {
-            font-size: 0.8rem;
-            font-weight: 500;
-            color: var(--dnfl-text-secondary, #475569);
-        }
-
-        .dnfl-legend-note {
-            font-size: 0.75rem;
-            font-style: italic;
-            color: var(--dnfl-text-muted, #64748b);
-        }
     }
 }
