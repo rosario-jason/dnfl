@@ -1878,14 +1878,11 @@ a.dnfl-btn-secondary:hover,
 }
 #dnfl-lts-container .dnfl-lts-scores-table,
 #dnfl-lts-container .dnfl-lts-summary-table {
-  /* Column Scoped Badge & Pill Overrides (Matching _standings.scss and _rankings.scss) */
+  /* Column Scoped Badge Width Overrides (Matching _rankings.scss and _standings.scss) */
 }
-#dnfl-lts-container .dnfl-lts-scores-table td .dnfl-pill,
 #dnfl-lts-container .dnfl-lts-scores-table td .dnfl-badge,
-#dnfl-lts-container .dnfl-lts-summary-table td .dnfl-pill,
 #dnfl-lts-container .dnfl-lts-summary-table td .dnfl-badge {
   min-width: 95px !important;
-  width: 95px !important;
   justify-content: center !important;
   display: inline-flex !important;
   align-items: center !important;
@@ -1910,18 +1907,6 @@ a.dnfl-btn-secondary:hover,
   padding: 0.5rem 1rem !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
-}
-#dnfl-lts-container {
-  /* Legend Swatch Width Enforcement */
-}
-#dnfl-lts-container #dnfl-lts-legend .dnfl-pill,
-#dnfl-lts-container #dnfl-lts-legend .dnfl-badge {
-  min-width: 38px !important;
-  width: 38px !important;
-  height: 24px !important;
-  justify-content: center !important;
-  display: inline-flex !important;
-  align-items: center !important;
 }
 
 /* ==========================================================================
