@@ -25,7 +25,7 @@
       "lts_startWeek": 1,
       "lts_endWeek": "auto"
     },
-    "02": {
+    "01": {
       "lts_isEnabled": false,
       "highScore_isEnabled": false
     }
