@@ -1,8 +1,33 @@
 {
+  "_instructions": [
+    "DNFL Last Team Standing (LTS) & High Score Rules Configuration",
+    "==============================================================",
+    "1. 'default': Global baseline rules applied across all leagues & conferences.",
+    "2. 'conferenceOverrides': Conference-specific overrides keyed by 2-digit ID ('00', '01', etc.).",
+    "3. 'leagueOverrides': Optional league-level overrides keyed by MFL League ID (e.g., '22883').",
+    "--------------------------------------------------------------",
+    "PARAMETER DEFINITIONS:",
+    "- 'lts_isEnabled' (boolean): true = enable LTS survival eliminations; false = disable.",
+    "- 'highScore_isEnabled' (boolean): true = highlight weekly high scorer; false = disable.",
+    "- 'lts_startWeek' (number | 'auto'): regular season week eliminations begin (e.g., 2 or 'auto').",
+    "- 'lts_endWeek' (number | 'auto'): final week of LTS eliminations (e.g., 12, 14, or 'auto')."
+  ],
   "default": {
     "lts_isEnabled": true,
     "highScore_isEnabled": true,
-    "lts_startWeek": "auto",
+    "lts_startWeek": 2,
     "lts_endWeek": "auto"
+  },
+  "conferenceOverrides": {
+    "01": {
+      "lts_isEnabled": true,
+      "highScore_isEnabled": false,
+      "lts_startWeek": 1,
+      "lts_endWeek": "auto"
+    },
+    "02": {
+      "lts_isEnabled": false,
+      "highScore_isEnabled": false
+    }
   }
 }

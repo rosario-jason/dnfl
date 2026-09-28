@@ -1,7 +1,7 @@
 /**
  * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module
- * File: scripts/dnfl-lts-v2_12.js
- * Version: v2_12
+ * File: scripts/dnfl-lts-v2_13.js
+ * Version: v2_13
  * Module Namespace: DNFL.LTS
  */
 (function() {
@@ -121,16 +121,45 @@
      * Conference Rules Resolver (3-Tier Cascading)
      */
     function getConferenceRules(confId) {
+        if (!cachedRulesConfig || Object.keys(cachedRulesConfig).length === 0) {
+            return null;
+        }
+
+        var leagueId = getLeagueId();
         var confKey = norm(confId) || 'default';
-        var overrides = (cachedRulesConfig && cachedRulesConfig.conferenceOverrides && cachedRulesConfig.conferenceOverrides[confKey])
-            ? cachedRulesConfig.conferenceOverrides[confKey] : {};
-        var globalDefaults = (cachedRulesConfig && cachedRulesConfig['default'])
-            ? cachedRulesConfig['default'] : {};
+
+        var leagueObj = (cachedRulesConfig.leagueOverrides && cachedRulesConfig.leagueOverrides[leagueId])
+            ? cachedRulesConfig.leagueOverrides[leagueId] : null;
+
+        var overrides = null;
+        var globalDefaults = null;
+
+        if (leagueObj) {
+            overrides = (leagueObj.conferenceOverrides && leagueObj.conferenceOverrides[confKey])
+                ? leagueObj.conferenceOverrides[confKey] : null;
+            globalDefaults = leagueObj['default'] || null;
+        }
+
+        if (!overrides && cachedRulesConfig.conferenceOverrides) {
+            overrides = cachedRulesConfig.conferenceOverrides[confKey] || null;
+        }
+
+        if (!globalDefaults) {
+            globalDefaults = cachedRulesConfig['default'] || null;
+        }
+
+        if (!overrides && !globalDefaults) {
+            return null;
+        }
+
+        overrides = overrides || {};
+        globalDefaults = globalDefaults || {};
 
         var rawStart = (overrides.lts_startWeek !== undefined) ? overrides.lts_startWeek : (globalDefaults.lts_startWeek !== undefined ? globalDefaults.lts_startWeek : 'auto');
         var rawEnd = (overrides.lts_endWeek !== undefined) ? overrides.lts_endWeek : (globalDefaults.lts_endWeek !== undefined ? globalDefaults.lts_endWeek : 'auto');
 
         return {
+            isDefined: true,
             lts_isEnabled: (overrides.lts_isEnabled !== undefined) ? overrides.lts_isEnabled : (globalDefaults.lts_isEnabled !== undefined ? globalDefaults.lts_isEnabled : true),
             lts_startWeek: rawStart,
             lts_endWeek: rawEnd,
@@ -154,6 +183,45 @@
 
         // Resolve Active Rules Configuration
         var rules = getConferenceRules(selectedConf);
+        var scoresSec = document.getElementById('dnfl-lts-scores-section');
+        var summarySec = document.getElementById('dnfl-lts-summary-section');
+        var legendSec = document.getElementById('dnfl-lts-legend');
+        var cardBody = document.querySelector('#dnfl-lts-container .dnfl-card-body');
+        var errorBanner = document.getElementById('dnfl-lts-error-banner');
+
+        if (!rules) {
+            if (scoresSec) scoresSec.classList.add('dnfl-is-hidden');
+            if (summarySec) summarySec.classList.add('dnfl-is-hidden');
+            if (legendSec) legendSec.classList.add('dnfl-is-hidden');
+
+            if (!errorBanner && cardBody) {
+                errorBanner = document.createElement('div');
+                errorBanner.id = 'dnfl-lts-error-banner';
+                errorBanner.className = 'dnfl-status-error';
+                cardBody.appendChild(errorBanner);
+            }
+            if (errorBanner) {
+                errorBanner.classList.remove('dnfl-is-hidden');
+                var apiClient = getApiClient();
+                var ctx = (apiClient && typeof apiClient.getContext === 'function') ? apiClient.getContext() : {};
+                var activeYear = ctx.year || targetYear;
+                errorBanner.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + activeYear + ' LTS & High Score rules not defined - check JSON file';
+            }
+
+            var cardTitleElem = document.getElementById('dnfl-lts-card-title');
+            if (cardTitleElem) {
+                var apiClient = getApiClient();
+                var ctx = (apiClient && typeof apiClient.getContext === 'function') ? apiClient.getContext() : {};
+                var activeYear = ctx.year || targetYear;
+                cardTitleElem.innerHTML = '<i class="fa-solid fa-triangle-exclamation dnfl-icon-red"></i> ' + activeYear + ' LTS & High Score Configuration Error';
+            }
+            return;
+        }
+
+        if (errorBanner) {
+            errorBanner.classList.add('dnfl-is-hidden');
+        }
+
         var ltsOn = rules.lts_isEnabled;
         var hsOn = rules.highScore_isEnabled;
 
@@ -625,7 +693,7 @@
         var leagueId = getLeagueId();
 
         try {
-            var rulesUrl = 'https://dnfl.live/dnfl_lts/' + activeYear + '/lts_rules.json';
+            var rulesUrl = 'https://dnfl.live/dnfl_lts/' + activeYear + '/lts_rules.json?L=' + leagueId;
 
             var results = await Promise.all([
                 apiClient.fetchData('league', { L: leagueId }, { ttl: apiClient.TTL.WEEKLY }).catch(function() { return {}; }),
