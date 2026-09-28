@@ -1,7 +1,7 @@
 /**
  * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module
- * File: scripts/dnfl-lts-v2_11.js
- * Version: v2_11
+ * File: scripts/dnfl-lts-v2_12.js
+ * Version: v2_12
  * Module Namespace: DNFL.LTS
  */
 (function() {
@@ -344,8 +344,13 @@
                 return (a.franchise.name || '').localeCompare(b.franchise.name || '');
             });
 
-            // Render Active Section
-            html += '<tr class="dnfl-subhead-active"><td colspan="' + totalCols + '" class="dnfl-sticky-col"><div class="dnfl-subhead-content">LTS Active Teams (' + activeGroup.length + ')</div></td></tr>';
+            // Render Active or Champion Section
+            if (activeGroup.length === 1) {
+                html += '<tr class="dnfl-subhead-champion"><td colspan="' + totalCols + '" class="dnfl-sticky-col"><div class="dnfl-subhead-content">LTS Champion</div></td></tr>';
+            } else if (activeGroup.length > 1) {
+                html += '<tr class="dnfl-subhead-active"><td colspan="' + totalCols + '" class="dnfl-sticky-col"><div class="dnfl-subhead-content">LTS Active Teams (' + activeGroup.length + ')</div></td></tr>';
+            }
+
             activeGroup.forEach(function(item, idx) {
                 html += renderTeamRow(item.franchise, item.fid, idx, myFid, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries);
             });
