@@ -1,7 +1,7 @@
 /**
  * Duke Networking Fantasy League (DNFL) Framework
- * Last Team Standing (LTS) & High Score Tracker Module v2.21
- * File: dnfl-lts-v2_21.js
+ * Last Team Standing (LTS) & High Score Tracker Module v2.22
+ * File: dnfl-lts-v2_22.js
  */
 (function() {
     'use strict';
@@ -20,7 +20,7 @@
     var divToConfMap = {};
 
     function getApiClient() {
-        return (window.DNFL && window.DNFL.API) ? window.DNFL.API : null;
+        return (window.DNFL && window.DNFL.Client) || window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
     }
 
     function getLeagueId() {
@@ -703,6 +703,7 @@
         var apiClient = getApiClient();
         if (!apiClient) {
             console.error('[DNFL.LTS] API Client middleware is unavailable.');
+            updateView();
             return;
         }
 
@@ -714,8 +715,8 @@
             var rulesUrl = 'https://dnfl.live/dnfl_lts/' + activeYear + '/lts_rules.json?L=' + leagueId;
 
             var results = await Promise.all([
-                apiClient.fetchData('league', { L: leagueId }, { ttl: apiClient.TTL.WEEKLY }).catch(function() { return {}; }),
-                apiClient.fetchRawText(rulesUrl, { ttl: apiClient.TTL.DAILY }).catch(function() { return null; })
+                apiClient.fetchData('league', { L: leagueId }, { ttl: (apiClient.TTL && apiClient.TTL.WEEKLY) || 604800000 }).catch(function() { return {}; }),
+                apiClient.fetchRawText(rulesUrl, { ttl: (apiClient.TTL && apiClient.TTL.DAILY) || 86400000 }).catch(function() { return null; })
             ]);
 
             var leagueData = results[0] || {};
@@ -744,7 +745,7 @@
             var fetchPromises = [];
             for (var w = 1; w <= cachedEndWeek; w++) {
                 (function(weekNum) {
-                    var p = apiClient.fetchData('weeklyResults', { W: String(weekNum), L: leagueId }, { ttl: apiClient.TTL.HOURLY })
+                    var p = apiClient.fetchData('weeklyResults', { W: String(weekNum), L: leagueId }, { ttl: (apiClient.TTL && apiClient.TTL.HOURLY) || 3600000 })
                         .then(function(data) {
                             var weeklyObj = (data && data.weeklyResults) ? data.weeklyResults : (data || {});
                             var rawMatchups = weeklyObj.matchup || weeklyObj.matchUp || (weeklyObj.schedule ? weeklyObj.schedule.matchup : null);
