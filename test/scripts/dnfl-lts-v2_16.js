@@ -1,6 +1,6 @@
 /**
  * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module
- * File: scripts/dnfl-lts-v2_15.js
+ * File: scripts/dnfl-lts-v2_16.js
  * Version: v2_14
  * Module Namespace: DNFL.LTS
  */
@@ -189,10 +189,13 @@
         var cardBody = document.querySelector('#dnfl-lts-container .dnfl-card-body');
         var errorBanner = document.getElementById('dnfl-lts-error-banner');
 
+        var infoBanner = document.getElementById('dnfl-lts-info-banner');
+
         if (!rules) {
             if (scoresSec) scoresSec.classList.add('dnfl-is-hidden');
             if (summarySec) summarySec.classList.add('dnfl-is-hidden');
             if (legendSec) legendSec.classList.add('dnfl-is-hidden');
+            if (infoBanner) infoBanner.classList.add('dnfl-is-hidden');
 
             if (!errorBanner && cardBody) {
                 errorBanner = document.createElement('div');
@@ -220,6 +223,32 @@
 
         if (errorBanner) {
             errorBanner.classList.add('dnfl-is-hidden');
+        }
+
+        // Handle pre-season / 0 completed weeks state
+        if (cachedMaxCompletedWeek === 0) {
+            if (scoresSec) scoresSec.classList.add('dnfl-is-hidden');
+            if (summarySec) summarySec.classList.add('dnfl-is-hidden');
+            if (legendSec) legendSec.classList.add('dnfl-is-hidden');
+
+            if (!infoBanner && cardBody) {
+                infoBanner = document.createElement('div');
+                infoBanner.id = 'dnfl-lts-info-banner';
+                infoBanner.className = 'dnfl-status-loading';
+                cardBody.appendChild(infoBanner);
+            }
+            if (infoBanner) {
+                infoBanner.classList.remove('dnfl-is-hidden');
+                infoBanner.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> This module will populate once Week 1 scores are finalized.';
+            }
+            return;
+        }
+
+        if (infoBanner) {
+            infoBanner.classList.add('dnfl-is-hidden');
+        }
+        if (scoresSec) {
+            scoresSec.classList.remove('dnfl-is-hidden');
         }
 
         var ltsOn = rules.lts_isEnabled;
@@ -537,8 +566,8 @@
         }
 
         if (weeklySummaries.length === 0) {
-            summarySection.classList.remove('dnfl-is-hidden');
-            container.innerHTML = '<div class="dnfl-status-loading" style="text-align: center; padding: 1.5rem;"><i class="fa-solid fa-clock-rotate-left"></i> Survival eliminations will activate once Week 1 scores are finalized.</div>';
+            summarySection.classList.add('dnfl-is-hidden');
+            container.innerHTML = '';
             return;
         }
 
