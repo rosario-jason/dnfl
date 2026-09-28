@@ -1,7 +1,7 @@
 /**
  * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module
- * File: scripts/dnfl-lts-v2_10.js
- * Version: v2_10
+ * File: scripts/dnfl-lts-v2_11.js
+ * Version: v2_11
  * Module Namespace: DNFL.LTS
  */
 (function() {
@@ -657,7 +657,7 @@
                         .then(function(data) {
                             var weeklyObj = (data && data.weeklyResults) ? data.weeklyResults : (data || {});
                             var rawMatchups = weeklyObj.matchup || weeklyObj.matchUp || (weeklyObj.schedule ? weeklyObj.schedule.matchup : null);
-                            var matchups = rawMatchups ? toArray(rawMatchups);
+                            var matchups = rawMatchups ? toArray(rawMatchups) : [];
 
                             if (matchups.length === 0 && weeklyObj.franchise) {
                                 var fList = toArray(weeklyObj.franchise);
