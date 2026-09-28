@@ -1,35 +1,29 @@
-/**
- * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module v2_05
- * File: scripts/dnfl-lts-v2_05.js
- * Version: v2_05
- * Module Namespace: DNFL.LTS
- * Architecture aligned with dnfl-exporter-v4_Final.js, dnfl-standings-v4_Final.js & dnfl-api-client-v4_Final.js
- */
+/* Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module v2.07 */
 (function() {
     'use strict';
 
     window.DNFL = window.DNFL || {};
 
     var activeHost = window.location.hostname || "myfantasyleague.com";
-
     var targetYear = window.current_year || null;
     if (!targetYear && window.location) {
         var pathSegments = window.location.pathname.split('/');
         var foundYear = pathSegments.find(function(segment) { return /^20\d{2}$/.test(segment); });
-        targetYear = foundYear ? foundYear : new Date().getFullYear().toString();
+        if (foundYear) targetYear = foundYear;
     }
+    if (!targetYear) targetYear = new Date().getFullYear().toString();
 
     function norm(val) {
-        if (val === null || val === undefined) return '';
-        var s = String(val).trim();
-        return s.length === 1 && /^\d$/.test(s) ? '0' + s : s;
+        if (!val && val !== 0) return '';
+        var str = String(val).trim();
+        return str.length === 1 ? '0' + str : str;
     }
 
     function normFranchiseId(val) {
-        if (val === null || val === undefined) return '';
-        var s = String(val).trim();
-        if (!s || s === '0000') return '';
-        return s.padStart(4, '0');
+        if (!val && val !== 0) return '';
+        var str = String(val).trim();
+        while (str.length < 4) str = '0' + str;
+        return str;
     }
 
     function toArray(val) {
@@ -81,27 +75,25 @@
         return (normalized && normalized !== '0000') ? normalized : null;
     }
 
-    // State Caches
+    // Module Internal State
     var cachedLeague = null;
     var cachedFranchises = [];
     var cachedConferences = [];
     var cachedDivisions = [];
-    var divToConfMap = {};
     var cachedWeeklyResults = {};
     var cachedRulesConfig = {};
     var cachedEndWeek = 14;
     var cachedMaxCompletedWeek = 0;
-    var retryCount = 0;
-    var maxRetries = 50;
+    var divToConfMap = {};
 
     /**
-     * Build Franchise Name Cell Component with Dynamic Host Link
+     * Build Franchise Name Cell Component with Dynamic Host Link (Template Literal Pattern)
      */
-        function buildFranchiseCell(franchise) {
+    function buildFranchiseCell(franchise) {
         if (!franchise) return '<span class="dnfl-text-muted">—</span>';
 
         var fid = normFranchiseId(franchise.id);
-        var name = franchise.name || ('Franchise ' + fid);
+        var name = franchise.name || (`Franchise ${fid}`);
         var ownerName = franchise.owner_name || franchise.username || '';
         var iconUrl = franchise.icon ? franchise.icon.toString().trim() : 'https://dnfl.live/images/ficon-dnfl.png';
         var activeLeagueId = getLeagueId();
@@ -134,52 +126,38 @@
 
         return {
             lts_isEnabled: (overrides.lts_isEnabled !== undefined) ? overrides.lts_isEnabled : (globalDefaults.lts_isEnabled !== undefined ? globalDefaults.lts_isEnabled : true),
-            highScore_isEnabled: (overrides.highScore_isEnabled !== undefined) ? overrides.highScore_isEnabled : (globalDefaults.highScore_isEnabled !== undefined ? globalDefaults.highScore_isEnabled : true),
-            lts_startWeek: overrides.lts_startWeek || globalDefaults.lts_startWeek || 'auto',
-            lts_endWeek: overrides.lts_endWeek || globalDefaults.lts_endWeek || 'auto'
+            lts_startWeek: (overrides.lts_startWeek !== undefined) ? Number(overrides.lts_startWeek) : Number(globalDefaults.lts_startWeek || 3),
+            lts_endWeek: (overrides.lts_endWeek !== undefined) ? Number(overrides.lts_endWeek) : Number(globalDefaults.lts_endWeek || 14),
+            highScore_isEnabled: (overrides.highScore_isEnabled !== undefined) ? overrides.highScore_isEnabled : (globalDefaults.highScore_isEnabled !== undefined ? globalDefaults.highScore_isEnabled : true)
         };
     }
 
     /**
-     * Primary Logic Engine & UI Renderer
+     * Primary Render / Update Controller
      */
     function updateView() {
         var confSelect = document.getElementById('dnfl-lts-conference-select');
-        if (!confSelect) return;
+        var selectedConf = confSelect ? confSelect.value : '';
 
-        var selectedConf = confSelect.value;
+        // Filter Franchises by Selected Conference
+        var confTeams = cachedFranchises.filter(function(f) {
+            if (!selectedConf) return true;
+            var fConf = f.conference ? norm(f.conference) : (f.division ? divToConfMap[norm(f.division)] : '');
+            return fConf === norm(selectedConf);
+        });
+
+        // Resolve Active Rules Configuration
         var rules = getConferenceRules(selectedConf);
         var ltsOn = rules.lts_isEnabled;
         var hsOn = rules.highScore_isEnabled;
-
-        // Extract teams in selected conference using divToConfMap mapping
-        var confTeams = cachedFranchises.filter(function(f) {
-            var divIdNorm = norm(f.division || f.div);
-            var confIdNorm = norm(f.conference || f.conf || divToConfMap[divIdNorm]);
-            if (!selectedConf || selectedConf === 'ALL') return true;
-            return confIdNorm === norm(selectedConf);
-        });
-
-        var totalTeams = confTeams.length || 12;
-
-        // Calculate LTS week bounds
-        var startW = (rules.lts_startWeek === 'auto' || !rules.lts_startWeek)
-            ? Math.max(1, cachedEndWeek - (totalTeams - 1) + 1)
-            : Number(rules.lts_startWeek);
-
-        var endLtsW = (rules.lts_endWeek === 'auto' || !rules.lts_endWeek)
-            ? (startW + (totalTeams - 2))
-            : Number(rules.lts_endWeek);
-
-        // Resolve Conference Name
-        var confName = 'League';
-        if (selectedConf && cachedConferences.length > 0) {
-            var matchConf = cachedConferences.find(function(c) { return norm(c.id) === norm(selectedConf); });
-            if (matchConf) confName = matchConf.name;
-        }
+        var startW = rules.lts_startWeek;
+        var endLtsW = rules.lts_endWeek;
 
         // Update Card Title
+        var matchConf = cachedConferences.find(function(c) { return norm(c.id) === norm(selectedConf); });
+        var confName = matchConf ? matchConf.name : (selectedConf ? ('Conference ' + selectedConf) : 'All League');
         var cardTitleElem = document.getElementById('dnfl-lts-card-title');
+
         if (cardTitleElem) {
             var isMobile = window.innerWidth <= 768;
             if (ltsOn) {
@@ -213,11 +191,10 @@
                 cumulativeYtd[fid] = (cumulativeYtd[fid] || 0) + score;
             });
 
-            // Identify High Scorer
+            // Identify High Scorer (among active/competing teams)
             var highScorerFid = null;
             var highScoreVal = -1;
 
-            // Identify Low Scorer among active LTS eligible teams
             var eligibleLtsFids = activeFids.filter(function(fid) { return !eliminations[fid]; });
 
             eligibleLtsFids.forEach(function(fid) {
@@ -225,6 +202,15 @@
                 if (s > highScoreVal) {
                     highScoreVal = s;
                     highScorerFid = fid;
+                }
+            });
+
+            // Identify Lowest Score across ALL conference franchises (active AND eliminated)
+            var overallLowScoreVal = 99999;
+            activeFids.forEach(function(fid) {
+                var s = scoresThisWeek[fid];
+                if (s < overallLowScoreVal) {
+                    overallLowScoreVal = s;
                 }
             });
 
@@ -243,7 +229,7 @@
                 if (tiedFids.length === 1) {
                     eliminatedFidThisWeek = tiedFids[0];
                 } else {
-                    // Tiebreaker 1: Fewest total year-to-date points scored
+                    // Tiebreaker 1: Fewest total YTD points scored
                     tiedFids.sort(function(a, b) {
                         var ytdA = cumulativeYtd[a];
                         var ytdB = cumulativeYtd[b];
@@ -270,6 +256,7 @@
                 week: w,
                 highScorerFid: highScorerFid,
                 highScore: highScoreVal,
+                overallLowScore: overallLowScoreVal !== 99999 ? overallLowScoreVal : null,
                 eliminatedFid: eliminatedFidThisWeek,
                 knockoutScore: lowScoreVal !== 99999 ? lowScoreVal : null
             });
@@ -310,7 +297,7 @@
             '</thead>' +
             '<tbody>';
 
-        // Section Title In-Table Row
+        // Section Title In-Table Header Row
         html += '<tr class="dnfl-table-section-header">' +
             '<td colspan="' + totalCols + '" class="dnfl-table-section-header-cell dnfl-sticky-col">' +
             '<div class="dnfl-table-section-header-content"><h3>Weekly Scores</h3></div>' +
@@ -376,7 +363,7 @@
      */
     function renderTeamRow(franchise, fid, rowIdx, myFid, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries) {
         var isMyTeam = (myFid && fid === myFid);
-        var rowClass = (rowIdx % 2 === 0 ? 'dnfl-row-odd' : 'dnfl-row-even') + (isMyTeam ? ' dnfl-my-team myfranchise' : '');
+        var rowClass = (rowIdx % 2 === 0 ? 'dnfl-row-odd' : 'dnfl-row-even') + (isMyTeam ? ' dnfl-my-team' : '');
         var elimInfo = eliminations[fid];
 
         var html = '<tr class="' + rowClass + '">';
@@ -390,30 +377,37 @@
 
             var wResults = cachedWeeklyResults[w] || [];
             var match = wResults.find(function(r) { return normFranchiseId(r.franchiseId) === fid; });
-            var score = match ? parseFloat(match.score || 0).toFixed(2) : '0.00';
+            var numScore = match ? parseFloat(match.score || 0) : 0;
+            var score = numScore.toFixed(2);
 
             var summary = weeklySummaries[w - 1] || {};
-            var isHighScore = (summary.highScorerFid === fid);
+            var isHighScore = (summary.highScorerFid === fid || (numScore === summary.highScore && numScore > 0));
+            var isLowScore = (summary.overallLowScore !== null && Math.abs(numScore - summary.overallLowScore) < 0.001);
             var isEliminatedThisWeek = (summary.eliminatedFid === fid);
 
             var cellContent = '';
 
-            if (elimInfo && w > elimInfo.week) {
-                // Post-elimination score
-                cellContent = '<span class="dnfl-text-muted dnfl-italic">' + score + '</span>';
-            } else if (ltsOn && w === endLtsW && !elimInfo && isHighScore) {
+            if (ltsOn && w === endLtsW && !elimInfo && isHighScore) {
                 // Final Week Champion
                 cellContent = '<span class="dnfl-pill dnfl-pill-blue">' + score + ' <i class="fa-solid fa-medal"></i></span>';
             } else if (isEliminatedThisWeek) {
-                // Knockout score
+                // Knockout score (If low score is the eliminated score, ONLY the skull pill is shown)
                 cellContent = '<span class="dnfl-pill dnfl-pill-red">' + score + ' <i class="fa-solid fa-skull"></i></span>';
             } else if (isHighScore && hsOn) {
-                // Weekly High Score
+                // Weekly High Score Winner
                 cellContent = '<span class="dnfl-pill dnfl-pill-green">' + score + ' <i class="fa-solid fa-star"></i></span>';
             } else if (isHighScore && !hsOn) {
+                // High Score Badge when feature off
                 cellContent = '<span class="dnfl-badge dnfl-badge-green">' + score + '</span>';
-            } else {
+            } else if (isLowScore) {
+                // Low Score Badge (Applies to ALL franchises, active and eliminated)
                 cellContent = '<span class="dnfl-badge dnfl-badge-red">' + score + '</span>';
+            } else if (elimInfo && w > elimInfo.week) {
+                // Post-elimination score (when NOT low score)
+                cellContent = '<span class="dnfl-text-muted dnfl-italic">' + score + '</span>';
+            } else {
+                // Regular active score
+                cellContent = score;
             }
 
             html += '<td class="dnfl-text-center">' + cellContent + '</td>';
@@ -459,7 +453,7 @@
 
         html += '</tr></thead><tbody>';
 
-        // In-table Section Header Row
+        // In-Table Section Header Row
         html += '<tr class="dnfl-table-section-header">' +
             '<td colspan="' + totalCols + '" class="dnfl-table-section-header-cell dnfl-sticky-col">' +
             '<div class="dnfl-table-section-header-content"><h3>Weekly Summary</h3></div>' +
@@ -502,13 +496,27 @@
         var legendContainer = document.getElementById('dnfl-lts-legend');
         if (!legendContainer) return;
 
-        var html = '<div class="dnfl-legend-items">' +
-            '<div class="dnfl-legend-item"><span class="dnfl-pill dnfl-pill-blue"><i class="fa-solid fa-medal"></i></span><span class="dnfl-legend-label">LTS Champion</span></div>' +
-            '<div class="dnfl-legend-item"><span class="dnfl-pill dnfl-pill-green"><i class="fa-solid fa-star"></i></span><span class="dnfl-legend-label">High Score</span></div>' +
-            '<div class="dnfl-legend-item"><span class="dnfl-pill dnfl-pill-red"><i class="fa-solid fa-skull"></i></span><span class="dnfl-legend-label">LTS Elimination</span></div>' +
-            '<div class="dnfl-legend-item"><span class="dnfl-badge dnfl-badge-green">&nbsp;</span><span class="dnfl-legend-label">High Score (Off)</span></div>' +
-            '<div class="dnfl-legend-item"><span class="dnfl-badge dnfl-badge-red">&nbsp;</span><span class="dnfl-legend-label">Low Score (Safe)</span></div>' +
-            '</div>';
+        var itemsHtml = '';
+
+        if (ltsOn) {
+            itemsHtml += '<div class="dnfl-legend-item"><span class="dnfl-pill dnfl-pill-blue"><i class="fa-solid fa-medal"></i></span><span class="dnfl-legend-label">LTS Champion</span></div>';
+        }
+
+        if (hsOn) {
+            itemsHtml += '<div class="dnfl-legend-item"><span class="dnfl-pill dnfl-pill-green"><i class="fa-solid fa-star"></i></span><span class="dnfl-legend-label">High Score Winner</span></div>';
+        }
+
+        if (ltsOn) {
+            itemsHtml += '<div class="dnfl-legend-item"><span class="dnfl-pill dnfl-pill-red"><i class="fa-solid fa-skull"></i></span><span class="dnfl-legend-label">LTS Elimination</span></div>';
+        }
+
+        if (!hsOn) {
+            itemsHtml += '<div class="dnfl-legend-item"><span class="dnfl-badge dnfl-badge-green">&nbsp;</span><span class="dnfl-legend-label">High Score</span></div>';
+        }
+
+        itemsHtml += '<div class="dnfl-legend-item"><span class="dnfl-badge dnfl-badge-red">&nbsp;</span><span class="dnfl-legend-label">Low Score</span></div>';
+
+        var html = '<div class="dnfl-legend-items">' + itemsHtml + '</div>';
 
         if (ltsOn) {
             html += '<div class="dnfl-legend-note">*LTS eliminations active Weeks ' + startW + '–' + endLtsW + '</div>';
@@ -557,16 +565,13 @@
 
         select.innerHTML = html;
 
-        // Auto-select user conference
-        var userFid = getLoggedInFranchiseId();
-        if (userFid && cachedFranchises.length > 0) {
-            var myFranchise = cachedFranchises.find(function(f) { return normFranchiseId(f.id) === userFid; });
+        // Auto-select logged in user's conference
+        var myFid = getLoggedInFranchiseId();
+        if (myFid) {
+            var myFranchise = cachedFranchises.find(function(f) { return normFranchiseId(f.id) === myFid; });
             if (myFranchise) {
-                var myDiv = norm(myFranchise.division || myFranchise.div);
-                var myConf = norm(myFranchise.conference || myFranchise.conf || divToConfMap[myDiv]);
-                if (myConf) {
-                    select.value = myConf;
-                }
+                var userConf = myFranchise.conference ? norm(myFranchise.conference) : (myFranchise.division ? divToConfMap[norm(myFranchise.division)] : '');
+                if (userConf) select.value = userConf;
             }
         }
     }
@@ -574,6 +579,9 @@
     /**
      * Primary Initialization Workflow
      */
+    var retryCount = 0;
+    var maxRetries = 50;
+
     function init() {
         var container = document.getElementById('dnfl-lts-container');
         if (!container) {
@@ -636,7 +644,7 @@
                         .then(function(data) {
                             var weeklyObj = (data && data.weeklyResults) ? data.weeklyResults : (data || {});
                             var rawMatchups = weeklyObj.matchup || weeklyObj.matchUp || (weeklyObj.schedule ? weeklyObj.schedule.matchup : null);
-                            var matchups = toArray(rawMatchups);
+                            var matchups = rawMatchups ? toArray(rawMatchups) : [];
 
                             if (matchups.length === 0 && weeklyObj.franchise) {
                                 var fList = toArray(weeklyObj.franchise);
@@ -647,7 +655,7 @@
 
                             var scores = [];
                             matchups.forEach(function(m) {
-                                var franchises = toArray(m.franchise);
+                                var franchises = (m && m.franchise) ? toArray(m.franchise) : [];
                                 franchises.forEach(function(f) {
                                     if (f && f.id) {
                                         scores.push({ franchiseId: normFranchiseId(f.id), score: f.score || '0' });
