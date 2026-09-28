@@ -1,6 +1,6 @@
 /**
  * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module
- * File: scripts/dnfl-lts-v2_16.js
+ * File: scripts/dnfl-lts-v2_19.js
  * Version: v2_14
  * Module Namespace: DNFL.LTS
  */
@@ -172,6 +172,10 @@
      */
     function updateView() {
         var confSelect = document.getElementById('dnfl-lts-conference-select');
+        var controlsBox = document.querySelector('#dnfl-lts-container .dnfl-card-controls') ||
+                          document.querySelector('#dnfl-lts-container .dnfl-controls') ||
+                          (confSelect ? (confSelect.closest('.dnfl-card-controls') || confSelect.closest('.dnfl-controls') || confSelect.parentElement) : null);
+
         var selectedConf = confSelect ? confSelect.value : '';
 
         // Filter Franchises by Selected Conference
@@ -188,7 +192,6 @@
         var legendSec = document.getElementById('dnfl-lts-legend');
         var cardBody = document.querySelector('#dnfl-lts-container .dnfl-card-body');
         var errorBanner = document.getElementById('dnfl-lts-error-banner');
-
         var infoBanner = document.getElementById('dnfl-lts-info-banner');
 
         if (!rules) {
@@ -196,6 +199,7 @@
             if (summarySec) summarySec.classList.add('dnfl-is-hidden');
             if (legendSec) legendSec.classList.add('dnfl-is-hidden');
             if (infoBanner) infoBanner.classList.add('dnfl-is-hidden');
+            if (controlsBox) controlsBox.classList.add('dnfl-is-hidden');
 
             if (!errorBanner && cardBody) {
                 errorBanner = document.createElement('div');
@@ -213,10 +217,7 @@
 
             var cardTitleElem = document.getElementById('dnfl-lts-card-title');
             if (cardTitleElem) {
-                var apiClient = getApiClient();
-                var ctx = (apiClient && typeof apiClient.getContext === 'function') ? apiClient.getContext() : {};
-                var activeYear = ctx.year || targetYear;
-                cardTitleElem.innerHTML = '<i class="fa-solid fa-triangle-exclamation dnfl-icon-red"></i> ' + activeYear + ' LTS & High Score Configuration Error';
+                cardTitleElem.innerHTML = '<i class="fa-solid fa-triangle-exclamation dnfl-icon-red"></i> DNFL - Rules Configuration Error';
             }
             return;
         }
@@ -230,6 +231,7 @@
             if (scoresSec) scoresSec.classList.add('dnfl-is-hidden');
             if (summarySec) summarySec.classList.add('dnfl-is-hidden');
             if (legendSec) legendSec.classList.add('dnfl-is-hidden');
+            if (controlsBox) controlsBox.classList.add('dnfl-is-hidden');
 
             if (!infoBanner && cardBody) {
                 infoBanner = document.createElement('div');
@@ -241,6 +243,20 @@
                 infoBanner.classList.remove('dnfl-is-hidden');
                 infoBanner.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> This module will populate once Week 1 scores are finalized.';
             }
+
+            var ltsOnPre = rules.lts_isEnabled;
+            var cardTitleElemPre = document.getElementById('dnfl-lts-card-title');
+            if (cardTitleElemPre) {
+                var isMobile = window.innerWidth <= 768;
+                if (ltsOnPre) {
+                    var titleText = isMobile
+                        ? '<i class="fa-solid fa-clock-rotate-left dnfl-icon-amber"></i> DNFL LTS & Weekly Summary'
+                        : '<i class="fa-solid fa-clock-rotate-left dnfl-icon-amber"></i> DNFL Last Team Standing & Weekly Summary';
+                    cardTitleElemPre.innerHTML = titleText;
+                } else {
+                    cardTitleElemPre.innerHTML = '<i class="fa-solid fa-clock-rotate-left dnfl-icon-amber"></i> DNFL Weekly Summary';
+                }
+            }
             return;
         }
 
@@ -249,6 +265,9 @@
         }
         if (scoresSec) {
             scoresSec.classList.remove('dnfl-is-hidden');
+        }
+        if (controlsBox) {
+            controlsBox.classList.remove('dnfl-is-hidden');
         }
 
         var ltsOn = rules.lts_isEnabled;
@@ -268,19 +287,17 @@
             : Number(rawEnd);
 
         // Update Card Title
-        var matchConf = cachedConferences.find(function(c) { return norm(c.id) === norm(selectedConf); });
-        var confName = matchConf ? matchConf.name : (selectedConf ? ('Conference ' + selectedConf) : 'All League');
         var cardTitleElem = document.getElementById('dnfl-lts-card-title');
 
         if (cardTitleElem) {
             var isMobile = window.innerWidth <= 768;
             if (ltsOn) {
                 var titleText = isMobile
-                    ? '<i class="fa-solid fa-medal dnfl-icon-amber"></i> ' + confName + ' LTS & Weekly Summary'
-                    : '<i class="fa-solid fa-medal dnfl-icon-amber"></i> ' + confName + ' Last Team Standing & Weekly Summary';
+                    ? '<i class="fa-solid fa-medal dnfl-icon-amber"></i> DNFL LTS & Weekly Summary'
+                    : '<i class="fa-solid fa-medal dnfl-icon-amber"></i> DNFL Last Team Standing & Weekly Summary';
                 cardTitleElem.innerHTML = titleText;
             } else {
-                cardTitleElem.innerHTML = '<i class="fa-solid fa-list dnfl-icon-amber"></i> ' + confName + ' Weekly Summary';
+                cardTitleElem.innerHTML = '<i class="fa-solid fa-list dnfl-icon-amber"></i> DNFL Weekly Summary';
             }
         }
 
