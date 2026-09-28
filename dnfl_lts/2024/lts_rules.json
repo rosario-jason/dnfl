@@ -20,7 +20,7 @@
   },
   "conferenceOverrides": {
     "00": {
-      "lts_isEnabled": true,
+      "lts_isEnabled": false,
       "highScore_isEnabled": true,
       "lts_startWeek": 1,
       "lts_endWeek": "auto"
