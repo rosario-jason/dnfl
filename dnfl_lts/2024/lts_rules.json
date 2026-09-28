@@ -21,8 +21,7 @@
   "conferenceOverrides": {
     "00": {
       "lts_isEnabled": false,
-      "highScore_isEnabled": true
-
+      "highScore_isEnabled": false
     },
     "01": {
       "lts_isEnabled": false,
