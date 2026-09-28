@@ -286,18 +286,20 @@
             ? (startW + (totalTeams - 2))
             : Number(rawEnd);
 
-        // Update Card Title
+        // Update Card Title (Dynamic Conference Name during live operating season)
         var cardTitleElem = document.getElementById('dnfl-lts-card-title');
 
         if (cardTitleElem) {
+            var matchConf = cachedConferences.find(function(c) { return norm(c.id) === norm(selectedConf); });
+            var confName = matchConf ? matchConf.name : (selectedConf ? ('Conference ' + selectedConf) : 'All League');
             var isMobile = window.innerWidth <= 768;
             if (ltsOn) {
                 var titleText = isMobile
-                    ? '<i class="fa-solid fa-medal dnfl-icon-amber"></i> DNFL LTS & Weekly Summary'
-                    : '<i class="fa-solid fa-medal dnfl-icon-amber"></i> DNFL Last Team Standing & Weekly Summary';
+                    ? '<i class="fa-solid fa-medal dnfl-icon-amber"></i> ' + confName + ' LTS & Weekly Summary'
+                    : '<i class="fa-solid fa-medal dnfl-icon-amber"></i> ' + confName + ' Last Team Standing & Weekly Summary';
                 cardTitleElem.innerHTML = titleText;
             } else {
-                cardTitleElem.innerHTML = '<i class="fa-solid fa-list dnfl-icon-amber"></i> DNFL Weekly Summary';
+                cardTitleElem.innerHTML = '<i class="fa-solid fa-list dnfl-icon-amber"></i> ' + confName + ' Weekly Summary';
             }
         }
 
