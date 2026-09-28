@@ -1,7 +1,7 @@
 /**
  * Duke Networking Fantasy League (DNFL) Framework
- * Last Team Standing (LTS) & High Score Tracker Module v2.23
- * File: dnfl-lts-v2_23.js
+ * Last Team Standing (LTS) & High Score Tracker Module v2.24
+ * File: dnfl-lts-v2_24.js
  */
 (function() {
     'use strict';
@@ -9,10 +9,18 @@
     window.DNFL = window.DNFL || {};
 
     var targetYear = (function() {
+        if (window.DNFL && window.DNFL.Client && typeof window.DNFL.Client.getContext === 'function') {
+            var ctx = window.DNFL.Client.getContext();
+            if (ctx && ctx.year) return String(ctx.year);
+        }
+        var urlParams = new URLSearchParams(window.location.search);
+        var qpYear = urlParams.get('YEAR') || urlParams.get('year') || urlParams.get('Y') || urlParams.get('y');
+        if (qpYear) return String(qpYear);
         if (window.current_year) return String(window.current_year);
         if (window.mflYear) return String(window.mflYear);
-        var match = window.location.pathname.match(/\/20(\d{2})\//);
-        if (match) return '20' + match[1];
+        var pathSegments = window.location.pathname.split('/');
+        var foundYear = pathSegments.find(function(s) { return /^20\d{2}$/.test(s); });
+        if (foundYear) return foundYear;
         return '2026';
     })();
     var cachedLeague = null;
@@ -30,12 +38,16 @@
     }
 
     function getLeagueId() {
-        var client = getApiClient();
-        if (client && typeof client.getLeagueId === 'function') {
-            return client.getLeagueId();
+        if (window.DNFL && window.DNFL.Client && typeof window.DNFL.Client.getContext === 'function') {
+            var ctx = window.DNFL.Client.getContext();
+            if (ctx && ctx.leagueId) return String(ctx.leagueId);
         }
-        var match = window.location.search.match(/[?&]L=(\d+)/i);
-        return match ? match[1] : '';
+        var urlParams = new URLSearchParams(window.location.search);
+        var qpLeague = urlParams.get('L') || urlParams.get('l');
+        if (qpLeague) return String(qpLeague);
+        if (window.league_id) return String(window.league_id);
+        if (window.mflLeagueId) return String(window.mflLeagueId);
+        return '22883';
     }
 
     function norm(val) {
