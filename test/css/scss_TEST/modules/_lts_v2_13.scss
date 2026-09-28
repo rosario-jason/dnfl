@@ -1,21 +1,22 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_12.scss)
+   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_13.scss)
    Duke Networking Fantasy League (DNFL)
+   Rebuilt and aligned with _standings.scss and _rankings.scss architecture.
    ========================================================================== */
 
 #dnfl-lts-container {
   /* ------------------------------------------------------------------------
-     1. IN-TABLE SECTION HEADER ROWS (MATCHING STANDINGS DIVISION HEADERS)
+     1. IN-TABLE SECTION HEADER ROWS (SCOPED TO LTS)
      ------------------------------------------------------------------------ */
   .dnfl-table-section-header {
     background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
   }
 
   .dnfl-table-section-header-cell {
-    padding: 10px 16px !important;
+    padding: 0.75rem 1rem !important;
     text-align: left !important;
     background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
-    border-bottom: 2px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
   }
 
   .dnfl-table-section-header-content {
@@ -26,11 +27,9 @@
 
     h3 {
       margin: 0 !important;
-      font-size: 1rem !important;
+      font-size: 1.05rem !important;
       font-weight: 700 !important;
       color: var(--dnfl-text-heading, #0f172a) !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.5px !important;
     }
   }
 
@@ -46,6 +45,14 @@
       left: 0 !important;
       z-index: 10 !important;
     }
+  }
+
+  th.dnfl-sticky-col,
+  th.dnfl-col-franchise.dnfl-sticky-col {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 10 !important;
+    background-color: var(--dnfl-bg-card, #ffffff) !important;
   }
 
   .dnfl-col-week {
@@ -133,12 +140,6 @@
     letter-spacing: 0.05em !important;
   }
 
-  .dnfl-subhead-active .dnfl-subhead-content {
-    position: sticky !important;
-    left: 1rem !important;
-    display: inline-block !important;
-  }
-
   .dnfl-subhead-eliminated td {
     background-color: var(--dnfl-alert-red, #ef4444) !important;
     color: #ffffff !important;
@@ -147,12 +148,6 @@
     padding: 0.5rem 1rem !important;
     text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
-  }
-
-  .dnfl-subhead-eliminated .dnfl-subhead-content {
-    position: sticky !important;
-    left: 1rem !important;
-    display: inline-block !important;
   }
 
   /* ------------------------------------------------------------------------
