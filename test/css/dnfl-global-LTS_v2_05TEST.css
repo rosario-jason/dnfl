@@ -1780,23 +1780,24 @@ a.dnfl-btn-secondary:hover,
 }
 #dnfl-lts-container {
   /* In-Table Section Title Header Rows */
-}
-#dnfl-lts-container .dnfl-table-section-header {
-  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
-  border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
-}
-#dnfl-lts-container .dnfl-table-section-header .dnfl-table-section-header-cell {
-  padding: 0.75rem 1rem !important;
-  text-align: left !important;
-}
-#dnfl-lts-container .dnfl-table-section-header .dnfl-table-section-header-content h3 {
-  margin: 0 !important;
-  font-size: 1.05rem !important;
-  font-weight: 700 !important;
-  color: var(--dnfl-text-heading, #0f172a) !important;
-}
-#dnfl-lts-container {
-  /* Table Column Widths & Alignments */
+  /*     .dnfl-table-section-header {
+          background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+          border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+
+          .dnfl-table-section-header-cell {
+              padding: 0.75rem 1rem !important;
+              text-align: left !important;
+          }
+
+          .dnfl-table-section-header-content h3 {
+              margin: 0 !important;
+              font-size: 1.05rem !important;
+              font-weight: 700 !important;
+              color: var(--dnfl-text-heading, #0f172a) !important;
+          }
+      }
+
+      /* Table Column Widths & Alignments */
 }
 #dnfl-lts-container .dnfl-lts-scores-table .dnfl-col-franchise,
 #dnfl-lts-container .dnfl-lts-summary-table .dnfl-col-franchise {
