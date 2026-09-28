@@ -10,11 +10,11 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "LTS_v2_05c-B",
+        VERSION: "LTS_v2_07-B",
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
-            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-LTS_v2_05TEST.css" }
+            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-LTS_v2_07.css" }
         ],
 
         INFRASTRUCTURE: [
