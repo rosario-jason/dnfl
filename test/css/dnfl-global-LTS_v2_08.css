@@ -1768,7 +1768,7 @@ a.dnfl-btn-secondary:hover,
   }
 }
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_07.scss)
+   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_08.scss)
    Duke Networking Fantasy League (DNFL)
    Fully scoped under #dnfl-lts-container matching _standings.scss and _rankings.scss.
    ========================================================================== */
@@ -1788,7 +1788,7 @@ a.dnfl-btn-secondary:hover,
 #dnfl-lts-container .dnfl-table-section-header-cell {
   padding: 0.75rem 1rem !important;
   text-align: left !important;
-  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important; /* Prevents mobile scroll bleed */
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
 }
 #dnfl-lts-container .dnfl-table-section-header-content h3 {
   margin: 0 !important;
@@ -1797,7 +1797,7 @@ a.dnfl-btn-secondary:hover,
   color: var(--dnfl-text-heading, #0f172a) !important;
 }
 #dnfl-lts-container {
-  /* Column Sizing & Alignments */
+  /* Column Sizing & Inner Element Nesting (Matching _standings.scss and _rankings.scss) */
 }
 #dnfl-lts-container .dnfl-col-franchise {
   min-width: 180px !important;
@@ -1820,6 +1820,16 @@ a.dnfl-btn-secondary:hover,
   white-space: nowrap !important;
   text-align: center !important;
 }
+#dnfl-lts-container th.dnfl-text-center .dnfl-pill,
+#dnfl-lts-container th.dnfl-text-center .dnfl-pill-blue,
+#dnfl-lts-container th.dnfl-text-center .dnfl-badge,
+#dnfl-lts-container td.dnfl-text-center .dnfl-pill,
+#dnfl-lts-container td.dnfl-text-center .dnfl-pill-blue,
+#dnfl-lts-container td.dnfl-text-center .dnfl-badge {
+  min-width: 95px !important;
+  text-align: center !important;
+  justify-content: center !important;
+}
 #dnfl-lts-container th.dnfl-col-week,
 #dnfl-lts-container td.dnfl-col-week {
   min-width: 75px !important;
@@ -1832,13 +1842,12 @@ a.dnfl-btn-secondary:hover,
   white-space: nowrap !important;
   text-align: center !important;
 }
-#dnfl-lts-container {
-  /* Column-Scoped Pill & Badge Overrides (Matching _standings.scss & _rankings.scss) */
-}
-#dnfl-lts-container .dnfl-col-score .dnfl-pill,
-#dnfl-lts-container .dnfl-col-score .dnfl-badge,
-#dnfl-lts-container td.dnfl-text-center .dnfl-pill,
-#dnfl-lts-container td.dnfl-text-center .dnfl-badge {
+#dnfl-lts-container th.dnfl-col-score .dnfl-pill,
+#dnfl-lts-container th.dnfl-col-score .dnfl-pill-blue,
+#dnfl-lts-container th.dnfl-col-score .dnfl-badge,
+#dnfl-lts-container td.dnfl-col-score .dnfl-pill,
+#dnfl-lts-container td.dnfl-col-score .dnfl-pill-blue,
+#dnfl-lts-container td.dnfl-col-score .dnfl-badge {
   min-width: 95px !important;
   text-align: center !important;
   justify-content: center !important;
@@ -1883,6 +1892,14 @@ a.dnfl-btn-secondary:hover,
   padding: 0.5rem 1rem !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
+}
+#dnfl-lts-container {
+  /* Legend Swatches Sizing */
+}
+#dnfl-lts-container #dnfl-lts-legend .dnfl-pill,
+#dnfl-lts-container #dnfl-lts-legend .dnfl-badge {
+  min-width: 38px !important;
+  justify-content: center !important;
 }
 
 /* ==========================================================================
