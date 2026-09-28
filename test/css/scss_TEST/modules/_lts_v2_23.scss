@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_22.scss)
+   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_23.scss)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 
@@ -134,13 +134,18 @@
   }
 
   /* ------------------------------------------------------------------------
-     5. SECTION SPACING & SUPPRESSION OVERRIDES
+     5. SECTION SPACING & CONTAINER VISIBILITY OVERRIDES
      ------------------------------------------------------------------------ */
   .dnfl-lts-section + .dnfl-lts-section {
     margin-top: 1.75rem !important;
   }
 
+  /* High-specificity overrides for component container suppression */
   #dnfl-lts-legend.dnfl-is-hidden {
+    display: none !important;
+  }
+
+  .dnfl-toolbar.dnfl-is-hidden {
     display: none !important;
   }
 }
