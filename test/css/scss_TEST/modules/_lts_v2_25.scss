@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_23.scss)
+   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_25.scss)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 
@@ -86,32 +86,43 @@
   }
 
   /* ------------------------------------------------------------------------
-     3. STICKY COLUMN MOBILE BACKGROUND MAPPINGS
+     3. STICKY COLUMN & FULL ROW ZEBRA STRIPING MAPPINGS
      ------------------------------------------------------------------------ */
-  tbody tr.dnfl-row-odd .dnfl-sticky-col {
+  tbody tr.dnfl-row-odd,
+  tbody tr.dnfl-row-odd td,
+  tbody tr.oddtablerow,
+  tbody tr.oddtablerow td {
     background-color: var(--dnfl-bg-card, #ffffff) !important;
   }
 
-  tbody tr.dnfl-row-even .dnfl-sticky-col {
+  tbody tr.dnfl-row-even,
+  tbody tr.dnfl-row-even td,
+  tbody tr.eventablerow,
+  tbody tr.eventablerow td {
     background-color: var(--dnfl-bg-alt, #fafafa) !important;
   }
 
+  tbody tr:hover td,
   tbody tr:hover .dnfl-sticky-col {
     background-color: var(--dnfl-primary-light, #b6e2ff) !important;
   }
 
+  tbody tr.dnfl-my-team td,
   tbody tr.dnfl-my-team .dnfl-sticky-col,
+  tbody tr.myfranchise td,
   tbody tr.myfranchise .dnfl-sticky-col {
     background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
   }
 
+  tbody tr.dnfl-my-team:hover td,
   tbody tr.dnfl-my-team:hover .dnfl-sticky-col,
+  tbody tr.myfranchise:hover td,
   tbody tr.myfranchise:hover .dnfl-sticky-col {
     background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
   }
 
   /* ------------------------------------------------------------------------
-     4. SUB-HEADER SECTION ROW STYLING (ACTIVE vs ELIMINATED GROUPS)
+     4. SUB-HEADER SECTION ROW STYLING (ACTIVE vs ELIMINATED vs CHAMPION GROUPS)
      ------------------------------------------------------------------------ */
   .dnfl-subhead-active td {
     background-color: var(--dnfl-success-green, #10b981) !important;
@@ -121,6 +132,9 @@
     padding: 0.5rem 1rem !important;
     text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 5 !important;
   }
 
   .dnfl-subhead-eliminated td {
@@ -131,6 +145,22 @@
     padding: 0.5rem 1rem !important;
     text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 5 !important;
+  }
+
+  .dnfl-subhead-champion td {
+    background-color: var(--dnfl-primary, #0577B1) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    padding: 0.5rem 1rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 5 !important;
   }
 
   /* ------------------------------------------------------------------------

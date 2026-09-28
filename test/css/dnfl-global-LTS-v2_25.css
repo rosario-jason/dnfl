@@ -2024,7 +2024,7 @@ a.dnfl-btn-secondary:hover,
 }
 
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_23.scss)
+   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_25.scss)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 #dnfl-lts-container {
@@ -2112,29 +2112,40 @@ a.dnfl-btn-secondary:hover,
 }
 #dnfl-lts-container {
   /* ------------------------------------------------------------------------
-     3. STICKY COLUMN MOBILE BACKGROUND MAPPINGS
+     3. STICKY COLUMN & FULL ROW ZEBRA STRIPING MAPPINGS
      ------------------------------------------------------------------------ */
 }
-#dnfl-lts-container tbody tr.dnfl-row-odd .dnfl-sticky-col {
+#dnfl-lts-container tbody tr.dnfl-row-odd,
+#dnfl-lts-container tbody tr.dnfl-row-odd td,
+#dnfl-lts-container tbody tr.oddtablerow,
+#dnfl-lts-container tbody tr.oddtablerow td {
   background-color: var(--dnfl-bg-card, #ffffff) !important;
 }
-#dnfl-lts-container tbody tr.dnfl-row-even .dnfl-sticky-col {
+#dnfl-lts-container tbody tr.dnfl-row-even,
+#dnfl-lts-container tbody tr.dnfl-row-even td,
+#dnfl-lts-container tbody tr.eventablerow,
+#dnfl-lts-container tbody tr.eventablerow td {
   background-color: var(--dnfl-bg-alt, #fafafa) !important;
 }
+#dnfl-lts-container tbody tr:hover td,
 #dnfl-lts-container tbody tr:hover .dnfl-sticky-col {
   background-color: var(--dnfl-primary-light, #b6e2ff) !important;
 }
+#dnfl-lts-container tbody tr.dnfl-my-team td,
 #dnfl-lts-container tbody tr.dnfl-my-team .dnfl-sticky-col,
+#dnfl-lts-container tbody tr.myfranchise td,
 #dnfl-lts-container tbody tr.myfranchise .dnfl-sticky-col {
   background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
 }
+#dnfl-lts-container tbody tr.dnfl-my-team:hover td,
 #dnfl-lts-container tbody tr.dnfl-my-team:hover .dnfl-sticky-col,
+#dnfl-lts-container tbody tr.myfranchise:hover td,
 #dnfl-lts-container tbody tr.myfranchise:hover .dnfl-sticky-col {
   background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
 }
 #dnfl-lts-container {
   /* ------------------------------------------------------------------------
-     4. SUB-HEADER SECTION ROW STYLING (ACTIVE vs ELIMINATED GROUPS)
+     4. SUB-HEADER SECTION ROW STYLING (ACTIVE vs ELIMINATED vs CHAMPION GROUPS)
      ------------------------------------------------------------------------ */
 }
 #dnfl-lts-container .dnfl-subhead-active td {
@@ -2145,6 +2156,9 @@ a.dnfl-btn-secondary:hover,
   padding: 0.5rem 1rem !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 5 !important;
 }
 #dnfl-lts-container .dnfl-subhead-eliminated td {
   background-color: var(--dnfl-alert-red, #ef4444) !important;
@@ -2154,6 +2168,21 @@ a.dnfl-btn-secondary:hover,
   padding: 0.5rem 1rem !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 5 !important;
+}
+#dnfl-lts-container .dnfl-subhead-champion td {
+  background-color: var(--dnfl-primary, #0577B1) !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  padding: 0.5rem 1rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 5 !important;
 }
 #dnfl-lts-container {
   /* ------------------------------------------------------------------------
