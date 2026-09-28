@@ -17,6 +17,18 @@
     "highScore_isEnabled": true,
     "lts_startWeek": 2,
     "lts_endWeek": "auto"
+  },
+  "conferenceOverrides": {
+    "00": {
+      "lts_isEnabled": true,
+      "highScore_isEnabled": true,
+      "lts_startWeek": 1,
+      "lts_endWeek": "auto"
+    },
+    "02": {
+      "lts_isEnabled": false,
+      "highScore_isEnabled": false
+    }
   }
 }
 
