@@ -2024,12 +2024,12 @@ a.dnfl-btn-secondary:hover,
 }
 
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_26.scss)
+   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_28.scss)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 #dnfl-lts-container {
   /* ------------------------------------------------------------------------
-     1. IN-TABLE SECTION HEADER ROWS (STANDINGS-ALIGNED DIVISION HEADERS)
+     1. IN-TABLE DIVISION HEADER ROWS (STANDINGS PARITY)
      ------------------------------------------------------------------------ */
 }
 #dnfl-lts-container .dnfl-division-header {
@@ -2046,25 +2046,36 @@ a.dnfl-btn-secondary:hover,
   z-index: 10 !important;
   background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
 }
+#dnfl-lts-container .dnfl-division-header-content h1,
+#dnfl-lts-container .dnfl-division-header-content h2,
 #dnfl-lts-container .dnfl-division-header-content h3 {
   margin: 0 !important;
   font-size: 1.05rem !important;
   font-weight: 700 !important;
   color: var(--dnfl-text-heading, #0f172a) !important;
+  font-family: inherit !important;
+  line-height: 1.2 !important;
 }
 #dnfl-lts-container {
   /* ------------------------------------------------------------------------
-     2. COLUMN ALIGNMENTS, WIDTHS & INNER CAPSULES
+     2. STICKY COLUMNS GLOBAL RULE
+     ------------------------------------------------------------------------ */
+}
+#dnfl-lts-container .dnfl-sticky-col,
+#dnfl-lts-container td.dnfl-sticky-col,
+#dnfl-lts-container th.dnfl-sticky-col {
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 10 !important;
+}
+#dnfl-lts-container {
+  /* ------------------------------------------------------------------------
+     3. COLUMN ALIGNMENTS & CAPSULE SIZING
      ------------------------------------------------------------------------ */
 }
 #dnfl-lts-container .dnfl-col-franchise {
   min-width: 180px !important;
   text-align: left !important;
-}
-#dnfl-lts-container .dnfl-col-franchise.dnfl-sticky-col {
-  position: sticky !important;
-  left: 0 !important;
-  z-index: 10 !important;
 }
 #dnfl-lts-container .dnfl-col-week {
   width: 75px !important;
@@ -2072,53 +2083,36 @@ a.dnfl-btn-secondary:hover,
   text-align: center !important;
   white-space: nowrap !important;
 }
-#dnfl-lts-container .dnfl-col-score {
-  width: 110px !important;
-  min-width: 110px !important;
-  text-align: center !important;
-  white-space: nowrap !important;
-}
-#dnfl-lts-container .dnfl-col-score .dnfl-pill,
-#dnfl-lts-container .dnfl-col-score .dnfl-pill-blue,
-#dnfl-lts-container .dnfl-col-score .dnfl-pill-green,
-#dnfl-lts-container .dnfl-col-score .dnfl-pill-red,
-#dnfl-lts-container .dnfl-col-score .dnfl-badge,
-#dnfl-lts-container .dnfl-col-score .dnfl-badge-green,
-#dnfl-lts-container .dnfl-col-score .dnfl-badge-red,
-#dnfl-lts-container .dnfl-col-score .dnfl-badge-blue {
-  min-width: 95px !important;
-  text-align: center !important;
-  justify-content: center !important;
-}
+#dnfl-lts-container .dnfl-col-score,
 #dnfl-lts-container td.dnfl-text-center,
 #dnfl-lts-container th.dnfl-text-center {
   min-width: 105px !important;
   text-align: center !important;
   white-space: nowrap !important;
 }
+#dnfl-lts-container .dnfl-col-score .dnfl-pill,
+#dnfl-lts-container .dnfl-col-score .dnfl-badge,
 #dnfl-lts-container td.dnfl-text-center .dnfl-pill,
-#dnfl-lts-container td.dnfl-text-center .dnfl-pill-blue,
-#dnfl-lts-container td.dnfl-text-center .dnfl-pill-green,
-#dnfl-lts-container td.dnfl-text-center .dnfl-pill-red,
 #dnfl-lts-container td.dnfl-text-center .dnfl-badge,
-#dnfl-lts-container td.dnfl-text-center .dnfl-badge-green,
-#dnfl-lts-container td.dnfl-text-center .dnfl-badge-red,
-#dnfl-lts-container td.dnfl-text-center .dnfl-badge-blue,
 #dnfl-lts-container th.dnfl-text-center .dnfl-pill,
-#dnfl-lts-container th.dnfl-text-center .dnfl-pill-blue,
-#dnfl-lts-container th.dnfl-text-center .dnfl-pill-green,
-#dnfl-lts-container th.dnfl-text-center .dnfl-pill-red,
-#dnfl-lts-container th.dnfl-text-center .dnfl-badge,
-#dnfl-lts-container th.dnfl-text-center .dnfl-badge-green,
-#dnfl-lts-container th.dnfl-text-center .dnfl-badge-red,
-#dnfl-lts-container th.dnfl-text-center .dnfl-badge-blue {
+#dnfl-lts-container th.dnfl-text-center .dnfl-badge {
   min-width: 95px !important;
   text-align: center !important;
   justify-content: center !important;
 }
 #dnfl-lts-container {
   /* ------------------------------------------------------------------------
-     3. STICKY COLUMN & FULL ROW ZEBRA STRIPING MAPPINGS
+     4. HEADER GRID ICONS (GLOBAL UTILITY OVERRIDES)
+     ------------------------------------------------------------------------ */
+}
+#dnfl-lts-container th .dnfl-icon-red,
+#dnfl-lts-container th .dnfl-icon-danger,
+#dnfl-lts-container th .dnfl-text-red {
+  color: var(--dnfl-alert-red, #ef4444) !important;
+}
+#dnfl-lts-container {
+  /* ------------------------------------------------------------------------
+     5. FULL ROW ZEBRA STRIPING & USER HIGHLIGHTING
      ------------------------------------------------------------------------ */
 }
 #dnfl-lts-container tbody tr.dnfl-row-odd,
@@ -2151,79 +2145,54 @@ a.dnfl-btn-secondary:hover,
 }
 #dnfl-lts-container {
   /* ------------------------------------------------------------------------
-     4. SUB-HEADER SECTION ROW STYLING (ACTIVE vs ELIMINATED vs CHAMPION)
+     6. SUB-HEADER GROUP ROWS (ACTIVE / ELIMINATED / CHAMPION)
      ------------------------------------------------------------------------ */
+}
+#dnfl-lts-container .dnfl-subhead-active td,
+#dnfl-lts-container .dnfl-subhead-eliminated td,
+#dnfl-lts-container .dnfl-subhead-champion td {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  padding: 0.5rem 1rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  position: sticky !important;
+  left: 0 !important;
+  z-index: 5 !important;
 }
 #dnfl-lts-container .dnfl-subhead-active td {
   background-color: var(--dnfl-success-green, #10b981) !important;
-  color: #ffffff !important;
-  font-weight: 700 !important;
-  font-size: 0.85rem !important;
-  padding: 0.5rem 1rem !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
-  position: sticky !important;
-  left: 0 !important;
-  z-index: 5 !important;
 }
 #dnfl-lts-container .dnfl-subhead-eliminated td {
   background-color: var(--dnfl-alert-red, #ef4444) !important;
-  color: #ffffff !important;
-  font-weight: 700 !important;
-  font-size: 0.85rem !important;
-  padding: 0.5rem 1rem !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
-  position: sticky !important;
-  left: 0 !important;
-  z-index: 5 !important;
 }
 #dnfl-lts-container .dnfl-subhead-champion td {
   background-color: var(--dnfl-primary, #0577B1) !important;
-  color: #ffffff !important;
-  font-weight: 700 !important;
-  font-size: 0.85rem !important;
-  padding: 0.5rem 1rem !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
-  position: sticky !important;
-  left: 0 !important;
-  z-index: 5 !important;
 }
 #dnfl-lts-container {
-  /* Suppress row hover effects on subheader rows */
+  /* Subheader Hover Suppression */
 }
-#dnfl-lts-container tbody tr.dnfl-subhead-active:hover,
-#dnfl-lts-container tbody tr.dnfl-subhead-active:hover td,
-#dnfl-lts-container tbody tr.dnfl-subhead-active:hover .dnfl-sticky-col {
+#dnfl-lts-container tbody tr.dnfl-subhead-active:hover td {
   background-color: var(--dnfl-success-green, #10b981) !important;
 }
-#dnfl-lts-container tbody tr.dnfl-subhead-eliminated:hover,
-#dnfl-lts-container tbody tr.dnfl-subhead-eliminated:hover td,
-#dnfl-lts-container tbody tr.dnfl-subhead-eliminated:hover .dnfl-sticky-col {
+#dnfl-lts-container tbody tr.dnfl-subhead-eliminated:hover td {
   background-color: var(--dnfl-alert-red, #ef4444) !important;
 }
-#dnfl-lts-container tbody tr.dnfl-subhead-champion:hover,
-#dnfl-lts-container tbody tr.dnfl-subhead-champion:hover td,
-#dnfl-lts-container tbody tr.dnfl-subhead-champion:hover .dnfl-sticky-col {
+#dnfl-lts-container tbody tr.dnfl-subhead-champion:hover td {
   background-color: var(--dnfl-primary, #0577B1) !important;
 }
 #dnfl-lts-container {
   /* ------------------------------------------------------------------------
-     5. SECTION SPACING & CONTAINER VISIBILITY OVERRIDES
+     7. SECTION SPACING & CONTAINER VISIBILITY OVERRIDES
      ------------------------------------------------------------------------ */
 }
 #dnfl-lts-container .dnfl-lts-section + .dnfl-lts-section {
   margin-top: 1.75rem !important;
 }
-#dnfl-lts-container {
-  /* High-specificity overrides for component container suppression */
-}
+#dnfl-lts-container #dnfl-lts-legend.dnfl-is-hidden,
 #dnfl-lts-container #dnfl-lts-toolbar.dnfl-is-hidden,
 #dnfl-lts-container .dnfl-toolbar.dnfl-is-hidden {
-  display: none !important;
-}
-#dnfl-lts-container #dnfl-lts-legend.dnfl-is-hidden {
   display: none !important;
 }
 
