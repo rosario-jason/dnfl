@@ -1,7 +1,7 @@
 /**
  * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module
- * File: scripts/dnfl-lts-v2_13.js
- * Version: v2_13
+ * File: scripts/dnfl-lts-v2_14.js
+ * Version: v2_14
  * Module Namespace: DNFL.LTS
  */
 (function() {
@@ -276,19 +276,19 @@
                 cumulativeYtd[fid] = (cumulativeYtd[fid] || 0) + score;
             });
 
-            // Identify High Scorer (among active/competing teams)
+            // Identify High Scorer across ALL conference franchises (active AND eliminated)
             var highScorerFid = null;
             var highScoreVal = -1;
 
-            var eligibleLtsFids = activeFids.filter(function(fid) { return !eliminations[fid]; });
-
-            eligibleLtsFids.forEach(function(fid) {
+            activeFids.forEach(function(fid) {
                 var s = scoresThisWeek[fid];
                 if (s > highScoreVal) {
                     highScoreVal = s;
                     highScorerFid = fid;
                 }
             });
+
+            var eligibleLtsFids = activeFids.filter(function(fid) { return !eliminations[fid]; });
 
             // Identify Lowest Score across ALL conference franchises (active AND eliminated)
             var overallLowScoreVal = 99999;
