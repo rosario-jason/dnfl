@@ -1,7 +1,6 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_14.scss)
+   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_21.scss)
    Duke Networking Fantasy League (DNFL)
-   Fully scoped under #dnfl-lts-container matching _standings.scss and _rankings.scss.
    ========================================================================== */
 
 #dnfl-lts-container {
@@ -13,26 +12,16 @@
   }
 
   .dnfl-table-section-header-cell {
-    padding: 10px 16px !important;
+    padding: 0.75rem 1rem !important;
     text-align: left !important;
     background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
-    border-bottom: 2px solid var(--dnfl-border-medium, #cbd5e1) !important;
   }
 
-  .dnfl-table-section-header-content {
-    display: inline-flex !important;
-    align-items: center !important;
-    position: sticky !important;
-    left: 1rem !important;
-
-    h3 {
-      margin: 0 !important;
-      font-size: 1rem !important;
-      font-weight: 700 !important;
-      color: var(--dnfl-text-heading, #0f172a) !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.5px !important;
-    }
+  .dnfl-table-section-header-content h3 {
+    margin: 0 !important;
+    font-size: 1.05rem !important;
+    font-weight: 700 !important;
+    color: var(--dnfl-text-heading, #0f172a) !important;
   }
 
   /* ------------------------------------------------------------------------
@@ -46,7 +35,6 @@
       position: sticky !important;
       left: 0 !important;
       z-index: 10 !important;
-      background-color: var(--dnfl-bg-card, #ffffff) !important;
     }
   }
 
@@ -123,74 +111,42 @@
   }
 
   /* ------------------------------------------------------------------------
-     4. SUB-HEADER SECTION ROW STYLING (ACTIVE, ELIMINATED & CHAMPION GROUPS)
+     4. SUB-HEADER SECTION ROW STYLING (ACTIVE vs ELIMINATED GROUPS)
      ------------------------------------------------------------------------ */
-  .dnfl-subhead-active td,
-  .dnfl-subhead-eliminated td,
-  .dnfl-subhead-champion td {
+  .dnfl-subhead-active td {
+    background-color: var(--dnfl-success-green, #10b981) !important;
+    color: #ffffff !important;
     font-weight: 700 !important;
     font-size: 0.85rem !important;
     padding: 0.5rem 1rem !important;
     text-transform: uppercase !important;
     letter-spacing: 0.05em !important;
-    position: sticky !important;
-    left: 0 !important;
-    z-index: 10 !important;
-  }
-
-  .dnfl-subhead-content {
-    position: sticky !important;
-    left: 1rem !important;
-    display: inline-block !important;
-    white-space: nowrap !important;
-  }
-
-  .dnfl-subhead-active td {
-    background-color: var(--dnfl-success-green, #10b981) !important;
-    color: #ffffff !important;
   }
 
   .dnfl-subhead-eliminated td {
     background-color: var(--dnfl-alert-red, #ef4444) !important;
     color: #ffffff !important;
-  }
-
-  .dnfl-subhead-champion td {
-    background-color: var(--dnfl-primary, #0284c7) !important;
-    color: #ffffff !important;
-  }
-
-  /* Disable Row Hover Effects on Subheaders & Section Headers */
-  tbody tr.dnfl-subhead-active:hover td,
-  tbody tr.dnfl-subhead-active:hover .dnfl-sticky-col {
-    background-color: var(--dnfl-success-green, #10b981) !important;
-  }
-
-  tbody tr.dnfl-subhead-eliminated:hover td,
-  tbody tr.dnfl-subhead-eliminated:hover .dnfl-sticky-col {
-    background-color: var(--dnfl-alert-red, #ef4444) !important;
-  }
-
-  tbody tr.dnfl-subhead-champion:hover td,
-  tbody tr.dnfl-subhead-champion:hover .dnfl-sticky-col {
-    background-color: var(--dnfl-primary, #0284c7) !important;
-  }
-
-  tbody tr.dnfl-table-section-header:hover td,
-  tbody tr.dnfl-table-section-header:hover .dnfl-sticky-col {
-    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    padding: 0.5rem 1rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
   }
 
   /* ------------------------------------------------------------------------
-     5. SECTION SPACING
+     5. SECTION SPACING & SUPPRESSION OVERRIDES
      ------------------------------------------------------------------------ */
   .dnfl-lts-section + .dnfl-lts-section {
     margin-top: 1.75rem !important;
   }
+
+  #dnfl-lts-legend.dnfl-is-hidden {
+    display: none !important;
+  }
 }
 
 /* ==========================================================================
-   MOBILE RESPONSIVE TWEAKS (MATCHING _standings.scss & _rankings.scss)
+   MOBILE RESPONSIVE TWEAKS
    ========================================================================== */
 @media (max-width: 768px) {
   #dnfl-lts-container {
