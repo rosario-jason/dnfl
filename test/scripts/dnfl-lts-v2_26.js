@@ -1,7 +1,7 @@
 /**
  * Duke Networking Fantasy League (DNFL) Framework
- * Last Team Standing (LTS) & High Score Tracker Module v2.25
- * File: dnfl-lts-v2_25.js
+ * Last Team Standing (LTS) & High Score Tracker Module v2.26
+ * File: dnfl-lts-v2_26.js
  */
 (function() {
     'use strict';
@@ -165,8 +165,9 @@
      * Primary Render / Update Controller
      */
     function updateView() {
-        var confSelect = document.getElementById('dnfl-lts-conference-select');
-        var controlsBox = document.querySelector('#dnfl-lts-container .dnfl-toolbar') ||
+        var confSelect = document.getElementById('dnfl-lts-conf-select') || document.getElementById('dnfl-lts-conference-select');
+        var controlsBox = document.getElementById('dnfl-lts-toolbar') ||
+                          document.querySelector('#dnfl-lts-container .dnfl-toolbar') ||
                           document.querySelector('#dnfl-lts-container .dnfl-card-controls') ||
                           document.querySelector('#dnfl-lts-container .dnfl-controls') ||
                           (confSelect ? (confSelect.closest('.dnfl-toolbar') || confSelect.closest('.dnfl-card-controls') || confSelect.closest('.dnfl-controls') || confSelect.parentElement) : null);
@@ -175,7 +176,7 @@
 
         // Filter Franchises by Selected Conference
         var confTeams = cachedFranchises.filter(function(f) {
-            if (!selectedConf) return true;
+            if (!selectedConf || selectedConf === 'ALL' || selectedConf === 'all') return true;
             var fConf = f.conference ? norm(f.conference) : (f.division ? divToConfMap[norm(f.division)] : '');
             return fConf === norm(selectedConf);
         });
@@ -649,7 +650,7 @@
 
     function toggleScores() {
         var sec = document.getElementById('dnfl-lts-scores-section');
-        var btn = document.getElementById('dnfl-btn-lts-scores');
+        var btn = document.getElementById('dnfl-lts-toggle-scores-btn') || document.getElementById('dnfl-btn-lts-scores');
         if (!sec || !btn) return;
 
         var isHidden = sec.classList.toggle('dnfl-is-hidden');
@@ -660,7 +661,7 @@
 
     function toggleSummary() {
         var sec = document.getElementById('dnfl-lts-summary-section');
-        var btn = document.getElementById('dnfl-btn-lts-summary');
+        var btn = document.getElementById('dnfl-lts-toggle-summary-btn') || document.getElementById('dnfl-btn-lts-summary');
         if (!sec || !btn) return;
 
         var isHidden = sec.classList.toggle('dnfl-is-hidden');
@@ -670,7 +671,7 @@
     }
 
     function populateConferenceSelect() {
-        var select = document.getElementById('dnfl-lts-conference-select');
+        var select = document.getElementById('dnfl-lts-conf-select') || document.getElementById('dnfl-lts-conference-select');
         if (!select) return;
 
         var html = '';
