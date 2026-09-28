@@ -1,4 +1,9 @@
-/* Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module v2.07 */
+/**
+ * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module
+ * File: scripts/dnfl-lts-v2_07.js
+ * Version: v2_07
+ * Module Namespace: DNFL.LTS
+ */
 (function() {
     'use strict';
 
@@ -126,9 +131,9 @@
 
         return {
             lts_isEnabled: (overrides.lts_isEnabled !== undefined) ? overrides.lts_isEnabled : (globalDefaults.lts_isEnabled !== undefined ? globalDefaults.lts_isEnabled : true),
-            lts_startWeek: (overrides.lts_startWeek !== undefined) ? Number(overrides.lts_startWeek) : Number(globalDefaults.lts_startWeek || 3),
-            lts_endWeek: (overrides.lts_endWeek !== undefined) ? Number(overrides.lts_endWeek) : Number(globalDefaults.lts_endWeek || 14),
-            highScore_isEnabled: (overrides.highScore_isEnabled !== undefined) ? overrides.highScore_isEnabled : (globalDefaults.highScore_isEnabled !== undefined ? globalDefaults.highScore_isEnabled : true)
+            highScore_isEnabled: (overrides.highScore_isEnabled !== undefined) ? overrides.highScore_isEnabled : (globalDefaults.highScore_isEnabled !== undefined ? globalDefaults.highScore_isEnabled : true),
+            lts_startWeek: (overrides.lts_startWeek !== undefined) ? overrides.lts_startWeek : (globalDefaults.lts_startWeek !== undefined ? globalDefaults.lts_startWeek : 'auto'),
+            lts_endWeek: (overrides.lts_endWeek !== undefined) ? overrides.lts_endWeek : (globalDefaults.lts_endWeek !== undefined ? globalDefaults.lts_endWeek : 'auto')
         };
     }
 
@@ -150,8 +155,16 @@
         var rules = getConferenceRules(selectedConf);
         var ltsOn = rules.lts_isEnabled;
         var hsOn = rules.highScore_isEnabled;
-        var startW = rules.lts_startWeek;
-        var endLtsW = rules.lts_endWeek;
+
+        var totalTeams = confTeams.length || 12;
+
+        var startW = (rules.lts_startWeek === 'auto' || !rules.lts_startWeek)
+            ? Math.max(1, cachedEndWeek - (totalTeams - 1) + 1)
+            : Number(rules.lts_startWeek);
+
+        var endLtsW = (rules.lts_endWeek === 'auto' || !rules.lts_endWeek)
+            ? (startW + (totalTeams - 2))
+            : Number(rules.lts_endWeek);
 
         // Update Card Title
         var matchConf = cachedConferences.find(function(c) { return norm(c.id) === norm(selectedConf); });
