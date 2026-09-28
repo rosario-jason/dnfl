@@ -2024,7 +2024,7 @@ a.dnfl-btn-secondary:hover,
 }
 
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_28.scss)
+   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_29.scss)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 #dnfl-lts-container {
@@ -2045,6 +2045,13 @@ a.dnfl-btn-secondary:hover,
   left: 0 !important;
   z-index: 10 !important;
   background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+}
+#dnfl-lts-container .dnfl-division-header-content,
+#dnfl-lts-container .dnfl-subhead-content {
+  position: sticky !important;
+  left: 1rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
 }
 #dnfl-lts-container .dnfl-division-header-content h1,
 #dnfl-lts-container .dnfl-division-header-content h2,
@@ -2199,6 +2206,12 @@ a.dnfl-btn-secondary:hover,
 /* ==========================================================================
    MOBILE RESPONSIVE TWEAKS
    ========================================================================== */
+@media (min-width: 769px) {
+  #dnfl-lts-container .dnfl-col-franchise {
+    min-width: 240px !important;
+    max-width: 280px !important;
+  }
+}
 @media (max-width: 768px) {
   #dnfl-lts-container table.dnfl-table {
     min-width: 320px !important;

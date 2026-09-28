@@ -1,7 +1,7 @@
 /**
  * Duke Networking Fantasy League (DNFL) Framework
- * Last Team Standing (LTS) & High Score Tracker Module v2.28
- * File: dnfl-lts-v2_28.js
+ * Last Team Standing (LTS) & High Score Tracker Module v2.29
+ * File: dnfl-lts-v2_29.js
  */
 (function() {
     'use strict';
@@ -226,21 +226,19 @@
             }
             if (infoBanner) {
                 infoBanner.classList.remove('dnfl-is-hidden');
-                infoBanner.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> This module will populate once Week 1 scores are finalized.';
+                infoBanner.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> Survival eliminations will activate once Week 1 scores are finalized.';
             }
 
             var ltsOnPre = rules.lts_isEnabled !== false;
-            var hsOnPre = rules.highScore_isEnabled !== false;
+            var confObjPre = cachedConferences.find(function(c) { return norm(c.id) === norm(selectedConfVal); });
+            var confNamePre = confObjPre ? confObjPre.name : 'Conference';
+
             var cardTitleElemPre = document.getElementById('dnfl-lts-card-title');
             if (cardTitleElemPre) {
-                if (ltsOnPre && hsOnPre) {
-                    cardTitleElemPre.innerHTML = '<i class="fa-solid fa-skull"></i> Last Team Standing & High Score';
-                } else if (ltsOnPre) {
-                    cardTitleElemPre.innerHTML = '<i class="fa-solid fa-skull"></i> Last Team Standing';
-                } else if (hsOnPre) {
-                    cardTitleElemPre.innerHTML = '<i class="fa-solid fa-star"></i> High Score Tracker';
+                if (ltsOnPre) {
+                    cardTitleElemPre.innerHTML = '<i class="fa-solid fa-skull"></i> ' + confNamePre + ' Last Team Standing & Weekly Summary';
                 } else {
-                    cardTitleElemPre.innerHTML = '<i class="fa-solid fa-trophy"></i> DNFL Tracker';
+                    cardTitleElemPre.innerHTML = '<i class="fa-solid fa-list"></i> ' + confNamePre + ' Weekly Summary';
                 }
             }
             return;
@@ -257,17 +255,17 @@
         var ltsOn = rules.lts_isEnabled !== false;
         var hsOn = rules.highScore_isEnabled !== false;
 
-        // Dynamic Card Header Title based on active features
+        // Resolve Active Conference Name
+        var confObj = cachedConferences.find(function(c) { return norm(c.id) === norm(selectedConfVal); });
+        var confName = confObj ? confObj.name : 'Conference';
+
+        // Dynamic Card Header Title
         var cardTitleElem = document.getElementById('dnfl-lts-card-title');
         if (cardTitleElem) {
-            if (ltsOn && hsOn) {
-                cardTitleElem.innerHTML = '<i class="fa-solid fa-skull"></i> Last Team Standing & High Score';
-            } else if (ltsOn) {
-                cardTitleElem.innerHTML = '<i class="fa-solid fa-skull"></i> Last Team Standing';
-            } else if (hsOn) {
-                cardTitleElem.innerHTML = '<i class="fa-solid fa-star"></i> High Score Tracker';
+            if (ltsOn) {
+                cardTitleElem.innerHTML = '<i class="fa-solid fa-skull"></i> ' + confName + ' Last Team Standing & Weekly Summary';
             } else {
-                cardTitleElem.innerHTML = '<i class="fa-solid fa-trophy"></i> DNFL Tracker';
+                cardTitleElem.innerHTML = '<i class="fa-solid fa-list"></i> ' + confName + ' Weekly Summary';
             }
         }
 
@@ -404,7 +402,7 @@
                 var subheadClass = (activeList.length === 1 && cachedMaxCompletedWeek >= endLtsW) ? 'dnfl-subhead-champion' : 'dnfl-subhead-active';
 
                 html += '<tr class="dnfl-table-subheader ' + subheadClass + '">' +
-                    '<td colspan="' + totalCols + '" class="dnfl-sticky-col">' + subheadText + '</td>' +
+                    '<td colspan="' + totalCols + '" class="dnfl-sticky-col"><div class="dnfl-subhead-content">' + subheadText + '</div></td>' +
                     '</tr>';
 
                 activeList.forEach(function(f) {
@@ -415,7 +413,7 @@
 
             if (elimList.length > 0) {
                 html += '<tr class="dnfl-table-subheader dnfl-subhead-eliminated">' +
-                    '<td colspan="' + totalCols + '" class="dnfl-sticky-col">Eliminated Teams (' + elimList.length + ')</td>' +
+                    '<td colspan="' + totalCols + '" class="dnfl-sticky-col"><div class="dnfl-subhead-content">Eliminated Teams (' + elimList.length + ')</div></td>' +
                     '</tr>';
 
                 elimList.forEach(function(f) {
@@ -504,7 +502,7 @@
 
         if (weeklySummaries.length === 0) {
             summarySection.classList.remove('dnfl-is-hidden');
-            container.innerHTML = '<div class="dnfl-status-loading"><i class="fa-solid fa-clock-rotate-left"></i> This module will populate once Week 1 scores are finalized.</div>';
+            container.innerHTML = '<div class="dnfl-status-loading"><i class="fa-solid fa-clock-rotate-left"></i> Survival eliminations will activate once Week 1 scores are finalized.</div>';
             return;
         }
 
@@ -568,28 +566,19 @@
         var legendContainer = document.getElementById('dnfl-lts-legend');
         if (!legendContainer) return;
 
-        if (!ltsOn && !hsOn) {
-            legendContainer.classList.add('dnfl-is-hidden');
-            legendContainer.innerHTML = '';
-            return;
-        }
-
         legendContainer.classList.remove('dnfl-is-hidden');
 
         var itemsHtml = '';
 
         if (ltsOn) {
             itemsHtml += '<div class="dnfl-legend-item"><span class="dnfl-pill dnfl-pill-blue"><i class="fa-solid fa-medal"></i></span><span class="dnfl-legend-label">LTS Champion</span></div>';
+            itemsHtml += '<div class="dnfl-legend-item"><span class="dnfl-pill dnfl-pill-red"><i class="fa-solid fa-skull"></i></span><span class="dnfl-legend-label">LTS Elimination</span></div>';
         }
 
         if (hsOn) {
             itemsHtml += '<div class="dnfl-legend-item"><span class="dnfl-pill dnfl-pill-green"><i class="fa-solid fa-star"></i></span><span class="dnfl-legend-label">High Score Winner</span></div>';
         } else {
             itemsHtml += '<div class="dnfl-legend-item"><span class="dnfl-badge dnfl-badge-green">&nbsp;</span><span class="dnfl-legend-label">High Score</span></div>';
-        }
-
-        if (ltsOn) {
-            itemsHtml += '<div class="dnfl-legend-item"><span class="dnfl-pill dnfl-pill-red"><i class="fa-solid fa-skull"></i></span><span class="dnfl-legend-label">LTS Elimination</span></div>';
         }
 
         itemsHtml += '<div class="dnfl-legend-item"><span class="dnfl-badge dnfl-badge-red">&nbsp;</span><span class="dnfl-legend-label">Low Score</span></div>';
