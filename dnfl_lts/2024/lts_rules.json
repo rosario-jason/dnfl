@@ -20,7 +20,6 @@
   },
   "conferenceOverrides": {
     "00": {
-      "lts_isEnabled": false,
       "highScore_isEnabled": false
     },
     "01": {
