@@ -1,6 +1,6 @@
 /**
  * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module
- * File: scripts/dnfl-lts-v2_14.js
+ * File: scripts/dnfl-lts-v2_15.js
  * Version: v2_14
  * Module Namespace: DNFL.LTS
  */
@@ -347,8 +347,25 @@
             });
         }
 
+        // Determine Champion Week for survivor medal
+        var championWeek = null;
+        if (ltsOn) {
+            var survivingFids = activeFids.filter(function(fid) { return !eliminations[fid]; });
+            if (survivingFids.length === 1) {
+                var lastElimW = 0;
+                Object.keys(eliminations).forEach(function(fid) {
+                    if (eliminations[fid].week > lastElimW) {
+                        lastElimW = eliminations[fid].week;
+                    }
+                });
+                championWeek = lastElimW || endLtsW;
+            } else if (cachedMaxCompletedWeek >= endLtsW && endLtsW > 0) {
+                championWeek = endLtsW;
+            }
+        }
+
         // Render View A: Table 1 - Weekly Scores
-        renderWeeklyScoresTable(confTeams, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries);
+        renderWeeklyScoresTable(confTeams, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries, championWeek);
 
         // Render View B: Table 2 - Weekly Summary
         renderWeeklySummaryTable(confTeams, ltsOn, hsOn, weeklySummaries);
@@ -360,7 +377,7 @@
     /**
      * Render Table 1: Weekly Scores Matrix
      */
-    function renderWeeklyScoresTable(confTeams, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries) {
+    function renderWeeklyScoresTable(confTeams, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries, championWeek) {
         var container = document.getElementById('dnfl-lts-scores-container');
         if (!container) return;
 
@@ -420,14 +437,14 @@
             }
 
             activeGroup.forEach(function(item, idx) {
-                html += renderTeamRow(item.franchise, item.fid, idx, myFid, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries);
+                html += renderTeamRow(item.franchise, item.fid, idx, myFid, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries, championWeek);
             });
 
             // Render Eliminated Section
             if (elimGroup.length > 0) {
                 html += '<tr class="dnfl-subhead-eliminated"><td colspan="' + totalCols + '" class="dnfl-sticky-col"><div class="dnfl-subhead-content">LTS Eliminated Teams (' + elimGroup.length + ')</div></td></tr>';
                 elimGroup.forEach(function(item, idx) {
-                    html += renderTeamRow(item.franchise, item.fid, idx, myFid, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries);
+                    html += renderTeamRow(item.franchise, item.fid, idx, myFid, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries, championWeek);
                 });
             }
         } else {
@@ -438,7 +455,7 @@
 
             sortedTeams.forEach(function(f, idx) {
                 var fid = normFranchiseId(f.id);
-                html += renderTeamRow(f, fid, idx, myFid, false, hsOn, startW, endLtsW, eliminations, weeklySummaries);
+                html += renderTeamRow(f, fid, idx, myFid, false, hsOn, startW, endLtsW, eliminations, weeklySummaries, championWeek);
             });
         }
 
@@ -449,7 +466,7 @@
     /**
      * Render Single Team Scoring Row
      */
-    function renderTeamRow(franchise, fid, rowIdx, myFid, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries) {
+    function renderTeamRow(franchise, fid, rowIdx, myFid, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries, championWeek) {
         var isMyTeam = (myFid && fid === myFid);
         var rowClass = (rowIdx % 2 === 0 ? 'dnfl-row-odd' : 'dnfl-row-even') + (isMyTeam ? ' dnfl-my-team' : '');
         var elimInfo = eliminations[fid];
@@ -475,7 +492,7 @@
 
             var cellContent = '';
 
-            if (ltsOn && w === endLtsW && !elimInfo && isHighScore) {
+            if (ltsOn && w === championWeek && !elimInfo) {
                 // Final Week Champion
                 cellContent = '<span class="dnfl-pill dnfl-pill-blue">' + score + ' <i class="fa-solid fa-medal"></i></span>';
             } else if (isEliminatedThisWeek) {
@@ -516,6 +533,12 @@
         if (!ltsOn && !hsOn) {
             summarySection.classList.add('dnfl-is-hidden');
             container.innerHTML = '';
+            return;
+        }
+
+        if (weeklySummaries.length === 0) {
+            summarySection.classList.remove('dnfl-is-hidden');
+            container.innerHTML = '<div class="dnfl-status-loading" style="text-align: center; padding: 1.5rem;"><i class="fa-solid fa-clock-rotate-left"></i> Survival eliminations will activate once Week 1 scores are finalized.</div>';
             return;
         }
 
@@ -761,7 +784,10 @@
             var maxComp = 0;
             allWeeks.forEach(function(wData) {
                 cachedWeeklyResults[wData.week] = wData.scores;
-                if (wData.scores.length > 0 && wData.week > maxComp) {
+                var hasNonZeroScore = wData.scores.some(function(s) {
+                    return parseFloat(s.score || 0) > 0;
+                });
+                if (hasNonZeroScore && wData.week > maxComp) {
                     maxComp = wData.week;
                 }
             });
