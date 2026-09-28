@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_08.scss)
+   DNFL Last Team Standing (LTS) Module Partial (_lts.scss)
    Duke Networking Fantasy League (DNFL)
    Fully scoped under #dnfl-lts-container matching _standings.scss and _rankings.scss.
    ========================================================================== */
@@ -10,33 +10,29 @@
     }
 
     /* In-Table Section Header Title Rows */
-    .dnfl-table-section-header {
-        background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
-        border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
-    }
-
     .dnfl-table-section-header-cell {
         padding: 0.75rem 1rem !important;
         text-align: left !important;
         background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+        border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
     }
 
-    .dnfl-table-section-header-content h3 {
-        margin: 0 !important;
-        font-size: 1.05rem !important;
-        font-weight: 700 !important;
-        color: var(--dnfl-text-heading, #0f172a) !important;
+    .dnfl-table-section-header-content {
+        display: flex !important;
+        align-items: center !important;
+
+        h3 {
+            margin: 0 !important;
+            font-size: 1.05rem !important;
+            font-weight: 700 !important;
+            color: var(--dnfl-text-heading, #0f172a) !important;
+        }
     }
 
-    /* Column Sizing & Inner Element Nesting (Matching _standings.scss and _rankings.scss) */
+    /* Column Sizing & Inner Element Nesting (Matching _standings.scss & _rankings.scss) */
     .dnfl-col-franchise {
         min-width: 180px !important;
         text-align: left !important;
-
-        @media (min-width: 769px) {
-            min-width: 240px !important;
-            max-width: 280px !important;
-        }
 
         &.dnfl-sticky-col {
             position: sticky !important;
@@ -45,37 +41,26 @@
         }
     }
 
-    th.dnfl-text-center,
-    td.dnfl-text-center {
-        min-width: 105px !important;
-        white-space: nowrap !important;
-        text-align: center !important;
-
-        .dnfl-pill,
-        .dnfl-pill-blue,
-        .dnfl-badge {
-            min-width: 95px !important;
-            text-align: center !important;
-            justify-content: center !important;
-        }
-    }
-
-    th.dnfl-col-week,
-    td.dnfl-col-week {
+    .dnfl-col-week {
         min-width: 75px !important;
         white-space: nowrap !important;
         text-align: center !important;
     }
 
-    th.dnfl-col-score,
-    td.dnfl-col-score {
+    .dnfl-col-score,
+    .dnfl-text-center {
         min-width: 110px !important;
         white-space: nowrap !important;
         text-align: center !important;
 
         .dnfl-pill,
         .dnfl-pill-blue,
-        .dnfl-badge {
+        .dnfl-pill-green,
+        .dnfl-pill-red,
+        .dnfl-badge,
+        .dnfl-badge-green,
+        .dnfl-badge-red,
+        .dnfl-badge-blue {
             min-width: 95px !important;
             text-align: center !important;
             justify-content: center !important;
@@ -112,12 +97,20 @@
         letter-spacing: 0.05em !important;
     }
 
-    /* Legend Swatches Sizing */
-    #dnfl-lts-legend {
+    /* Legend Item Capsule Sizing */
+    .dnfl-legend-panel {
         .dnfl-pill,
         .dnfl-badge {
             min-width: 38px !important;
             justify-content: center !important;
         }
+    }
+}
+
+/* Desktop Responsive Column Width Overrides (Un-nested matching _standings.scss & _rankings.scss) */
+@media (min-width: 769px) {
+    #dnfl-lts-container .dnfl-col-franchise {
+        min-width: 240px !important;
+        max-width: 280px !important;
     }
 }
