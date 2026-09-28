@@ -1,7 +1,7 @@
 /**
  * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module
- * File: scripts/dnfl-lts-v2_09.js
- * Version: v2_09
+ * File: scripts/dnfl-lts-v2_10.js
+ * Version: v2_10
  * Module Namespace: DNFL.LTS
  */
 (function() {
@@ -108,7 +108,7 @@
 
         return '<div class="dnfl-franchise-cell">' +
             '<a href="' + url + '" title="View Franchise Page">' +
-            '<img src="' + iconUrl + '" alt="' + name + '" class="franchiseicon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';" />' +
+            '<img src="' + iconUrl + '" alt="' + name + '" class="franchiseicon" onError="this.onerror=null;this.src=\'https://dnfl.live/images/ficon-dnfl.png\';" />' +
             '</a>' +
             '<div class="dnfl-franchise-info">' +
             '<a href="' + url + '" class="dnfl-team-name">' + name + '</a>' +
