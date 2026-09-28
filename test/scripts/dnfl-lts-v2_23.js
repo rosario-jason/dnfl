@@ -1,14 +1,20 @@
 /**
  * Duke Networking Fantasy League (DNFL) Framework
- * Last Team Standing (LTS) & High Score Tracker Module v2.22
- * File: dnfl-lts-v2_22.js
+ * Last Team Standing (LTS) & High Score Tracker Module v2.23
+ * File: dnfl-lts-v2_23.js
  */
 (function() {
     'use strict';
 
     window.DNFL = window.DNFL || {};
 
-    var targetYear = '2026';
+    var targetYear = (function() {
+        if (window.current_year) return String(window.current_year);
+        if (window.mflYear) return String(window.mflYear);
+        var match = window.location.pathname.match(/\/20(\d{2})\//);
+        if (match) return '20' + match[1];
+        return '2026';
+    })();
     var cachedLeague = null;
     var cachedFranchises = [];
     var cachedConferences = [];
@@ -528,7 +534,7 @@
 
         if (weeklySummaries.length === 0) {
             summarySection.classList.remove('dnfl-is-hidden');
-            container.innerHTML = '<div class="dnfl-status-loading" style="text-align: center; padding: 1.5rem;"><i class="fa-solid fa-clock-rotate-left"></i> This module will populate once Week 1 scores are finalized.</div>';
+            container.innerHTML = '<div class="dnfl-status-loading" ><i class="fa-solid fa-clock-rotate-left"></i> This module will populate once Week 1 scores are finalized.</div>';
             return;
         }
 
@@ -715,7 +721,7 @@
             var rulesUrl = 'https://dnfl.live/dnfl_lts/' + activeYear + '/lts_rules.json?L=' + leagueId;
 
             var results = await Promise.all([
-                apiClient.fetchData('league', { L: leagueId }, { ttl: (apiClient.TTL && apiClient.TTL.WEEKLY) || 604800000 }).catch(function() { return {}; }),
+                apiClient.fetchData('league', { L: leagueId, YEAR: activeYear }, { ttl: (apiClient.TTL && apiClient.TTL.WEEKLY) || 604800000 }).catch(function() { return {}; }),
                 apiClient.fetchRawText(rulesUrl, { ttl: (apiClient.TTL && apiClient.TTL.DAILY) || 86400000 }).catch(function() { return null; })
             ]);
 
@@ -745,7 +751,7 @@
             var fetchPromises = [];
             for (var w = 1; w <= cachedEndWeek; w++) {
                 (function(weekNum) {
-                    var p = apiClient.fetchData('weeklyResults', { W: String(weekNum), L: leagueId }, { ttl: (apiClient.TTL && apiClient.TTL.HOURLY) || 3600000 })
+                    var p = apiClient.fetchData('weeklyResults', { W: String(weekNum), L: leagueId, YEAR: activeYear }, { ttl: (apiClient.TTL && apiClient.TTL.HOURLY) || 3600000 })
                         .then(function(data) {
                             var weeklyObj = (data && data.weeklyResults) ? data.weeklyResults : (data || {});
                             var rawMatchups = weeklyObj.matchup || weeklyObj.matchUp || (weeklyObj.schedule ? weeklyObj.schedule.matchup : null);
@@ -763,7 +769,11 @@
                                 var franchises = (m && m.franchise) ? toArray(m.franchise) : [];
                                 franchises.forEach(function(f) {
                                     if (f && f.id) {
-                                        scores.push({ franchiseId: normFranchiseId(f.id), score: f.score || '0' });
+                                        var sc = (f.score !== undefined && f.score !== null && f.score !== '') ? f.score :
+                                         ((f.points !== undefined && f.points !== null && f.points !== '') ? f.points :
+                                         ((f.pts !== undefined && f.pts !== null && f.pts !== '') ? f.pts :
+                                         ((f.pf !== undefined && f.pf !== null && f.pf !== '') ? f.pf : '0')));
+                                        scores.push({ franchiseId: normFranchiseId(f.id), score: String(sc) });
                                     }
                                 });
                             });
