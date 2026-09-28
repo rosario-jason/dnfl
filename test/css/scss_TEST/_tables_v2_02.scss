@@ -1,7 +1,6 @@
 /* ==========================================================================
-   DNFL BASE TABLES & RESPONSIVE TOUCH SCROLLING (_tables_v2_01.scss)
+   DNFL BASE TABLES & RESPONSIVE TOUCH SCROLLING (_tables_v2_02.scss)
    Duke Networking Fantasy League (DNFL)
-   Adds 2D Vertical/Horizontal Sticky Table Headers & Section Title Pinning.
    ========================================================================== */
 
 /* ------------------------------------------------------------------------
@@ -13,7 +12,7 @@
   width: 100% !important;
   max-width: 100% !important;
   overflow-x: auto !important;
-  -webkit-overflow-scrolling: touch !important; /* Hardware-accelerated mobile touch momentum */
+  -webkit-overflow-scrolling: touch !important;
   display: block !important;
   box-sizing: border-box !important;
   box-shadow: none !important;
@@ -51,59 +50,43 @@
   font-size: 0.85rem !important;
   background-color: var(--dnfl-bg-card, #ffffff) !important;
   text-align: left !important;
+  margin: 0 !important;
 }
 
 .dnfl-table th,
 #dnfl_dataTable th,
 #dnfl_standingsTable th {
-  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
   color: var(--dnfl-text-main, #121212) !important;
-  padding: 12px 15px !important;
-  font-weight: 600 !important;
+  padding: 10px 14px !important;
+  font-weight: 700 !important;
   text-transform: uppercase !important;
   font-size: 0.75rem !important;
   letter-spacing: 0.5px !important;
-  border-bottom: 2px solid var(--dnfl-border-dark, #444444) !important;
+  border-bottom: 2px solid var(--dnfl-border-medium, #cbd5e1) !important;
   font-style: normal !important;
 }
 
 /* ------------------------------------------------------------------------
    3. VERTICAL & HORIZONTAL STICKY HEADER RULES (MFL MENU OFFSET)
    ------------------------------------------------------------------------ */
-/* Vertical Sticky Table Header Row */
-.dnfl-table thead th,
-.dnfl-table th.dnfl-col-header {
+/* Column Header Rows in thead */
+.dnfl-table thead tr.dnfl-table-subheader th,
+.dnfl-table thead th {
   position: sticky !important;
   top: var(--dnfl-sticky-top-offset, 2.5rem) !important;
   z-index: 15 !important;
-  background-color: var(--dnfl-bg-card, #ffffff) !important;
-}
-
-/* Section Header Title Row (In-Table Titles above column headers) */
-.dnfl-table tr.dnfl-table-section-header,
-.dnfl-table tr.dnfl-division-header {
-  position: sticky !important;
-  top: var(--dnfl-sticky-top-offset, 2.5rem) !important;
-  z-index: 18 !important;
-}
-
-.dnfl-table-section-header-cell,
-.dnfl-division-header-cell {
-  position: sticky !important;
-  left: 0 !important;
-  top: var(--dnfl-sticky-top-offset, 2.5rem) !important;
-  z-index: 19 !important;
   background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
 }
 
 /* Top-Left Intersection Cell (Sticky Horizontally + Vertically) */
-.dnfl-table th.dnfl-sticky-col,
-.dnfl-table thead th.dnfl-sticky-col {
+.dnfl-table thead th.dnfl-sticky-col,
+.dnfl-table th.dnfl-col-franchise.dnfl-sticky-col {
   position: sticky !important;
   left: 0 !important;
   top: var(--dnfl-sticky-top-offset, 2.5rem) !important;
   z-index: 20 !important;
-  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
 }
 
 /* Data Cells Sticky Column (Horizontal Only) */
@@ -116,7 +99,7 @@
 .dnfl-table td,
 #dnfl_dataTable td,
 #dnfl_standingsTable td {
-  padding: 12px 15px !important;
+  padding: 10px 14px !important;
   border-bottom: 1px solid var(--dnfl-border-light, #e5e7eb) !important;
   color: var(--dnfl-text-main, #121212) !important;
   vertical-align: middle !important;
@@ -124,46 +107,28 @@
 
 /* Zebra Striping */
 .dnfl-table tbody tr.dnfl-row-even,
-.dnfl-table tbody tr:nth-child(even),
-#dnfl_dataTable tbody tr:nth-child(even),
-#dnfl_dataTable tbody tr.dnfl-row-even,
-#dnfl_standingsTable tbody tr:nth-child(even),
-#dnfl_standingsTable tbody tr.dnfl-row-even {
+.dnfl-table tbody tr:nth-child(even) {
   background-color: var(--dnfl-bg-alt, #fafafa) !important;
 }
 
 .dnfl-table tbody tr.dnfl-row-odd,
-.dnfl-table tbody tr:nth-child(odd),
-#dnfl_dataTable tbody tr:nth-child(odd),
-#dnfl_dataTable tbody tr.dnfl-row-odd,
-#dnfl_standingsTable tbody tr:nth-child(odd),
-#dnfl_standingsTable tbody tr.dnfl-row-odd {
+.dnfl-table tbody tr:nth-child(odd) {
   background-color: var(--dnfl-bg-card, #ffffff) !important;
 }
 
 /* Interactive Row Hover & Logged-In User Row Highlighting */
-.dnfl-table tbody tr:not(.dnfl-division-header):not(.dnfl-table-section-header):not(.dnfl-comment-row):not(.dnfl-my-team):not(.myfranchise):hover,
-#dnfl_dataTable tbody tr:not(.dnfl-division-header):not(.dnfl-comment-row):not(.dnfl-my-team):not(.myfranchise):hover,
-#dnfl_standingsTable tbody tr:not(.dnfl-division-header):not(.dnfl-comment-row):not(.dnfl-my-team):not(.myfranchise):hover {
+.dnfl-table tbody tr:not(.dnfl-division-header):not(.dnfl-table-section-header):not(.dnfl-subhead-active):not(.dnfl-subhead-eliminated):not(.dnfl-comment-row):not(.dnfl-my-team):not(.myfranchise):hover {
   background-color: var(--dnfl-primary-light, #b6e2ff) !important;
   transition: background-color var(--dnfl-transition-smooth, 0.2s ease) !important;
 }
 
 .dnfl-table tbody tr.dnfl-my-team,
-.dnfl-table tbody tr.myfranchise,
-#dnfl_dataTable tbody tr.dnfl-my-team,
-#dnfl_dataTable tbody tr.myfranchise,
-#dnfl_standingsTable tbody tr.dnfl-my-team,
-#dnfl_standingsTable tbody tr.myfranchise {
+.dnfl-table tbody tr.myfranchise {
   background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
 }
 
 .dnfl-table tbody tr.dnfl-my-team:hover,
-.dnfl-table tbody tr.myfranchise:hover,
-#dnfl_dataTable tbody tr.dnfl-my-team:hover,
-#dnfl_dataTable tbody tr.myfranchise:hover,
-#dnfl_standingsTable tbody tr.dnfl-my-team:hover,
-#dnfl_standingsTable tbody tr.myfranchise:hover {
+.dnfl-table tbody tr.myfranchise:hover {
   background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
   transition: background-color var(--dnfl-transition-smooth, 0.2s ease) !important;
 }

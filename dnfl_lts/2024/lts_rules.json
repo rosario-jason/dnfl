@@ -2,7 +2,7 @@
   "default": {
     "lts_isEnabled": true,
     "highScore_isEnabled": true,
-    "lts_startWeek": "auto",
+    "lts_startWeek": 2,
     "lts_endWeek": "auto"
   }
 }

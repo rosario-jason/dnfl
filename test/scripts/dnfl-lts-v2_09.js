@@ -1,7 +1,7 @@
 /**
  * Duke Networking Fantasy League (DNFL) Last Team Standing (LTS) Module
- * File: scripts/dnfl-lts-v2_08.js
- * Version: v2_08
+ * File: scripts/dnfl-lts-v2_09.js
+ * Version: v2_09
  * Module Namespace: DNFL.LTS
  */
 (function() {
@@ -92,31 +92,29 @@
     var divToConfMap = {};
 
     /**
-     * Build Franchise Name Cell Component with Dynamic Host Link (Template Literal Pattern)
+     * Build Franchise Name Cell Component with Dynamic Host Link
      */
     function buildFranchiseCell(franchise) {
         if (!franchise) return '<span class="dnfl-text-muted">—</span>';
 
         var fid = normFranchiseId(franchise.id);
-        var name = franchise.name || (`Franchise ${fid}`);
+        var name = franchise.name || ('Franchise ' + fid);
         var ownerName = franchise.owner_name || franchise.username || '';
         var iconUrl = franchise.icon ? franchise.icon.toString().trim() : 'https://dnfl.live/images/ficon-dnfl.png';
         var activeLeagueId = getLeagueId();
-        var url = `https://${activeHost}/${targetYear}/options?L=${activeLeagueId}&F=${fid}&O=01`;
 
-        var ownerHtml = ownerName ? `<span class="dnfl-owner-name">${ownerName}</span>` : '';
+        var url = 'https://' + activeHost + '/' + targetYear + '/options?L=' + activeLeagueId + '&F=' + fid + '&O=01';
+        var ownerHtml = ownerName ? '<span class="dnfl-owner-name">' + ownerName + '</span>' : '';
 
-        return `
-            <div class="dnfl-franchise-cell">
-                <a href="${url}" title="View Franchise Page">
-                    <img src="${iconUrl}" alt="${name}" class="franchiseicon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';" />
-                </a>
-                <div class="dnfl-franchise-info">
-                    <a href="${url}" class="dnfl-team-name">${name}</a>
-                    ${ownerHtml}
-                </div>
-            </div>
-        `;
+        return '<div class="dnfl-franchise-cell">' +
+            '<a href="' + url + '" title="View Franchise Page">' +
+            '<img src="' + iconUrl + '" alt="' + name + '" class="franchiseicon" onError="this.onerror=null;this.src='https://dnfl.live/images/ficon-dnfl.png';" />' +
+            '</a>' +
+            '<div class="dnfl-franchise-info">' +
+            '<a href="' + url + '" class="dnfl-team-name">' + name + '</a>' +
+            ownerHtml +
+            '</div>' +
+            '</div>';
     }
 
     /**
@@ -129,10 +127,13 @@
         var globalDefaults = (cachedRulesConfig && cachedRulesConfig['default'])
             ? cachedRulesConfig['default'] : {};
 
+        var rawStart = (overrides.lts_startWeek !== undefined) ? overrides.lts_startWeek : (globalDefaults.lts_startWeek !== undefined ? globalDefaults.lts_startWeek : 'auto');
+        var rawEnd = (overrides.lts_endWeek !== undefined) ? overrides.lts_endWeek : (globalDefaults.lts_endWeek !== undefined ? globalDefaults.lts_endWeek : 'auto');
+
         return {
             lts_isEnabled: (overrides.lts_isEnabled !== undefined) ? overrides.lts_isEnabled : (globalDefaults.lts_isEnabled !== undefined ? globalDefaults.lts_isEnabled : true),
-            lts_startWeek: (overrides.lts_startWeek !== undefined) ? Number(overrides.lts_startWeek) : Number(globalDefaults.lts_startWeek || 3),
-            lts_endWeek: (overrides.lts_endWeek !== undefined) ? Number(overrides.lts_endWeek) : Number(globalDefaults.lts_endWeek || 14),
+            lts_startWeek: rawStart,
+            lts_endWeek: rawEnd,
             highScore_isEnabled: (overrides.highScore_isEnabled !== undefined) ? overrides.highScore_isEnabled : (globalDefaults.highScore_isEnabled !== undefined ? globalDefaults.highScore_isEnabled : true)
         };
     }
@@ -155,8 +156,19 @@
         var rules = getConferenceRules(selectedConf);
         var ltsOn = rules.lts_isEnabled;
         var hsOn = rules.highScore_isEnabled;
-        var startW = rules.lts_startWeek;
-        var endLtsW = rules.lts_endWeek;
+
+        var totalTeams = confTeams.length || 12;
+
+        // Calculate LTS week bounds with robust 'auto' support
+        var rawStart = String(rules.lts_startWeek).toLowerCase().trim();
+        var startW = (rawStart === 'auto' || rawStart === '' || isNaN(Number(rawStart)))
+            ? Math.max(1, cachedEndWeek - (totalTeams - 1) + 1)
+            : Number(rawStart);
+
+        var rawEnd = String(rules.lts_endWeek).toLowerCase().trim();
+        var endLtsW = (rawEnd === 'auto' || rawEnd === '' || isNaN(Number(rawEnd)))
+            ? (startW + (totalTeams - 2))
+            : Number(rawEnd);
 
         // Update Card Title
         var matchConf = cachedConferences.find(function(c) { return norm(c.id) === norm(selectedConf); });
@@ -291,7 +303,7 @@
             '<table class="dnfl-lts-scores-table dnfl-table">' +
             '<thead>' +
             '<tr class="dnfl-table-section-header">' +
-            '<td colspan="' + totalCols + '" class="dnfl-table-section-header-cell dnfl-sticky-col">' +
+            '<td colspan="' + totalCols + '" class="dnfl-table-section-header-cell">' +
             '<div class="dnfl-table-section-header-content"><h3>Weekly Scores</h3></div>' +
             '</td></tr>' +
             '<tr class="dnfl-table-subheader">' +
@@ -305,8 +317,6 @@
         html += '</tr>' +
             '</thead>' +
             '<tbody>';
-
-
 
         if (ltsOn) {
             // Group Teams: Active vs Eliminated
@@ -335,14 +345,14 @@
             });
 
             // Render Active Section
-            html += '<tr class="dnfl-subhead-active"><td colspan="' + totalCols + '" class="dnfl-sticky-col">LTS Active Teams (' + activeGroup.length + ')</td></tr>';
+            html += '<tr class="dnfl-subhead-active"><td colspan="' + totalCols + '" class="dnfl-sticky-col"><div class="dnfl-subhead-content">LTS Active Teams (' + activeGroup.length + ')</div></td></tr>';
             activeGroup.forEach(function(item, idx) {
                 html += renderTeamRow(item.franchise, item.fid, idx, myFid, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries);
             });
 
             // Render Eliminated Section
             if (elimGroup.length > 0) {
-                html += '<tr class="dnfl-subhead-eliminated"><td colspan="' + totalCols + '" class="dnfl-sticky-col">LTS Eliminated Teams (' + elimGroup.length + ')</td></tr>';
+                html += '<tr class="dnfl-subhead-eliminated"><td colspan="' + totalCols + '" class="dnfl-sticky-col"><div class="dnfl-subhead-content">LTS Eliminated Teams (' + elimGroup.length + ')</div></td></tr>';
                 elimGroup.forEach(function(item, idx) {
                     html += renderTeamRow(item.franchise, item.fid, idx, myFid, ltsOn, hsOn, startW, endLtsW, eliminations, weeklySummaries);
                 });
@@ -444,7 +454,7 @@
             '<table class="dnfl-lts-summary-table dnfl-table">' +
             '<thead>' +
             '<tr class="dnfl-table-section-header">' +
-            '<td colspan="' + totalCols + '" class="dnfl-table-section-header-cell dnfl-sticky-col">' +
+            '<td colspan="' + totalCols + '" class="dnfl-table-section-header-cell">' +
             '<div class="dnfl-table-section-header-content"><h3>Weekly Summary</h3></div>' +
             '</td></tr>' +
             '<tr class="dnfl-table-subheader">' +
@@ -461,8 +471,6 @@
         }
 
         html += '</tr></thead><tbody>';
-
-
 
         weeklySummaries.forEach(function(s, idx) {
             var rowClass = (idx % 2 === 0 ? 'dnfl-row-odd' : 'dnfl-row-even');
@@ -649,7 +657,7 @@
                         .then(function(data) {
                             var weeklyObj = (data && data.weeklyResults) ? data.weeklyResults : (data || {});
                             var rawMatchups = weeklyObj.matchup || weeklyObj.matchUp || (weeklyObj.schedule ? weeklyObj.schedule.matchup : null);
-                            var matchups = rawMatchups ? toArray(rawMatchups) : [];
+                            var matchups = rawMatchups ? toArray(rawMatchups);
 
                             if (matchups.length === 0 && weeklyObj.franchise) {
                                 var fList = toArray(weeklyObj.franchise);
