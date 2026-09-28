@@ -4,17 +4,12 @@
    Fully scoped under #dnfl-lts-container matching _standings.scss and _rankings.scss.
    ========================================================================== */
 #dnfl-lts-container {
+    /* Section Spacing */
     .dnfl-lts-section + .dnfl-lts-section {
         margin-top: 1.75rem !important;
     }
 
-    .dnfl-table-wrapper {
-        border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
-        border-radius: var(--dnfl-radius-md, 8px) !important;
-        overflow-x: auto !important;
-        margin-bottom: 1.5rem !important;
-    }
-
+    /* In-Table Section Title Header Rows */
     .dnfl-table-section-header {
         background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
         border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
@@ -24,25 +19,17 @@
             text-align: left !important;
         }
 
-        .dnfl-table-section-header-content {
-            display: flex !important;
-            align-items: center !important;
-
-            h3 {
-                margin: 0 !important;
-                font-size: 1.05rem !important;
-                font-weight: 700 !important;
-                color: var(--dnfl-text-heading, #0f172a) !important;
-            }
+        .dnfl-table-section-header-content h3 {
+            margin: 0 !important;
+            font-size: 1.05rem !important;
+            font-weight: 700 !important;
+            color: var(--dnfl-text-heading, #0f172a) !important;
         }
     }
 
+    /* Table Column Widths & Alignments */
     .dnfl-lts-scores-table,
     .dnfl-lts-summary-table {
-        width: 100% !important;
-        border-collapse: separate !important;
-        border-spacing: 0 !important;
-
         .dnfl-col-franchise {
             min-width: 180px !important;
             text-align: left !important;
@@ -59,7 +46,6 @@
             position: sticky !important;
             left: 0 !important;
             z-index: 10 !important;
-            background-color: var(--dnfl-bg-card, #ffffff) !important;
         }
 
         th.dnfl-text-center,
@@ -83,36 +69,23 @@
             text-align: center !important;
         }
 
-        /* Sticky Column Row Background Mappings */
-        tbody tr.dnfl-row-odd .dnfl-sticky-col {
-            background-color: var(--dnfl-bg-card, #ffffff) !important;
-        }
-
-        tbody tr.dnfl-row-even .dnfl-sticky-col {
-            background-color: var(--dnfl-bg-alt, #fafafa) !important;
-        }
-
-        tbody tr:hover .dnfl-sticky-col {
-            background-color: var(--dnfl-primary-light, #b6e2ff) !important;
-        }
-
-        tbody tr.dnfl-my-team .dnfl-sticky-col,
-        tbody tr.myfranchise .dnfl-sticky-col {
-            background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
-        }
-
-        tbody tr.dnfl-my-team:hover .dnfl-sticky-col,
-        tbody tr.myfranchise:hover .dnfl-sticky-col {
-            background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
-        }
-
-        /* Column Scoped Badge Width Overrides (Matching _rankings.scss and _standings.scss) */
-        td .dnfl-badge {
+        /* Column Scoped Pill and Badge Widths (Matching _standings.scss & _rankings.scss) */
+        td.dnfl-col-score .dnfl-pill,
+        td.dnfl-col-score .dnfl-badge,
+        td.dnfl-text-center .dnfl-pill,
+        td.dnfl-text-center .dnfl-badge {
             min-width: 95px !important;
             justify-content: center !important;
-            display: inline-flex !important;
-            align-items: center !important;
         }
+
+        /* Sticky Column Mobile Background Mappings */
+        tbody tr.dnfl-row-odd .dnfl-sticky-col { background-color: var(--dnfl-bg-card, #ffffff) !important; }
+        tbody tr.dnfl-row-even .dnfl-sticky-col { background-color: var(--dnfl-bg-alt, #fafafa) !important; }
+        tbody tr:hover .dnfl-sticky-col { background-color: var(--dnfl-primary-light, #b6e2ff) !important; }
+        tbody tr.dnfl-my-team .dnfl-sticky-col,
+        tbody tr.myfranchise .dnfl-sticky-col { background-color: var(--dnfl-highlight-yellow, #fde68a) !important; }
+        tbody tr.dnfl-my-team:hover .dnfl-sticky-col,
+        tbody tr.myfranchise:hover .dnfl-sticky-col { background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important; }
     }
 
     /* Sub-Header Section Row Styling */
@@ -134,5 +107,14 @@
         padding: 0.5rem 1rem !important;
         text-transform: uppercase !important;
         letter-spacing: 0.05em !important;
+    }
+
+    /* Legend Swatches Sizing */
+    #dnfl-lts-legend {
+        .dnfl-pill,
+        .dnfl-badge {
+            min-width: 38px !important;
+            justify-content: center !important;
+        }
     }
 }

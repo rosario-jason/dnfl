@@ -1772,14 +1772,14 @@ a.dnfl-btn-secondary:hover,
    Duke Networking Fantasy League (DNFL)
    Fully scoped under #dnfl-lts-container matching _standings.scss and _rankings.scss.
    ========================================================================== */
+#dnfl-lts-container {
+  /* Section Spacing */
+}
 #dnfl-lts-container .dnfl-lts-section + .dnfl-lts-section {
   margin-top: 1.75rem !important;
 }
-#dnfl-lts-container .dnfl-table-wrapper {
-  border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
-  border-radius: var(--dnfl-radius-md, 8px) !important;
-  overflow-x: auto !important;
-  margin-bottom: 1.5rem !important;
+#dnfl-lts-container {
+  /* In-Table Section Title Header Rows */
 }
 #dnfl-lts-container .dnfl-table-section-header {
   background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
@@ -1789,21 +1789,14 @@ a.dnfl-btn-secondary:hover,
   padding: 0.75rem 1rem !important;
   text-align: left !important;
 }
-#dnfl-lts-container .dnfl-table-section-header .dnfl-table-section-header-content {
-  display: flex !important;
-  align-items: center !important;
-}
 #dnfl-lts-container .dnfl-table-section-header .dnfl-table-section-header-content h3 {
   margin: 0 !important;
   font-size: 1.05rem !important;
   font-weight: 700 !important;
   color: var(--dnfl-text-heading, #0f172a) !important;
 }
-#dnfl-lts-container .dnfl-lts-scores-table,
-#dnfl-lts-container .dnfl-lts-summary-table {
-  width: 100% !important;
-  border-collapse: separate !important;
-  border-spacing: 0 !important;
+#dnfl-lts-container {
+  /* Table Column Widths & Alignments */
 }
 #dnfl-lts-container .dnfl-lts-scores-table .dnfl-col-franchise,
 #dnfl-lts-container .dnfl-lts-summary-table .dnfl-col-franchise {
@@ -1822,7 +1815,6 @@ a.dnfl-btn-secondary:hover,
   position: sticky !important;
   left: 0 !important;
   z-index: 10 !important;
-  background-color: var(--dnfl-bg-card, #ffffff) !important;
 }
 #dnfl-lts-container .dnfl-lts-scores-table th.dnfl-text-center,
 #dnfl-lts-container .dnfl-lts-scores-table td.dnfl-text-center,
@@ -1850,7 +1842,22 @@ a.dnfl-btn-secondary:hover,
 }
 #dnfl-lts-container .dnfl-lts-scores-table,
 #dnfl-lts-container .dnfl-lts-summary-table {
-  /* Sticky Column Row Background Mappings */
+  /* Column Scoped Pill and Badge Widths (Matching _standings.scss & _rankings.scss) */
+}
+#dnfl-lts-container .dnfl-lts-scores-table td.dnfl-col-score .dnfl-pill,
+#dnfl-lts-container .dnfl-lts-scores-table td.dnfl-col-score .dnfl-badge,
+#dnfl-lts-container .dnfl-lts-scores-table td.dnfl-text-center .dnfl-pill,
+#dnfl-lts-container .dnfl-lts-scores-table td.dnfl-text-center .dnfl-badge,
+#dnfl-lts-container .dnfl-lts-summary-table td.dnfl-col-score .dnfl-pill,
+#dnfl-lts-container .dnfl-lts-summary-table td.dnfl-col-score .dnfl-badge,
+#dnfl-lts-container .dnfl-lts-summary-table td.dnfl-text-center .dnfl-pill,
+#dnfl-lts-container .dnfl-lts-summary-table td.dnfl-text-center .dnfl-badge {
+  min-width: 95px !important;
+  justify-content: center !important;
+}
+#dnfl-lts-container .dnfl-lts-scores-table,
+#dnfl-lts-container .dnfl-lts-summary-table {
+  /* Sticky Column Mobile Background Mappings */
 }
 #dnfl-lts-container .dnfl-lts-scores-table tbody tr.dnfl-row-odd .dnfl-sticky-col,
 #dnfl-lts-container .dnfl-lts-summary-table tbody tr.dnfl-row-odd .dnfl-sticky-col {
@@ -1876,17 +1883,6 @@ a.dnfl-btn-secondary:hover,
 #dnfl-lts-container .dnfl-lts-summary-table tbody tr.myfranchise:hover .dnfl-sticky-col {
   background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
 }
-#dnfl-lts-container .dnfl-lts-scores-table,
-#dnfl-lts-container .dnfl-lts-summary-table {
-  /* Column Scoped Badge Width Overrides (Matching _rankings.scss and _standings.scss) */
-}
-#dnfl-lts-container .dnfl-lts-scores-table td .dnfl-badge,
-#dnfl-lts-container .dnfl-lts-summary-table td .dnfl-badge {
-  min-width: 95px !important;
-  justify-content: center !important;
-  display: inline-flex !important;
-  align-items: center !important;
-}
 #dnfl-lts-container {
   /* Sub-Header Section Row Styling */
 }
@@ -1907,6 +1903,14 @@ a.dnfl-btn-secondary:hover,
   padding: 0.5rem 1rem !important;
   text-transform: uppercase !important;
   letter-spacing: 0.05em !important;
+}
+#dnfl-lts-container {
+  /* Legend Swatches Sizing */
+}
+#dnfl-lts-container #dnfl-lts-legend .dnfl-pill,
+#dnfl-lts-container #dnfl-lts-legend .dnfl-badge {
+  min-width: 38px !important;
+  justify-content: center !important;
 }
 
 /* ==========================================================================
