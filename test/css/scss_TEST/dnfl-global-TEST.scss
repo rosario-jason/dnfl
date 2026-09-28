@@ -11,7 +11,7 @@
 @import 'utilities';
 @import 'badges';
 @import 'containers';
-@import 'tables';
+@import 'tables_v2_01';
 
 // 2. Feature Modules
 @import 'modules/standings';
@@ -19,7 +19,7 @@
 @import 'modules/podcast';
 @import 'modules/rules';
 @import 'modules/exporter';
-@import 'modules/lts_v2_10';
+@import 'modules/lts_v2_11';
 
 // 3. Native MFL UI Overrides
 @import 'mfl-overrides';
