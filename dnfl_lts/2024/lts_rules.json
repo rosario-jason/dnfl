@@ -22,12 +22,12 @@
     "00": {
       "lts_isEnabled": true,
       "highScore_isEnabled": true,
-      "lts_startWeek": 1,
+      "lts_startWeek": "auto",
       "lts_endWeek": "auto"
     },
     "01": {
-      "lts_isEnabled": true,
-      "highScore_isEnabled": false
+      "lts_isEnabled": false,
+      "highScore_isEnabled": true
     }
   }
 }
