@@ -1,6 +1,11 @@
+/* ==========================================================================
+   DNFL Standings Component Styles (_standings.scss)
+   Scoped to #dnfl-standings-container
+   ========================================================================== */
+
 #dnfl-standings-container {
   /* ------------------------------------------------------------------------
-     1. DIVISION HEADERS & SUBHEADERS
+     1. DIVISION HEADERS & TOGGLE BUTTONS
      ------------------------------------------------------------------------ */
   tr.dnfl-division-header,
   td.dnfl-division-header-cell {
@@ -22,8 +27,8 @@
       font-size: 0.95rem !important;
       font-weight: 700 !important;
       color: var(--dnfl-text-heading, #0f172a) !important;
-      text-transform: uppercase !important;
-      letter-spacing: 0.5px !important;
+      text-transform: none !important; /* Title Case (parity with LTS table titles) */
+      letter-spacing: normal !important;
       background: transparent !important;
       border: none !important;
     }
@@ -34,19 +39,28 @@
     }
   }
 
-  tr.dnfl-table-subheader th {
-    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
-    color: var(--dnfl-text-subtle, #555555) !important;
-    font-size: 0.75rem !important;
+  /* ------------------------------------------------------------------------
+     2. TABLE HEADER RESETS (WHITE BACKGROUND - PARITY WITH LTS & RANKINGS)
+     ------------------------------------------------------------------------ */
+  tr.dnfl-table-subheader th,
+  th.dnfl-col-seed,
+  th.dnfl-col-franchise,
+  th.dnfl-col-record,
+  th.dnfl-col-pf,
+  th.dnfl-col-pa,
+  th.dnfl-col-bbid {
+    background-color: var(--dnfl-bg-card, #ffffff) !important;
+    color: var(--dnfl-text-heading, #0f172a) !important;
     font-weight: 700 !important;
+    font-size: 0.8rem !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.5px !important;
-    padding: 8px 12px !important;
-    border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    letter-spacing: 0.05em !important;
+    border-bottom: 2px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    padding: 8px 10px !important;
   }
 
   /* ------------------------------------------------------------------------
-     2. CIRCULAR SEED BADGE (.dnfl-seed-badge)
+     3. CIRCULAR SEED BADGE (.dnfl-seed-badge)
      ------------------------------------------------------------------------ */
   .dnfl-seed-badge {
     display: inline-flex !important;
@@ -62,14 +76,14 @@
     border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
     font-weight: 700 !important;
     font-size: 0.85rem !important;
-    margin-right: 6px !important;
+    margin-right: 3px !important; /* Reduced to match icon-to-icon spacing */
     vertical-align: middle !important;
   }
 
   /* ------------------------------------------------------------------------
-     3. SCOPED STANDINGS COLUMN ALIGNMENTS & WIDTHS (DESKTOP)
+     4. SCOPED STANDINGS COLUMN ALIGNMENTS & WIDTHS (DESKTOP)
      ------------------------------------------------------------------------ */
-  /* Seed Column (85px, Left-Aligned with 12px Padding for Badges/Icons) */
+  /* Seed Column (Left-Aligned) */
   .dnfl-col-seed,
   th.dnfl-col-seed,
   td.dnfl-col-seed {
@@ -95,24 +109,48 @@
     vertical-align: middle !important;
   }
 
-  /* Centered Data Columns (PF, PA, Record, BBID) */
+  /* Centered Data Columns (Record, PF, PA, BBID) */
+  .dnfl-col-record,
   .dnfl-col-pf,
   .dnfl-col-pa,
-  .dnfl-col-record,
   .dnfl-col-bbid,
+  th.dnfl-col-record,
   th.dnfl-col-pf,
   th.dnfl-col-pa,
-  th.dnfl-col-record,
   th.dnfl-col-bbid,
+  td.dnfl-col-record,
   td.dnfl-col-pf,
   td.dnfl-col-pa,
-  td.dnfl-col-record,
   td.dnfl-col-bbid {
     text-align: center !important;
     vertical-align: middle !important;
   }
 
-  /* Points For & Points Against Columns (100px, Uniform 76px Badges) */
+  /* Record Column & Uniform Pill Width */
+  .dnfl-col-record,
+  th.dnfl-col-record,
+  td.dnfl-col-record {
+    width: 95px !important;
+    min-width: 95px !important;
+
+    .dnfl-pill,
+    .dnfl-pill-blue,
+    .dnfl-record-badge,
+    .dnfl-record-pill {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 76px !important;
+      min-width: 76px !important;
+      max-width: 76px !important;
+      padding: 3px 0 !important;
+      font-size: 0.8rem !important;
+      font-weight: 700 !important;
+      margin: 0 auto !important;
+    }
+  }
+
+  /* Points For & Points Against Columns & Uniform Badge Width */
   .dnfl-col-pf,
   .dnfl-col-pa,
   th.dnfl-col-pf,
@@ -136,7 +174,7 @@
     }
   }
 
-  /* Points For & Points Against Cell Color Accents */
+  /* Text & Badge Colors for Standings PF / PA */
   .dnfl-standings-pf {
     color: var(--dnfl-green-text, #15803d) !important;
     background-color: var(--dnfl-green-bg, #dcfce7) !important;
@@ -151,31 +189,7 @@
     border-radius: var(--dnfl-radius-sm, 4px) !important;
   }
 
-  /* Win-Loss Record Column (95px, Uniform 76px Pill Capsules) */
-  .dnfl-col-record,
-  th.dnfl-col-record,
-  td.dnfl-col-record {
-    width: 95px !important;
-    min-width: 95px !important;
-
-    .dnfl-pill,
-    .dnfl-pill-blue,
-    .dnfl-record-badge,
-    .dnfl-record-pill {
-      display: inline-flex !important;
-      align-items: center !important;
-      justify-content: center !important;
-      width: 76px !important;
-      min-width: 76px !important;
-      max-width: 76px !important;
-      padding: 4px 0 !important;
-      font-size: 0.8rem !important;
-      font-weight: 700 !important;
-      margin: 0 auto !important;
-    }
-  }
-
-  /* BBID Column (80px Centered) */
+  /* BBID Column */
   .dnfl-col-bbid,
   .dnfl-standings-bbid,
   th.dnfl-col-bbid,
@@ -187,7 +201,7 @@
   }
 
   /* ------------------------------------------------------------------------
-     4. MOBILE RESPONSIVE TWEAKS FOR STANDINGS (<= 768px)
+     5. MOBILE RESPONSIVE TWEAKS FOR STANDINGS (<= 768px)
      ------------------------------------------------------------------------ */
   @media (max-width: 768px) {
     table.dnfl-table {
@@ -218,6 +232,7 @@
         min-width: 68px !important;
         max-width: 68px !important;
         font-size: 0.75rem !important;
+        margin: 0 auto !important;
       }
     }
 
@@ -226,7 +241,7 @@
     td.dnfl-col-franchise {
       width: 154px !important;
       max-width: 154px !important;
-      min-width: 150px !important;
+      min-width: 140px !important;
       padding: 6px 4px !important;
       overflow-wrap: break-word !important;
       word-break: break-word !important;

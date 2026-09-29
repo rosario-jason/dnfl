@@ -1146,9 +1146,13 @@ a.dnfl-btn-secondary:hover,
     padding: 6px 4px !important;
   }
 }
+/* ==========================================================================
+   DNFL Standings Component Styles (_standings.scss)
+   Scoped to #dnfl-standings-container
+   ========================================================================== */
 #dnfl-standings-container {
   /* ------------------------------------------------------------------------
-     1. DIVISION HEADERS & SUBHEADERS
+     1. DIVISION HEADERS & TOGGLE BUTTONS
      ------------------------------------------------------------------------ */
 }
 #dnfl-standings-container tr.dnfl-division-header,
@@ -1170,8 +1174,8 @@ a.dnfl-btn-secondary:hover,
   font-size: 0.95rem !important;
   font-weight: 700 !important;
   color: var(--dnfl-text-heading, #0f172a) !important;
-  text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
+  text-transform: none !important; /* Title Case (parity with LTS table titles) */
+  letter-spacing: normal !important;
   background: transparent !important;
   border: none !important;
 }
@@ -1179,19 +1183,30 @@ a.dnfl-btn-secondary:hover,
   padding: 4px 8px !important;
   font-size: 0.75rem !important;
 }
-#dnfl-standings-container tr.dnfl-table-subheader th {
-  background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
-  color: var(--dnfl-text-subtle, #555555) !important;
-  font-size: 0.75rem !important;
+#dnfl-standings-container {
+  /* ------------------------------------------------------------------------
+     2. TABLE HEADER RESETS (WHITE BACKGROUND - PARITY WITH LTS & RANKINGS)
+     ------------------------------------------------------------------------ */
+}
+#dnfl-standings-container tr.dnfl-table-subheader th,
+#dnfl-standings-container th.dnfl-col-seed,
+#dnfl-standings-container th.dnfl-col-franchise,
+#dnfl-standings-container th.dnfl-col-record,
+#dnfl-standings-container th.dnfl-col-pf,
+#dnfl-standings-container th.dnfl-col-pa,
+#dnfl-standings-container th.dnfl-col-bbid {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  color: var(--dnfl-text-heading, #0f172a) !important;
   font-weight: 700 !important;
+  font-size: 0.8rem !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.5px !important;
-  padding: 8px 12px !important;
-  border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: 2px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  padding: 8px 10px !important;
 }
 #dnfl-standings-container {
   /* ------------------------------------------------------------------------
-     2. CIRCULAR SEED BADGE (.dnfl-seed-badge)
+     3. CIRCULAR SEED BADGE (.dnfl-seed-badge)
      ------------------------------------------------------------------------ */
 }
 #dnfl-standings-container .dnfl-seed-badge {
@@ -1208,14 +1223,14 @@ a.dnfl-btn-secondary:hover,
   border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
   font-weight: 700 !important;
   font-size: 0.85rem !important;
-  margin-right: 6px !important;
+  margin-right: 3px !important; /* Reduced to match icon-to-icon spacing */
   vertical-align: middle !important;
 }
 #dnfl-standings-container {
   /* ------------------------------------------------------------------------
-     3. SCOPED STANDINGS COLUMN ALIGNMENTS & WIDTHS (DESKTOP)
+     4. SCOPED STANDINGS COLUMN ALIGNMENTS & WIDTHS (DESKTOP)
      ------------------------------------------------------------------------ */
-  /* Seed Column (85px, Left-Aligned with 12px Padding for Badges/Icons) */
+  /* Seed Column (Left-Aligned) */
 }
 #dnfl-standings-container .dnfl-col-seed,
 #dnfl-standings-container th.dnfl-col-seed,
@@ -1243,25 +1258,57 @@ a.dnfl-btn-secondary:hover,
   vertical-align: middle !important;
 }
 #dnfl-standings-container {
-  /* Centered Data Columns (PF, PA, Record, BBID) */
+  /* Centered Data Columns (Record, PF, PA, BBID) */
 }
+#dnfl-standings-container .dnfl-col-record,
 #dnfl-standings-container .dnfl-col-pf,
 #dnfl-standings-container .dnfl-col-pa,
-#dnfl-standings-container .dnfl-col-record,
 #dnfl-standings-container .dnfl-col-bbid,
+#dnfl-standings-container th.dnfl-col-record,
 #dnfl-standings-container th.dnfl-col-pf,
 #dnfl-standings-container th.dnfl-col-pa,
-#dnfl-standings-container th.dnfl-col-record,
 #dnfl-standings-container th.dnfl-col-bbid,
+#dnfl-standings-container td.dnfl-col-record,
 #dnfl-standings-container td.dnfl-col-pf,
 #dnfl-standings-container td.dnfl-col-pa,
-#dnfl-standings-container td.dnfl-col-record,
 #dnfl-standings-container td.dnfl-col-bbid {
   text-align: center !important;
   vertical-align: middle !important;
 }
 #dnfl-standings-container {
-  /* Points For & Points Against Columns (100px, Uniform 76px Badges) */
+  /* Record Column & Uniform Pill Width */
+}
+#dnfl-standings-container .dnfl-col-record,
+#dnfl-standings-container th.dnfl-col-record,
+#dnfl-standings-container td.dnfl-col-record {
+  width: 95px !important;
+  min-width: 95px !important;
+}
+#dnfl-standings-container .dnfl-col-record .dnfl-pill,
+#dnfl-standings-container .dnfl-col-record .dnfl-pill-blue,
+#dnfl-standings-container .dnfl-col-record .dnfl-record-badge,
+#dnfl-standings-container .dnfl-col-record .dnfl-record-pill,
+#dnfl-standings-container th.dnfl-col-record .dnfl-pill,
+#dnfl-standings-container th.dnfl-col-record .dnfl-pill-blue,
+#dnfl-standings-container th.dnfl-col-record .dnfl-record-badge,
+#dnfl-standings-container th.dnfl-col-record .dnfl-record-pill,
+#dnfl-standings-container td.dnfl-col-record .dnfl-pill,
+#dnfl-standings-container td.dnfl-col-record .dnfl-pill-blue,
+#dnfl-standings-container td.dnfl-col-record .dnfl-record-badge,
+#dnfl-standings-container td.dnfl-col-record .dnfl-record-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 76px !important;
+  min-width: 76px !important;
+  max-width: 76px !important;
+  padding: 3px 0 !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  margin: 0 auto !important;
+}
+#dnfl-standings-container {
+  /* Points For & Points Against Columns & Uniform Badge Width */
 }
 #dnfl-standings-container .dnfl-col-pf,
 #dnfl-standings-container .dnfl-col-pa,
@@ -1290,7 +1337,7 @@ a.dnfl-btn-secondary:hover,
   margin: 0 auto !important;
 }
 #dnfl-standings-container {
-  /* Points For & Points Against Cell Color Accents */
+  /* Text & Badge Colors for Standings PF / PA */
 }
 #dnfl-standings-container .dnfl-standings-pf {
   color: var(--dnfl-green-text, #15803d) !important;
@@ -1305,39 +1352,7 @@ a.dnfl-btn-secondary:hover,
   border-radius: var(--dnfl-radius-sm, 4px) !important;
 }
 #dnfl-standings-container {
-  /* Win-Loss Record Column (95px, Uniform 76px Pill Capsules) */
-}
-#dnfl-standings-container .dnfl-col-record,
-#dnfl-standings-container th.dnfl-col-record,
-#dnfl-standings-container td.dnfl-col-record {
-  width: 95px !important;
-  min-width: 95px !important;
-}
-#dnfl-standings-container .dnfl-col-record .dnfl-pill,
-#dnfl-standings-container .dnfl-col-record .dnfl-pill-blue,
-#dnfl-standings-container .dnfl-col-record .dnfl-record-badge,
-#dnfl-standings-container .dnfl-col-record .dnfl-record-pill,
-#dnfl-standings-container th.dnfl-col-record .dnfl-pill,
-#dnfl-standings-container th.dnfl-col-record .dnfl-pill-blue,
-#dnfl-standings-container th.dnfl-col-record .dnfl-record-badge,
-#dnfl-standings-container th.dnfl-col-record .dnfl-record-pill,
-#dnfl-standings-container td.dnfl-col-record .dnfl-pill,
-#dnfl-standings-container td.dnfl-col-record .dnfl-pill-blue,
-#dnfl-standings-container td.dnfl-col-record .dnfl-record-badge,
-#dnfl-standings-container td.dnfl-col-record .dnfl-record-pill {
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  width: 76px !important;
-  min-width: 76px !important;
-  max-width: 76px !important;
-  padding: 4px 0 !important;
-  font-size: 0.8rem !important;
-  font-weight: 700 !important;
-  margin: 0 auto !important;
-}
-#dnfl-standings-container {
-  /* BBID Column (80px Centered) */
+  /* BBID Column */
 }
 #dnfl-standings-container .dnfl-col-bbid,
 #dnfl-standings-container .dnfl-standings-bbid,
@@ -1350,7 +1365,7 @@ a.dnfl-btn-secondary:hover,
 }
 #dnfl-standings-container {
   /* ------------------------------------------------------------------------
-     4. MOBILE RESPONSIVE TWEAKS FOR STANDINGS (<= 768px)
+     5. MOBILE RESPONSIVE TWEAKS FOR STANDINGS (<= 768px)
      ------------------------------------------------------------------------ */
 }
 @media (max-width: 768px) {
@@ -1384,13 +1399,14 @@ a.dnfl-btn-secondary:hover,
     min-width: 68px !important;
     max-width: 68px !important;
     font-size: 0.75rem !important;
+    margin: 0 auto !important;
   }
   #dnfl-standings-container .dnfl-col-franchise,
   #dnfl-standings-container th.dnfl-col-franchise,
   #dnfl-standings-container td.dnfl-col-franchise {
     width: 154px !important;
     max-width: 154px !important;
-    min-width: 150px !important;
+    min-width: 140px !important;
     padding: 6px 4px !important;
     overflow-wrap: break-word !important;
     word-break: break-word !important;
@@ -1398,9 +1414,36 @@ a.dnfl-btn-secondary:hover,
   }
 }
 
+/* ==========================================================================
+   DNFL Power Rankings Component Styles (_rankings.scss)
+   Scoped to #dnfl-rankings-container
+   ========================================================================== */
 #dnfl-rankings-container {
   /* ------------------------------------------------------------------------
-     1. CONFERENCE RANK BADGES (.dnfl-rank-badge)
+     1. TABLE HEADER RESETS (WHITE BACKGROUND - PARITY WITH LTS & STANDINGS)
+     ------------------------------------------------------------------------ */
+}
+#dnfl-rankings-container th.dnfl-col-rank,
+#dnfl-rankings-container th.dnfl-col-change,
+#dnfl-rankings-container th.dnfl-col-franchise,
+#dnfl-rankings-container th.dnfl-col-index,
+#dnfl-rankings-container th.dnfl-col-power,
+#dnfl-rankings-container th.dnfl-col-comment,
+#dnfl-rankings-container th.dnfl-col-record,
+#dnfl-rankings-container th.dnfl-col-pf,
+#dnfl-rankings-container th.dnfl-col-pts {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+  color: var(--dnfl-text-heading, #0f172a) !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: 2px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  padding: 8px 10px !important;
+}
+#dnfl-rankings-container {
+  /* ------------------------------------------------------------------------
+     2. CONFERENCE RANK BADGES (.dnfl-rank-badge)
      ------------------------------------------------------------------------ */
 }
 #dnfl-rankings-container .dnfl-rank-badge {
@@ -1418,26 +1461,26 @@ a.dnfl-btn-secondary:hover,
   margin: 0 auto !important;
 }
 #dnfl-rankings-container .dnfl-rank-badge.color-1 {
-  background-color: var(--dnfl-chart-1, #0577B1) !important;
+  background-color: var(--dnfl-chart-1, rgba(54, 162, 235, 0.85)) !important;
 }
 #dnfl-rankings-container .dnfl-rank-badge.color-2 {
-  background-color: var(--dnfl-chart-2, #0284c7) !important;
+  background-color: var(--dnfl-chart-2, rgba(255, 99, 132, 0.85)) !important;
 }
 #dnfl-rankings-container .dnfl-rank-badge.color-3 {
-  background-color: var(--dnfl-chart-3, #0d9488) !important;
+  background-color: var(--dnfl-chart-3, rgba(75, 192, 192, 0.85)) !important;
 }
 #dnfl-rankings-container .dnfl-rank-badge.color-4 {
-  background-color: var(--dnfl-chart-4, #d97706) !important;
+  background-color: var(--dnfl-chart-4, rgba(255, 205, 86, 0.85)) !important;
 }
 #dnfl-rankings-container .dnfl-rank-badge.color-5 {
-  background-color: var(--dnfl-chart-5, #dc2626) !important;
+  background-color: var(--dnfl-chart-5, rgba(153, 102, 255, 0.85)) !important;
 }
 #dnfl-rankings-container .dnfl-rank-badge.color-6 {
-  background-color: var(--dnfl-chart-6, #4f46e5) !important;
+  background-color: var(--dnfl-chart-6, rgba(255, 159, 64, 0.85)) !important;
 }
 #dnfl-rankings-container {
   /* ------------------------------------------------------------------------
-     2. SCOPED POWER RANKINGS COLUMN ALIGNMENTS & WIDTHS (DESKTOP)
+     3. SCOPED POWER RANKINGS COLUMN ALIGNMENTS & WIDTHS (DESKTOP)
      ------------------------------------------------------------------------ */
   /* Shared Centered Alignment for Numeric & Control Columns */
 }
@@ -1448,6 +1491,7 @@ a.dnfl-btn-secondary:hover,
 #dnfl-rankings-container .dnfl-col-comment,
 #dnfl-rankings-container .dnfl-col-record,
 #dnfl-rankings-container .dnfl-col-pf,
+#dnfl-rankings-container .dnfl-col-pts,
 #dnfl-rankings-container th.dnfl-col-rank,
 #dnfl-rankings-container th.dnfl-col-change,
 #dnfl-rankings-container th.dnfl-col-index,
@@ -1455,18 +1499,20 @@ a.dnfl-btn-secondary:hover,
 #dnfl-rankings-container th.dnfl-col-comment,
 #dnfl-rankings-container th.dnfl-col-record,
 #dnfl-rankings-container th.dnfl-col-pf,
+#dnfl-rankings-container th.dnfl-col-pts,
 #dnfl-rankings-container td.dnfl-col-rank,
 #dnfl-rankings-container td.dnfl-col-change,
 #dnfl-rankings-container td.dnfl-col-index,
 #dnfl-rankings-container td.dnfl-col-power,
 #dnfl-rankings-container td.dnfl-col-comment,
 #dnfl-rankings-container td.dnfl-col-record,
-#dnfl-rankings-container td.dnfl-col-pf {
+#dnfl-rankings-container td.dnfl-col-pf,
+#dnfl-rankings-container td.dnfl-col-pts {
   text-align: center !important;
   vertical-align: middle !important;
 }
 #dnfl-rankings-container {
-  /* Rank Column (70px Centered) */
+  /* Rank Column */
 }
 #dnfl-rankings-container .dnfl-col-rank,
 #dnfl-rankings-container th.dnfl-col-rank,
@@ -1476,7 +1522,7 @@ a.dnfl-btn-secondary:hover,
   padding: 6px 4px !important;
 }
 #dnfl-rankings-container {
-  /* Rank Change Column (60px Centered, Uniform 48px Badge) */
+  /* Rank Change Column */
 }
 #dnfl-rankings-container .dnfl-col-change,
 #dnfl-rankings-container th.dnfl-col-change,
@@ -1499,7 +1545,7 @@ a.dnfl-btn-secondary:hover,
   margin: 0 auto !important;
 }
 #dnfl-rankings-container {
-  /* Franchise Column (250px Desktop Fixed Width) */
+  /* Franchise Column (250px Desktop Fixed Width - Parity with Standings) */
 }
 #dnfl-rankings-container .dnfl-col-franchise,
 #dnfl-rankings-container th.dnfl-col-franchise,
@@ -1514,7 +1560,7 @@ a.dnfl-btn-secondary:hover,
   vertical-align: middle !important;
 }
 #dnfl-rankings-container {
-  /* Power Index Grade Column (100px Desktop, Uniform 68px Pill) */
+  /* Power Index Grade Column & Uniform Pill Width */
 }
 #dnfl-rankings-container .dnfl-col-index,
 #dnfl-rankings-container .dnfl-col-power,
@@ -1549,7 +1595,7 @@ a.dnfl-btn-secondary:hover,
   margin: 0 auto !important;
 }
 #dnfl-rankings-container {
-  /* Comments Button Column (55px Centered) */
+  /* Comments Button Column */
 }
 #dnfl-rankings-container .dnfl-col-comment,
 #dnfl-rankings-container th.dnfl-col-comment,
@@ -1566,20 +1612,23 @@ a.dnfl-btn-secondary:hover,
   margin: 0 auto !important;
 }
 #dnfl-rankings-container {
-  /* Record & Points Columns */
+  /* Record, PF & Points Columns */
 }
 #dnfl-rankings-container .dnfl-col-record,
 #dnfl-rankings-container .dnfl-col-pf,
+#dnfl-rankings-container .dnfl-col-pts,
 #dnfl-rankings-container th.dnfl-col-record,
 #dnfl-rankings-container th.dnfl-col-pf,
+#dnfl-rankings-container th.dnfl-col-pts,
 #dnfl-rankings-container td.dnfl-col-record,
-#dnfl-rankings-container td.dnfl-col-pf {
+#dnfl-rankings-container td.dnfl-col-pf,
+#dnfl-rankings-container td.dnfl-col-pts {
   width: 95px !important;
   min-width: 95px !important;
 }
 #dnfl-rankings-container {
   /* ------------------------------------------------------------------------
-     3. COMMENTARY CALLOUT ROW & BOX (DESKTOP)
+     4. COMMENTARY CALLOUT ROW & BOX (DESKTOP)
      ------------------------------------------------------------------------ */
 }
 #dnfl-rankings-container .dnfl-comment-row {
@@ -1589,7 +1638,9 @@ a.dnfl-btn-secondary:hover,
   padding: 8px 16px 12px 24px !important;
   background: transparent !important;
 }
-#dnfl-rankings-container .dnfl-comment-box {
+#dnfl-rankings-container .dnfl-comment-box,
+#dnfl-rankings-container .dnfl-comment-box p,
+#dnfl-rankings-container .dnfl-comment-box span {
   background-color: #ffffff !important;
   border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
   border-top: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
@@ -1600,31 +1651,36 @@ a.dnfl-btn-secondary:hover,
   margin: 2px 0 !important;
   font-style: italic !important;
   font-size: 0.85rem !important;
-  color: var(--dnfl-text-main, #121212) !important;
+  color: var(--dnfl-text-main, #121212) !important; /* Primary Obsidian Dark Text */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
 }
-#dnfl-rankings-container .dnfl-comment-box i.fa-quote-left {
+#dnfl-rankings-container .dnfl-comment-box i.fa-quote-left,
+#dnfl-rankings-container .dnfl-comment-box p i.fa-quote-left,
+#dnfl-rankings-container .dnfl-comment-box span i.fa-quote-left {
   color: var(--dnfl-primary, #0577B1) !important;
   margin-right: 6px !important;
 }
 #dnfl-rankings-container {
   /* ------------------------------------------------------------------------
-     4. MOBILE RESPONSIVE TWEAKS FOR POWER RANKINGS (<= 768px)
+     5. MOBILE RESPONSIVE TWEAKS FOR POWER RANKINGS (<= 768px)
      ------------------------------------------------------------------------ */
 }
 @media (max-width: 768px) {
   #dnfl-rankings-container .dnfl-col-rank,
   #dnfl-rankings-container th.dnfl-col-rank,
   #dnfl-rankings-container td.dnfl-col-rank {
-    width: 48px !important;
-    min-width: 48px !important;
-    max-width: 48px !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
     padding: 6px 2px !important;
+  }
+  #dnfl-rankings-container {
+    /* Franchise Column (Identical to Standings Mobile Franchise Parity) */
   }
   #dnfl-rankings-container .dnfl-col-franchise,
   #dnfl-rankings-container th.dnfl-col-franchise,
   #dnfl-rankings-container td.dnfl-col-franchise {
-    width: 150px !important;
+    width: 154px !important;
     max-width: 154px !important;
     min-width: 140px !important;
     padding: 6px 4px !important;
@@ -1633,7 +1689,7 @@ a.dnfl-btn-secondary:hover,
     white-space: normal !important;
   }
   #dnfl-rankings-container {
-    /* Compact Mobile Power Index Column */
+    /* Narrow Power Index Column & Two-Line Wrapping Header */
   }
   #dnfl-rankings-container .dnfl-col-index,
   #dnfl-rankings-container .dnfl-col-power,
@@ -1641,9 +1697,9 @@ a.dnfl-btn-secondary:hover,
   #dnfl-rankings-container th.dnfl-col-power,
   #dnfl-rankings-container td.dnfl-col-index,
   #dnfl-rankings-container td.dnfl-col-power {
-    width: 55px !important;
-    min-width: 50px !important;
-    max-width: 55px !important;
+    width: 50px !important;
+    min-width: 46px !important;
+    max-width: 50px !important;
     padding: 4px 2px !important;
     text-align: center !important;
   }
@@ -1652,15 +1708,14 @@ a.dnfl-btn-secondary:hover,
     white-space: normal !important;
     word-break: break-word !important;
     line-height: 1.1 !important;
-    font-size: 0.72rem !important;
+    font-size: 0.7rem !important;
+    text-align: center !important;
   }
   #dnfl-rankings-container .dnfl-col-index .dnfl-pill,
-  #dnfl-rankings-container .dnfl-col-index .dnfl-pill-blue,
-  #dnfl-rankings-container .dnfl-col-power .dnfl-pill,
-  #dnfl-rankings-container .dnfl-col-power .dnfl-pill-blue {
-    width: 46px !important;
-    min-width: 46px !important;
-    max-width: 46px !important;
+  #dnfl-rankings-container .dnfl-col-index .dnfl-pill-blue {
+    width: 44px !important;
+    min-width: 44px !important;
+    max-width: 44px !important;
     font-size: 0.75rem !important;
     padding: 2px 0 !important;
     display: inline-flex !important;
@@ -1668,22 +1723,22 @@ a.dnfl-btn-secondary:hover,
     margin: 0 auto !important;
   }
   #dnfl-rankings-container {
-    /* Compact Mobile Comments Column */
+    /* Narrow Comments Column */
   }
   #dnfl-rankings-container .dnfl-col-comment,
   #dnfl-rankings-container th.dnfl-col-comment,
   #dnfl-rankings-container td.dnfl-col-comment {
-    width: 44px !important;
-    min-width: 40px !important;
-    max-width: 44px !important;
+    width: 40px !important;
+    min-width: 36px !important;
+    max-width: 40px !important;
     padding: 4px 2px !important;
     text-align: center !important;
   }
   #dnfl-rankings-container .dnfl-col-comment .dnfl-btn-icon,
   #dnfl-rankings-container th.dnfl-col-comment .dnfl-btn-icon,
   #dnfl-rankings-container td.dnfl-col-comment .dnfl-btn-icon {
-    padding: 2px 6px !important;
-    font-size: 0.8rem !important;
+    padding: 2px 4px !important;
+    font-size: 0.75rem !important;
     margin: 0 auto !important;
     display: inline-flex !important;
   }
