@@ -1,36 +1,110 @@
 /* ==========================================================================
-   Native MFL Host Overrides Partial (_mfl-overrides_v2.scss)
-   Duke Networking Fantasy League (DNFL)
+   DNFL NATIVE MFL UI OVERRIDES & MFLSCRIPTS DECOUPLING
+   ==========================================================================
+   Module: _mfl-overrides.scss
+   Description: Encapsulates overrides for native MyFantasyLeague (MFL) UI elements:
+                sticky top menu bar (.myfantasyleague_menu), mobile container wrappers,
+                franchise icon square sizing (.franchiseicon: 4rem desktop / 2.25rem mobile),
+                and franchise logo centering (.franchiselogo).
    ========================================================================== */
 
-/* ------------------------------------------------------------------------
-   1. STICKY TOP NAVIGATION BAR
-   ------------------------------------------------------------------------ */
 .myfantasyleague_menu {
-  position: sticky !important;
-  top: 0 !important;
-  z-index: 1000 !important;
-  background-color: var(--dnfl-primary, #0577B1) !important;
+  border-bottom: 0;
+  border-top: 0;
+  background: var(--accent, #0577B1) !important; /* Duke Shale Blue */
+  box-shadow: none;
+  height: 2.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
-/* ------------------------------------------------------------------------
-   2. TRANSPARENT CONTAINER & BODY RESETS
-   ------------------------------------------------------------------------ */
-#body_content,
-#reports,
-.homepagemodule {
-  background-color: transparent !important;
-  box-shadow: none !important;
+.mobile-wrap,
+.settings-mobile-wrap,
+#options_45 #container-wrap table.report,
+#body_live_scoring_summary #live_scoring_summary table.scoresummary table,
+#body_live_scoring_summary #live_scoring_summary table.teamscoresummary table,
+#body_live_scoring_summary #live_scoring_summary table[width="90%"],
+#body_live_scoring_summary #live_scoring_summary span.reportnavigation + table {
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+}
+
+.homepagecolumn .homepagemodule caption,
+caption,
+#commissioner_setup table.two_column_layout th {
+  font-size: 1.1rem;
+  text-align: left;
+  background: none;
+  padding: 0.5rem 0.313rem;
+  line-height: 100%;
+  text-transform: capitalize;
+}
+
+.dnfl {
+  --accent: #0577B1;
+}
+
+/* ==========================================================================
+   FRANCHISE MEDIA ASSETS (ICONS & LOGOS)
+   ========================================================================== */
+
+/* Base Square Franchise Icon (.franchiseicon) */
+.franchiseicon {
+  width: var(--dnfl-ficon-md, 2.5rem) !important;       /* 40px Desktop Baseline */
+  height: var(--dnfl-ficon-md, 2.5rem) !important;
+  min-width: var(--dnfl-ficon-md, 2.5rem) !important;
+  max-width: var(--dnfl-ficon-md, 2.5rem) !important;
+  flex-shrink: 0 !important;                            /* Prevents flex squishing */
+  aspect-ratio: 1 / 1 !important;
+  object-fit: cover !important;                          /* Prevents image distortion */
+  border-radius: var(--dnfl-radius-md, 8px) !important;  /* Standard 8px curve */
   border: 0 !important;
+  vertical-align: middle !important;
+
+  /* Mobile Responsive Baseline (<= 768px) */
+  @media (max-width: 768px) {
+    width: 2.25rem !important;                          /* 36px Mobile Baseline */
+    height: 2.25rem !important;
+    min-width: 2.25rem !important;
+    max-width: 2.25rem !important;
+  }
 }
 
-/* ------------------------------------------------------------------------
-   3. NATIVE FRANCHISE LOGO HERO CONTAINER
-   ------------------------------------------------------------------------ */
+/* Explicit Size Modifiers for Custom Contexts */
+.franchiseicon-sm {
+  width: var(--dnfl-ficon-sm, 1.5rem) !important;
+  height: var(--dnfl-ficon-sm, 1.5rem) !important;
+  min-width: var(--dnfl-ficon-sm, 1.5rem) !important;
+  max-width: var(--dnfl-ficon-sm, 1.5rem) !important;
+}
+
+.franchiseicon-md {
+  width: var(--dnfl-ficon-md, 2.5rem) !important;
+  height: var(--dnfl-ficon-md, 2.5rem) !important;
+  min-width: var(--dnfl-ficon-md, 2.5rem) !important;
+  max-width: var(--dnfl-ficon-md, 2.5rem) !important;
+}
+
+.franchiseicon-lg {
+  width: var(--dnfl-ficon-lg, 3.5rem) !important;
+  height: var(--dnfl-ficon-lg, 3.5rem) !important;
+  min-width: var(--dnfl-ficon-lg, 3.5rem) !important;
+  max-width: var(--dnfl-ficon-lg, 3.5rem) !important;
+}
+
+.franchiseicon-xl {
+  width: var(--dnfl-ficon-xl, 4.0rem) !important;
+  height: var(--dnfl-ficon-xl, 4.0rem) !important;
+  min-width: var(--dnfl-ficon-xl, 4.0rem) !important;
+  max-width: var(--dnfl-ficon-xl, 4.0rem) !important;
+}
+
+/* Banner Franchise Logos (.franchiselogo) */
 .franchiselogo {
   max-height: var(--dnfl-flogo-max-h, 25rem) !important;
-  margin: 0 auto !important;
+  width: auto !important;
+  max-width: 100% !important;
+  object-fit: contain !important;
   display: block !important;
+  margin: 0 auto !important;
 }
-
-/* Note: Core .franchiseicon rules have been migrated to _tables_v2.scss */

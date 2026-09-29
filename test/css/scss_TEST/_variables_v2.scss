@@ -1,74 +1,131 @@
 /* ==========================================================================
-   DNFL SCSS Design Tokens & Variables (_variables_v2.scss)
-   Duke Networking Fantasy League (DNFL)
+   DNFL DESIGN SYSTEM - DESIGN TOKENS & GLOBAL CSS VARIABLES
+   ==========================================================================
+   Module: _variables.scss
+   Description: Serves as the single source of truth for design tokens, brand
+                colors, chart palettes, neutral shades, typography colors,
+                status indicator variables, elevation shadows, and motion timing.
+                Fully aligned with ground-truth dnfl-global-v4_58.css.
    ========================================================================== */
 
 :root, .dnfl {
-  /* 1. BRAND & PRIMARY COLOR PALETTE */
-  --dnfl-primary: #0577B1;                  /* Duke Shale Blue (Primary Accent) */
-  --dnfl-primary-hover: #045e8c;            /* Ocean Blue (Darker Accent) */
-  --dnfl-primary-light: #b6e2ff;            /* Ice Blue (Row Hover & Active Tint) */
-  --dnfl-primary-ultra-light: #f0f9ff;      /* Sky Blue Tint (Soft Card Background) */
+  /* ------------------------------------------------------------------------
+     1. PRIMARY BRAND PALETTE
+     ------------------------------------------------------------------------ */
+  --accent: #0577B1;                  /* Duke Shale Blue (MFL Native Script Compatibility) */
+  --dnfl-primary: #0577B1;            /* Duke Shale Blue (Primary Brand Accent) */
+  --dnfl-primary-hover: #045e8c;      /* Deep Ocean Blue (Button & Link Hover) */
+  --dnfl-primary-light: #b6e2ff;      /* Ice Blue Tint (Row Hover & Active Highlights) */
 
-  /* 2. NEUTRAL SURFACES & BORDERS */
-  --dnfl-bg-main: #ffffff;                 /* Pure White Surface */
-  --dnfl-bg-card: #ffffff;                 /* Card Surface */
-  --dnfl-bg-subhead: #f1f5f9;              /* Slate Sub-header Tint */
-  --dnfl-bg-alt: #fafafa;                  /* Alternate Table Row Tint */
-  --dnfl-border-subtle: #e2e8f0;           /* Card & Table Divider Border */
-  --dnfl-border-medium: #cbd5e1;           /* Header & Divider Border Medium */
-  --dnfl-border-focus: #0577B1;            /* Input Focus Outline */
+  /* ------------------------------------------------------------------------
+     2. ACCENT & HIGHLIGHT COLORS
+     ------------------------------------------------------------------------ */
+  --dnfl-accent-blue: #36a2eb;        /* Bright Sky Blue (Focus Rings & Highlights) */
+  --dnfl-highlight-yellow: #fde68a;    /* Soft Canary Yellow (Logged-In Franchise Row Highlight) */
+  --dnfl-highlight-yellow-hover: #fcd34d; /* Warm Gold (Logged-In Row Hover Highlight) */
+  --dnfl-alert-red: #ef4444;          /* Coral Red (Relegation & Error Alerts) */
+  --dnfl-success-green: #10b981;      /* Emerald Green (Promotion & High Score Highlights) */
+  --dnfl-badge-blue: #3b82f6;         /* Cobalt Blue (W-L Record & Metadata Capsules) */
+  --dnfl-badge-amber: #f59e0b;        /* Dark Amber (Playoff Trophy Badges) */
 
-  /* 3. TYPOGRAPHY & TEXT COLORS */
-  --dnfl-text-heading: #0f172a;            /* Midnight Obsidian (Headings & Titles) */
-  --dnfl-text-main: #121212;               /* Primary Dark Body Text */
-  --dnfl-text-muted: #555555;              /* Medium Charcoal (Subtext & Legends) */
-  --dnfl-text-light: #94a3b8;              /* Slate Muted Subtext */
+  /* ------------------------------------------------------------------------
+     3. CHART & CONFERENCE COLOR PALETTE (GROUND-TRUTH GROUNDED)
+     ------------------------------------------------------------------------ */
+  --dnfl-chart-1: rgba(54, 162, 235, 0.85);        /* Sky Blue (Cameron Crazies Fill) */
+  --dnfl-chart-1-border: rgb(54, 162, 235);        /* Sky Blue Border */
+  --dnfl-chart-2: rgba(255, 99, 132, 0.85);       /* Rose Pink (K-Ville Fill) */
+  --dnfl-chart-2-border: rgb(255, 99, 132);         /* Rose Pink Border */
+  --dnfl-chart-3: rgba(75, 192, 192, 0.85);       /* Teal Cyan (Blue Devils Fill) */
+  --dnfl-chart-3-border: rgb(75, 192, 192);         /* Teal Cyan Border */
+  --dnfl-chart-4: rgba(255, 205, 86, 0.85);       /* Yellow/Gold (Chart Slot 4) */
+  --dnfl-chart-4-border: rgb(255, 205, 86);         /* Yellow/Gold Border */
+  --dnfl-chart-5: rgba(153, 102, 255, 0.85);      /* Lavender Purple (Chart Slot 5) */
+  --dnfl-chart-5-border: rgb(153, 102, 255);        /* Lavender Purple Border */
+  --dnfl-chart-6: rgba(255, 159, 64, 0.85);       /* Amber Orange (Chart Slot 6) */
+  --dnfl-chart-6-border: rgb(255, 159, 64);         /* Amber Orange Border */
 
-  /* 4. USER SESSION & FRANCHISE HIGHLIGHT */
-  --dnfl-highlight-yellow: #fde68a;         /* Canary Yellow (Logged-In User Row) */
-  --dnfl-highlight-yellow-hover: #fcd34d;   /* Warm Gold (User Row Hover) */
+  /* Chart Background & Border Variable Aliases */
+  --dnfl-chart-bg-1: var(--dnfl-chart-1);
+  --dnfl-chart-border-1: var(--dnfl-chart-1-border);
+  --dnfl-chart-bg-2: var(--dnfl-chart-2);
+  --dnfl-chart-border-2: var(--dnfl-chart-2-border);
+  --dnfl-chart-bg-3: var(--dnfl-chart-3);
+  --dnfl-chart-border-3: var(--dnfl-chart-3-border);
+  --dnfl-chart-bg-4: var(--dnfl-chart-4);
+  --dnfl-chart-border-4: var(--dnfl-chart-4-border);
+  --dnfl-chart-bg-5: var(--dnfl-chart-5);
+  --dnfl-chart-border-5: var(--dnfl-chart-5-border);
+  --dnfl-chart-bg-6: var(--dnfl-chart-6);
+  --dnfl-chart-border-6: var(--dnfl-chart-6-border);
 
-  /* 5. CHART & CONFERENCE PALETTE */
-  --dnfl-chart-1: #0577B1;                 /* Duke Shale Blue */
-  --dnfl-chart-2: #0284c7;                 /* Cobalt Blue */
-  --dnfl-chart-3: #0d9488;                 /* Teal Accent */
-  --dnfl-chart-4: #d97706;                 /* Amber Gold */
-  --dnfl-chart-5: #dc2626;                 /* Crimson Red */
-  --dnfl-chart-6: #4f46e5;                 /* Indigo Accent */
+  /* Legacy Conference Aliases */
+  --dnfl-conf-crazies-bg: var(--dnfl-chart-1);
+  --dnfl-conf-crazies-border: var(--dnfl-chart-1-border);
+  --dnfl-conf-kville-bg: var(--dnfl-chart-2);
+  --dnfl-conf-kville-border: var(--dnfl-chart-2-border);
+  --dnfl-conf-bluedevils-bg: var(--dnfl-chart-3);
+  --dnfl-conf-bluedevils-border: var(--dnfl-chart-3-border);
 
-  /* 6. STATUS & BADGE TINTS */
-  --dnfl-green-bg: #dcfce7;                /* Emerald Tint (Positive Rank / High Score) */
-  --dnfl-green-text: #15803d;              /* Dark Emerald Text */
-  --dnfl-green-border: #bbf7d0;            /* Emerald Border */
-  --dnfl-red-bg: #fee2e2;                  /* Rose Tint (Negative Rank / Relegation) */
-  --dnfl-red-text: #b91c1c;                /* Crimson Red Text */
-  --dnfl-red-border: #fecaca;              /* Rose Border */
-  --dnfl-blue-bg: #dbeafe;                 /* Ice Blue (General Status Background) */
-  --dnfl-blue-text: #1d4ed8;               /* Royal Blue Text */
-  --dnfl-blue-border: #bfdbfe;              /* Ice Blue Border */
-  --dnfl-amber-bg: #fef3c7;                /* Soft Amber Tint (Playoff Qualifier) */
-  --dnfl-amber-text: #b45309;              /* Warm Amber Gold Text */
-  --dnfl-amber-border: #fde68a;            /* Amber Border */
-  --dnfl-gray-bg: #f1f5f9;                 /* Slate Tint (Neutral Status Background) */
-  --dnfl-gray-text: #64748b;               /* Medium Slate Text */
-  --dnfl-gray-border: #e2e8f0;             /* Slate Border */
-  --dnfl-alert-red: #ef4444;               /* Alert Crimson Red */
-  --dnfl-success-green: #10b981;           /* Success Emerald Green */
+  /* ------------------------------------------------------------------------
+     4. NEUTRAL PALETTE & SURFACE CONTAINERS
+     ------------------------------------------------------------------------ */
+  --dnfl-bg-card: #ffffff;            /* Pure White (Card Surfaces & Modal Panels) */
+  --dnfl-bg-alt: #fafafa;             /* Off-White (Table Zebra Stripe Even Rows) */
+  --dnfl-bg-muted: #f8fafc;           /* Cool Slate Tint (Previews, Textareas & Headers) */
+  --dnfl-bg-dark: #262626;            /* Dark Charcoal (Media Players & Dark Cards) */
+  --dnfl-bg-subhead: #f1f5f9;         /* Soft Slate Gray (Table Subheaders & Control Toolbars) */
+  --dnfl-border-dark: #444444;        /* Dark Mineral Gray (Strong Container Borders) */
+  --dnfl-border-medium: #cbd5e1;      /* Light Slate Border (Standard Control Borders) */
+  --dnfl-border-light: #e5e7eb;       /* Soft Divider Gray (Table Row Dividers) */
+  --dnfl-border-subtle: #e2e8f0;      /* Ultra-Light Slate (Card Internal Separators) */
 
-  /* 7. DIMENSIONS, ELEVATION & MOTION */
-  --dnfl-radius-lg: 12px;                  /* Card Corner Curve */
-  --dnfl-radius-md: 8px;                   /* Control Input & Toolbar Curve */
-  --dnfl-radius-sm: 4px;                   /* Badge & Button Curve */
+  /* ------------------------------------------------------------------------
+     5. TYPOGRAPHY COLORS
+     ------------------------------------------------------------------------ */
+  --dnfl-text-main: #121212;          /* Obsidian Black (Primary Body & Heading Text) */
+  --dnfl-text-heading: #0f172a;       /* Deep Midnight Slate (Section & Card Titles) */
+  --dnfl-text-subhead: #1e293b;       /* Dark Charcoal Slate (Subheaders & Accordion Titles) */
+  --dnfl-text-subtle: #555555;        /* Medium Charcoal (Secondary Label & Owner Text) */
+  --dnfl-text-muted: #a3a3a3;         /* Muted Ash Gray (Timestamp & Secondary Metadata) */
+  --dnfl-text-quote: #475569;         /* Slate Blue-Gray (Blockquote Text & Commentary) */
+
+  /* ------------------------------------------------------------------------
+     6. STATUS INDICATOR COLOR PALETTE
+     ------------------------------------------------------------------------ */
+  --dnfl-green-bg: #dcfce7;           /* Mint Tint (Positive Rank Change / High Score) */
+  --dnfl-green-text: #15803d;         /* Emerald Green (Positive Indicator Text) */
+  --dnfl-green-border: #bbf7d0;       /* Mint Border */
+  --dnfl-red-bg: #fee2e2;             /* Rose Tint (Negative Rank Change / Relegation) */
+  --dnfl-red-text: #b91c1c;           /* Crimson Red (Negative Indicator Text) */
+  --dnfl-red-border: #fecaca;         /* Rose Border */
+  --dnfl-blue-bg: #dbeafe;            /* Ice Blue (General Status Badge Background) */
+  --dnfl-blue-text: #1d4ed8;          /* Royal Blue (General Status Badge Text) */
+  --dnfl-blue-border: #bfdbfe;        /* Ice Blue Border */
+  --dnfl-amber-bg: #fef3c7;           /* Soft Amber Tint (Warning & Playoff Qualifier) */
+  --dnfl-amber-text: #b45309;         /* Warm Amber Gold (Playoff Indicator Text) */
+  --dnfl-amber-border: #fde68a;       /* Amber Border */
+  --dnfl-gray-bg: #f1f5f9;            /* Slate Tint (Neutral Unchanged Status Background) */
+  --dnfl-gray-text: #64748b;          /* Medium Slate (Neutral Unchanged Status Text) */
+  --dnfl-gray-border: #e2e8f0;        /* Slate Border */
+
+  /* ------------------------------------------------------------------------
+     7. DIMENSIONS, ELEVATION & MOTION
+     ------------------------------------------------------------------------ */
+  --dnfl-radius-lg: 12px;            /* Card & Modal Container Corner Curve */
+  --dnfl-radius-md: 8px;             /* Control Input & Toolbar Corner Curve */
+  --dnfl-radius-sm: 4px;             /* Badge & Button Corner Curve */
   --dnfl-shadow-card: 0 4px 16px rgba(0, 0, 0, 0.4); /* Card Elevation Shadow */
-  --dnfl-shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05); /* Component Elevation Shadow */
-  --dnfl-transition-fast: 0.15s ease;     /* Button Hover & Focus Motion */
-  --dnfl-transition-smooth: 0.2s ease;    /* Accordion & Row Hover Motion */
+  --dnfl-shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.05); /* Subtle Component Elevation */
+  --dnfl-transition-fast: 0.15s ease; /* Button Hover & Focus Motion */
+  --dnfl-transition-smooth: 0.2s ease;/* Accordion Expansion & Row Hover Motion */
 
-  /* 8. FRANCHISE MEDIA ASSET TOKENS */
-  --dnfl-ficon-sm: 1.5rem;    /* 24px — Tickers, dropdowns, compact feeds */
-  --dnfl-ficon-md: 2.5rem;    /* 40px — Standard tables (Standings, Rankings, LTS) */
-  --dnfl-ficon-lg: 3.5rem;    /* 56px — Scoreboard cards, matchup previews */
-  --dnfl-ficon-xl: 4.0rem;    /* 64px — Hero headers, team profile modals */
-  --dnfl-flogo-max-h: 25rem;  /* Max height for full team logos */
+  /* ------------------------------------------------------------------------
+     8. FRANCHISE ICON & LOGO DESIGN TOKENS
+     ------------------------------------------------------------------------ */
+  --dnfl-ficon-sm: 1.5rem;    /* 24px — Compact feeds, tickers & dropdowns */
+  --dnfl-ficon-md: 2.5rem;    /* 40px — Standard table rows (Desktop) */
+  --dnfl-ficon-lg: 3.5rem;    /* 56px — Scoreboards & game cards */
+  --dnfl-ficon-xl: 4.0rem;    /* 64px — Hero profile cards & modals */
+  --dnfl-flogo-max-h: 25rem;  /* Banner logo height limit */
+
 }
