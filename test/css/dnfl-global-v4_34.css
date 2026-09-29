@@ -1136,7 +1136,7 @@ a.dnfl-btn-secondary:hover,
 @media (max-width: 768px) {
   table.dnfl-table,
   table.dnfl-rules-table {
-    min-width: 500px !important;
+    min-width: 320px !important;
     width: -moz-max-content !important;
     width: max-content !important;
   }
