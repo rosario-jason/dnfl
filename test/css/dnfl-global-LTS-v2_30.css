@@ -2024,7 +2024,7 @@ a.dnfl-btn-secondary:hover,
 }
 
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_29.scss)
+   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_30.scss)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 #dnfl-lts-container {
@@ -2034,11 +2034,13 @@ a.dnfl-btn-secondary:hover,
 }
 #dnfl-lts-container .dnfl-division-header {
   background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
 }
 #dnfl-lts-container .dnfl-division-header-cell {
   padding: 0.75rem 1rem !important;
   text-align: left !important;
   background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+  border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
 }
 #dnfl-lts-container .dnfl-division-header-cell.dnfl-sticky-col {
   position: sticky !important;
@@ -2065,8 +2067,12 @@ a.dnfl-btn-secondary:hover,
 }
 #dnfl-lts-container {
   /* ------------------------------------------------------------------------
-     2. STICKY COLUMNS GLOBAL RULE
+     2. TABLE HEADER BORDERS & STICKY COLUMNS GLOBAL RULE
      ------------------------------------------------------------------------ */
+}
+#dnfl-lts-container table.dnfl-table th,
+#dnfl-lts-container .dnfl-table-subheader th {
+  border-bottom: 2px solid var(--dnfl-border-medium, #cbd5e1) !important;
 }
 #dnfl-lts-container .dnfl-sticky-col,
 #dnfl-lts-container td.dnfl-sticky-col,
@@ -2084,11 +2090,13 @@ a.dnfl-btn-secondary:hover,
   min-width: 180px !important;
   text-align: left !important;
 }
-#dnfl-lts-container .dnfl-col-week {
+#dnfl-lts-container .dnfl-col-week,
+#dnfl-lts-container td.dnfl-col-week {
   width: 75px !important;
   min-width: 75px !important;
   text-align: center !important;
   white-space: nowrap !important;
+  font-weight: 700 !important;
 }
 #dnfl-lts-container .dnfl-col-score,
 #dnfl-lts-container td.dnfl-text-center,
@@ -2191,26 +2199,34 @@ a.dnfl-btn-secondary:hover,
 }
 #dnfl-lts-container {
   /* ------------------------------------------------------------------------
-     7. SECTION SPACING & CONTAINER VISIBILITY OVERRIDES
+     7. SECTION SPACING & MARGIN NORMALIZATION (LEGEND ABOVE TABLES)
      ------------------------------------------------------------------------ */
 }
-#dnfl-lts-container .dnfl-lts-section + .dnfl-lts-section {
-  margin-top: 1.75rem !important;
+#dnfl-lts-container #dnfl-lts-legend {
+  margin-bottom: 1.5rem !important;
+}
+#dnfl-lts-container .dnfl-lts-section {
+  margin-bottom: 1.5rem !important;
 }
 #dnfl-lts-container #dnfl-lts-legend.dnfl-is-hidden,
 #dnfl-lts-container #dnfl-lts-toolbar.dnfl-is-hidden,
 #dnfl-lts-container .dnfl-toolbar.dnfl-is-hidden {
   display: none !important;
 }
-
-/* ==========================================================================
-   MOBILE RESPONSIVE TWEAKS
-   ========================================================================== */
+#dnfl-lts-container {
+  /* ------------------------------------------------------------------------
+     8. RESPONSIVE MEDIA QUERIES (FRAMEWORK CONVENTION)
+     ------------------------------------------------------------------------ */
+  /* Desktop Viewports (> 768px) */
+}
 @media (min-width: 769px) {
   #dnfl-lts-container .dnfl-col-franchise {
     min-width: 240px !important;
     max-width: 280px !important;
   }
+}
+#dnfl-lts-container {
+  /* Mobile Viewports (<= 768px) */
 }
 @media (max-width: 768px) {
   #dnfl-lts-container table.dnfl-table {
@@ -2236,6 +2252,7 @@ a.dnfl-btn-secondary:hover,
     flex-shrink: 0 !important;
   }
 }
+
 /* ==========================================================================
    DNFL NATIVE MFL UI OVERRIDES & MFLSCRIPTS DECOUPLING
    ==========================================================================

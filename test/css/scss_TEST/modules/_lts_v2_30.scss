@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_29.scss)
+   DNFL Last Team Standing (LTS) Module Partial (_lts_v2_30.scss)
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 
@@ -9,12 +9,14 @@
      ------------------------------------------------------------------------ */
   .dnfl-division-header {
     background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
   }
 
   .dnfl-division-header-cell {
     padding: 0.75rem 1rem !important;
     text-align: left !important;
     background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
 
     &.dnfl-sticky-col {
       position: sticky !important;
@@ -44,8 +46,13 @@
   }
 
   /* ------------------------------------------------------------------------
-     2. STICKY COLUMNS GLOBAL RULE
+     2. TABLE HEADER BORDERS & STICKY COLUMNS GLOBAL RULE
      ------------------------------------------------------------------------ */
+  table.dnfl-table th,
+  .dnfl-table-subheader th {
+    border-bottom: 2px solid var(--dnfl-border-medium, #cbd5e1) !important;
+  }
+
   .dnfl-sticky-col,
   td.dnfl-sticky-col,
   th.dnfl-sticky-col {
@@ -62,11 +69,13 @@
     text-align: left !important;
   }
 
-  .dnfl-col-week {
+  .dnfl-col-week,
+  td.dnfl-col-week {
     width: 75px !important;
     min-width: 75px !important;
     text-align: center !important;
     white-space: nowrap !important;
+    font-weight: 700 !important;
   }
 
   .dnfl-col-score,
@@ -156,10 +165,14 @@
   tbody tr.dnfl-subhead-champion:hover td { background-color: var(--dnfl-primary, #0577B1) !important; }
 
   /* ------------------------------------------------------------------------
-     7. SECTION SPACING & CONTAINER VISIBILITY OVERRIDES
+     7. SECTION SPACING & MARGIN NORMALIZATION (LEGEND ABOVE TABLES)
      ------------------------------------------------------------------------ */
-  .dnfl-lts-section + .dnfl-lts-section {
-    margin-top: 1.75rem !important;
+  #dnfl-lts-legend {
+    margin-bottom: 1.5rem !important;
+  }
+
+  .dnfl-lts-section {
+    margin-bottom: 1.5rem !important;
   }
 
   #dnfl-lts-legend.dnfl-is-hidden,
@@ -167,22 +180,20 @@
   .dnfl-toolbar.dnfl-is-hidden {
     display: none !important;
   }
-}
 
-/* ==========================================================================
-   MOBILE RESPONSIVE TWEAKS
-   ========================================================================== */
-@media (min-width: 769px) {
-  #dnfl-lts-container {
+  /* ------------------------------------------------------------------------
+     8. RESPONSIVE MEDIA QUERIES (FRAMEWORK CONVENTION)
+     ------------------------------------------------------------------------ */
+  /* Desktop Viewports (> 768px) */
+  @media (min-width: 769px) {
     .dnfl-col-franchise {
       min-width: 240px !important;
       max-width: 280px !important;
     }
   }
-}
 
-@media (max-width: 768px) {
-  #dnfl-lts-container {
+  /* Mobile Viewports (<= 768px) */
+  @media (max-width: 768px) {
     table.dnfl-table {
       min-width: 320px !important;
       width: 100% !important;
