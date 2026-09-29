@@ -1,0 +1,100 @@
+#dnfl-standings-container {
+  /* ------------------------------------------------------------------------
+     1. SCOPED STANDINGS COLUMN ALIGNMENTS & WIDTHS (DESKTOP)
+     ------------------------------------------------------------------------ */
+  /* Franchise Column (250px Desktop Fixed Width) */
+  .dnfl-col-franchise {
+    width: 250px !important;
+    min-width: 250px !important;
+    max-width: 250px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  /* Seed Column (85px Width, Left-Aligned with 12px padding for Seed Badges & Icons) */
+  .dnfl-col-seed,
+  th.dnfl-col-seed,
+  td.dnfl-col-seed {
+    width: 85px !important;
+    min-width: 85px !important;
+    padding-left: 12px !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+  }
+
+  /* Points For & Points Against Columns (100px Width) */
+  .dnfl-col-pf,
+  .dnfl-col-pa {
+    width: 100px !important;
+    min-width: 100px !important;
+    text-align: center !important;
+
+    .dnfl-badge {
+      min-width: 72px !important; /* Uniform badge width */
+      padding: 2px 6px !important;
+      font-size: 0.8rem !important;
+    }
+  }
+
+  /* Standings PF/PA Cell Text Direct Formatting */
+  .dnfl-standings-pf {
+    color: var(--dnfl-success-green, #10b981) !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    text-align: center !important;
+  }
+
+  .dnfl-standings-pa {
+    color: var(--dnfl-alert-red, #ef4444) !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    text-align: center !important;
+  }
+
+  /* Consolidated BBID Column (80px Width) */
+  .dnfl-col-bbid,
+  .dnfl-standings-bbid {
+    width: 80px !important;
+    min-width: 80px !important;
+    text-align: center !important;
+    font-size: 0.8rem !important;
+    color: var(--dnfl-text-subtle, #555555) !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     2. MOBILE RESPONSIVE TWEAKS FOR STANDINGS (<= 768px)
+     ------------------------------------------------------------------------ */
+  @media (max-width: 768px) {
+    table.dnfl-table {
+      min-width: 320px !important;
+      width: 100% !important;
+    }
+
+    /* Seed Column Mobile Reset */
+    .dnfl-col-seed,
+    th.dnfl-col-seed,
+    td.dnfl-col-seed {
+      width: 65px !important;
+      min-width: 65px !important;
+      padding-left: 6px !important;
+      white-space: nowrap !important;
+    }
+
+    .dnfl-col-record {
+      width: 86px !important;
+      min-width: 86px !important;
+      padding: 6px 2px !important;
+    }
+
+    .dnfl-col-franchise {
+      width: 154px !important;
+      max-width: 154px !important;
+      min-width: 150px !important;
+      padding: 6px 4px !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
+      white-space: normal !important;
+    }
+  }
+}
