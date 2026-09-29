@@ -1,0 +1,194 @@
+/* ==========================================================================
+   DNFL Standings Module Styles (_standings.scss - #dnfl-standings-container)
+   ========================================================================== */
+
+#dnfl-standings-container {
+  /* ------------------------------------------------------------------------
+     1. DIVISION HEADERS & VISIBILITY TOGGLE BUTTONS
+     ------------------------------------------------------------------------ */
+  .dnfl-division-header,
+  tr.dnfl-division-header,
+  td.dnfl-division-header {
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    color: var(--dnfl-text-heading, #0f172a) !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    padding: 10px 14px !important;
+    border-top: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    border-bottom: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    text-align: left !important;
+
+    .dnfl-division-title {
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      width: 100% !important;
+    }
+
+    .dnfl-visibility-toggle-btn {
+      background: transparent !important;
+      border: none !important;
+      color: var(--dnfl-primary, #0577B1) !important;
+      font-weight: 600 !important;
+      font-size: 0.8rem !important;
+      cursor: pointer !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+      padding: 2px 8px !important;
+
+      &:hover {
+        color: var(--dnfl-primary-hover, #045e8c) !important;
+        text-decoration: underline !important;
+      }
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     2. CIRCULAR SEED BADGE (.dnfl-seed-badge)
+     ------------------------------------------------------------------------ */
+  .dnfl-seed-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    border-radius: 50% !important;
+    background-color: var(--dnfl-gray-bg, #f1f5f9) !important;
+    color: var(--dnfl-text-heading, #0f172a) !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    margin-right: 6px !important;
+    vertical-align: middle !important;
+    box-shadow: inset 0 0 0 1px var(--dnfl-border-subtle, #e2e8f0) !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     3. SCOPED STANDINGS COLUMN ALIGNMENTS & WIDTHS (DESKTOP)
+     ------------------------------------------------------------------------ */
+  /* Seed Column: Left-aligned with 12px padding for badges & inline crown/trophy icons */
+  .dnfl-col-seed,
+  th.dnfl-col-seed,
+  td.dnfl-col-seed {
+    width: 85px !important;
+    min-width: 85px !important;
+    padding-left: 12px !important;
+    text-align: left !important;
+    white-space: nowrap !important;
+    vertical-align: middle !important;
+  }
+
+  /* Franchise Column: 250px Desktop Fixed Width with Ellipsis */
+  .dnfl-col-franchise,
+  th.dnfl-col-franchise,
+  td.dnfl-col-franchise {
+    width: 250px !important;
+    min-width: 250px !important;
+    max-width: 250px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    text-align: left !important;
+    vertical-align: middle !important;
+  }
+
+  /* Points For & Points Against Columns (Centered + Uniform 76px Pill Width) */
+  .dnfl-col-pf,
+  .dnfl-col-pa,
+  th.dnfl-col-pf,
+  th.dnfl-col-pa,
+  td.dnfl-col-pf,
+  td.dnfl-col-pa {
+    width: 100px !important;
+    min-width: 100px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+
+    /* Uniform Badge / Pill Alignment */
+    .dnfl-badge,
+    .dnfl-pill,
+    .dnfl-standings-pf,
+    .dnfl-standings-pa {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 76px !important;
+      min-width: 76px !important;
+      max-width: 76px !important;
+      padding: 3px 0 !important;
+      font-size: 0.8rem !important;
+      font-weight: 700 !important;
+      box-sizing: border-box !important;
+      margin: 0 auto !important;
+    }
+  }
+
+  /* Text & Badge Formatting for Points For / Points Against */
+  .dnfl-standings-pf {
+    color: var(--dnfl-green-text, #15803d) !important;
+    background-color: var(--dnfl-green-bg, #dcfce7) !important;
+    border: 1px solid var(--dnfl-green-border, #bbf7d0) !important;
+    border-radius: var(--dnfl-radius-sm, 4px) !important;
+  }
+
+  .dnfl-standings-pa {
+    color: var(--dnfl-red-text, #b91c1c) !important;
+    background-color: var(--dnfl-red-bg, #fee2e2) !important;
+    border: 1px solid var(--dnfl-red-border, #fecaca) !important;
+    border-radius: var(--dnfl-radius-sm, 4px) !important;
+  }
+
+  /* Consolidated BBID Column (80px Width, Centered) */
+  .dnfl-col-bbid,
+  .dnfl-standings-bbid,
+  th.dnfl-col-bbid,
+  td.dnfl-col-bbid {
+    width: 80px !important;
+    min-width: 80px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    font-size: 0.8rem !important;
+    color: var(--dnfl-text-muted, #555555) !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     4. MOBILE RESPONSIVE TWEAKS FOR STANDINGS (<= 768px)
+     ------------------------------------------------------------------------ */
+  @media (max-width: 768px) {
+    table.dnfl-table {
+      min-width: 320px !important;
+      width: 100% !important;
+    }
+
+    .dnfl-col-seed,
+    th.dnfl-col-seed,
+    td.dnfl-col-seed {
+      width: 65px !important;
+      min-width: 65px !important;
+      padding-left: 6px !important;
+      white-space: nowrap !important;
+    }
+
+    .dnfl-col-record,
+    th.dnfl-col-record,
+    td.dnfl-col-record {
+      width: 86px !important;
+      min-width: 86px !important;
+      padding: 6px 2px !important;
+      text-align: center !important;
+    }
+
+    .dnfl-col-franchise,
+    th.dnfl-col-franchise,
+    td.dnfl-col-franchise {
+      width: 154px !important;
+      max-width: 154px !important;
+      min-width: 150px !important;
+      padding: 6px 4px !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
+      white-space: normal !important;
+    }
+  }
+}

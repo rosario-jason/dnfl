@@ -1,0 +1,172 @@
+/* ==========================================================================
+   DNFL Power Rankings Module Styles (_rankings.scss - #dnfl-rankings-container)
+   ========================================================================== */
+
+#dnfl-rankings-container {
+  /* ------------------------------------------------------------------------
+     1. CONFERENCE RANK BADGES (.dnfl-rank-badge)
+     ------------------------------------------------------------------------ */
+  .dnfl-rank-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    border-radius: 6px !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    margin: 0 auto !important;
+
+    /* Conference Slot Color Palette Mapping */
+    &.color-1 { background-color: var(--dnfl-chart-1, #0577B1) !important; }
+    &.color-2 { background-color: var(--dnfl-chart-2, #0284c7) !important; }
+    &.color-3 { background-color: var(--dnfl-chart-3, #0d9488) !important; }
+    &.color-4 { background-color: var(--dnfl-chart-4, #d97706) !important; }
+    &.color-5 { background-color: var(--dnfl-chart-5, #dc2626) !important; }
+    &.color-6 { background-color: var(--dnfl-chart-6, #4f46e5) !important; }
+  }
+
+  /* ------------------------------------------------------------------------
+     2. SCOPED POWER RANKINGS COLUMN ALIGNMENTS & WIDTHS (DESKTOP)
+     ------------------------------------------------------------------------ */
+  /* Rank Column: Centered with Balanced Padding */
+  .dnfl-col-rank,
+  th.dnfl-col-rank,
+  td.dnfl-col-rank {
+    width: 70px !important;
+    min-width: 70px !important;
+    padding: 6px 4px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+  }
+
+  /* Rank Change Column: Compact Centered Badge */
+  .dnfl-col-change,
+  th.dnfl-col-change,
+  td.dnfl-col-change {
+    width: 60px !important;
+    min-width: 60px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+
+    /* Uniform Rank Change Badge */
+    .dnfl-badge {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 48px !important;
+      min-width: 48px !important;
+      max-width: 48px !important;
+      padding: 2px 0 !important;
+      font-size: 0.75rem !important;
+      font-weight: 700 !important;
+      box-sizing: border-box !important;
+      margin: 0 auto !important;
+    }
+  }
+
+  /* Franchise Column: 250px Desktop Fixed Width */
+  .dnfl-col-franchise,
+  th.dnfl-col-franchise,
+  td.dnfl-col-franchise {
+    width: 250px !important;
+    min-width: 250px !important;
+    max-width: 250px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    text-align: left !important;
+    vertical-align: middle !important;
+  }
+
+  /* Power Index & Points Columns */
+  .dnfl-col-power,
+  .dnfl-col-pts,
+  th.dnfl-col-power,
+  th.dnfl-col-pts,
+  td.dnfl-col-power,
+  td.dnfl-col-pts {
+    width: 100px !important;
+    min-width: 100px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+
+    .dnfl-pill,
+    .dnfl-pill-blue {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 68px !important;
+      min-width: 68px !important;
+      max-width: 68px !important;
+      padding: 3px 0 !important;
+      font-size: 0.8rem !important;
+      font-weight: 700 !important;
+      margin: 0 auto !important;
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     3. COMMENTARY CALLOUT ROW & BOX (DESKTOP)
+     ------------------------------------------------------------------------ */
+  .dnfl-comment-row {
+    background-color: var(--dnfl-bg-subtle, #f8fafc) !important;
+  }
+
+  .dnfl-comment-cell {
+    padding: 8px 16px 12px 24px !important;
+    background: transparent !important;
+  }
+
+  .dnfl-comment-box {
+    background-color: #ffffff !important;
+    border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
+    border-top: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    border-right: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    border-bottom: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    border-radius: 4px 8px 8px 4px !important;
+    padding: 10px 16px !important;
+    margin: 2px 0 !important;
+    font-style: italic !important;
+    font-size: 0.85rem !important;
+    color: var(--dnfl-text-muted, #555555) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     4. MOBILE RESPONSIVE TWEAKS FOR POWER RANKINGS (<= 768px)
+     ------------------------------------------------------------------------ */
+  @media (max-width: 768px) {
+    .dnfl-col-rank,
+    th.dnfl-col-rank,
+    td.dnfl-col-rank {
+      width: 60px !important;
+      min-width: 60px !important;
+      padding: 6px 2px !important;
+    }
+
+    .dnfl-col-franchise,
+    th.dnfl-col-franchise,
+    td.dnfl-col-franchise {
+      width: 154px !important;
+      max-width: 154px !important;
+      min-width: 150px !important;
+      padding: 6px 4px !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
+      white-space: normal !important;
+    }
+
+    .dnfl-comment-cell {
+      padding: 6px 8px 8px 10px !important;
+    }
+
+    .dnfl-comment-box {
+      padding: 8px 10px !important;
+      font-size: 0.8rem !important;
+    }
+  }
+}
