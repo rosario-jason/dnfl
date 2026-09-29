@@ -1,0 +1,36 @@
+/* ==========================================================================
+   Native MFL Host Overrides Partial (_mfl-overrides_v2.scss)
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+
+/* ------------------------------------------------------------------------
+   1. STICKY TOP NAVIGATION BAR
+   ------------------------------------------------------------------------ */
+.myfantasyleague_menu {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+  background-color: var(--dnfl-primary, #0577B1) !important;
+}
+
+/* ------------------------------------------------------------------------
+   2. TRANSPARENT CONTAINER & BODY RESETS
+   ------------------------------------------------------------------------ */
+#body_content,
+#reports,
+.homepagemodule {
+  background-color: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+/* ------------------------------------------------------------------------
+   3. NATIVE FRANCHISE LOGO HERO CONTAINER
+   ------------------------------------------------------------------------ */
+.franchiselogo {
+  max-height: var(--dnfl-flogo-max-h, 25rem) !important;
+  margin: 0 auto !important;
+  display: block !important;
+}
+
+/* Note: Core .franchiseicon rules have been migrated to _tables_v2.scss */

@@ -5,21 +5,21 @@
    ========================================================================== */
 
 // 1. Core Framework Foundation
-@import 'variables';
+@import 'variables_v2';
 @import 'base';
 @import 'mixins';
 @import 'utilities';
 @import 'badges';
 @import 'containers';
-@import 'tables';
+@import 'tables_v2';
 
 // 2. Feature Modules
-@import 'modules/standings';
-@import 'modules/rankings';
+@import 'modules/standings_v2';
+@import 'modules/rankings_v2';
 @import 'modules/podcast';
 @import 'modules/rules';
 @import 'modules/exporter';
-@import 'modules/lts_v2_30';
+@import 'modules/lts_v2_31';
 
 // 3. Native MFL UI Overrides
-@import 'mfl-overrides';
+@import 'mfl-overrides_v2';

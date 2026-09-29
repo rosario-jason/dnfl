@@ -1,0 +1,60 @@
+/* ==========================================================================
+   DNFL Power Rankings Module Partial (_rankings_v2.scss)
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+
+#dnfl-rankings-container {
+  /* ------------------------------------------------------------------------
+     1. FLUID TABLE LAYOUT & COMMENTARY ROWS
+     ------------------------------------------------------------------------ */
+  table.dnfl-table {
+    table-layout: auto !important;
+  }
+
+  .dnfl-comment-row {
+    td {
+      padding: 0.5rem 1rem !important;
+      background-color: var(--dnfl-bg-alt, #fafafa) !important;
+    }
+  }
+
+  .dnfl-comment-box {
+    font-style: italic !important;
+    color: var(--dnfl-text-main, #121212) !important;
+    padding: 0.5rem 0.75rem !important;
+    border-left: 3px solid var(--dnfl-primary, #0577B1) !important;
+    background-color: var(--dnfl-bg-card, #ffffff) !important;
+    border-radius: var(--dnfl-radius-sm, 4px) !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     2. CHART CANVAS WRAPPER
+     ------------------------------------------------------------------------ */
+  .dnfl-chart-wrapper {
+    position: relative !important;
+    width: 100% !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     3. RESPONSIVE MEDIA QUERIES
+     ------------------------------------------------------------------------ */
+  @media (min-width: 769px) {
+    .dnfl-col-franchise {
+      min-width: 240px !important;
+      max-width: 280px !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .dnfl-col-franchise {
+      width: 154px !important;
+      max-width: 154px !important;
+      min-width: 150px !important;
+      padding: 6px 4px !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
+      white-space: normal !important;
+    }
+  }
+}
