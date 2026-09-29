@@ -219,6 +219,11 @@
      5. MOBILE RESPONSIVE TWEAKS FOR POWER RANKINGS (<= 768px)
      ------------------------------------------------------------------------ */
   @media (max-width: 768px) {
+    table.dnfl-table {
+      min-width: 320px !important;
+      width: 100% !important;
+    }
+
     .dnfl-col-rank,
     th.dnfl-col-rank,
     td.dnfl-col-rank {
@@ -259,9 +264,6 @@
     th.dnfl-col-power {
       white-space: normal !important;
       word-break: break-word !important;
-      line-height: 1.1 !important;
-      font-size: 0.7rem !important;
-      text-align: center !important;
     }
 
     .dnfl-col-index .dnfl-pill,
