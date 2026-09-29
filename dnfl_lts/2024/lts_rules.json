@@ -16,11 +16,5 @@
     "lts_startWeek": 2
   },
   "conferenceOverrides": {
-    "00": {
-      "highScore_isEnabled": false
-    },
-    "01": {
-      "lts_isEnabled": false
-    }
   }
 }
