@@ -8,18 +8,18 @@
 @import 'variables_v2';
 @import 'base';
 @import 'mixins';
-@import 'utilities_v2';
+@import 'utilities_v4';
 @import 'badges';
 @import 'containers';
-@import 'tables_v3';
+@import 'tables_v4';
 
 // 2. Feature Modules
-@import 'modules/standings_v7';
-@import 'modules/rankings_v7';
+@import 'modules/standings_v9';
+@import 'modules/rankings_v8';
 @import 'modules/podcast';
 @import 'modules/rules';
 @import 'modules/exporter';
 @import 'modules/lts_v2_30';
 
 // 3. Native MFL UI Overrides
-@import 'mfl-overrides_v2';
+@import 'mfl-overrides_v3';

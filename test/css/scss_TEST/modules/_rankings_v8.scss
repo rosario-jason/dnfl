@@ -1,0 +1,205 @@
+/* =========================================================================
+   DNFL POWER RANKINGS MODULE STYLES (_rankings.scss) - v8
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+
+#dnfl-rankings-container {
+  /* ------------------------------------------------------------------------
+     1. CHART CANVAS WRAPPER
+     ------------------------------------------------------------------------ */
+  .dnfl-chart-wrapper {
+    position: relative !important;
+    width: 100% !important;
+    margin-bottom: 1rem !important;
+
+    canvas {
+      width: 100% !important;
+      max-height: 400px !important;
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     2. FLUID TABLE LAYOUT FOR COMMENTARY ROWS
+     ------------------------------------------------------------------------ */
+  /* Allows commentary callout rows (.dnfl-comment-row) to expand cleanly across columns */
+  table.dnfl-table {
+    table-layout: auto !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     3. SUB-HEADER TITLE BAR & COLLAPSE TOGGLE
+     ------------------------------------------------------------------------ */
+  .dnfl-division-header {
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    color: var(--dnfl-text-heading, #0f172a) !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+
+    td {
+      background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+      padding: 10px 12px !important;
+      border-bottom: 2px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    }
+  }
+
+  .dnfl-division-title-wrap {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+
+  .dnfl-division-toggle-btn {
+    background: transparent !important;
+    border: none !important;
+    color: var(--dnfl-primary, #0577B1) !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    padding: 2px 6px !important;
+    border-radius: var(--dnfl-radius-sm, 4px) !important;
+    transition: background-color var(--dnfl-transition-fast, 0.15s ease) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+
+    &:hover {
+      background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     4. RANKINGS TABLE METRIC COLUMNS & ALIGNMENTS
+     ------------------------------------------------------------------------ */
+
+  /* Rank Column (.dnfl-col-rank) & Comment Toggle Button Alignment */
+  .dnfl-col-rank {
+    text-align: center !important;
+    white-space: nowrap !important;
+  }
+
+  .dnfl-rank-cell-wrap {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+  }
+
+  .dnfl-comment-toggle-btn {
+    background: transparent !important;
+    border: none !important;
+    padding: 0 2px !important;
+    cursor: pointer !important;
+    color: var(--dnfl-primary, #0577B1) !important;
+    font-size: 0.9rem !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    transition: transform var(--dnfl-transition-fast, 0.15s ease) !important;
+
+    &:hover {
+      transform: scale(1.2) !important;
+      color: var(--dnfl-primary-dark, #0284c7) !important;
+    }
+  }
+
+  /* Conference Rank Badge (.dnfl-rank-badge) */
+  .dnfl-rank-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    border-radius: var(--dnfl-radius-sm, 6px) !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    flex-shrink: 0 !important;
+
+    /* Conference Color Slot Mapping */
+    &.color-1 { background-color: var(--dnfl-chart-1, #0577B1) !important; }
+    &.color-2 { background-color: var(--dnfl-chart-2, #0284c7) !important; }
+    &.color-3 { background-color: var(--dnfl-chart-3, #0d9488) !important; }
+    &.color-4 { background-color: var(--dnfl-chart-4, #d97706) !important; }
+    &.color-5 { background-color: var(--dnfl-chart-5, #dc2626) !important; }
+    &.color-6 { background-color: var(--dnfl-chart-6, #4f46e5) !important; }
+  }
+
+  /* Rank Change Column (.dnfl-col-change) & Scoped Semi-Bold Badge Override */
+  .dnfl-col-change {
+    text-align: center !important;
+    white-space: nowrap !important;
+
+    /* Overrides global badge normal weight (400) to semi-bold (600) for rank change indicators */
+    .dnfl-badge {
+      font-weight: 600 !important;
+    }
+  }
+
+  /* Power Index Column (.dnfl-col-index) */
+  .dnfl-col-index {
+    text-align: center !important;
+    white-space: nowrap !important;
+
+    /* Stepped-up bold pill for Power Index emphasis (e.g. 84.5) */
+    .dnfl-pill,
+    .dnfl-pill-blue,
+    .dnfl-index-pill {
+      font-weight: 700 !important;
+      font-size: 0.95rem !important;
+    }
+  }
+
+  /* Win-Loss-Tie Record Column (.dnfl-col-record) */
+  .dnfl-col-record {
+    text-align: center !important;
+    white-space: nowrap !important;
+  }
+
+  /* Points For Column (.dnfl-col-pf) */
+  .dnfl-col-pf {
+    text-align: center !important;
+    white-space: nowrap !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     5. EXPANDABLE COMMENTARY CALLOUT BOX (.dnfl-comment-box)
+     ------------------------------------------------------------------------ */
+  .dnfl-comment-row {
+    td {
+      padding: 6px 12px 12px 12px !important;
+      border-bottom: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+      background-color: transparent !important;
+    }
+  }
+
+  .dnfl-comment-box {
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    border-left: 3px solid var(--dnfl-primary, #0577B1) !important;
+    border-radius: 0 var(--dnfl-radius-md, 8px) var(--dnfl-radius-md, 8px) 0 !important;
+    padding: 10px 14px !important;
+    font-size: 0.85rem !important;
+    font-style: italic !important;
+    color: var(--dnfl-text-muted, #555555) !important;
+    line-height: 1.4 !important;
+
+    i {
+      margin-right: 6px !important;
+      color: var(--dnfl-primary, #0577B1) !important;
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     6. MOBILE RESPONSIVE TWEAKS (<= 768px)
+     ------------------------------------------------------------------------ */
+  @media (max-width: 768px) {
+    .dnfl-rank-badge {
+      width: 24px !important;
+      height: 24px !important;
+      min-width: 24px !important;
+      min-height: 24px !important;
+      font-size: 0.75rem !important;
+    }
+  }
+}

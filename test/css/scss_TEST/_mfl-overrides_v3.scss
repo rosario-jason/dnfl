@@ -1,0 +1,58 @@
+/* ==========================================================================
+   DNFL DESIGN SYSTEM - NATIVE MYFANTASYLEAGUE (MFL) HOST OVERRIDES
+   ==========================================================================
+   Module: _mfl-overrides.scss
+   Description: Provides targeted host-level overrides for native MFL site
+                containers, sticky navigation menus, header banners, and
+                page headers.
+   Guardrails:
+   1. Zero table interference (no .dnfl-table, .dnfl-col-franchise, or cell rules).
+   2. Container isolation (targets native MFL host wrappers without bleeding
+      into .dnfl-card shells).
+   ========================================================================== */
+
+/* ------------------------------------------------------------------------
+   1. STICKY NAVIGATION MENU OVERRIDES (.myfantasyleague_menu)
+   ------------------------------------------------------------------------ */
+.myfantasyleague_menu,
+.myfantasyleague_menuMobile {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+  background-color: var(--dnfl-primary, #0577B1) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* ------------------------------------------------------------------------
+   2. TRANSPARENT OUTER CONTAINER RESETS
+   ------------------------------------------------------------------------ */
+/* Neutralizes native MFL outer wrappers so .dnfl-card shells render cleanly */
+#body_content,
+#reports,
+.homepagemodule {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* ------------------------------------------------------------------------
+   3. NATIVE MFL HEADER BANNER LOGOS (.franchiselogo)
+   ------------------------------------------------------------------------ */
+/* Applies exclusively to team logos in native MFL header banners outside tables */
+.franchiselogo {
+  max-height: var(--dnfl-flogo-max-h, 25rem) !important;
+  width: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
+  object-fit: contain !important;
+}
+
+/* ------------------------------------------------------------------------
+   4. REDUNDANT HOST HEADER HIDES
+   ------------------------------------------------------------------------ */
+/* Suppresses native MFL title banners when framework card headers are active */
+.pageheader {
+  display: none !important;
+}

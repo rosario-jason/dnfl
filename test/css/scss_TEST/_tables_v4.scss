@@ -1,5 +1,5 @@
 /* =========================================================================
-   DNFL Unified Table System (_tables.scss) - v3
+   DNFL Unified Table System (_tables.scss) - v4
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 
@@ -110,18 +110,14 @@ td.dnfl-col-franchise {
   min-width: 0 !important;
 }
 
-/* Square Team Icon (Overrides MFL native display: none) */
+/* Square Team Icon (Bound to _variable_v2.scss tokens) */
 .franchiseicon,
 img.franchiseicon,
 .dnfl-franchise-cell img {
   display: block !important;
-  width: 36px !important;
-  height: 36px !important;
-  min-width: 36px !important;
-  min-height: 36px !important;
-  max-width: 36px !important;
-  max-height: 36px !important;
-  border-radius: 8px !important; /* 25% curve */
+  width: var(--dnfl-ficon-md, 2.5rem) !important;
+  height: var(--dnfl-ficon-md, 2.5rem) !important;
+  border-radius: 8px !important;
   object-fit: cover !important;
   border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
   flex-shrink: 0 !important;
@@ -194,10 +190,8 @@ img.franchiseicon,
 
   .franchiseicon,
   img.franchiseicon {
-    width: 28px !important;
-    height: 28px !important;
-    min-width: 28px !important;
-    min-height: 28px !important;
+    width: var(--dnfl-ficon-sm, 1.5rem) !important;
+    height: var(--dnfl-ficon-sm, 1.5rem) !important;
     border-radius: 6px !important;
   }
 

@@ -1,13 +1,13 @@
 /* ==========================================================================
-   DNFL Dynamic Standings & Seeding Engine v4_06
+   DNFL Dynamic Standings & Seeding Engine v5.0 (Architecture Aligned)
    Duke Networking Fantasy League (DNFL)
-   Fully aligned with dnfl-global-v4_Final.css & DNFL Framework Standards.
-   Provides centralized API fetching via DNFL.Client, standings_rules.json evaluation,
-   auto logged-in owner row highlighting, circular seed badges (.dnfl-seed-badge),
-   green/red PF/PA badges, class-based division toggling (.dnfl-is-hidden),
-   and dynamic legend key disclaimers.
+   Fully aligned with _tables_v4.scss, _standings_v9.scss, and hpm-standings-embed-v6.
+   Supports multi-tier API metadata fetch via DNFL.Client, standings_rules.json,
+   auto logged-in owner highlight (.dnfl-my-team), circular seed badges (.dnfl-seed-badge),
+   stepped-up bold W-L record pills (.dnfl-pill-blue), multi-property owner resolution,
+   clean single-target DOM lookups, and class-based division toggling (.dnfl-is-hidden).
    ========================================================================== */
-(function() {
+(function(window, document) {
     'use strict';
 
     window.DNFL = window.DNFL || {};
@@ -16,7 +16,7 @@
     const activeHost = window.location.hostname || "myfantasyleague.com";
 
     let targetYear = window.current_year || null;
-    if (!targetYear) {
+    if (!targetYear && window.location) {
         const pathSegments = window.location.pathname.split('/');
         const foundYear = pathSegments.find(segment => /^20\d{2}$/.test(segment));
         targetYear = foundYear ? foundYear : new Date().getFullYear().toString();
@@ -41,7 +41,11 @@
     }
 
     function getApiClient() {
-        return (window.DNFL && window.DNFL.Client) || window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
+        const client = (window.DNFL && window.DNFL.Client) || window.DNFLClient;
+        if (!client || typeof client.fetchData !== 'function') {
+            throw new Error("[DNFL Standings] DNFL.Client API middleware is required but unavailable.");
+        }
+        return client;
     }
 
     function getLeagueId() {
@@ -54,8 +58,8 @@
 
     function getLoggedInFranchiseId() {
         let fid = window.franchise_id || window.mflFranchiseId || window.login_franchise_id || window.current_franchise_id;
-        if (!fid && window.DNFLClient && typeof window.DNFLClient.getFranchiseId === 'function') {
-            fid = window.DNFLClient.getFranchiseId();
+        if (!fid && window.DNFL && window.DNFL.Client && typeof window.DNFL.Client.getLoggedInFranchiseId === 'function') {
+            fid = window.DNFL.Client.getLoggedInFranchiseId();
         }
         if (!fid && window.location && window.location.search) {
             const urlParams = new URLSearchParams(window.location.search);
@@ -69,19 +73,26 @@
                 if (idMatch && idMatch[1]) fid = idMatch[1];
             }
         }
-        if (!fid) {
-            const myTeamLink = document.querySelector('a[href*="O=01"], a[href*="O=02"], a[href*="F="]');
-            if (myTeamLink && myTeamLink.href) {
-                const hrefMatch = myTeamLink.href.match(/[?&]F=(\d{4})/i);
-                if (hrefMatch && hrefMatch[1]) fid = hrefMatch[1];
-            }
-        }
-        if (!fid) {
-            const inputEl = document.querySelector('input[name="FRANCHISE_ID"], select[name="FRANCHISE_ID"]');
-            if (inputEl) fid = inputEl.value;
-        }
         const normalized = normFranchiseId(fid);
         return (normalized && normalized !== '0000') ? normalized : null;
+    }
+
+    /**
+     * Resolves owner name safely across multiple MFL API fields and central franchise map.
+     * Completely eliminates generic "Owner" default fallback bug.
+     */
+    function resolveOwnerName(profile, normFid) {
+        if (!profile) profile = {};
+        const mapEntry = (window.DNFL && window.DNFL.franchiseMap && window.DNFL.franchiseMap[normFid]) || {};
+        
+        const candidate = profile.owner_name 
+            || profile.owner 
+            || profile.username 
+            || mapEntry.owner 
+            || mapEntry.owner_name 
+            || '';
+
+        return String(candidate).trim();
     }
 
     // State Caches
@@ -148,9 +159,6 @@
         try {
             const rulesUrl = "https://dnfl.live/dnfl_standings/standings_rules.json";
             const apiClient = getApiClient();
-            if (!apiClient) {
-                throw new Error("DNFL API middleware unavailable.");
-            }
 
             const [standingsResponse, leagueResponse, rawRulesJson] = await Promise.all([
                 apiClient.fetchData("leagueStandings"),
@@ -258,7 +266,7 @@
     }
 
     function renderStandingsKey(confRules) {
-        const keyContainer = document.getElementById("dnfl-standings-legend") || document.getElementById("dnfl-standings-key");
+        const keyContainer = document.getElementById("dnfl-standings-legend");
         if (!keyContainer) return;
 
         let iconHtml = `<div class="dnfl-legend-items">`;
@@ -416,7 +424,7 @@
     }
 
     function setupDropdown() {
-        const confSelect = document.getElementById("dnfl-standings-select-conf") || document.getElementById("dnfl_standings_confFilter");
+        const confSelect = document.getElementById("dnfl-standings-select-conf");
         if (!confSelect) return;
 
         confSelect.innerHTML = '';
@@ -473,12 +481,9 @@
         const stats = cachedStandingsFranchises.find(t => normFranchiseId(t.id) === normFranchiseId(profile.id)) || {};
         const teamName = profile.name || "Franchise " + profile.id;
         
-        // Smart owner name resolution (prevents "Owner" placeholder when logged out)
-        const apiClient = getApiClient();
-        const fMeta = apiClient && typeof apiClient.getFranchise === 'function' ? apiClient.getFranchise(profile.id) : null;
-        const rawOwner = (fMeta && fMeta.owner) || profile.owner_name || '';
-        const cleanOwner = (rawOwner && rawOwner.trim() !== 'Owner') ? rawOwner.trim() : '';
-        const ownerSubtextHtml = cleanOwner ? `<span class="dnfl-owner-name">${cleanOwner}</span>` : '';
+        const normFid = normFranchiseId(profile.id);
+        const ownerName = resolveOwnerName(profile, normFid);
+        const ownerSubtextHtml = ownerName ? `<span class="dnfl-owner-name">${ownerName}</span>` : '';
 
         const logoUrl = profile.icon ? profile.icon.toString().trim() : "https://dnfl.live/images/ficon-dnfl.png";
 
@@ -490,7 +495,6 @@
         let rawPa = parseFloat(paVal || 0);
 
         const gamesPlayed = parseInt(stats.h2hw || stats.w || 0, 10) + parseInt(stats.h2hl || stats.l || 0, 10) + parseInt(stats.h2ht || stats.t || 0, 10);
-        const normFid = normFranchiseId(profile.id);
 
         if (rawPa === 0 && gamesPlayed > 0 && weeklyPaMap[normFid] !== undefined) {
             rawPa = weeklyPaMap[normFid];
@@ -561,7 +565,7 @@
     }
 
     function updateDnflStandingsView() {
-        const select = document.getElementById("dnfl-standings-select-conf") || document.getElementById("dnfl_standings_confFilter");
+        const select = document.getElementById("dnfl-standings-select-conf");
         const tbody = document.getElementById("dnfl-standings-tbody");
         const titleEl = document.getElementById("dnfl-standings-title");
         if (!select || !tbody) return;
@@ -646,7 +650,7 @@
                             <div class="dnfl-division-header-content">
                                 <h3>${fullDivTitle}</h3>
                                 <button id="dnfl-btn-div-${div.id}" class="dnfl-btn dnfl-btn-secondary dnfl-btn-icon" onclick="DNFL.Standings.toggleDivision('${div.id}')" title="Toggle Division Rows" aria-label="Toggle Division">
-                                    <i class="fa-solid fa-eye-slash" id="dnfl-div-icon-${div.id}"></i> Hide
+                                    <i class="fa-solid fa-eye-slash"></i> Hide
                                 </button>
                             </div>
                         </td>
@@ -714,4 +718,4 @@
         init();
     }
 
-})();
+})(window, document);
