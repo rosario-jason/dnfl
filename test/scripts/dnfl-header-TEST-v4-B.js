@@ -10,7 +10,7 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "LTS-v4.37-B",
+        VERSION: "LTS-v4.38-B",
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
