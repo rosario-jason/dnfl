@@ -1,0 +1,36 @@
+<!-- DNFL STANDINGS MODULE EMBED -->
+<div class="dnfl-card" id="dnfl-standings-container">
+    <!-- Level 2 Card Header -->
+    <div class="dnfl-card-header">
+        <h3 class="dnfl-card-title" id="dnfl-standings-title">
+            <i class="fa-solid fa-list"></i> 
+        </h3>
+    </div>
+
+    <!-- Level 2 Card Body -->
+    <div class="dnfl-card-body">
+        <!-- Level 3 Controls Toolbar -->
+        <div class="dnfl-toolbar">
+            <div class="dnfl-filter-group">
+                <label for="dnfl-standings-select-conf">Conference</label>
+                <select id="dnfl-standings-select-conf" class="dnfl-select"></select>
+            </div>
+        </div>
+
+        <!-- Level 3 Dynamic Legend Key Container -->
+        <div id="dnfl-standings-legend" class="dnfl-legend-panel"></div>
+
+        <!-- Level 3 Standings Data Table Container -->
+        <div id="dnfl-standings-table-wrapper" class="dnfl-table-wrapper">
+            <table id="dnfl-standings-table" class="dnfl-table">
+                <tbody id="dnfl-standings-tbody">
+                    <tr>
+                        <td colspan="6" class="dnfl-status-loading">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Loading DNFL League Standings...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

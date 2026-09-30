@@ -1,0 +1,110 @@
+/* =========================================================================
+   DNFL Unified Table System (_tables.scss)
+   ========================================================================== */
+
+/* ------------------------------------------------------------------------
+   1. TOUCH SCROLLING WRAPPER (.dnfl-table-wrapper)
+   ------------------------------------------------------------------------ */
+.dnfl-table-wrapper {
+  width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  box-sizing: border-box !important;
+}
+
+/* ------------------------------------------------------------------------
+   2. BASE TABLE RULES (.dnfl-table) & UPRIGHT HEADERS RESET
+   ------------------------------------------------------------------------ */
+table.dnfl-table,
+.dnfl-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  margin: 0 !important;
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+
+  th {
+    font-style: normal !important;
+    font-weight: 700 !important;
+    color: var(--dnfl-text-heading, #0f172a) !important;
+    background-color: var(--dnfl-bg-card, #ffffff) !important;
+    border-bottom: 2px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    padding: 8px 10px !important;
+    text-align: left !important;
+  }
+
+  td {
+    padding: 8px 10px !important;
+    border-bottom: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    vertical-align: middle !important;
+    color: var(--dnfl-text-main, #121212) !important;
+    font-size: 0.9rem !important;
+  }
+}
+
+/* ------------------------------------------------------------------------
+   3. ROW STRIPING, HOVER & LOGGED-IN FRANCHISE HIGHLIGHTING
+   ------------------------------------------------------------------------ */
+.dnfl-row-odd,
+tr.dnfl-row-odd {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+}
+
+.dnfl-row-even,
+tr.dnfl-row-even {
+  background-color: var(--dnfl-bg-alt, #fafafa) !important;
+}
+
+table.dnfl-table tr:hover,
+.dnfl-table tr:hover {
+  background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+  transition: background-color var(--dnfl-transition-fast, 0.15s ease) !important;
+}
+
+.dnfl-my-team,
+.myfranchise,
+tr.dnfl-my-team,
+tr.myfranchise {
+  background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
+  color: var(--dnfl-text-main, #121212) !important;
+
+  &:hover {
+    background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
+  }
+}
+
+/* ------------------------------------------------------------------------
+   4. FRANCHISE LINK TYPOGRAPHY
+   ------------------------------------------------------------------------ */
+.dnfl-team-name {
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  color: var(--dnfl-text-main, #121212) !important;
+  text-decoration: none !important;
+
+  &:hover {
+    color: var(--dnfl-primary, #0577B1) !important;
+  }
+}
+
+.dnfl-owner-name {
+  font-weight: 400 !important;
+  font-size: 0.8rem !important;
+  color: var(--dnfl-text-muted, #555555) !important;
+}
+
+/* ------------------------------------------------------------------------
+   5. MOBILE TABLE MINIMUM FOOTPRINT (CENTRALIZED BASELINE)
+   ------------------------------------------------------------------------ */
+@media (max-width: 768px) {
+  table.dnfl-table,
+  table.dnfl-rules-table {
+    min-width: 320px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+
+    th, td {
+      padding: 6px 4px !important;
+    }
+  }
+}

@@ -1,0 +1,289 @@
+#dnfl-rankings-container {
+  /* ------------------------------------------------------------------------
+     1. TABLE HEADER RESETS (WHITE BACKGROUND - PARITY WITH LTS & STANDINGS)
+     ------------------------------------------------------------------------ */
+  th.dnfl-col-rank,
+  th.dnfl-col-change,
+  th.dnfl-col-franchise,
+  th.dnfl-col-index,
+  th.dnfl-col-power,
+  th.dnfl-col-comment,
+  th.dnfl-col-record,
+  th.dnfl-col-pf,
+  th.dnfl-col-pts {
+    background-color: var(--dnfl-bg-card, #ffffff) !important;
+    color: var(--dnfl-text-heading, #0f172a) !important;
+    font-weight: 700 !important;
+    font-size: 0.8rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    border-bottom: 2px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    padding: 8px 10px !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     2. CONFERENCE RANK BADGES (.dnfl-rank-badge)
+     ------------------------------------------------------------------------ */
+  .dnfl-rank-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    border-radius: 6px !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    margin: 0 !important;
+
+    &.color-1 { background-color: var(--dnfl-chart-1, rgba(54, 162, 235, 0.85)) !important; }
+    &.color-2 { background-color: var(--dnfl-chart-2, rgba(255, 99, 132, 0.85)) !important; }
+    &.color-3 { background-color: var(--dnfl-chart-3, rgba(75, 192, 192, 0.85)) !important; }
+    &.color-4 { background-color: var(--dnfl-chart-4, rgba(255, 205, 86, 0.85)) !important; }
+    &.color-5 { background-color: var(--dnfl-chart-5, rgba(153, 102, 255, 0.85)) !important; }
+    &.color-6 { background-color: var(--dnfl-chart-6, rgba(255, 159, 64, 0.85)) !important; }
+  }
+
+  /* ------------------------------------------------------------------------
+     3. SCOPED POWER RANKINGS COLUMN ALIGNMENTS & WIDTHS (DESKTOP)
+     ------------------------------------------------------------------------ */
+  /* Shared Centered Alignment for Numeric & Control Columns */
+  .dnfl-col-rank,
+  .dnfl-col-change,
+  .dnfl-col-index,
+  .dnfl-col-power,
+  .dnfl-col-record,
+  .dnfl-col-pf,
+  .dnfl-col-pts,
+  th.dnfl-col-rank,
+  th.dnfl-col-change,
+  th.dnfl-col-index,
+  th.dnfl-col-power,
+  th.dnfl-col-record,
+  th.dnfl-col-pf,
+  th.dnfl-col-pts,
+  td.dnfl-col-rank,
+  td.dnfl-col-change,
+  td.dnfl-col-index,
+  td.dnfl-col-power,
+  td.dnfl-col-record,
+  td.dnfl-col-pf,
+  td.dnfl-col-pts {
+    text-align: center !important;
+    vertical-align: middle !important;
+  }
+
+  /* Rank Column (Houses Badge + Comment Icon with 3px Flex Gap) */
+  .dnfl-col-rank,
+  th.dnfl-col-rank,
+  td.dnfl-col-rank {
+    width: 80px !important;
+    min-width: 80px !important;
+    padding: 6px 4px !important;
+
+    .dnfl-rank-cell-wrap {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 3px !important;
+    }
+
+    .dnfl-comment-icon {
+      color: var(--dnfl-primary, #0577B1) !important;
+      cursor: pointer !important;
+      font-size: 0.9rem !important;
+      transition: transform var(--dnfl-transition-fast, 0.15s ease), color var(--dnfl-transition-fast, 0.15s ease) !important;
+      padding: 2px !important;
+
+      &:hover {
+        color: var(--dnfl-primary-hover, #045e8c) !important;
+        transform: scale(1.2) !important;
+      }
+    }
+  }
+
+  /* Rank Change Column */
+  .dnfl-col-change,
+  th.dnfl-col-change,
+  td.dnfl-col-change {
+    width: 60px !important;
+    min-width: 60px !important;
+
+    .dnfl-badge {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 48px !important;
+      min-width: 48px !important;
+      max-width: 48px !important;
+      padding: 2px 0 !important;
+      font-size: 0.75rem !important;
+      font-weight: 700 !important;
+      margin: 0 auto !important;
+    }
+  }
+
+  /* Franchise Column (250px Fixed Desktop Width - Parity with Standings) */
+  .dnfl-col-franchise,
+  th.dnfl-col-franchise,
+  td.dnfl-col-franchise {
+    width: 250px !important;
+    min-width: 250px !important;
+    max-width: 250px !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    text-align: left !important;
+    vertical-align: middle !important;
+  }
+
+  /* Power Index Grade Column & Uniform Pill Width */
+  .dnfl-col-index,
+  .dnfl-col-power,
+  th.dnfl-col-index,
+  th.dnfl-col-power,
+  td.dnfl-col-index,
+  td.dnfl-col-power {
+    width: 100px !important;
+    min-width: 100px !important;
+
+    .dnfl-pill,
+    .dnfl-pill-blue {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      width: 68px !important;
+      min-width: 68px !important;
+      max-width: 68px !important;
+      padding: 3px 0 !important;
+      font-size: 0.8rem !important;
+      font-weight: 700 !important;
+      margin: 0 auto !important;
+    }
+  }
+
+  /* Record, PF & Points Columns */
+  .dnfl-col-record,
+  .dnfl-col-pf,
+  .dnfl-col-pts,
+  th.dnfl-col-record,
+  th.dnfl-col-pf,
+  th.dnfl-col-pts,
+  td.dnfl-col-record,
+  td.dnfl-col-pf,
+  td.dnfl-col-pts {
+    width: 95px !important;
+    min-width: 95px !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     4. COMMENTARY CALLOUT ROW & BOX (DESKTOP)
+     ------------------------------------------------------------------------ */
+  .dnfl-comment-row {
+    background-color: var(--dnfl-bg-subtle, #f8fafc) !important;
+  }
+
+  .dnfl-comment-cell {
+    padding: 8px 16px 12px 24px !important;
+    background: transparent !important;
+  }
+
+  .dnfl-comment-box,
+  .dnfl-comment-box p,
+  .dnfl-comment-box span {
+    background-color: #ffffff !important;
+    border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
+    border-top: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    border-right: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    border-bottom: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    border-radius: 4px 8px 8px 4px !important;
+    padding: 10px 16px !important;
+    margin: 2px 0 !important;
+    font-style: italic !important;
+    font-size: 0.85rem !important;
+    color: var(--dnfl-text-main, #121212) !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+
+    i.fa-quote-left {
+      color: var(--dnfl-primary, #0577B1) !important;
+      margin-right: 6px !important;
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     5. MOBILE RESPONSIVE TWEAKS FOR POWER RANKINGS (<= 768px)
+     ------------------------------------------------------------------------ */
+  @media (max-width: 768px) {
+    .dnfl-col-rank,
+    th.dnfl-col-rank,
+    td.dnfl-col-rank {
+      width: 52px !important;
+      min-width: 52px !important;
+      max-width: 52px !important;
+      padding: 6px 2px !important;
+
+      .dnfl-rank-cell-wrap {
+        gap: 2px !important;
+      }
+    }
+
+    /* Franchise Column (Identical to Standings Mobile Franchise Parity) */
+    .dnfl-col-franchise,
+    th.dnfl-col-franchise,
+    td.dnfl-col-franchise {
+      width: 154px !important;
+      max-width: 154px !important;
+      min-width: 140px !important;
+      padding: 6px 4px !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
+      white-space: normal !important;
+    }
+
+    /* Narrow Power Index Column & Two-Line Wrapping Header */
+    .dnfl-col-index,
+    .dnfl-col-power,
+    th.dnfl-col-index,
+    th.dnfl-col-power,
+    td.dnfl-col-index,
+    td.dnfl-col-power {
+      width: 50px !important;
+      min-width: 46px !important;
+      max-width: 50px !important;
+      padding: 4px 2px !important;
+      text-align: center !important;
+    }
+
+    th.dnfl-col-index,
+    th.dnfl-col-power {
+      white-space: normal !important;
+      word-break: break-word !important;
+      line-height: 1.1 !important;
+      font-size: 0.7rem !important;
+      text-align: center !important;
+    }
+
+    .dnfl-col-index .dnfl-pill,
+    .dnfl-col-index .dnfl-pill-blue {
+      width: 44px !important;
+      min-width: 44px !important;
+      max-width: 44px !important;
+      font-size: 0.75rem !important;
+      padding: 2px 0 !important;
+      display: inline-flex !important;
+      justify-content: center !important;
+      margin: 0 auto !important;
+    }
+
+    .dnfl-comment-cell {
+      padding: 6px 8px 8px 10px !important;
+    }
+
+    .dnfl-comment-box {
+      padding: 8px 10px !important;
+      font-size: 0.8rem !important;
+    }
+  }
+}

@@ -11,11 +11,11 @@
 @import 'utilities';
 @import 'badges';
 @import 'containers';
-@import 'tables';
+@import 'tables_v2';
 
 // 2. Feature Modules
-@import 'modules/standings_v5';
-@import 'modules/rankings_v5';
+@import 'modules/standings_v7';
+@import 'modules/rankings_v7';
 @import 'modules/podcast';
 @import 'modules/rules';
 @import 'modules/exporter';
