@@ -1,5 +1,6 @@
 /* =========================================================================
-   DNFL Unified Table System (_tables.scss)
+   DNFL Unified Table System (_tables.scss) - v3
+   Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 
 /* ------------------------------------------------------------------------
@@ -74,27 +75,94 @@ tr.myfranchise {
 }
 
 /* ------------------------------------------------------------------------
-   4. FRANCHISE LINK TYPOGRAPHY
+   4. RANK CELL FLEX WRAPPER (.dnfl-rank-cell-wrap)
    ------------------------------------------------------------------------ */
+.dnfl-rank-cell-wrap {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 3px !important;
+}
+
+/* ------------------------------------------------------------------------
+   5. FRANCHISE COLUMN & FLEX WRAPPERS (.dnfl-franchise-cell)
+   ------------------------------------------------------------------------ */
+/* Desktop Franchise Column Baseline (250px Fixed Width) */
+.dnfl-col-franchise,
+th.dnfl-col-franchise,
+td.dnfl-col-franchise {
+  width: 250px !important;
+  min-width: 250px !important;
+  max-width: 250px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+/* Flex Wrapper for Logo + Stacked Info */
+.dnfl-franchise-cell {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+/* Square Team Icon (Overrides MFL native display: none) */
+.franchiseicon,
+img.franchiseicon,
+.dnfl-franchise-cell img {
+  display: block !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  max-width: 36px !important;
+  max-height: 36px !important;
+  border-radius: 8px !important; /* 25% curve */
+  object-fit: cover !important;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+  flex-shrink: 0 !important;
+}
+
+/* Stacked Info Container */
+.dnfl-franchise-info {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+}
+
+/* Team Link Typography */
 .dnfl-team-name {
+  display: block !important;
   font-weight: 700 !important;
   font-size: 0.95rem !important;
   color: var(--dnfl-text-main, #121212) !important;
   text-decoration: none !important;
+  line-height: 1.25 !important;
+  transition: color var(--dnfl-transition-fast, 0.15s ease) !important;
 
   &:hover {
     color: var(--dnfl-primary, #0577B1) !important;
   }
 }
 
+/* Owner Subtext Typography */
 .dnfl-owner-name {
+  display: block !important;
   font-weight: 400 !important;
   font-size: 0.8rem !important;
   color: var(--dnfl-text-muted, #555555) !important;
+  line-height: 1.2 !important;
+  margin-top: 1px !important;
 }
 
 /* ------------------------------------------------------------------------
-   5. MOBILE TABLE MINIMUM FOOTPRINT (CENTRALIZED BASELINE)
+   6. MOBILE TABLE MINIMUM FOOTPRINT & RESPONSIVE TWEAKS (<= 768px)
    ------------------------------------------------------------------------ */
 @media (max-width: 768px) {
   table.dnfl-table,
@@ -106,5 +174,42 @@ tr.myfranchise {
     th, td {
       padding: 6px 4px !important;
     }
+  }
+
+  .dnfl-col-franchise,
+  th.dnfl-col-franchise,
+  td.dnfl-col-franchise {
+    width: 154px !important;
+    min-width: 140px !important;
+    max-width: 154px !important;
+    padding: 6px 4px !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+  }
+
+  .dnfl-franchise-cell {
+    gap: 6px !important;
+  }
+
+  .franchiseicon,
+  img.franchiseicon {
+    width: 28px !important;
+    height: 28px !important;
+    min-width: 28px !important;
+    min-height: 28px !important;
+    border-radius: 6px !important;
+  }
+
+  .dnfl-team-name {
+    font-size: 0.85rem !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    word-break: break-word !important;
+  }
+
+  .dnfl-owner-name {
+    font-size: 0.75rem !important;
+    white-space: normal !important;
   }
 }
