@@ -445,7 +445,7 @@
                     <div class="dnfl-division-header-content">
                         <h3>Power Rankings</h3>
                         <button id="dnfl-btn-toggle-all-comments" class="dnfl-btn dnfl-btn-secondary" title="Toggle Commentary Rows" aria-label="Toggle All Comments">
-                            <i class="fa-solid fa-comments"></i> Show
+                            <i class="fa-solid fa-comment"></i> Show
                         </button>
                     </div>
                 </td>
@@ -611,8 +611,8 @@
         });
 
         toggleBtn.innerHTML = hasOpen 
-            ? '<i class="fa-solid fa-comments"></i> Hide' 
-            : '<i class="fa-solid fa-comments"></i> Show';
+            ? '<i class="fa-solid fa-comment"></i> Hide' 
+            : '<i class="fa-solid fa-comment"></i> Show';
     }
 
     function toggleAllComments() {
@@ -637,8 +637,8 @@
 
         if (toggleBtn) {
             toggleBtn.innerHTML = hasAnyOpen
-                ? '<i class="fa-solid fa-comments"></i> Show'
-                : '<i class="fa-solid fa-comments"></i> Hide';
+                ? '<i class="fa-solid fa-comment"></i> Show'
+                : '<i class="fa-solid fa-comment"></i> Hide';
         }
     }
 
