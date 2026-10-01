@@ -137,8 +137,8 @@
   .dnfl-comment-box {
     background-color: var(--dnfl-bg-card, #ffffff) !important;
     border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
-    border-left: 3px solid var(--dnfl-primary, #0577B1) !important;
-    border-radius: 0 var(--dnfl-radius-md, 8px) var(--dnfl-radius-md, 8px) 0 !important;
+    border-left: 3px solid var(--dnfl-badge-blue, #3b82f6) !important;
+    border-radius: var(--dnfl-radius-md, 8px) !important;
     padding: 10px 14px !important;
     font-size: 0.85rem !important;
     color: var(--dnfl-text-main, #121212) !important;
