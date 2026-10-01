@@ -438,7 +438,7 @@
                     <div class="dnfl-division-header-content">
                         <h3>DNFL Power Rankings</h3>
                         <button id="dnfl-btn-toggle-all-comments" class="dnfl-btn dnfl-btn-secondary" title="Toggle Commentary Rows" aria-label="Toggle All Comments">
-                            <i class="fa-solid fa-comments"></i> Show Comments
+                            <i class="fa-solid fa-comments"></i> Show
                         </button>
                     </div>
                 </td>
@@ -608,9 +608,9 @@
 
         if (toggleBtn) {
             if (hasHidden) {
-                toggleBtn.innerHTML = '<i class="fa-solid fa-comments"></i> Hide Comments';
+                toggleBtn.innerHTML = '<i class="fa-solid fa-comments"></i> Hide';
             } else {
-                toggleBtn.innerHTML = '<i class="fa-solid fa-comments"></i> Show Comments';
+                toggleBtn.innerHTML = '<i class="fa-solid fa-comments"></i> Show';
             }
         }
     }
