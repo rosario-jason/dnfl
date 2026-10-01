@@ -1,10 +1,11 @@
 /* ==========================================================================
-   DNFL Power Rankings Dashboard Engine v4.23 (Architecture Aligned)
+   DNFL Power Rankings Dashboard Engine v4.24 (Architecture Aligned - Step 5)
    Duke Networking Fantasy League (DNFL)
    Fully aligned with dnfl-global-v3_36.css & _test_v4_46.scss design tokens.
    Supports dynamic API metadata fetch via DNFL.Client, weeks.json loading,
    MFL API standings & points for, Chart.js horizontal bar graphs with dynamic palette mapping,
-   and expandable commentary rows.
+   and expandable commentary rows with global subheader toggle.
+   Zero Inline Handlers - Standard DNFL Framework Architecture.
    ========================================================================== */
 (function() {
     'use strict';
@@ -190,11 +191,43 @@
 
         await ensureLeagueMetadata();
         updateConferenceControls();
+        attachEventHandlers();
 
         const mostRecentWeek = publishedWeeks[publishedWeeks.length - 1];
         if (mostRecentWeek) {
             selector.value = mostRecentWeek.id;
             loadWeeklyData();
+        }
+    }
+
+    function attachEventHandlers() {
+        const weekSelector = document.getElementById('dnfl_weekSelector');
+        if (weekSelector && !weekSelector.dataset.dnflBound) {
+            weekSelector.addEventListener('change', loadWeeklyData);
+            weekSelector.dataset.dnflBound = 'true';
+        }
+
+        const confFilter = document.getElementById('dnfl_confFilter');
+        if (confFilter && !confFilter.dataset.dnflBound) {
+            confFilter.addEventListener('change', applyConferenceFilter);
+            confFilter.dataset.dnflBound = 'true';
+        }
+
+        const chartToggleBtn = document.getElementById('dnfl_chartToggleBtn');
+        if (chartToggleBtn && !chartToggleBtn.dataset.dnflBound) {
+            chartToggleBtn.addEventListener('click', () => toggleElementVisibility('chart'));
+            chartToggleBtn.dataset.dnflBound = 'true';
+        }
+
+        const table = document.getElementById('dnfl_dataTable');
+        if (table && !table.dataset.dnflBound) {
+            table.addEventListener('click', (e) => {
+                const toggleAllBtn = e.target.closest('#dnfl-btn-toggle-all-comments');
+                if (toggleAllBtn) {
+                    toggleAllComments();
+                }
+            });
+            table.dataset.dnflBound = 'true';
         }
     }
 
@@ -397,25 +430,40 @@
         }
 
         const thead = table.querySelector('thead');
+        const colSpanCount = isPreseasonWeek ? 4 : 6;
+
+        const subheaderRowHtml = `
+            <tr class="dnfl-division-header">
+                <td colspan="${colSpanCount}" class="dnfl-division-header-cell">
+                    <div class="dnfl-division-header-content">
+                        <h3>DNFL Power Rankings</h3>
+                        <button id="dnfl-btn-toggle-all-comments" class="dnfl-btn dnfl-btn-secondary" title="Toggle Commentary Rows" aria-label="Toggle All Comments">
+                            <i class="fa-solid fa-comments"></i> Show Comments
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+
         if (thead) {
             if (isPreseasonWeek) {
                 thead.innerHTML = `
+                    ${subheaderRowHtml}
                     <tr class="dnfl-table-subheader">
                         <th class="dnfl-col-rank">Rank</th>
                         <th class="dnfl-col-franchise">Franchise</th>
                         <th class="dnfl-col-index">Power Index</th>
-                        <th class="dnfl-col-comment">Comments</th>
                         <th class="dnfl-col-record dnfl-hide-mobile">Projected W-L</th>
                     </tr>
                 `;
             } else {
                 thead.innerHTML = `
+                    ${subheaderRowHtml}
                     <tr class="dnfl-table-subheader">
                         <th class="dnfl-col-rank">Rank</th>
                         <th class="dnfl-col-change dnfl-hide-mobile">Change</th>
                         <th class="dnfl-col-franchise">Franchise</th>
                         <th class="dnfl-col-index">Power Index</th>
-                        <th class="dnfl-col-comment">Comments</th>
                         <th class="dnfl-col-record dnfl-hide-mobile">Record</th>
                         <th class="dnfl-col-pf dnfl-hide-mobile">Points For</th>
                     </tr>
@@ -434,10 +482,8 @@
             const confKey = String(item.conference).trim();
             const palette = resolveConferenceColors(confKey);
 
-            // Clean class-based rank badge referencing conference color slot (.color-1..6)
             const rankBadgeHtml = `<span class="dnfl-rank-badge ${palette.slotClass}">${displayRank}</span>`;
 
-            // Clean class-based change badge without extra padding or element tags
             let changeBadgeHtml = '';
             if (!isPreseasonWeek) {
                 const prevMeta = prevWeekRankMap[item.franchiseId];
@@ -483,11 +529,6 @@
                 : rawPfNum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
             const hasComment = Boolean(item.comments && item.comments.trim().length > 0);
-            const commentBtnHtml = hasComment ? `
-                <button class="dnfl-btn dnfl-btn-secondary dnfl-btn-icon" onclick="DNFL.Rankings.toggleCommentRow('${item.franchiseId}')" title="View Comments" aria-label="View Comments">
-                    <i class="fa-solid fa-comment-dots"></i>
-                </button>
-            ` : '<span style="color: var(--dnfl-text-subtle, #94a3b8); font-size: 0.75rem;">—</span>';
 
             const activeFranchiseId = getLoggedInFranchiseId();
             const isMyTeam = activeFranchiseId && activeFranchiseId !== '0000' && normId(item.franchiseId) === activeFranchiseId;
@@ -504,7 +545,6 @@
                     <td class="dnfl-col-rank">${rankBadgeHtml}</td>
                     <td class="dnfl-col-franchise">${franchiseColHtml}</td>
                     <td class="dnfl-col-index"><span class="dnfl-pill-blue dnfl-pill">${item.powerIndex.toFixed(1)}</span></td>
-                    <td class="dnfl-col-comment">${commentBtnHtml}</td>
                     <td class="dnfl-col-record dnfl-hide-mobile">${recordVal}</td>
                 `;
             } else {
@@ -513,7 +553,6 @@
                     <td class="dnfl-col-change dnfl-hide-mobile">${changeBadgeHtml}</td>
                     <td class="dnfl-col-franchise">${franchiseColHtml}</td>
                     <td class="dnfl-col-index"><span class="dnfl-pill-blue dnfl-pill">${item.powerIndex.toFixed(1)}</span></td>
-                    <td class="dnfl-col-comment">${commentBtnHtml}</td>
                     <td class="dnfl-col-record dnfl-hide-mobile">${recordVal}</td>
                     <td class="dnfl-col-pf dnfl-hide-mobile">${pfVal}</td>
                 `;
@@ -526,11 +565,10 @@
                 subRow.id = `dnfl-comment-row-${item.franchiseId}`;
                 subRow.className = 'dnfl-comment-row dnfl-is-hidden';
 
-                const colSpanCount = isPreseasonWeek ? 5 : 7;
                 subRow.innerHTML = `
                     <td colspan="${colSpanCount}" class="dnfl-comment-cell">
                         <div class="dnfl-comment-box">
-                            <i class="fa-solid fa-quote-left"></i> ${item.comments}
+                            <i class="fa-solid fa-quote-left dnfl-icon-blue"></i> ${item.comments}
                         </div>
                     </td>
                 `;
@@ -538,6 +576,7 @@
             }
         });
 
+        attachEventHandlers();
         renderChart(records, activeConfFilter);
     }
 
@@ -545,6 +584,35 @@
         const subRow = document.getElementById(`dnfl-comment-row-${franchiseId}`);
         if (!subRow) return;
         subRow.classList.toggle('dnfl-is-hidden');
+    }
+
+    function toggleAllComments() {
+        const commentRows = document.querySelectorAll('.dnfl-comment-row');
+        const toggleBtn = document.getElementById('dnfl-btn-toggle-all-comments');
+        if (!commentRows.length) return;
+
+        let hasHidden = false;
+        commentRows.forEach(row => {
+            if (row.classList.contains('dnfl-is-hidden')) {
+                hasHidden = true;
+            }
+        });
+
+        commentRows.forEach(row => {
+            if (hasHidden) {
+                row.classList.remove('dnfl-is-hidden');
+            } else {
+                row.classList.add('dnfl-is-hidden');
+            }
+        });
+
+        if (toggleBtn) {
+            if (hasHidden) {
+                toggleBtn.innerHTML = '<i class="fa-solid fa-comments"></i> Hide Comments';
+            } else {
+                toggleBtn.innerHTML = '<i class="fa-solid fa-comments"></i> Show Comments';
+            }
+        }
     }
 
     function renderChart(records, activeConfFilter = 'All') {
@@ -695,7 +763,8 @@
         renderChartAndTable: renderChartAndTable,
         applyConferenceFilter: applyConferenceFilter,
         toggleElementVisibility: toggleElementVisibility,
-        toggleCommentRow: toggleCommentRow
+        toggleCommentRow: toggleCommentRow,
+        toggleAllComments: toggleAllComments
     };
 
     function autoInit() {
