@@ -14,7 +14,7 @@
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
-            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-v4_37.css" }
+            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-LTS-v2_30.css" }
         ],
 
         INFRASTRUCTURE: [
@@ -26,8 +26,8 @@
 
         FEATURE_MODULES: [
             // { name: "ui-enhancements", url: "dnfl-ui-enhancements-TEST.js" },
-            { name: "standings", url: "dnfl-standings-v5.js" },
-            { name: "rankings",  url: "dnfl-rankings-v7.js" },
+            { name: "standings", url: "dnfl-standings-v4_Final.js" },
+            { name: "rankings",  url: "dnfl-rankings-v4_Final.js" },
             { name: "podcast",   url: "dnfl-podcast-v4_Final.js" },
             { name: "rules",     url: "dnfl-rules-v4_Final.js" },
             { name: "exporter",     url: "dnfl-exporter-v4_Final.js" },
