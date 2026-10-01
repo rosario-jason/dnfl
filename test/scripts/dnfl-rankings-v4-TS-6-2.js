@@ -620,27 +620,25 @@
         const toggleBtn = document.getElementById('dnfl-btn-toggle-all-comments');
         if (!commentRows.length) return;
 
-        let hasHidden = false;
+        let hasAnyOpen = false;
         commentRows.forEach(row => {
-            if (row.classList.contains('dnfl-is-hidden')) {
-                hasHidden = true;
+            if (!row.classList.contains('dnfl-is-hidden')) {
+                hasAnyOpen = true;
             }
         });
 
         commentRows.forEach(row => {
-            if (hasHidden) {
-                row.classList.remove('dnfl-is-hidden');
-            } else {
+            if (hasAnyOpen) {
                 row.classList.add('dnfl-is-hidden');
+            } else {
+                row.classList.remove('dnfl-is-hidden');
             }
         });
 
         if (toggleBtn) {
-            if (hasHidden) {
-                toggleBtn.innerHTML = '<i class="fa-solid fa-comments"></i> Hide';
-            } else {
-                toggleBtn.innerHTML = '<i class="fa-solid fa-comments"></i> Show';
-            }
+            toggleBtn.innerHTML = hasAnyOpen
+                ? '<i class="fa-solid fa-comments"></i> Show'
+                : '<i class="fa-solid fa-comments"></i> Hide';
         }
     }
 
