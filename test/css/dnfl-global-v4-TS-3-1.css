@@ -1373,25 +1373,17 @@ a.dnfl-btn-secondary:hover,
   min-width: 52px !important;
 }
 #dnfl-rankings-container {
-  /* Power Index Grade Column */
+  /* Power Index Column & Pill Emphasis */
 }
-#dnfl-rankings-container th.dnfl-col-index,
-#dnfl-rankings-container td.dnfl-col-index,
 #dnfl-rankings-container .dnfl-col-index {
   width: 100px !important;
-  min-width: 100px !important;
   text-align: center !important;
-  font-weight: 600 !important;
 }
-#dnfl-rankings-container th.dnfl-col-index .dnfl-pill,
-#dnfl-rankings-container th.dnfl-col-index .dnfl-pill-blue,
-#dnfl-rankings-container td.dnfl-col-index .dnfl-pill,
-#dnfl-rankings-container td.dnfl-col-index .dnfl-pill-blue,
-#dnfl-rankings-container .dnfl-col-index .dnfl-pill,
-#dnfl-rankings-container .dnfl-col-index .dnfl-pill-blue {
-  min-width: 58px !important;
-  background-color: var(--dnfl-badge-blue, #3b82f6) !important;
-  color: #ffffff !important;
+#dnfl-rankings-container .dnfl-col-index .dnfl-pill {
+  min-width: 68px !important;
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
 }
 #dnfl-rankings-container {
   /* Comments Column Header & Cell */
