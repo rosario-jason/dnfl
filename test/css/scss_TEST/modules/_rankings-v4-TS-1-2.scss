@@ -37,12 +37,13 @@
     }
   }
 
-/* Power Index Column & Pill Emphasis (Step 2) */
+/* Power Index Column & Pill Emphasis */
 .dnfl-col-index {
   width: 100px !important;
   text-align: center !important;
 
   .dnfl-pill {
+    min-width: 68px !important;
     font-size: 0.95rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.02em !important;
