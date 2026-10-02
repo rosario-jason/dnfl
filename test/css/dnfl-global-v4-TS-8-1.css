@@ -1321,24 +1321,23 @@ a.dnfl-btn-secondary:hover,
     white-space: normal !important;
   }
   #dnfl-standings-container .franchiseicon {
-    width: 2.25rem !important;
-    height: 2.25rem !important;
-    min-width: 2.25rem !important;
-    max-width: 2.25rem !important;
-    min-height: 2.25rem !important;
-    max-height: 2.25rem !important;
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+    min-width: 1.5rem !important;
+    max-width: 1.5rem !important;
+    min-height: 1.5rem !important;
+    max-height: 1.5rem !important;
     flex-shrink: 0 !important;
   }
 }
 
 /* ==========================================================================
-   DNFL POWER RANKINGS MODULE - SCOPED ALIGNMENTS & CONFERENCES
+   DNFL POWER RANKINGS MODULE - SCOPED ALIGNMENTS & CONFERENCES (Step 8)
    ==========================================================================
    Module: modules/_rankings.scss
-   Description: Encapsulates scoped styles for #dnfl-rankings-container: explicit
-                centered column alignments across headers and cells, conference
-                rank badges (.color-1..6 matching v4_58.css palette), fluid
-                table-layout (table-layout: auto !important), division header rows,
+   Description: Encapsulates scoped styles for #dnfl-rankings-container: clean
+                single-class column alignments matching _standings.scss, conference
+                rank badges (.color-1..6), fluid table-layout, division header rows,
                 and nested commentary callout boxes.
    ========================================================================== */
 #dnfl-rankings-container {
@@ -1349,12 +1348,10 @@ a.dnfl-btn-secondary:hover,
 }
 #dnfl-rankings-container {
   /* ------------------------------------------------------------------------
-     1. EXPLICIT COLUMN ALIGNMENTS & WIDTHS (HEADERS & CELLS CENTERED)
+     1. EXPLICIT COLUMN ALIGNMENTS & WIDTHS (SIMPLIFIED SINGLE-CLASS SELECTORS)
      ------------------------------------------------------------------------ */
   /* Rank Column */
 }
-#dnfl-rankings-container th.dnfl-col-rank,
-#dnfl-rankings-container td.dnfl-col-rank,
 #dnfl-rankings-container .dnfl-col-rank {
   width: 56px !important;
   text-align: center !important;
@@ -1362,14 +1359,10 @@ a.dnfl-btn-secondary:hover,
 #dnfl-rankings-container {
   /* Rank Change Column */
 }
-#dnfl-rankings-container th.dnfl-col-change,
-#dnfl-rankings-container td.dnfl-col-change,
 #dnfl-rankings-container .dnfl-col-change {
   width: 62px !important;
   text-align: center !important;
 }
-#dnfl-rankings-container th.dnfl-col-change .dnfl-badge,
-#dnfl-rankings-container td.dnfl-col-change .dnfl-badge,
 #dnfl-rankings-container .dnfl-col-change .dnfl-badge {
   min-width: 52px !important;
 }
@@ -1387,20 +1380,8 @@ a.dnfl-btn-secondary:hover,
   letter-spacing: 0.02em !important;
 }
 #dnfl-rankings-container {
-  /* Comments Column Header & Cell */
-}
-#dnfl-rankings-container th.dnfl-col-comment,
-#dnfl-rankings-container td.dnfl-col-comment,
-#dnfl-rankings-container .dnfl-col-comment {
-  width: 50px !important;
-  text-align: center !important;
-  white-space: nowrap !important;
-}
-#dnfl-rankings-container {
   /* Projected W-L / Record Column in Rankings */
 }
-#dnfl-rankings-container th.dnfl-col-record,
-#dnfl-rankings-container td.dnfl-col-record,
 #dnfl-rankings-container .dnfl-col-record {
   width: 95px !important;
   text-align: center !important;
@@ -1408,8 +1389,6 @@ a.dnfl-btn-secondary:hover,
 #dnfl-rankings-container {
   /* Points For Column in Rankings */
 }
-#dnfl-rankings-container th.dnfl-col-pf,
-#dnfl-rankings-container td.dnfl-col-pf,
 #dnfl-rankings-container .dnfl-col-pf {
   width: 100px !important;
   text-align: center !important;
@@ -1444,15 +1423,15 @@ a.dnfl-btn-secondary:hover,
   border: 1px solid var(--dnfl-chart-3-border, rgb(75, 192, 192)) !important;
 }
 #dnfl-rankings-container .dnfl-rank-badge.color-4 {
-  background-color: var(--dnfl-chart-4, rgba(255, 205, 86, 0.85)) !important; /* Yellow/Gold */
+  background-color: var(--dnfl-chart-4, rgba(255, 205, 86, 0.85)) !important;
   border: 1px solid var(--dnfl-chart-4-border, rgb(255, 205, 86)) !important;
 }
 #dnfl-rankings-container .dnfl-rank-badge.color-5 {
-  background-color: var(--dnfl-chart-5, rgba(153, 102, 255, 0.85)) !important; /* Lavender Purple */
+  background-color: var(--dnfl-chart-5, rgba(153, 102, 255, 0.85)) !important;
   border: 1px solid var(--dnfl-chart-5-border, rgb(153, 102, 255)) !important;
 }
 #dnfl-rankings-container .dnfl-rank-badge.color-6 {
-  background-color: var(--dnfl-chart-6, rgba(255, 159, 64, 0.85)) !important; /* Amber Orange */
+  background-color: var(--dnfl-chart-6, rgba(255, 159, 64, 0.85)) !important;
   border: 1px solid var(--dnfl-chart-6-border, rgb(255, 159, 64)) !important;
 }
 #dnfl-rankings-container {
@@ -1547,7 +1526,7 @@ a.dnfl-btn-secondary:hover,
   width: 100% !important;
   box-sizing: border-box !important;
   box-shadow: var(--dnfl-shadow-subtle, 0 1px 3px rgba(0, 0, 0, 0.05)) !important;
-  /* Pseudo-element vertical bar */
+  /* Accent vertical bar */
 }
 #dnfl-rankings-container .dnfl-comment-box::before {
   content: "" !important;
@@ -1594,13 +1573,6 @@ a.dnfl-btn-secondary:hover,
     text-align: center !important;
     line-height: 1.15 !important;
   }
-  #dnfl-rankings-container .dnfl-col-comment {
-    width: 60px !important;
-    min-width: 60px !important;
-    max-width: 65px !important;
-    white-space: nowrap !important;
-    text-align: center !important;
-  }
   #dnfl-rankings-container .dnfl-col-franchise {
     width: 154px !important;
     max-width: 154px !important;
@@ -1611,12 +1583,12 @@ a.dnfl-btn-secondary:hover,
     white-space: normal !important;
   }
   #dnfl-rankings-container .franchiseicon {
-    width: 2.25rem !important;
-    height: 2.25rem !important;
-    min-width: 2.25rem !important;
-    max-width: 2.25rem !important;
-    min-height: 2.25rem !important;
-    max-height: 2.25rem !important;
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+    min-width: 1.5rem !important;
+    max-width: 1.5rem !important;
+    min-height: 1.5rem !important;
+    max-height: 1.5rem !important;
     flex-shrink: 0 !important;
   }
   #dnfl-rankings-container .dnfl-comment-row {
@@ -2310,12 +2282,12 @@ a.dnfl-btn-secondary:hover,
     white-space: normal !important;
   }
   #dnfl-lts-container .franchiseicon {
-    width: 2.25rem !important;
-    height: 2.25rem !important;
-    min-width: 2.25rem !important;
-    max-width: 2.25rem !important;
-    min-height: 2.25rem !important;
-    max-height: 2.25rem !important;
+    width: 1.5rem !important;
+    height: 1.5rem !important;
+    min-width: 1.5rem !important;
+    max-width: 1.5rem !important;
+    min-height: 1.5rem !important;
+    max-height: 1.5rem !important;
     flex-shrink: 0 !important;
   }
 }
@@ -2351,12 +2323,12 @@ a.dnfl-btn-secondary:hover,
 }
 
 .franchiseicon {
-  min-width: 4rem !important;
-  max-width: 4rem !important;
-  width: 4rem !important;
-  min-height: 4rem !important;
-  max-height: 4rem !important;
-  height: 4rem !important;
+  min-width: 2.5rem !important;
+  max-width: 2.5rem !important;
+  width: 2.5rem !important;
+  min-height: 2.5rem !important;
+  max-height: 2.5rem !important;
+  height: 2.5rem !important;
   aspect-ratio: 1/1 !important;
   -o-object-fit: cover !important;
      object-fit: cover !important;
