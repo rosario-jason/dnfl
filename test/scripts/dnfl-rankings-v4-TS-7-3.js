@@ -113,26 +113,11 @@
                         const divInfo = divConfMap[String(f.division)] || {};
                         const cName = confMap[String(f.conference)] || divInfo.confName || f.conference || '';
                         
-                        const profile = f.profile || {};
-                        const resolvedOwner = (f.owner_name && String(f.owner_name).trim().length > 0)
-                            ? String(f.owner_name).trim()
-                            : ((profile.owner_name && String(profile.owner_name).trim().length > 0)
-                                ? String(profile.owner_name).trim()
-                                : ((f.owner && String(f.owner).trim().length > 0)
-                                    ? String(f.owner).trim()
-                                    : ((profile.owner && String(profile.owner).trim().length > 0)
-                                        ? String(profile.owner).trim()
-                                        : ((f.username && String(f.username).trim().length > 0)
-                                            ? String(f.username).trim()
-                                            : ((profile.username && String(profile.username).trim().length > 0)
-                                                ? String(profile.username).trim()
-                                                : 'Owner')))));
-
                         mflFranchiseMap[fId] = {
-                            name: f.name || 'Unknown Team',
-                            owner: resolvedOwner,
-                            icon: f.icon || f.logo || 'https://dnfl.live/images/ficon-dnfl.png',
-                            conference: cName,
+                            name: f.name || '',
+                            owner: f.owner_name || '',
+                            icon: f.icon || '',
+                            conference: cName || '',
                             division: divInfo.divName || ''
                         };
                     });
@@ -389,18 +374,20 @@
                 const fId = normId(row['Franchise ID'] || row['FranchiseId'] || row['id']);
                 const mflMeta = mflFranchiseMap[fId] || {};
 
+                const rawComment = String(row['Rank Comments'] || '').trim();
+
                 return {
                     overallRank: parseInt(row['Rank'] || 0, 10),
                     powerIndex: parseFloat(row['Power Index'] || 0),
                     tier: row['Tier'] || '',
                     franchiseId: fId,
                     franchiseName: mflMeta.name || 'Unknown Team',
-                    ownerName: mflMeta.owner || 'Owner',
+                    ownerName: mflMeta.owner || 'Unknown Owner',
                     iconUrl: mflMeta.icon || 'https://dnfl.live/images/ficon-dnfl.png',
-                    conference: mflMeta.conference || 'Other',
+                    conference: mflMeta.conference || 'Unknown Conference',
                     division: mflMeta.division || '',
                     projectedRecord: row['Projected W-L'] || 'N/A',
-                    comments: row['Comments'] || row['Rank Comments'] || row['Commentary'] || ''
+                    comments: rawComment || 'Comments pending...'
                 };
             });
 
@@ -576,12 +563,10 @@
             subRow.id = `dnfl-comment-row-${item.franchiseId}`;
             subRow.className = 'dnfl-comment-row dnfl-is-hidden';
 
-            const commentContent = (item.comments && item.comments.trim().length > 0) ? item.comments : 'Comments pending...';
-
             subRow.innerHTML = `
                 <td colspan="${colSpanCount}" class="dnfl-comment-cell">
                     <div class="dnfl-comment-box">
-                        <i class="fa-solid fa-quote-left dnfl-icon-blue"></i> ${commentContent}
+                        <i class="fa-solid fa-quote-left dnfl-icon-blue"></i> ${item.comments}
                     </div>
                 </td>
             `;
