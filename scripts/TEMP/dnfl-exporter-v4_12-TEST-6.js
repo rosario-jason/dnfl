@@ -748,22 +748,38 @@
     async function fetchFantasyCalcMap() {
         if (FANTASYCALC_MAP) return FANTASYCALC_MAP;
 
-        const targetUrl = 'https://fantasycalc.com/api/values?isSuperflex=false&ppr=1';
-        // Use corsproxy.io to bypass browser CORS policy restrictions on client-side requests
-        const url = 'https://corsproxy.io/?' + encodeURIComponent(targetUrl);
+        const targetUrl = 'https://api.fantasycalc.com/values/current?isDynasty=false&numQbs=1&numTeams=12&ppr=1';
+        const candidateUrls = [
+            `https://dnfl.live/dnfl_market/${targetYear || '2026'}/fantasycalc_values.json`,
+            'https://dnfl.live/dnfl_market/fantasycalc_values.json',
+            `https://dnfl.live/dnfl_rankings/${targetYear || '2026'}/fantasycalc_values.json`,
+            'https://dnfl.live/dnfl_exporter/fantasycalc_values.json',
+            'https://api.allorigins.win/raw?url=' + encodeURIComponent(targetUrl)
+        ];
         const fcMap = {};
 
         try {
             const client = getApiClient();
             let rawJson = null;
 
-            if (typeof client.fetchRawText === 'function') {
-                rawJson = await client.fetchRawText(url, { ttl: client.TTL ? client.TTL.DAILY : 86400000 }).catch(() => null);
-            }
-
-            if (!rawJson) {
-                const resp = await fetch(url);
-                if (resp.ok) rawJson = await resp.text();
+            for (const url of candidateUrls) {
+                try {
+                    if (typeof client.fetchRawText === 'function') {
+                        rawJson = await client.fetchRawText(url, { ttl: client.TTL ? client.TTL.DAILY : 86400000 }).catch(() => null);
+                    }
+                    if (!rawJson) {
+                        const resp = await fetch(url + (url.includes('?') ? '&' : '?') + 'v=' + Date.now());
+                        if (resp.ok) rawJson = await resp.text();
+                    }
+                    if (rawJson && (rawJson.trim().startsWith('[') || rawJson.trim().startsWith('{'))) {
+                        console.log(`[DNFL Exporter] Successfully loaded FantasyCalc feed from ${url}`);
+                        break;
+                    } else {
+                        rawJson = null;
+                    }
+                } catch (e) {
+                    rawJson = null;
+                }
             }
 
             if (rawJson) {
@@ -771,11 +787,12 @@
                 const playerArray = Array.isArray(data) ? data : (data.players || []);
 
                 playerArray.forEach(p => {
-                    const mflId = p.mflId || p.mfl_id || p.id;
-                    if (mflId !== undefined && mflId !== null) {
-                        const val = parseInt(p.value || p.tradeValue || 0, 10);
+                    const pObj = p.player || p;
+                    const mflId = pObj.mflId || pObj.mfl_id || p.mflId || p.mfl_id || pObj.id || p.id;
+                    if (mflId !== undefined && mflId !== null && mflId !== '') {
+                        const val = parseInt(p.value || p.tradeValue || pObj.value || pObj.tradeValue || 0, 10);
                         const rawId = String(mflId).trim();
-                        const unpaddedId = rawId.replace(/^0+/, '');
+                        const unpaddedId = rawId.replace(/^0+/, '') || '0';
                         const paddedId = unpaddedId.padStart(4, '0');
 
                         fcMap[rawId] = val;
