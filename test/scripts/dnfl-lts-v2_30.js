@@ -261,20 +261,14 @@
             }
             if (infoBanner) {
                 infoBanner.classList.remove('dnfl-is-hidden');
-                infoBanner.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> Last Team Standing will activate once Week 1 scores are finalized.';
+                infoBanner.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> Weekly score summary will populate once Week 1 scores are finalized.';
             }
 
             var ltsOnPre = rules.lts_isEnabled;
             var hsOnPre = rules.highScore_isEnabled;
             var cardTitleElemPre = document.getElementById('dnfl-lts-card-title');
             if (cardTitleElemPre) {
-                if (ltsOnPre) {
-                    cardTitleElemPre.innerHTML = '<i class="fa-solid fa-skull"></i> ' + confName + ' Last Team Standing';
-                } else if (hsOnPre) {
-                    cardTitleElemPre.innerHTML = '<i class="fa-solid fa-star"></i> ' + confName + ' Weekly High Scores';
-                } else {
-                    cardTitleElemPre.innerHTML = '<i class="fa-solid fa-list"></i> ' + confName + ' Weekly Summary';
-                }
+                cardTitleElemPre.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> DNFL - Pre-Season Mode';
             }
             return;
         }
