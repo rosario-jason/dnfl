@@ -187,7 +187,14 @@
             cachedDivisions = toArray(leagueResponse.league?.divisions?.division);
 
             cachedLastRegWeek = parseInt(leagueResponse.league?.lastRegularSeasonWeek || 14, 10);
-            cachedCurrentWeek = parseInt(leagueResponse.league?.currentWk, 10) || 1;
+
+            const mflReportedWk = parseInt(leagueResponse.league?.currentWk || leagueResponse.league?.currentWeek || 0, 10);
+            const maxGamesPlayed = cachedStandingsFranchises.reduce((maxG, s) => {
+                const games = parseInt(s.h2hw || s.w || 0, 10) + parseInt(s.h2hl || s.l || 0, 10) + parseInt(s.h2ht || s.t || 0, 10);
+                return Math.max(maxG, games);
+            }, 0);
+
+            cachedCurrentWeek = Math.max(mflReportedWk, maxGamesPlayed) || 1;
 
             weeklyPaMap = {};
             const needsPaFallback = cachedStandingsFranchises.some(s => {
