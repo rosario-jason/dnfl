@@ -26,7 +26,7 @@
 
         FEATURE_MODULES: [
             // { name: "ui-enhancements", url: "dnfl-ui-enhancements-TEST.js" },
-            { name: "standings", url: "dnfl-standings-v4_TS-1-1.js" },
+            { name: "standings", url: "dnfl-standings-v4-TS-1-1.js" },
             { name: "rankings",  url: "dnfl-rankings-v4-TS-7-3.js" },
             { name: "podcast",   url: "dnfl-podcast-v4_Final.js" },
             { name: "rules",     url: "dnfl-rules-v4_Final.js" },

@@ -503,13 +503,13 @@
                         } else if (diff < 0) {
                             changeBadgeHtml = `<span class="dnfl-badge dnfl-badge-red">▼ ${diff}</span>`;
                         } else {
-                            changeBadgeHtml = `<span class="dnfl-badge dnfl-badge-gray">&mdash;</span>`;
+                            changeBadgeHtml = `<span class="dnfl-badge dnfl-badge-gray">&ndash;</span>`;
                         }
                     } else {
-                        changeBadgeHtml = `<span class="dnfl-badge dnfl-badge-gray">&mdash;</span>`;
+                        changeBadgeHtml = `<span class="dnfl-badge dnfl-badge-gray">&ndash;</span>`;
                     }
                 } else {
-                    changeBadgeHtml = `<span class="dnfl-badge dnfl-badge-gray">&mdash;</span>`;
+                    changeBadgeHtml = `<span class="dnfl-badge dnfl-badge-gray">&ndash;</span>`;
                 }
             }
 
