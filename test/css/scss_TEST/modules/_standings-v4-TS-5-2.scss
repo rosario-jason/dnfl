@@ -1,0 +1,178 @@
+/* ==========================================================================
+   DNFL STANDINGS MODULE - SCOPED COLUMN ALIGNMENTS & BADGES (Step 5 - v2)
+   ==========================================================================
+   Module: modules/_standings.scss
+   Description: Encapsulates scoped styles for #dnfl-standings-container:
+                fluid table-layout, simplified single-class column scoping
+                (.dnfl-col-seed, .dnfl-col-pf, .dnfl-col-pa, .dnfl-col-record,
+                .dnfl-col-bbid), circular neutral seed badges, green/red PF/PA
+                badges, compact blue record pills, and optimized mobile 
+                responsive spacing.
+   ========================================================================== */
+
+#dnfl-standings-container {
+  /* Enforce fluid layout for responsive cell expansion */
+  table.dnfl-table {
+    table-layout: auto !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     1. SCOPED STANDINGS COLUMN ALIGNMENTS & WIDTHS
+     ------------------------------------------------------------------------ */
+  /* Seed Column */
+  .dnfl-col-seed {
+    width: 90px !important;
+    min-width: 90px !important;
+    text-align: left !important;
+    padding-left: 10px !important;
+    white-space: nowrap !important;
+  }
+
+  /* Points For & Points Against Columns */
+  .dnfl-col-pf,
+  .dnfl-col-pa {
+    width: 110px !important;
+    text-align: center !important;
+
+    .dnfl-badge {
+      min-width: 72px !important; /* Compact badge padding for X,XXX.00 */
+      padding: 2px 6px !important;
+      font-size: 0.8rem !important;
+    }
+  }
+
+  /* Record Column (Solid Blue Pill Capsule - Emphasized & Compact) */
+  .dnfl-col-record {
+    width: 80px !important;
+    text-align: center !important;
+
+    .dnfl-pill {
+      min-width: 64px !important;
+      font-size: 0.95rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.02em !important;
+      text-align: center !important;
+      background-color: var(--dnfl-badge-blue, #3b82f6) !important;
+      color: #ffffff !important;
+    }
+  }
+
+  /* Consolidated BBID Column (Header & Cell) */
+  .dnfl-col-bbid {
+    width: 85px !important;
+    text-align: center !important;
+    font-size: 0.8rem !important;
+    color: var(--dnfl-text-subtle, #555555) !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     2. CIRCULAR STANDINGS SEED BADGE & ICON UTILITIES
+     ------------------------------------------------------------------------ */
+  .dnfl-seed-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    padding: 0 !important;
+    border-radius: 50% !important; /* Circular neutral badge */
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    color: var(--dnfl-text-heading, #0f172a) !important;
+    border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    line-height: 1 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Standings Icon Utility Color Helpers */
+  .dnfl-icon-blue  { color: var(--dnfl-badge-blue, #3b82f6) !important; margin-left: 5px; }
+  .dnfl-icon-amber { color: var(--dnfl-badge-amber, #f59e0b) !important; margin-left: 5px; }
+  .dnfl-icon-red   { color: var(--dnfl-alert-red, #ef4444) !important; margin-left: 5px; }
+  .dnfl-icon-green { color: var(--dnfl-success-green, #10b981) !important; margin-left: 5px; }
+
+  /* ------------------------------------------------------------------------
+     3. DIVISION HEADER ROWS
+     ------------------------------------------------------------------------ */
+  .dnfl-division-header-cell {
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    border-bottom: 2px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    padding: 10px 16px !important;
+  }
+
+  .dnfl-division-header-content {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    h3 {
+      margin: 0 !important;
+      font-size: 1rem !important;
+      font-weight: 700 !important;
+      color: var(--dnfl-text-heading, #0f172a) !important;
+      text-transform: capitalize !important;
+      letter-spacing: 0.5px !important;
+    }
+  }
+
+  tr.dnfl-table-subheader {
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+
+    th {
+      font-size: 0.75rem !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.5px !important;
+      color: var(--dnfl-text-subtle, #555555) !important;
+      padding: 8px 12px !important;
+      border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     4. MOBILE RESPONSIVE TWEAKS FOR STANDINGS
+     ------------------------------------------------------------------------ */
+  @media (max-width: 768px) {
+    table.dnfl-table {
+      min-width: 320px !important;
+      width: 100% !important;
+    }
+
+    .dnfl-col-seed {
+      width: 72px !important;
+      min-width: 72px !important;
+      padding: 6px 2px 6px 8px !important; /* Balanced 8px left breathing margin */
+      white-space: nowrap !important;
+
+      i[class*="dnfl-icon-"] {
+        margin-left: 3px !important; /* Tighter mobile icon spacing */
+      }
+    }
+
+    .dnfl-col-record {
+      width: 70px !important;
+      min-width: 70px !important;
+      padding: 6px 2px !important;
+    }
+
+    .dnfl-col-franchise {
+      width: 168px !important;
+      max-width: 168px !important;
+      min-width: 150px !important;
+      padding: 6px 4px !important;
+      overflow-wrap: break-word !important;
+      word-break: break-word !important;
+      white-space: normal !important;
+    }
+
+    .franchiseicon {
+      width: 1.5rem !important;
+      height: 1.5rem !important;
+      min-width: 1.5rem !important;
+      max-width: 1.5rem !important;
+      min-height: 1.5rem !important;
+      max-height: 1.5rem !important;
+      flex-shrink: 0 !important;
+    }
+  }
+}
