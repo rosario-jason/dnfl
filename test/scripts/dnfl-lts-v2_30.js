@@ -647,7 +647,7 @@
         }
 
         // 4. Low Score
-        itemsHtml += '<div class="dnfl-legend-item"><span class="dnfl-badge dnfl-badge-red">&nbsp;</span><span class="dnfl-legend-label">Low Score</span></div>';
+        itemsHtml += '<div class="dnfl-legend-item"><span class="dnfl-badge dnfl-badge-red">"&nbsp;&nbsp;"</span><span class="dnfl-legend-label">Low Score</span></div>';
 
         var html = '<div class="dnfl-legend-items">' + itemsHtml + '</div>';
 
