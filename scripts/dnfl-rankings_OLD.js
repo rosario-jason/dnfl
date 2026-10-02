@@ -163,39 +163,18 @@
 
         try {
             if (apiClient && typeof apiClient.fetchRawText === 'function') {
-                // Force bypassCache so newly added weeks load immediately
-                const rawJson = await apiClient.fetchRawText(weeksUrl, { bypassCache: true });
+                const rawJson = await apiClient.fetchRawText(weeksUrl);
                 publishedWeeks = JSON.parse(rawJson);
             } else {
-                const resp = await fetch(weeksUrl + '?v=' + Date.now());
-                if (!resp.ok) throw new Error(`HTTP ${resp.status} (${resp.statusText})`);
+                const resp = await fetch(weeksUrl);
                 publishedWeeks = await resp.json();
             }
-
-            if (!Array.isArray(publishedWeeks) || publishedWeeks.length === 0) {
-                throw new Error("Invalid or empty weeks manifest format");
-            }
         } catch (err) {
-            console.error("[DNFL Rankings] Failed to load weeks.json:", err);
-
-            // Update Selector Dropdown to indicate error state
-            selector.innerHTML = `<option value="">⚠️ Error Loading Weeks</option>`;
-
-            // Render error state in table body using global framework .dnfl-status-error class
-            const tableBody = document.getElementById('dnfl_tableBody');
-            if (tableBody) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="6">
-                            <div class="dnfl-status-error">
-                                <i class="fa-solid fa-circle-exclamation"></i> <strong>Failed to load weeks manifest (weeks.json)</strong>
-                                <div>${err.message}</div>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            }
-            return; // Halt initialization
+            console.warn("[DNFL Rankings] Could not load weeks.json, applying fallback weeks.", err);
+            publishedWeeks = [
+                { id: "00_pre-season", display: "Pre-Season" },
+                { id: "01", display: "Week 1" }
+            ];
         }
 
         selector.innerHTML = '';
