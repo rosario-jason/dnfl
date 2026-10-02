@@ -572,12 +572,12 @@
 
         if (ltsOn) {
             html += '<th class="dnfl-col-franchise">LTS Eliminated Team</th>' +
-                '<th class="dnfl-col-score">&nbsp;</th>';
+                '<th class="dnfl-col-score">Score</th>';
         }
 
         if (hsOn) {
             html += '<th class="dnfl-col-franchise">Weekly High Scorer</th>' +
-                '<th class="dnfl-col-score">&nbsp;</th>';
+                '<th class="dnfl-col-score">Score</th>';
         }
 
         html += '</tr></thead><tbody>';
