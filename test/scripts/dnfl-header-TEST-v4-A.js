@@ -10,7 +10,7 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "LTS-Staging-v4_11-A",
+        VERSION: "LTS-Staging-v4_11 (A)",
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
@@ -19,19 +19,19 @@
 
         INFRASTRUCTURE: [
             // { name: "fontawesome", url: "https://kit.fontawesome.com/aa3dbf3e4a.js", isExternal: true },
-            { name: "papaparse", url: "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js", isExternal: true },
+            { name: "papaparse",  url: "https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.6.1/papaparse.min.js", isExternal: true },
             { name: "marked",     url: "https://cdn.jsdelivr.net/npm/marked/marked.min.js", isExternal: true },
-            { name: "api-client", url: "dnfl-api-client-v4_Final.js" }
+            { name: "api-client", url: "dnfl-api-client-v4_11.js" }
         ],
 
         FEATURE_MODULES: [
             // { name: "ui-enhancements", url: "dnfl-ui-enhancements-TEST.js" },
-            { name: "standings", url: "dnfl-standings-v4-TS-1-1.js" },
-            { name: "rankings",  url: "dnfl-rankings-v4-TS-7-3.js" },
-            { name: "podcast",   url: "dnfl-podcast-v4_Final.js" },
-            { name: "rules",     url: "dnfl-rules-v4_Final.js" },
-            { name: "exporter",     url: "dnfl-exporter-v4_Final.js" },
-            { name: "lts",     url: "dnfl-lts-v2_30.js" }
+            { name: "standings", url: "dnfl-standings-v4_11.js" },
+            { name: "rankings",  url: "dnfl-rankings-v4_11.js" },
+            { name: "podcast",   url: "dnfl-podcast-v4_11.js" },
+            { name: "rules",     url: "dnfl-rules-v4_11.js" },
+            { name: "exporter",  url: "dnfl-exporter-v4_11.js" },
+            { name: "lts",       url: "dnfl-lts-v4_11.js" }
         ],
 
         CONDITIONAL_LIBRARIES: {
