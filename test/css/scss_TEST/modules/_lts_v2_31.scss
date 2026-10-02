@@ -78,9 +78,14 @@
     text-align: center !important;
     white-space: nowrap !important;
 
-    .dnfl-pill,
-    .dnfl-badge {
+    .dnfl-pill {
       min-width: 95px !important;
+      text-align: center !important;
+      justify-content: center !important;
+    }
+    
+    .dnfl-badge {
+      min-width: 60px !important;
       text-align: center !important;
       justify-content: center !important;
     }
