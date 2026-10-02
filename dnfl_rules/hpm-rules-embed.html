@@ -1,42 +1,25 @@
-<!-- DNFL Rules v3.36 -->
+<!-- DNFL Rules v4.11 -->
+<div id="dnfl-rules-container" class="dnfl-card">
+    <!-- Level 2 Card Header -->
+    <div class="dnfl-card-header">
+        <h3 id="dnfl-rules-title" class="dnfl-card-title">
+            <i class="fa-solid fa-book"></i>DNFL Official Rulebook
+        </h3>
+    </div>
 
-<div id="dnfl_rules" class="mobile-wrap">
-  <table class="homepagemodule report" cellspacing="1" align="center">
-    <caption>
-      DNFL Official Rulebook
-    </caption>
-  </table>
-
-  <div class="toggle_tabs">
-    <br />
-
-   <!-- ==========================================================================
-   DNFL OFFICIAL RULEBOOK MODULE
-   ========================================================================== -->
-    <div class="dnfl-module-container">
+    <!-- Level 2 Card Body -->
+    <div class="dnfl-card-body">
       <!-- Controls Bar -->
-      <div class="dnfl-controls">
-        <div class="dnfl-rules-title">%YEAR% DNFL Official Rulebook</div>
-        <div class="dnfl-buttons-right">
-          <button
-            class="dnfl-visibility-toggle-btn"
-            onclick="DNFL.Rules.showSubMenus()"
-          >
-            Show Sub Menus
+      <div id="dnfl-rules-actions" class="dnfl-action-toolbar dnfl-toolbar">
+          <button id="dnfl-rules-expand-btn" class="dnfl-btn dnfl-btn-secondary" onclick="DNFL.Rules.expandAll()">
+              <i class="fa-solid fa-angles-down"></i> Expand All
           </button>
-          <button
-            class="dnfl-visibility-toggle-btn"
-            onclick="DNFL.Rules.expandAll()"
-          >
-            Expand All
+          <button id="dnfl-rules-submenus-btn" class="dnfl-btn dnfl-btn-secondary" onclick="DNFL.Rules.showSubMenus()">
+              <i class="fa-solid fa-angle-down"></i> Show Submenus
           </button>
-          <button
-            class="dnfl-visibility-toggle-btn"
-            onclick="DNFL.Rules.collapseAll()"
-          >
-            Collapse All
+          <button id="dnfl-rules-collapse-btn" class="dnfl-btn dnfl-btn-secondary" onclick="DNFL.Rules.collapseAll()">
+              <i class="fa-solid fa-angles-up"></i> Collapse All
           </button>
-        </div>
       </div>
 
       <!-- Rulebook Body Container -->
@@ -48,7 +31,7 @@
             onclick="DNFL.Rules.toggleElement(this)"
           >
             <span
-              ><i class="fas fa-chevron-right dnfl-rules-icon"></i> I.
+              ><i class="fa-solid fa-chevron-right dnfl-rules-icon"></i> I.
               GENERAL</span
             >
             <span class="dnfl-rules-badge">Section 1</span>
@@ -60,7 +43,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> A)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> A)
                   Welcome</span
                 >
               </div>
@@ -71,7 +54,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A1.
                       Overview</span
                     >
                   </div>
@@ -89,10 +72,8 @@
                         The rulebook is organized so users can easily navigate
                         to and reference specific rules as necessary
                         <p>
-                          <em
-                            >For example, Rule II.A1.01 references the rule
-                            which defines the league entry fee amount</em
-                          >
+                          <em>For example, Rule II.A1.01 references the rule
+                          which defines the league entry fee amount</em>
                         </p>
                       </li>
                     </ol>
@@ -104,7 +85,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A2.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A2.
                       Last Update - July 27, 2026</span
                     >
                   </div>
@@ -139,7 +120,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> B) League
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> B) League
                   Management</span
                 >
               </div>
@@ -150,7 +131,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B1.
                       Commissioners</span
                     >
                   </div>
@@ -180,7 +161,7 @@
             onclick="DNFL.Rules.toggleElement(this)"
           >
             <span
-              ><i class="fas fa-chevron-right dnfl-rules-icon"></i> II.
+              ><i class="fa-solid fa-chevron-right dnfl-rules-icon"></i> II.
               ACCOUNTING</span
             >
             <span class="dnfl-rules-badge">Section 2</span>
@@ -192,7 +173,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> A) Entry
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> A) Entry
                   Fees</span
                 >
               </div>
@@ -203,7 +184,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A1.
                       Entry Fees</span
                     >
                   </div>
@@ -244,7 +225,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> B)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> B)
                   Payouts</span
                 >
               </div>
@@ -255,105 +236,103 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B1.
                       Payout Table</span
                     >
                   </div>
                   <div class="dnfl-rules-topic-content">
-                    <div class="dnfl-rules-table-wrapper mobile-wrap">
-                      <table class="dnfl-rules-table" id="rulestable">
+                    <div class="dnfl-table-wrapper">
+                      <table class="dnfl-table dnfl-rules-table">
                         <caption>
                           <span>Prizes and Payouts</span>
                         </caption>
                         <thead>
                           <tr>
-                            <th style="text-align: left">Prize</th>
-                            <th style="width: 10%; text-align: right">
+                            <th>Prize</th>
+                            <th>
                               Payout $
                             </th>
-                            <th style="text-align: left; padding-left: 20px">
+                            <th>
                               Notes
                             </th>
-                            <th style="width: 10%; text-align: right">
+                            <th>
                               Total $
                             </th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Super Bowl Champion
                             </td>
-                            <td style="text-align: right">3,850</td>
-                            <td style="text-align: left; padding-left: 20px">
+                            <td>3,850</td>
+                            <td>
                               1 winner
                             </td>
-                            <td style="text-align: right">3,850</td>
+                            <td>3,850</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Super Bowl Runner-Up
                             </td>
-                            <td style="text-align: right">1,000</td>
-                            <td style="text-align: left; padding-left: 20px">
+                            <td>1,000</td>
+                            <td>
                               1 winner
                             </td>
-                            <td style="text-align: right">1,000</td>
+                            <td>1,000</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">Last Team Standing</td>
-                            <td style="text-align: right">200</td>
-                            <td style="text-align: left; padding-left: 20px">
+                          <tr class="dnfl-row-odd">
+                            <td>
+                              Playoff Semifinalists
+                            </td>
+                            <td>300</td>
+                            <td>
+                              2 winners
+                            </td>
+                            <td>600</td>
+                          </tr>
+                          <tr class="dnfl-row-even">
+                            <td>Last Team Standing</td>
+                            <td>200</td>
+                            <td>
                               3 winners, one per Conference
                             </td>
-                            <td style="text-align: right">600</td>
+                            <td>600</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">
-                              Conference Playoff Runner-Ups
-                            </td>
-                            <td style="text-align: right">200</td>
-                            <td style="text-align: left; padding-left: 20px">
-                              3 winners, one per Conference
-                            </td>
-                            <td style="text-align: right">600</td>
-                          </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">Division Winners</td>
-                            <td style="text-align: right">150</td>
-                            <td style="text-align: left; padding-left: 20px">
+                          <tr class="dnfl-row-odd">
+                            <td>Division Winners</td>
+                            <td>150</td>
+                            <td>
                               6 winners, one per Division
                             </td>
-                            <td style="text-align: right">900</td>
+                            <td>900</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Weekly High Scorers
                             </td>
-                            <td style="text-align: right">50</td>
-                            <td style="text-align: left; padding-left: 20px">
+                            <td>50</td>
+                            <td>
                               36 winners, one per Conference each week (Weeks
                               1-12)
                             </td>
-                            <td style="text-align: right">1,800</td>
+                            <td>1,800</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left"><b>Total</b></td>
+                          <tr class="dnfl-row-odd">
+                            <td><b>Total</b></td>
                             <td></td>
                             <td></td>
-                            <td style="text-align: right"><b>8,750</b></td>
+                            <td><b>8,750</b></td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
                     <p>
-                      <em
-                        >Note: If the administrative fees are less than $250,
-                        any additional $ will be added to the total prize
-                        winnings of the Super Bowl Champion. If fees are more
-                        than $250 then the championship prize is reduced
-                        slightly.</em
-                      >
+                      <em>Note: If the administrative fees are less than $250,
+                      any additional $ will be added to the total prize
+                      winnings of the Super Bowl Champion. If fees are more
+                      than $250 then the championship prize is reduced
+                      slightly.</em>
                     </p>
                   </div>
                 </div>
@@ -369,7 +348,7 @@
             onclick="DNFL.Rules.toggleElement(this)"
           >
             <span
-              ><i class="fas fa-chevron-right dnfl-rules-icon"></i> III.
+              ><i class="fa-solid fa-chevron-right dnfl-rules-icon"></i> III.
               LEAGUE</span
             >
             <span class="dnfl-rules-badge">Section 3</span>
@@ -381,7 +360,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> A)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> A)
                   Conference &amp; Division Assignments</span
                 >
               </div>
@@ -392,7 +371,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A1.
                       Conferences &amp; Divisions</span
                     >
                   </div>
@@ -410,13 +389,11 @@
                         Upcoming realignment years are: 2027 - 2030 - 2033 -
                         2035
                       </li>
-                      <p>
-                        <em
-                          >Note: There is also an alignment in 2026 due to the
-                          expansion to 36 teams.</em
-                        >
-                      </p>
                     </ol>
+                    <p>
+                      <em>Note: There is also an alignment in 2026 due to the
+                      expansion to 36 teams.</em>
+                    </p>
                   </div>
                 </div>
                 <div class="dnfl-rules-topicsection">
@@ -425,23 +402,21 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A2.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A2.
                       Team Assignment Rules</span
                     >
                   </div>
                   <div class="dnfl-rules-topic-content">
+                    <p>
+                      <em>Note: The Team Assignment Rules below define the
+                      assignment process for the 2026 season based on the
+                      expansion to 36 teams and restructuring to 3
+                      Conferences. These assignment rules will be revisited
+                      prior to the 2027 season based on the new Relegation
+                      Structure of the league that will be in affect at that
+                      time.</em>
+                    </p>
                     <ol class="subnum">
-                      <p>
-                        <em
-                          >Note: The Team Assignment Rules below define the
-                          assignment process for the 2026 season based on the
-                          expansion to 36 teams and restructuring to 3
-                          Conferences. These assignment rules will be revisited
-                          prior to the 2027 season based on the new Relegation
-                          Structure of the league that will be in affect at that
-                          time.</em
-                        >
-                      </p>
                       <li class="subtext">
                         The returning 28 teams will be placed across the 3
                         Conferences based on final standings, using a snake
@@ -468,7 +443,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> B)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> B)
                   Standings</span
                 >
               </div>
@@ -479,7 +454,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B1.
                       Standings</span
                     >
                   </div>
@@ -519,7 +494,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> C)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> C)
                   Rosters</span
                 >
               </div>
@@ -530,7 +505,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> C1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> C1.
                       Rosters</span
                     >
                   </div>
@@ -565,7 +540,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> D)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> D)
                   Lineups</span
                 >
               </div>
@@ -576,7 +551,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> D1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> D1.
                       Starting lineups</span
                     >
                   </div>
@@ -599,7 +574,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> D2.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> D2.
                       Lineup Rules</span
                     >
                   </div>
@@ -639,7 +614,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> E)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> E)
                   Schedules</span
                 >
               </div>
@@ -650,7 +625,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> E1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> E1.
                       Regular Season</span
                     >
                   </div>
@@ -674,14 +649,12 @@
                         matching teams from different Conferences based on their
                         draft order.
                       </li>
-                      <p>
-                        <em
-                          >Note: Week 7 Inter-Conference matchups may feature
-                          games where teams have the same players in their
-                          starting lineups</em
-                        >
-                      </p>
                     </ol>
+                    <p>
+                      <em>Note: Week 7 Inter-Conference matchups may feature
+                      games where teams have the same players in their
+                      starting lineups</em>
+                    </p>
                   </div>
                 </div>
                 <div class="dnfl-rules-topicsection">
@@ -690,7 +663,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> E2.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> E2.
                       Post-Season</span
                     >
                   </div>
@@ -717,7 +690,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> F)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> F)
                   Draft</span
                 >
               </div>
@@ -728,7 +701,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> F1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> F1.
                       Draft Format</span
                     >
                   </div>
@@ -788,18 +761,16 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> F2.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> F2.
                       Draft Order</span
                     >
                   </div>
                   <div class="dnfl-rules-topic-content">
+                    <p>
+                      <em>Note: The Draft Order below has been updated due to
+                      the expansion to 36 teams.</em>
+                    </p>
                     <ol class="subnum">
-                      <p>
-                        <em
-                          >Note: The Draft Order below has been updated due to
-                          the expansion to 36 teams.</em
-                        >
-                      </p>
                       <li class="subtext">
                         Expansion teams will get the first picks in each
                         conference. The Commissioners will randomly assign the
@@ -826,7 +797,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> G)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> G)
                   Supplemental Draft Picks</span
                 >
               </div>
@@ -837,7 +808,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> G1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> G1.
                       Supplemental Picks</span
                     >
                   </div>
@@ -905,7 +876,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> G2.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> G2.
                       Life Events and Supplemental Draft Pick Awards</span
                     >
                   </div>
@@ -962,7 +933,7 @@
             onclick="DNFL.Rules.toggleElement(this)"
           >
             <span
-              ><i class="fas fa-chevron-right dnfl-rules-icon"></i> IV.
+              ><i class="fa-solid fa-chevron-right dnfl-rules-icon"></i> IV.
               SCORING</span
             >
             <span class="dnfl-rules-badge">Section 4</span>
@@ -974,7 +945,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> A)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> A)
                   Individual Players</span
                 >
               </div>
@@ -985,199 +956,199 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A1.
                       Offense Scoring Rules Table</span
                     >
                   </div>
                   <div class="dnfl-rules-topic-content">
-                    <div class="dnfl-rules-table-wrapper mobile-wrap">
-                      <table class="dnfl-rules-table" id="rulestable">
+                    <div class="dnfl-table-wrapper">
+                      <table class="dnfl-table dnfl-rules-table">
                         <caption>
                           <span>Rules for QB, RB, WR, TE, PK</span>
                         </caption>
                         <thead>
                           <tr>
-                            <th style="text-align: left">Event</th>
-                            <th style="text-align: center">Range (Low-High)</th>
-                            <th style="text-align: right">Points</th>
+                            <th>Event</th>
+                            <th>Range (Low-High)</th>
+                            <th>Points</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Number of Passing TDs
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">4 points each</td>
+                            <td>0-10</td>
+                            <td>4 points each</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">Passing Yards</td>
-                            <td style="text-align: center">0-299</td>
-                            <td style="text-align: right">
+                          <tr class="dnfl-row-even">
+                            <td>Passing Yards</td>
+                            <td>0-299</td>
+                            <td>
                               0 points for 0, and then 0.04 points for every 1
                               thereafter
                             </td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">Passing Yards</td>
-                            <td style="text-align: center">300-599</td>
-                            <td style="text-align: right">
+                          <tr class="dnfl-row-odd">
+                            <td>Passing Yards</td>
+                            <td>300-599</td>
+                            <td>
                               14 points for 300, and then 0.04 points for every
                               1 thereafter
                             </td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">Passing Yards</td>
-                            <td style="text-align: center">600-999</td>
-                            <td style="text-align: right">
+                          <tr class="dnfl-row-even">
+                            <td>Passing Yards</td>
+                            <td>600-999</td>
+                            <td>
                               28 points for 600, and then 0.04 points for every
                               1 thereafter
                             </td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Pass Interceptions Thrown
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">-1 point each</td>
+                            <td>0-10</td>
+                            <td>-1 point each</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">Passing 2 Pointers</td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">2 points each</td>
+                          <tr class="dnfl-row-even">
+                            <td>Passing 2 Pointers</td>
+                            <td>0-10</td>
+                            <td>2 points each</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Number of Rushing TDs
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">6 points each</td>
+                            <td>0-10</td>
+                            <td>6 points each</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">Rushing Yards</td>
-                            <td style="text-align: center">0-99</td>
-                            <td style="text-align: right">
+                          <tr class="dnfl-row-even">
+                            <td>Rushing Yards</td>
+                            <td>0-99</td>
+                            <td>
                               0 points for 0, and then 0.10 point for every 1
                               thereafter
                             </td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">Rushing Yards</td>
-                            <td style="text-align: center">100-199</td>
-                            <td style="text-align: right">
+                          <tr class="dnfl-row-odd">
+                            <td>Rushing Yards</td>
+                            <td>100-199</td>
+                            <td>
                               12 points for 100, and then 0.10 point for every 1
                               thereafter
                             </td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">Rushing Yards</td>
-                            <td style="text-align: center">200-999</td>
-                            <td style="text-align: right">
+                          <tr class="dnfl-row-even">
+                            <td>Rushing Yards</td>
+                            <td>200-999</td>
+                            <td>
                               24 points for 200, and then 0.10 point for every 1
                               thereafter
                             </td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">Rushing 2 Pointers</td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">2 points each</td>
+                          <tr class="dnfl-row-odd">
+                            <td>Rushing 2 Pointers</td>
+                            <td>0-10</td>
+                            <td>2 points each</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Number of Receiving TDs
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">6 points each</td>
+                            <td>0-10</td>
+                            <td>6 points each</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">Receiving Yards</td>
-                            <td style="text-align: center">0-99</td>
-                            <td style="text-align: right">
+                          <tr class="dnfl-row-odd">
+                            <td>Receiving Yards</td>
+                            <td>0-99</td>
+                            <td>
                               0 points for 0, and then 0.10 point for every 1
                               thereafter
                             </td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">Receiving Yards</td>
-                            <td style="text-align: center">100-199</td>
-                            <td style="text-align: right">
+                          <tr class="dnfl-row-even">
+                            <td>Receiving Yards</td>
+                            <td>100-199</td>
+                            <td>
                               12 points for 100, and then 0.10 point for every 1
                               thereafter
                             </td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">Receiving Yards</td>
-                            <td style="text-align: center">200-999</td>
-                            <td style="text-align: right">
+                          <tr class="dnfl-row-odd">
+                            <td>Receiving Yards</td>
+                            <td>200-999</td>
+                            <td>
                               24 points for 200, and then 0.10 point for every 1
                               thereafter
                             </td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">Receptions</td>
-                            <td style="text-align: center">0-99</td>
-                            <td style="text-align: right">1 point each</td>
+                          <tr class="dnfl-row-even">
+                            <td>Receptions</td>
+                            <td>0-99</td>
+                            <td>1 point each</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Receiving 2 Pointers
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">2 points each</td>
+                            <td>0-10</td>
+                            <td>2 points each</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Length of Field Goal Made
                             </td>
-                            <td style="text-align: center">0-39</td>
-                            <td style="text-align: right">3</td>
+                            <td>0-39</td>
+                            <td>3</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Length of Field Goal Made
                             </td>
-                            <td style="text-align: center">40-49</td>
-                            <td style="text-align: right">4</td>
+                            <td>40-49</td>
+                            <td>4</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Length of Field Goal Made
                             </td>
-                            <td style="text-align: center">50-59</td>
-                            <td style="text-align: right">5</td>
+                            <td>50-59</td>
+                            <td>5</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Length of Field Goal Made
                             </td>
-                            <td style="text-align: center">60-99</td>
-                            <td style="text-align: right">6</td>
+                            <td>60-99</td>
+                            <td>6</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">Extra Points</td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">1 point each</td>
+                          <tr class="dnfl-row-even">
+                            <td>Extra Points</td>
+                            <td>0-10</td>
+                            <td>1 point each</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Number of Punt Return TDs
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">6 points each</td>
+                            <td>0-10</td>
+                            <td>6 points each</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Number of Kickoff Return TDs
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">6 points each</td>
+                            <td>0-10</td>
+                            <td>6 points each</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Fumbles Lost (to Opponent)
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">-1 point each</td>
+                            <td>0-10</td>
+                            <td>-1 point each</td>
                           </tr>
                         </tbody>
                       </table>
@@ -1192,7 +1163,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> B) Team
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> B) Team
                   Defense</span
                 >
               </div>
@@ -1203,150 +1174,150 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B1.
                       Defense Scoring Rules Table</span
                     >
                   </div>
                   <div class="dnfl-rules-topic-content">
-                    <div class="dnfl-rules-table-wrapper mobile-wrap">
-                      <table class="dnfl-rules-table" id="rulestable">
+                    <div class="dnfl-table-wrapper">
+                      <table class="dnfl-table dnfl-rules-table">
                         <caption>
                           <span>Rules for Def</span>
                         </caption>
                         <thead>
                           <tr>
-                            <th style="text-align: left">Event</th>
-                            <th style="text-align: center">Range (Low-High)</th>
-                            <th style="text-align: right">Points</th>
+                            <th>Event</th>
+                            <th>Range (Low-High)</th>
+                            <th>Points</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Number of Punt Return TDs
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">6 points each</td>
+                            <td>0-10</td>
+                            <td>6 points each</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Number of Kickoff Return TDs
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">6 points each</td>
+                            <td>0-10</td>
+                            <td>6 points each</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Number of Defensive Fumble Recovery TDs
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">4 points each</td>
+                            <td>0-10</td>
+                            <td>4 points each</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Fumble Recoveries (from Opponent)
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">2 points each</td>
+                            <td>0-10</td>
+                            <td>2 points each</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Number of Interception Return TDs
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">4 points each</td>
+                            <td>0-10</td>
+                            <td>4 points each</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Interceptions Caught
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">2 points each</td>
+                            <td>0-10</td>
+                            <td>2 points each</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Number of Blocked Field Goal TDs
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">4 points each</td>
+                            <td>0-10</td>
+                            <td>4 points each</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Blocked Field Goals
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">2 points each</td>
+                            <td>0-10</td>
+                            <td>2 points each</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Number of Blocked Punt TDs
                             </td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">4 points each</td>
+                            <td>0-10</td>
+                            <td>4 points each</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">Blocked Punts</td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">2 points each</td>
+                          <tr class="dnfl-row-even">
+                            <td>Blocked Punts</td>
+                            <td>0-10</td>
+                            <td>2 points each</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">Sacked a QB</td>
-                            <td style="text-align: center">0-25</td>
-                            <td style="text-align: right">1 point each</td>
+                          <tr class="dnfl-row-odd">
+                            <td>Sacked a QB</td>
+                            <td>0-25</td>
+                            <td>1 point each</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">Safeties</td>
-                            <td style="text-align: center">0-10</td>
-                            <td style="text-align: right">2 points each</td>
+                          <tr class="dnfl-row-even">
+                            <td>Safeties</td>
+                            <td>0-10</td>
+                            <td>2 points each</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Total Points Allowed
                             </td>
-                            <td style="text-align: center">0-0</td>
-                            <td style="text-align: right">10</td>
+                            <td>0-0</td>
+                            <td>10</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Total Points Allowed
                             </td>
-                            <td style="text-align: center">1-6</td>
-                            <td style="text-align: right">6</td>
+                            <td>1-6</td>
+                            <td>6</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Total Points Allowed
                             </td>
-                            <td style="text-align: center">7-13</td>
-                            <td style="text-align: right">4</td>
+                            <td>7-13</td>
+                            <td>4</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Total Points Allowed
                             </td>
-                            <td style="text-align: center">14-19</td>
-                            <td style="text-align: right">2</td>
+                            <td>14-19</td>
+                            <td>2</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Total Points Allowed
                             </td>
-                            <td style="text-align: center">20-26</td>
-                            <td style="text-align: right">0</td>
+                            <td>20-26</td>
+                            <td>0</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Total Points Allowed
                             </td>
-                            <td style="text-align: center">27-35</td>
-                            <td style="text-align: right">-2</td>
+                            <td>27-35</td>
+                            <td>-2</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Total Points Allowed
                             </td>
-                            <td style="text-align: center">36-999</td>
-                            <td style="text-align: right">-4</td>
+                            <td>36-999</td>
+                            <td>-4</td>
                           </tr>
                         </tbody>
                       </table>
@@ -1365,7 +1336,7 @@
             onclick="DNFL.Rules.toggleElement(this)"
           >
             <span
-              ><i class="fas fa-chevron-right dnfl-rules-icon"></i> V.
+              ><i class="fa-solid fa-chevron-right dnfl-rules-icon"></i> V.
               TRANSACTIONS</span
             >
             <span class="dnfl-rules-badge">Section 5</span>
@@ -1377,7 +1348,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> A) Waivers
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> A) Waivers
                   (Add/Drop)</span
                 >
               </div>
@@ -1388,7 +1359,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A1.
                       General Waiver Information</span
                     >
                   </div>
@@ -1447,7 +1418,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A2.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A2.
                       BBID $</span
                     >
                   </div>
@@ -1484,7 +1455,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A3.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A3.
                       BBID Waivers</span
                     >
                   </div>
@@ -1555,7 +1526,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A4.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A4.
                       FCFS Waivers</span
                     >
                   </div>
@@ -1596,7 +1567,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> B)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> B)
                   Trades</span
                 >
               </div>
@@ -1607,7 +1578,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B1.
                       Trade Deadlines</span
                     >
                   </div>
@@ -1636,7 +1607,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B2.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B2.
                       Trade Processing</span
                     >
                   </div>
@@ -1693,7 +1664,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B3.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B3.
                       Trading BBID $</span
                     >
                   </div>
@@ -1717,7 +1688,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B4.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B4.
                       Trading Draft Picks</span
                     >
                   </div>
@@ -1749,7 +1720,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B5.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B5.
                       Trading Conditional Draft Picks</span
                     >
                   </div>
@@ -1788,7 +1759,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B6.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B6.
                       Illegal Trades</span
                     >
                   </div>
@@ -1820,7 +1791,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B7.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B7.
                       Off-Season Trades</span
                     >
                   </div>
@@ -1868,7 +1839,7 @@
             onclick="DNFL.Rules.toggleElement(this)"
           >
             <span
-              ><i class="fas fa-chevron-right dnfl-rules-icon"></i> VI.
+              ><i class="fa-solid fa-chevron-right dnfl-rules-icon"></i> VI.
               CHAMPIONSHIPS</span
             >
             <span class="dnfl-rules-badge">Section 6</span>
@@ -1880,7 +1851,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> A) Last Team
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> A) Last Team
                   Standing</span
                 >
               </div>
@@ -1891,7 +1862,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A1.
                       Last Team Standing Overview</span
                     >
                   </div>
@@ -1918,7 +1889,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A2.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A2.
                       LTS Elimination</span
                     >
                   </div>
@@ -1954,7 +1925,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> B)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> B)
                   Post-Season Seeding</span
                 >
               </div>
@@ -1965,7 +1936,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B1.
                       Seeding Overview</span
                     >
                   </div>
@@ -1988,7 +1959,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B2.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B2.
                       Seeds</span
                     >
                   </div>
@@ -2021,7 +1992,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> C)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> C)
                   Championship Playoffs</span
                 >
               </div>
@@ -2032,7 +2003,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> C1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> C1.
                       Championship Bracket Overview</span
                     >
                   </div>
@@ -2072,15 +2043,14 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> C2.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> C2.
                       Schedule</span
                     >
                   </div>
+
                   <div class="dnfl-rules-topic-content">
+                    <p class="dnfl-rules-schedule-header">Week 13 — First Round</p>
                     <ol class="subnum">
-                      <p class="dnfl-rules-schedule-header">
-                        Week 13 — First Round
-                      </p>
                       <li class="subtext">Game 1: Seed #16 vs Seed #1</li>
                       <li class="subtext">Game 2: Seed #15 vs Seed #2</li>
                       <li class="subtext">Game 3: Seed #14 vs Seed #3</li>
@@ -2089,9 +2059,10 @@
                       <li class="subtext">Game 6: Seed #11 vs Seed #6</li>
                       <li class="subtext">Game 7: Seed #10 vs Seed #7</li>
                       <li class="subtext">Game 8: Seed #9 vs Seed #8</li>
-                      <p class="dnfl-rules-schedule-header">
-                        Week 14 — Second Round
-                      </p>
+                    </ol>
+
+                    <p class="dnfl-rules-schedule-header">Week 14 — Second Round</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         Game 9: Winner of Game 8 vs Winner of Game 1
                       </li>
@@ -2104,22 +2075,25 @@
                       <li class="subtext">
                         Game 12: Winner of Game 5 vs Winner of Game 4
                       </li>
-                      <p class="dnfl-rules-schedule-header">
-                        Week 15 — Championship Semifinals
-                      </p>
+                    </ol>
+
+                    <p class="dnfl-rules-schedule-header">Week 15 — Championship Semifinals</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         Game 13: Winner of Game 12 vs Winner of Game 9
                       </li>
                       <li class="subtext">
                         Game 14: Winner of Game 11 vs Winner of Game 10
                       </li>
-                      <p class="dnfl-rules-schedule-header">
-                        Week 16 — DNFL Super Bowl
-                      </p>
+                    </ol>
+
+                    <p class="dnfl-rules-schedule-header">Week 16 — DNFL Super Bowl</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         Game 15: Winner of Game 14 vs Winner of Game 13
                       </li>
                     </ol>
+
                     <p class="subindent">
                       <em
                         >The winner of Game 15 is the DNFL Super Bowl
@@ -2143,7 +2117,7 @@
             onclick="DNFL.Rules.toggleElement(this)"
           >
             <span
-              ><i class="fas fa-chevron-right dnfl-rules-icon"></i> VII.
+              ><i class="fa-solid fa-chevron-right dnfl-rules-icon"></i> VII.
               KEEPERS</span
             >
             <span class="dnfl-rules-badge">Section 7</span>
@@ -2155,7 +2129,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> A)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> A)
                   Overview</span
                 >
               </div>
@@ -2166,22 +2140,20 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A1.
                       Keeper Overview</span
                     >
                   </div>
                   <div class="dnfl-rules-topic-content">
+                    <p>
+                      <em>Note: The Keeper Rules below are in effect for the
+                      start of the 2026-27 season. The number of keepers
+                      allowed in future seasons after the new Relegation
+                      Structure has been put in place may change. See Future
+                      Relegation Structure Keeper Rules Section VIII.F7 for
+                      more information.</em>
+                    </p>
                     <ol class="subnum">
-                      <p>
-                        <em
-                          >Note: The Keeper Rules below are in effect for the
-                          start of the 2026-27 season. The number of keepers
-                          allowed in future seasons after the new Relegation
-                          Structure has been put in place may change. See Future
-                          Relegation Structure Keeper Rules Section VIII.F7 for
-                          more information.</em
-                        >
-                      </p>
                       <li class="subtext">
                         Each team can keep up to four players from the previous
                         year
@@ -2214,7 +2186,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> B)
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> B)
                   Eligibility Requirements</span
                 >
               </div>
@@ -2225,7 +2197,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B1.
                       Players Eligible to Be Kept</span
                     >
                   </div>
@@ -2258,7 +2230,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> C) Cost to
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> C) Cost to
                   Keep Players</span
                 >
               </div>
@@ -2269,7 +2241,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> C1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> C1.
                       Forfeiting Draft Picks for Keepers</span
                     >
                   </div>
@@ -2355,7 +2327,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> D) Keeper
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> D) Keeper
                   Processing</span
                 >
               </div>
@@ -2366,7 +2338,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> D1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> D1.
                       Selecting and Processing Keepers</span
                     >
                   </div>
@@ -2422,7 +2394,7 @@
             onclick="DNFL.Rules.toggleElement(this)"
           >
             <span
-              ><i class="fas fa-chevron-right dnfl-rules-icon"></i> VIII.
+              ><i class="fa-solid fa-chevron-right dnfl-rules-icon"></i> VIII.
               OTHER</span
             >
             <span class="dnfl-rules-badge">Section 8</span>
@@ -2434,7 +2406,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> A) Team
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> A) Team
                   Ownership</span
                 >
               </div>
@@ -2445,7 +2417,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A1.
                       Joint Ownership</span
                     >
                   </div>
@@ -2468,7 +2440,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> A2.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> A2.
                       League Participation</span
                     >
                   </div>
@@ -2519,7 +2491,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> B) Transfer
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> B) Transfer
                   of Team Ownership</span
                 >
               </div>
@@ -2530,7 +2502,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B1.
                       New Ownership</span
                     >
                   </div>
@@ -2567,7 +2539,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> B2.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> B2.
                       Transfer of Team Assets</span
                     >
                   </div>
@@ -2608,7 +2580,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> C) Team
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> C) Team
                   Management</span
                 >
               </div>
@@ -2619,7 +2591,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> C1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> C1.
                       Management Expectations</span
                     >
                   </div>
@@ -2669,20 +2641,16 @@
                         that owner's team (until the owner begins active
                         management again) to make waiver and lineup decisions
                         <p>
-                          <em
-                            >This will be done to limit the impact of scheduling
-                            luck on regular season records.</em
-                          >
+                          <em>This will be done to limit the impact of scheduling
+                          luck on regular season records.</em>
                         </p>
                         <p>
-                          <em
-                            >For example: it would be a terrible outcome if one
-                            team made the playoffs only because they got an
-                            easy/undeserved win against an absent-owner late in
-                            the season while the team that just missed the
-                            playoffs had earlier in the season lost to the
-                            absent-owner before that owner went absent</em
-                          >
+                          <em>For example: it would be a terrible outcome if one
+                          team made the playoffs only because they got an
+                          easy/undeserved win against an absent-owner late in
+                          the season while the team that just missed the
+                          playoffs had earlier in the season lost to the
+                          absent-owner before that owner went absent</em>
                         </p>
                       </li>
                       <li class="subtext">
@@ -2701,7 +2669,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> D) Team
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> D) Team
                   Expulsion</span
                 >
               </div>
@@ -2712,7 +2680,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> D1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> D1.
                       Expulsion from DNFL League</span
                     >
                   </div>
@@ -2726,12 +2694,10 @@
                         An owner can be expelled by a league majority vote of
                         the other owners (19 or more owners)
                         <p>
-                          <em
-                            >Note: this would only occur in extreme cases where
-                            owners truly piss off the majority of DNFL owners,
-                            but we all love each other, so this should never
-                            happen</em
-                          >
+                          <em>Note: this would only occur in extreme cases where
+                          owners truly piss off the majority of DNFL owners,
+                          but we all love each other, so this should never
+                          happen</em>
                         </p>
                       </li>
                     </ol>
@@ -2745,7 +2711,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> E) Voting
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> E) Voting
                   and Rule Changes</span
                 >
               </div>
@@ -2756,7 +2722,7 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> E1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> E1.
                       Issue Resolution &amp; Rule Changes</span
                     >
                   </div>
@@ -2796,7 +2762,7 @@
                 onclick="DNFL.Rules.toggleElement(this)"
               >
                 <span
-                  ><i class="fas fa-caret-right dnfl-sub-icon"></i> F) Future
+                  ><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> F) Future
                   Relegation Structure</span
                 >
               </div>
@@ -2807,13 +2773,13 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> F1.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> F1.
                       League Structure with Relegation</span
                     >
                   </div>
                   <div class="dnfl-rules-topic-content">
+                    <p class="dnfl-rules-schedule-header">Overview</p>
                     <ol class="subnum">
-                      <p class="dnfl-rules-schedule-header">Overview</p>
                       <li class="subtext">
                         The DNFL will convert to a new Relegation Structure for
                         the 2027-28 DNFL Season.
@@ -2832,9 +2798,9 @@
                         contend for the right for promotion to the Premier
                         League.
                       </li>
-                      <p class="dnfl-rules-schedule-header">
-                        Premier League Structure
-                      </p>
+                    </ol>
+                    <p class="dnfl-rules-schedule-header">Premier League Structure</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         The Premier League will comprise the top 24 teams from
                         the DNFL
@@ -2843,9 +2809,9 @@
                         The Premier League will have 2 Conferences: Each
                         Conferences has 2 Divisions; Each Division has 6 teams
                       </li>
-                      <p class="dnfl-rules-schedule-header">
-                        Bedeviled League Structure
-                      </p>
+                    </ol>
+                      <p class="dnfl-rules-schedule-header">Bedeviled League Structure</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         The Bedeviled League will comprise the bottom 12
                         (relegated) teams from the DNFL
@@ -2863,13 +2829,13 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> F2.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> F2.
                       Initial Team Assignment</span
                     >
                   </div>
                   <div class="dnfl-rules-topic-content">
+                    <p class="dnfl-rules-schedule-header">Overview</p>
                     <ol class="subnum">
-                      <p class="dnfl-rules-schedule-header">Overview</p>
                       <li class="subtext">
                         After the 2026-27 season, 12 teams from the DNFL will be
                         relegated to the newly formed Bedeviled League
@@ -2878,9 +2844,9 @@
                         The remaining 24 teams will be placed in the newly
                         formed Premier League
                       </li>
-                      <p class="dnfl-rules-schedule-header">
-                        Premier League Team Assignment
-                      </p>
+                    </ol>
+                    <p class="dnfl-rules-schedule-header">Premier League Team Assignment</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         The top 4 teams from each Division based on final
                         regular season standings (24 teams in total) will be
@@ -2897,9 +2863,9 @@
                         teams are honored and may adjust team Conference
                         assignment accordingly.
                       </li>
-                      <p class="dnfl-rules-schedule-header">
-                        Bedeviled League Team Assignment
-                      </p>
+                    </ol>
+                    <p class="dnfl-rules-schedule-header">Bedeviled League Team Assignment</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         The bottom 2 teams from each Division based on final
                         regular season standings (12 teams in total) will be
@@ -2918,13 +2884,13 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> F3.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> F3.
                       Annual Relegation &amp; Promotion</span
                     >
                   </div>
                   <div class="dnfl-rules-topic-content">
+                    <p class="dnfl-rules-schedule-header">Overview</p>
                     <ol class="subnum">
-                      <p class="dnfl-rules-schedule-header">Overview</p>
                       <li class="subtext">
                         Each year 4 teams will be relegated from the Premier
                         League to the Bedeviled League
@@ -2933,17 +2899,17 @@
                         Each year 4 teams will be promoted from the Bedeviled
                         League to the Premier League
                       </li>
-                      <p class="dnfl-rules-schedule-header">
-                        Premier League Relegation
-                      </p>
+                    </ol>
+                    <p class="dnfl-rules-schedule-header">Premier League Relegation</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         The last place team from each Premier League Division
                         based on final regular season standings (4 teams in
                         total) will be relegated to the Bedeviled League
                       </li>
-                      <p class="dnfl-rules-schedule-header">
-                        Bedeviled League Promotion
-                      </p>
+                    </ol>
+                    <p class="dnfl-rules-schedule-header">Bedeviled League Promotion</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         The top 4 teams in the Bedeviled League based on final
                         regular season standings will be promoted to the Premier
@@ -2963,13 +2929,13 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> F4.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> F4.
                       Accounting &amp; Payouts</span
                     >
                   </div>
                   <div class="dnfl-rules-topic-content">
+                    <p class="dnfl-rules-schedule-header">Overview</p>
                     <ol class="subnum">
-                      <p class="dnfl-rules-schedule-header">Overview</p>
                       <li class="subtext">
                         Accounting for the Premier League and Bedeviled League
                         will be kept separate
@@ -2978,9 +2944,9 @@
                         Each league will have its own entry fee and will have
                         separate payout structures
                       </li>
-                      <p class="dnfl-rules-schedule-header">
-                        Premier League Accounting
-                      </p>
+                    </ol>
+                    <p class="dnfl-rules-schedule-header">Premier League Accounting</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         The entry fee for the Premier League teams will be $250
                         per team
@@ -2997,94 +2963,92 @@
                         Payouts for the Premier League are as follows:
                       </li>
                     </ol>
-                    <div class="dnfl-rules-table-wrapper mobile-wrap">
-                      <table class="dnfl-rules-table" id="rulestable">
+                    <div class="dnfl-table-wrapper">
+                      <table class="dnfl-table dnfl-rules-table">
                         <caption>
                           <span>Premier League Payouts</span>
                         </caption>
                         <thead>
                           <tr>
-                            <th style="text-align: left">Prize</th>
-                            <th style="width: 10%; text-align: right">
+                            <th>Prize</th>
+                            <th>
                               Payout $
                             </th>
-                            <th style="text-align: left; padding-left: 20px">
+                            <th>
                               Notes
                             </th>
-                            <th style="width: 10%; text-align: right">
+                            <th>
                               Total $
                             </th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">Superbowl Champion</td>
-                            <td style="text-align: right">3,000</td>
-                            <td style="text-align: left; padding-left: 20px">
+                          <tr class="dnfl-row-odd">
+                            <td>Superbowl Champion</td>
+                            <td>3,000</td>
+                            <td>
                               1 winner
                             </td>
-                            <td style="text-align: right">3,000</td>
+                            <td>3,000</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Superbowl Runner-Up
                             </td>
-                            <td style="text-align: right">500</td>
-                            <td style="text-align: left; padding-left: 20px">
+                            <td>500</td>
+                            <td>
                               1 winner
                             </td>
-                            <td style="text-align: right">500</td>
+                            <td>500</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">Last Team Standing</td>
-                            <td style="text-align: right">200</td>
-                            <td style="text-align: left; padding-left: 20px">
+                          <tr class="dnfl-row-odd">
+                            <td>Last Team Standing</td>
+                            <td>200</td>
+                            <td>
                               2 winners, one per Conference
                             </td>
-                            <td style="text-align: right">400</td>
+                            <td>400</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Conference Playoff Runner-Ups
                             </td>
-                            <td style="text-align: right">150</td>
-                            <td style="text-align: left; padding-left: 20px">
+                            <td>150</td>
+                            <td>
                               2 winners, one per Conference
                             </td>
-                            <td style="text-align: right">300</td>
+                            <td>300</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">Division Winners</td>
-                            <td style="text-align: right">100</td>
-                            <td style="text-align: left; padding-left: 20px">
+                          <tr class="dnfl-row-odd">
+                            <td>Division Winners</td>
+                            <td>100</td>
+                            <td>
                               4 winners, one per Division
                             </td>
-                            <td style="text-align: right">400</td>
+                            <td>400</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-even">
+                            <td>
                               Weekly High Scorers
                             </td>
-                            <td style="text-align: right">50</td>
-                            <td style="text-align: left; padding-left: 20px">
+                            <td>50</td>
+                            <td>
                               24 winners, one per Conference each week (Weeks
                               1-12)
                             </td>
-                            <td style="text-align: right">1,200</td>
+                            <td>1,200</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left"><b>Total</b></td>
+                          <tr class="dnfl-row-odd">
+                            <td><b>Total</b></td>
                             <td></td>
                             <td></td>
-                            <td style="text-align: right"><b>5,800</b></td>
+                            <td><b>5,800</b></td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
+                    <p class="dnfl-rules-schedule-header">Bedeviled League Accounting</p>
                     <ol class="subnum">
-                      <p class="dnfl-rules-schedule-header">
-                        Bedeviled League Accounting
-                      </p>
                       <li class="subtext">
                         The entry fee for the Bedeviled League teams will be
                         $100 per team
@@ -3101,76 +3065,74 @@
                         Payouts for the Bedeviled League are as follows:
                       </li>
                     </ol>
-                    <div class="dnfl-rules-table-wrapper mobile-wrap">
-                      <table class="dnfl-rules-table" id="rulestable">
+                    <div class="dnfl-table-wrapper">
+                      <table class="dnfl-table dnfl-rules-table">
                         <caption>
                           <span>Bedeviled League Payouts</span>
                         </caption>
                         <thead>
                           <tr>
-                            <th style="text-align: left">Prize</th>
-                            <th style="width: 10%; text-align: right">
+                            <th>Prize</th>
+                            <th>
                               Payout $
                             </th>
-                            <th style="text-align: left; padding-left: 20px">
+                            <th>
                               Notes
                             </th>
-                            <th style="width: 10%; text-align: right">
+                            <th>
                               Total $
                             </th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">First Place</td>
-                            <td style="text-align: right">600</td>
-                            <td style="text-align: left; padding-left: 20px">
+                          <tr class="dnfl-row-odd">
+                            <td>First Place</td>
+                            <td>600</td>
+                            <td>
                               1 winner
                             </td>
-                            <td style="text-align: right">600</td>
+                            <td>600</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">Second Place</td>
-                            <td style="text-align: right">250</td>
-                            <td style="text-align: left; padding-left: 20px">
+                          <tr class="dnfl-row-even">
+                            <td>Second Place</td>
+                            <td>250</td>
+                            <td>
                               1 winner
                             </td>
-                            <td style="text-align: right">250</td>
+                            <td>250</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left">
+                          <tr class="dnfl-row-odd">
+                            <td>
                               Third &amp; Fourth Places
                             </td>
-                            <td style="text-align: right">100</td>
-                            <td style="text-align: left; padding-left: 20px">
+                            <td>100</td>
+                            <td>
                               2 winners
                             </td>
-                            <td style="text-align: right">200</td>
+                            <td>200</td>
                           </tr>
-                          <tr class="eventablerow">
-                            <td style="text-align: left">Last Team Standing</td>
-                            <td style="text-align: right">100</td>
-                            <td style="text-align: left; padding-left: 20px">
+                          <tr class="dnfl-row-even">
+                            <td>Last Team Standing</td>
+                            <td>100</td>
+                            <td>
                               1 winner
                             </td>
-                            <td style="text-align: right">100</td>
+                            <td>100</td>
                           </tr>
-                          <tr class="oddtablerow">
-                            <td style="text-align: left"><b>Total</b></td>
+                          <tr class="dnfl-row-odd">
+                            <td><b>Total</b></td>
                             <td></td>
                             <td></td>
-                            <td style="text-align: right"><b>1,150</b></td>
+                            <td><b>1,150</b></td>
                           </tr>
                         </tbody>
                       </table>
                     </div>
                     <p>
-                      <em
-                        >Note: If the administrative fees are less than $50, any
-                        additional $ will be added to the total prize winnings
-                        of the First Place team. If fees are more than $50 then
-                        the First Place prize is reduced slightly.</em
-                      >
+                      <em>Note: If the administrative fees are less than $50, any
+                      additional $ will be added to the total prize winnings
+                      of the First Place team. If fees are more than $50 then
+                      the First Place prize is reduced slightly.</em>
                     </p>
                   </div>
                 </div>
@@ -3180,29 +3142,29 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> F5.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> F5.
                       Draft</span
                     >
                   </div>
                   <div class="dnfl-rules-topic-content">
+                    <p class="dnfl-rules-schedule-header">Overview</p>
                     <ol class="subnum">
-                      <p class="dnfl-rules-schedule-header">Overview</p>
                       <li class="subtext">
                         The draft rules will generally follow the draft rules as
                         defined above in section III.F
                       </li>
                       <li class="subtext">Exceptions are noted below</li>
-                      <p class="dnfl-rules-schedule-header">
-                        Premier League Draft
-                      </p>
+                    </ol>
+                    <p class="dnfl-rules-schedule-header">Premier League Draft</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         The top two draft spots (Picks 1 and 2) in each
                         Conference will be awarded to the teams newly promoted
                         to the Premier League from the Bedeviled League
                       </li>
-                      <p class="dnfl-rules-schedule-header">
-                        Bedeviled League Draft
-                      </p>
+                    </ol>                    
+                    <p class="dnfl-rules-schedule-header">Bedeviled League Draft</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         The draft order for the Bedeviled League will be set
                         randomly by the website
@@ -3216,21 +3178,21 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> F6.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> F6.
                       Trades</span
                     >
                   </div>
                   <div class="dnfl-rules-topic-content">
+                    <p class="dnfl-rules-schedule-header">Overview</p>
                     <ol class="subnum">
-                      <p class="dnfl-rules-schedule-header">Overview</p>
                       <li class="subtext">
                         The trade rules will generally follow the trade rules as
                         defined above in section V.B
                       </li>
                       <li class="subtext">Exceptions are noted below</li>
-                      <p class="dnfl-rules-schedule-header">
-                        Premier League Trades
-                      </p>
+                    </ol>
+                    <p class="dnfl-rules-schedule-header">Premier League Trades</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         Trades of Future Draft Picks are allowed in the Premier
                         League
@@ -3240,23 +3202,19 @@
                         previous season, even if traded to / from a relegated
                         team, will be honored
                         <p>
-                          <em
-                            >For example: Team A traded a 3rd round pick to Team
-                            B, and Team B is then relegated, Team A still
-                            forfeits its 3rd round pick.</em
-                          >
+                          <em>For example: Team A traded a 3rd round pick to Team
+                          B, and Team B is then relegated, Team A still
+                          forfeits its 3rd round pick.</em>
                         </p>
                         <p>
-                          <em
-                            >Note: If the trade also involves a player that Team
-                            A wants to keep the following season, there are
-                            additional penalties - see keeper rules below.</em
-                          >
+                          <em>Note: If the trade also involves a player that Team
+                          A wants to keep the following season, there are
+                          additional penalties - see keeper rules below.</em>
                         </p>
                       </li>
-                      <p class="dnfl-rules-schedule-header">
-                        Bedeviled League Trades
-                      </p>
+                    </ol>
+                    <p class="dnfl-rules-schedule-header">Bedeviled League Trades</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         Trades of Future Draft Picks will not be allowed in the
                         Bedeviled League
@@ -3276,32 +3234,30 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> F7.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> F7.
                       Keepers</span
                     >
                   </div>
                   <div class="dnfl-rules-topic-content">
+                    <p class="dnfl-rules-schedule-header">Overview</p>
                     <ol class="subnum">
-                      <p class="dnfl-rules-schedule-header">Overview</p>
                       <li class="subtext">
                         The keeper rules will generally follow the keeper rules
                         as defined above in section VII
                       </li>
                       <li class="subtext">Exceptions are noted below</li>
-                      <p class="dnfl-rules-schedule-header">
-                        Premier League Keepers
-                      </p>
+                    </ol>
+                    <p class="dnfl-rules-schedule-header">Premier League Keepers</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         Each team can keep up to 2 players from the previous
                         year (this is reduced from the 4 keepers allowed in
                         previous seasons)
                         <p>
-                          <em
-                            >The intent of this rule change is to maintain the
-                            spirit of the traditional keeper rules while also
-                            ensuring that teams promoted to the Premier League
-                            are not at a significant disadvantage.</em
-                          >
+                          <em>The intent of this rule change is to maintain the
+                          spirit of the traditional keeper rules while also
+                          ensuring that teams promoted to the Premier League
+                          are not at a significant disadvantage.</em>
                         </p>
                       </li>
                       <li class="subtext">
@@ -3313,37 +3269,31 @@
                         earlier than the pick they originally traded for the
                         player.
                         <p>
-                          <em
-                            >For example: Team A traded a 3rd round pick and
-                            "Player Avg. Joe" to Team B for "TOP Player" and a
-                            16th round pick. Let's assume "TOP Player" was
-                            drafted that year with the 6th round pick by Team B.
-                            Team B is then relegated. Team A will need to
-                            forfeit their 4th round pick per standard keeper
-                            rules to keep "TOP Player", but - IN ADDITION - will
-                            forfeit their 1st round pick instead of their 3rd
-                            round pick that was traded.</em
-                          >
+                          <em>For example: Team A traded a 3rd round pick and
+                          "Player Avg. Joe" to Team B for "TOP Player" and a
+                          16th round pick. Let's assume "TOP Player" was
+                          drafted that year with the 6th round pick by Team B.
+                          Team B is then relegated. Team A will need to
+                          forfeit their 4th round pick per standard keeper
+                          rules to keep "TOP Player", but - IN ADDITION - will
+                          forfeit their 1st round pick instead of their 3rd
+                          round pick that was traded.</em>
                         </p>
                         <p>
-                          <em
-                            >Note: Team B will surrender the right to keep any
-                            players and will have their draft picks reset due to
-                            relegation.</em
-                          >
+                          <em>Note: Team B will surrender the right to keep any
+                          players and will have their draft picks reset due to
+                          relegation.</em>
                         </p>
                         <p>
-                          <em
-                            >The intent of this rule is to deter predatory
-                            trades between top performing teams and poor
-                            performing teams that are at risk to be
-                            relegated.</em
-                          >
+                          <em>The intent of this rule is to deter predatory
+                          trades between top performing teams and poor
+                          performing teams that are at risk to be
+                          relegated.</em>
                         </p>
                       </li>
-                      <p class="dnfl-rules-schedule-header">
-                        Bedeviled League Keepers
-                      </p>
+                    </ol>
+                    <p class="dnfl-rules-schedule-header">Bedeviled League Keepers</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         Keepers will not be allowed in the Bedeviled League
                       </li>
@@ -3360,20 +3310,20 @@
                     onclick="DNFL.Rules.toggleElement(this)"
                   >
                     <span
-                      ><i class="fas fa-angle-right dnfl-topic-icon"></i> F8.
+                      ><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> F8.
                       Playoffs</span
                     >
                   </div>
                   <div class="dnfl-rules-topic-content">
+                    <p class="dnfl-rules-schedule-header">Overview</p>
                     <ol class="subnum">
-                      <p class="dnfl-rules-schedule-header">Overview</p>
                       <li class="subtext">
                         The Premier League and Bedeviled League will have
                         separate, distinct playoffs
                       </li>
-                      <p class="dnfl-rules-schedule-header">
-                        Premier League Playoffs
-                      </p>
+                    </ol>
+                    <p class="dnfl-rules-schedule-header">Premier League Playoffs</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         Each Conference in the Premier League will have a
                         Champions Bracket in Weeks 13-15
@@ -3390,9 +3340,9 @@
                         The top 2 seeds from each Conference will have a bye
                         week in the first round
                       </li>
-                      <p class="dnfl-rules-schedule-header">
-                        Bedeviled League Playoffs
-                      </p>
+                    </ol>
+                    <p class="dnfl-rules-schedule-header">Bedeviled League Playoffs</p>
+                    <ol class="subnum">
                       <li class="subtext">
                         The Bedeviled League will have a single 4 team Bedeviled
                         Playoff in Weeks 13-14
@@ -3416,6 +3366,4 @@
       </div>
       <!-- End of dnfl-rules-wrapper -->
     </div>
-    <!-- End of dnfl-module-container -->
-  </div>
 </div>

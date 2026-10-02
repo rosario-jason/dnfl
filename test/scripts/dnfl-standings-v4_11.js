@@ -1,12 +1,7 @@
 /* ==========================================================================
-   DNFL Dynamic Standings & Seeding Engine v4.10 (Architecture Aligned)
-   Duke Networking Fantasy League (DNFL)
-   Fully aligned with dnfl-global-TEST.css & _test_v4_47.scss design tokens.
-   Supports dynamic API metadata fetch via DNFL.Client, standings_rules.json,
-   auto logged-in owner highlight, resilient data-index zebra striping,
-   circular neutral seed badges (.dnfl-seed-badge), green/red PF/PA badges,
-   class-based division toggling (.dnfl-is-hidden), and dynamic legend key.
+   DNFL Standings Engine v4.11
    ========================================================================== */
+
 (function() {
     'use strict';
 
@@ -192,7 +187,14 @@
             cachedDivisions = toArray(leagueResponse.league?.divisions?.division);
 
             cachedLastRegWeek = parseInt(leagueResponse.league?.lastRegularSeasonWeek || 14, 10);
-            cachedCurrentWeek = parseInt(leagueResponse.league?.currentWk, 10) || 1;
+
+            const mflReportedWk = parseInt(leagueResponse.league?.currentWk || leagueResponse.league?.currentWeek || 0, 10);
+            const maxGamesPlayed = cachedStandingsFranchises.reduce((maxG, s) => {
+                const games = parseInt(s.h2hw || s.w || 0, 10) + parseInt(s.h2hl || s.l || 0, 10) + parseInt(s.h2ht || s.t || 0, 10);
+                return Math.max(maxG, games);
+            }, 0);
+
+            cachedCurrentWeek = Math.max(mflReportedWk, maxGamesPlayed) || 1;
 
             weeklyPaMap = {};
             const needsPaFallback = cachedStandingsFranchises.some(s => {

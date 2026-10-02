@@ -1,54 +1,36 @@
-<!-- DNFL Standings v3.36 -->
+<!-- DNFL STANDINGS MODULE EMBED v4.11 -->
+<div id="dnfl-standings-container" class="dnfl-card">
+    <!-- Level 2 Card Header -->
+    <div class="dnfl-card-header">
+        <h3 id="dnfl-standings-title" class="dnfl-card-title">
+            <i class="fa-solid fa-list"></i> 
+        </h3>
+    </div>
 
-<div id="dnfl_standings" class="mobile-wrap">
-    <table class="homepagemodule report" cellspacing="1" align="center">
-        <caption><span>DNFL League Standings</span></caption>
-    </table>
-    <div class="toggle_tabs">
-        <br>
-
-        <div class="dnfl-module-container">
-            <!-- Controls Toolbar -->
-            <div class="dnfl-toolbar">
-                
-                <!-- Left Side: Conference Filter Dropdown -->
-                <div class="dnfl-filter-group">
-                    <label for="dnfl_standings_confFilter">Conference:</label>
-                    <select id="dnfl_standings_confFilter" class="dnfl-select" onchange="DNFL.Standings.updateView()"></select>
-                </div>
-
-                <!-- Right Side: Dynamic Legend Key & Disclaimer (Injected by JS Engine) -->
-                <div id="dnfl-standings-key" class="dnfl-actions-right">
-                    <!-- Content injected dynamically by DNFL.Standings.renderStandingsKey() -->
-                </div>
-
+    <!-- Level 2 Card Body -->
+    <div class="dnfl-card-body">
+        <!-- Level 3 Controls Toolbar -->
+        <div class="dnfl-toolbar">
+            <div class="dnfl-filter-group">
+                <label for="dnfl_standings_confFilter">Conference Filter</label>
+                <select id="dnfl_standings_confFilter" class="dnfl-select"></select>
             </div>
         </div>
 
-        <!-- Standings Data Table Container -->
-        <div class="dnfl-table-wrapper">
-            <table class="dnfl-table dnfl-standings-table">
-                <thead>
-                    <tr>
-                        <th>Seed</th>
-                        <th>Franchise</th>
-                        <th class="dnfl-hide-mobile">PF</th>
-                        <th class="dnfl-hide-mobile">PA</th>
-                        <th>Record</th>
-                        <th class="dnfl-hide-mobile">BBID $</th>
-                    </tr>
-                </thead>
+        <!-- Level 3 Dynamic Legend Key Container -->
+        <div id="dnfl-standings-key" class="dnfl-legend-panel"></div>
+
+        <!-- Level 3 Standings Data Table Container -->
+        <div id="dnfl_standingsTableWrapper" class="dnfl-table-wrapper">
+            <table id="dnfl_standingsTable" class="dnfl-table">
                 <tbody id="dnfl-standings-tbody">
                     <tr>
                         <td colspan="6" class="dnfl-status-loading" style="text-align: center; padding: 2.5rem; font-weight: 600;">
-                            Loading DNFL League Standings...
+                            <i class="fa-solid fa-spinner fa-spin"></i> Loading DNFL League Standings...
                         </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-
-
-
     </div>
 </div>
