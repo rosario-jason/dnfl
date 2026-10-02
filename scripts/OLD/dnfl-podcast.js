@@ -1,5 +1,9 @@
 /* ==========================================================================
-   DNFL Podcast Engine v4.11
+   DNFL Podcast Module Engine v3.36
+   Duke Networking Fantasy League (DNFL)
+   ==========================================================================
+   Streamlined, modern podcast player module. Strictly targets the new HPM spec 
+   with zero legacy fallbacks or redundant code.
    ========================================================================== */
 
 (function (window, document) {
@@ -10,17 +14,6 @@
 
     let podcastYear = '';
     let episodeList = [];
-
-    /**
-     * Middleware availability guard
-     */
-    function getApiClient() {
-        const client = (window.DNFL && window.DNFL.Client) || window.DNFLClient || (typeof DNFLClient !== 'undefined' ? DNFLClient : null);
-        if (!client || typeof client.fetchRawText !== 'function') {
-            throw new Error('[DNFL.Podcast] DNFL.Client API middleware is required but unavailable.');
-        }
-        return client;
-    }
 
     /**
      * Resolve media or transcript path to dnfl.live CDN URL
@@ -34,15 +27,14 @@
      * Initialize Podcast Module
      */
     async function init(yearOverride) {
-        let client;
-        try {
-            client = getApiClient();
-        } catch (e) {
-            console.error(e.message);
+        // Middleware availability guard
+        const client = (window.DNFL && window.DNFL.Client) || window.DNFLClient;
+        if (!client) {
+            console.error('[DNFL.Podcast] API Client middleware is unavailable.');
             return;
         }
 
-        podcastYear = yearOverride || (client.getContext && client.getContext().year) || new Date().getFullYear().toString();
+        podcastYear = yearOverride || client.getContext().year || new Date().getFullYear().toString();
 
         const selector = document.getElementById('dnfl_podcast_selector');
         if (!selector) return;
@@ -50,7 +42,7 @@
         const episodesUrl = `https://dnfl.live/dnfl_podcast/${podcastYear}/episodes.json`;
 
         try {
-            const rawJson = await client.fetchRawText(episodesUrl);
+            const rawJson = await DNFL.Client.fetchRawText(episodesUrl);
             const parsed = JSON.parse(rawJson);
             const rawEpisodes = Array.isArray(parsed) ? parsed : (parsed.episodes || []);
 
@@ -133,11 +125,8 @@
 
         try {
             transcriptEl.innerHTML = '<p class="dnfl-disclaimer-text">Loading transcript...</p>';
-            const client = getApiClient();
-            const rawMarkdown = await client.fetchRawText(transcriptUrl);
-            transcriptEl.innerHTML = window.marked 
-                ? marked.parse(rawMarkdown) 
-                : `<div class="dnfl-transcript-raw">${rawMarkdown}</div>`;
+            const rawMarkdown = await DNFL.Client.fetchRawText(transcriptUrl);
+            transcriptEl.innerHTML = window.marked ? marked.parse(rawMarkdown) : `<div style="white-space: pre-wrap;">${rawMarkdown}</div>`;
         } catch (err) {
             console.error('[DNFL.Podcast] Error loading transcript:', err);
             transcriptEl.innerHTML = '<p class="dnfl-disclaimer-text">Error loading transcript.</p>';
@@ -152,13 +141,9 @@
         const btn = document.getElementById('dnfl_transcriptToggleBtn');
         if (!wrapper) return;
 
-        const isHidden = wrapper.classList.toggle('dnfl-is-hidden');
-
-        if (btn) {
-            btn.innerHTML = isHidden 
-                ? `<i class="fa-solid fa-scroll"></i> Show Transcript`
-                : `<i class="fa-solid fa-scroll"></i> Hide Transcript`;
-        }
+        const isHidden = wrapper.style.display === 'none' || getComputedStyle(wrapper).display === 'none';
+        wrapper.style.display = isHidden ? 'block' : 'none';
+        if (btn) btn.textContent = isHidden ? 'Hide Transcript' : 'Show Transcript';
     }
 
     // Export Module API

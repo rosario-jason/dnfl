@@ -1,11 +1,10 @@
 /* ==========================================================================
-   DNFL API Client Middleware v4.11
+   DNFL API Client Middleware v3.36
    Duke Networking Fantasy League (DNFL)
    Provides centralized API fetching, multi-tier caching (RAM + LocalStorage),
    cross-tab synchronization, request deduplication, parameter normalization,
    CORS same-origin resolution, and HTML response guards for data feeds.
    ========================================================================== */
-
 (function (window, document) { 'use strict';
 
     // Global Namespace Setup

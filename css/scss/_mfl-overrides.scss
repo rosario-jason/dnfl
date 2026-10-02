@@ -1,14 +1,17 @@
 /* ==========================================================================
-   DNFL Native MFL UI Overrides & MFLScripts Decoupling (_mfl-overrides.scss)
-   Duke Networking Fantasy League (DNFL)
-   Source Base: dnfl-global-css.txt (MFL & MFLScripts Style Updates)
+   DNFL NATIVE MFL UI OVERRIDES & MFLSCRIPTS DECOUPLING
+   ==========================================================================
+   Module: _mfl-overrides.scss
+   Description: Encapsulates overrides for native MyFantasyLeague (MFL) UI elements:
+                sticky top menu bar (.myfantasyleague_menu), mobile container wrappers,
+                franchise icon square sizing (.franchiseicon: 4rem desktop / 2.25rem mobile),
+                and franchise logo centering (.franchiselogo).
    ========================================================================== */
 
-// 1. Native MFL Header & Main Menu Styling
 .myfantasyleague_menu {
   border-bottom: 0;
   border-top: 0;
-  background: var(--accent) !important;
+  background: var(--accent, #0577B1) !important; /* Duke Shale Blue */
   box-shadow: none;
   height: 2.5rem;
   position: sticky;
@@ -16,7 +19,6 @@
   z-index: 1000;
 }
 
-// 2. MFL Report Containers & Rounded Wrapper Overrides
 .mobile-wrap,
 .settings-mobile-wrap,
 #options_45 #container-wrap table.report,
@@ -24,18 +26,17 @@
 #body_live_scoring_summary #live_scoring_summary table.teamscoresummary table,
 #body_live_scoring_summary #live_scoring_summary table[width="90%"],
 #body_live_scoring_summary #live_scoring_summary span.reportnavigation + table {
-  border-radius: var(--dnfl-radius-lg) !important;
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
 }
 
-// 3. Franchise Icons & Logos
 .franchiseicon {
-  min-width: 4rem !important;
-  max-width: 4rem !important;
-  width: 4rem !important;
-  min-height: 4rem !important;
-  max-height: 4rem !important;
-  height: 4rem !important;
-  aspect-ratio: 1 / 1 !important;
+  min-width: 2.5rem !important;
+  max-width: 2.5rem !important;
+  width: 2.5rem !important;
+  min-height: 2.5rem !important;
+  max-height: 2.5rem !important;
+  height: 2.5rem !important;
+  aspect-ratio: 1/1 !important;
   object-fit: cover !important;
   border-radius: 25% !important;
   border: 0 !important;
@@ -50,7 +51,6 @@
   margin-right: auto;
 }
 
-// 4. MFL Module & Report Table Captions / Headers
 .homepagecolumn .homepagemodule caption,
 caption,
 #commissioner_setup table.two_column_layout th {
@@ -62,7 +62,6 @@ caption,
   text-transform: capitalize;
 }
 
-// 5. MFLScripts Decoupling & Framework Accent Overrides
 .dnfl {
-  --accent: #{$dnfl-primary}; // Primary Duke Shale Blue override
+  --accent: #0577B1;
 }

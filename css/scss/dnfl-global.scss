@@ -1,21 +1,25 @@
 /* ==========================================================================
-   DNFL Master Entry File
-   Duke Networking Fantasy League (DNFL) - Framework v3.25-TEST
-   Sub-Phase 1A Baseline Parity Build
+   DNFL Master SCSS Entry Manifest File (dnfl-global-Staging.scss)
+   Duke Networking Fantasy League (DNFL)
+   Fully Consolidated Architecture — All Sandbox SCSS Parsed into Partials
    ========================================================================== */
 
 // 1. Core Framework Foundation
 @import 'variables';
 @import 'base';
 @import 'mixins';
+@import 'utilities';
+@import 'badges';
 @import 'containers';
 @import 'tables';
 
 // 2. Feature Modules
 @import 'modules/standings';
-@import 'modules/podcast';
 @import 'modules/rankings';
+@import 'modules/podcast';
 @import 'modules/rules';
+@import 'modules/lts';
+@import 'modules/exporter';
 
-// 3. Native MFL UI Overrides (Held / Excluded for Sub-Phase 1A Parity)
-// @import 'mfl-overrides';
+// 3. Native MFL UI Overrides
+@import 'mfl-overrides';

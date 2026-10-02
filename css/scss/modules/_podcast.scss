@@ -1,74 +1,125 @@
 /* ==========================================================================
-   DNFL Podcast Module Styles (modules/_podcast.scss)
-   Duke Networking Fantasy League (DNFL)
-   Source Base: dnfl-global-css.txt
+   DNFL PODCAST MODULE - MEDIA PLAYER & TRANSCRIPT TYPOGRAPHY
+   ==========================================================================
+   Module: modules/_podcast.scss
+   Description: Encapsulates scoped styles for #dnfl-podcast-container: banner,
+                dark media player block (.dnfl-media-player-block), audio player,
+                custom WebKit transcript scrollbars, and restored Markdown transcript
+                child typography overrides (h1-h4, p, strong, em).
+                Fully aligned with dnfl-global-v4_58.css ground-truth.
    ========================================================================== */
 
-@import '../mixins';
-
-// 1. Podcast Banner & Header Graphic
-.dnfl-podcast-banner {
-  width: 100%;
-  height: auto;
-  border-radius: var(--dnfl-radius-md);
-  margin-bottom: 0.5rem;
-  border: 1px solid var(--dnfl-border-dark);
-}
-
-// 2. Audio Media Player Dark Shell
-.dnfl-media-player-block {
-  background-color: var(--dnfl-bg-dark);
-  padding: 1.25rem;
-  border-radius: var(--dnfl-radius-md);
-  margin-bottom: 2rem;
-  margin-top: 1rem;
-  border: 1px solid var(--dnfl-border-dark);
-}
-
-.dnfl-now-playing-label {
-  font-size: 0.875rem;
-  color: var(--dnfl-bg-card);
-  text-transform: uppercase;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  display: block;
-  margin-bottom: 0.5rem;
-}
-
-.dnfl-audio {
-  width: 100%;
-  margin-top: 0.5rem;
-}
-
-// 3. Scrollable Podcast Transcript Container & Markdown Elements
-.dnfl-transcript-wrapper {
-  width: 95%;
-  background-color: var(--dnfl-bg-card);
-  padding: 1.5rem;
-  border-radius: var(--dnfl-radius-md);
-  border: 1px solid var(--dnfl-border-dark);
-  max-height: 500px;
-  overflow-y: auto;
-  line-height: 1.6;
-  margin: 0.75rem auto 0 auto;
-  font-size: 0.85rem;
-  box-sizing: border-box;
-
-  @include custom-scrollbar(6px, var(--dnfl-bg-muted), var(--dnfl-border-medium));
-
-  h1,
-  h2 {
-    color: var(--dnfl-text-main);
-    margin-top: 0;
-    font-size: 1rem;
+#dnfl-podcast-container {
+  /* ------------------------------------------------------------------------
+     1. BANNER & MEDIA PLAYER BLOCK
+     ------------------------------------------------------------------------ */
+  .dnfl-podcast-banner {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: var(--dnfl-radius-md, 8px) !important;
+    margin-bottom: 0.5rem !important;
+    border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
   }
 
-  strong {
-    color: var(--dnfl-text-main);
+  .dnfl-media-player-block {
+    background-color: var(--dnfl-bg-dark, #262626) !important; /* Dark Charcoal */
+    padding: 1.25rem !important;
+    border-radius: var(--dnfl-radius-md, 8px) !important;
+    margin-bottom: 1.5rem !important;
+    margin-top: 0.5rem !important;
+    border: 1px solid var(--dnfl-border-dark, #444444) !important;
   }
 
-  em {
-    color: var(--dnfl-primary);
-    font-style: italic;
+  .dnfl-now-playing-label {
+    font-size: 1rem !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    display: block !important;
+    margin-bottom: 0.25rem !important;
+  }
+
+  .dnfl-podcast-date,
+  .dnfl-podcast-desc {
+    color: var(--dnfl-text-muted, #a3a3a3) !important;
+    font-size: 0.85rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+
+  .dnfl-audio {
+    width: 100% !important;
+    margin-top: 0.75rem !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     2. TRANSCRIPT CONTAINER & CUSTOM SCROLLBARS
+     ------------------------------------------------------------------------ */
+  .dnfl-transcript-wrapper {
+    width: 100% !important;
+    background-color: var(--dnfl-bg-card, #ffffff) !important;
+    padding: 1.25rem !important;
+    border-radius: var(--dnfl-radius-md, 8px) !important;
+    border: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    max-height: 450px !important;
+    overflow-y: auto !important;
+    line-height: 1.6 !important;
+    margin-top: 1rem !important;
+    font-size: 0.85rem !important;
+    box-sizing: border-box !important;
+
+    /* Custom WebKit Scrollbars */
+    &::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    &::-webkit-scrollbar-track {
+      background: var(--dnfl-bg-muted, #f8fafc);
+      border-radius: var(--dnfl-radius-sm, 4px);
+    }
+    &::-webkit-scrollbar-thumb {
+      background: var(--dnfl-border-medium, #cbd5e1);
+      border-radius: var(--dnfl-radius-sm, 4px);
+
+      &:hover {
+        background: var(--dnfl-gray-text, #64748b);
+      }
+    }
+
+    /* ------------------------------------------------------------------------
+       3. RESTORED TRANSCRIPT CHILD TYPOGRAPHY (GROUND-TRUTH MATCH v4_58.css)
+       ------------------------------------------------------------------------ */
+    h1, h2, h3, h4 {
+      color: var(--dnfl-text-main, #121212) !important;
+      margin-top: 0.5rem !important;
+      margin-bottom: 0.5rem !important;
+      font-size: 1rem !important;
+      text-align: left !important;
+      text-transform: none !important;
+      background: none !important;
+      font-weight: 700 !important;
+    }
+
+    p, li {
+      color: var(--dnfl-text-main, #121212) !important;
+      font-size: 0.85rem !important;
+      line-height: 1.6 !important;
+      margin-bottom: 0.5rem !important;
+    }
+
+    strong {
+      color: var(--dnfl-text-main, #121212) !important;
+      font-weight: 700 !important;
+    }
+
+    em {
+      color: var(--dnfl-primary, #0577B1) !important; /* Duke Shale Blue Emphasis */
+      font-style: italic !important;
+    }
+  }
+
+  .dnfl-transcript-raw {
+    white-space: pre-wrap !important;
+    font-family: inherit !important;
+    line-height: 1.6 !important;
   }
 }
