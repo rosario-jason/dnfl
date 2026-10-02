@@ -1,21 +1,28 @@
 /* ==========================================================================
-   DNFL STANDINGS MODULE - SCOPED COLUMN ALIGNMENTS & BADGES
+   DNFL STANDINGS MODULE - SCOPED COLUMN ALIGNMENTS & BADGES (Step 5 - v2)
    ==========================================================================
    Module: modules/_standings.scss
-   Description: Encapsulates scoped styles for #dnfl-standings-container: left-aligned
-                seed column (95px), circular neutral seed badge (.dnfl-seed-badge),
-                green/red PF/PA badges, solid blue W-L record pills, and consolidated
-                BBID dollar column alignment (.dnfl-col-bbid / .dnfl-standings-bbid).
+   Description: Encapsulates scoped styles for #dnfl-standings-container:
+                fluid table-layout, simplified single-class column scoping
+                (.dnfl-col-seed, .dnfl-col-pf, .dnfl-col-pa, .dnfl-col-record,
+                .dnfl-col-bbid), circular neutral seed badges, green/red PF/PA
+                badges, compact blue record pills, and optimized mobile 
+                responsive spacing.
    ========================================================================== */
 
 #dnfl-standings-container {
+  /* Enforce fluid layout for responsive cell expansion */
+  table.dnfl-table {
+    table-layout: auto !important;
+  }
+
   /* ------------------------------------------------------------------------
      1. SCOPED STANDINGS COLUMN ALIGNMENTS & WIDTHS
      ------------------------------------------------------------------------ */
   /* Seed Column */
   .dnfl-col-seed {
-    width: 95px !important;
-    min-width: 95px !important;
+    width: 90px !important;
+    min-width: 90px !important;
     text-align: left !important;
     padding-left: 10px !important;
     white-space: nowrap !important;
@@ -28,37 +35,22 @@
     text-align: center !important;
 
     .dnfl-badge {
-      min-width: 72px !important; /* Compact badge padding */
+      min-width: 72px !important; /* Compact badge padding for X,XXX.00 */
       padding: 2px 6px !important;
       font-size: 0.8rem !important;
     }
   }
 
-  /* Standings PF/PA Cell Text Direct Formatting */
-  .dnfl-standings-pf {
-    color: var(--dnfl-success-green, #10b981) !important;
-    font-weight: 700 !important;
-    font-size: 0.8rem !important;
-    text-align: center !important;
-  }
-
-  .dnfl-standings-pa {
-    color: var(--dnfl-alert-red, #ef4444) !important;
-    font-weight: 700 !important;
-    font-size: 0.8rem !important;
-    text-align: center !important;
-  }
-
-  /* Record Column (Solid Blue Pill Capsule) */
+  /* Record Column (Solid Blue Pill Capsule - Emphasized & Compact) */
   .dnfl-col-record {
-    width: 95px !important;
+    width: 80px !important;
     text-align: center !important;
 
-    .dnfl-pill,
-    .dnfl-pill-blue,
-    .dnfl-record-badge,
-    .dnfl-record-pill {
-      min-width: 80px !important;
+    .dnfl-pill {
+      min-width: 64px !important;
+      font-size: 0.95rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.02em !important;
       text-align: center !important;
       background-color: var(--dnfl-badge-blue, #3b82f6) !important;
       color: #ffffff !important;
@@ -66,8 +58,7 @@
   }
 
   /* Consolidated BBID Column (Header & Cell) */
-  .dnfl-col-bbid,
-  .dnfl-standings-bbid {
+  .dnfl-col-bbid {
     width: 85px !important;
     text-align: center !important;
     font-size: 0.8rem !important;
@@ -95,10 +86,10 @@
   }
 
   /* Standings Icon Utility Color Helpers */
-  .dnfl-icon-blue  { color: var(--dnfl-badge-blue, #3b82f6) !important; margin-left: 6px; }
-  .dnfl-icon-amber { color: var(--dnfl-badge-amber, #f59e0b) !important; margin-left: 6px; }
-  .dnfl-icon-red   { color: var(--dnfl-alert-red, #ef4444) !important; margin-left: 6px; }
-  .dnfl-icon-green { color: var(--dnfl-success-green, #10b981) !important; margin-left: 6px; }
+  .dnfl-icon-blue  { color: var(--dnfl-badge-blue, #3b82f6) !important; margin-left: 5px; }
+  .dnfl-icon-amber { color: var(--dnfl-badge-amber, #f59e0b) !important; margin-left: 5px; }
+  .dnfl-icon-red   { color: var(--dnfl-alert-red, #ef4444) !important; margin-left: 5px; }
+  .dnfl-icon-green { color: var(--dnfl-success-green, #10b981) !important; margin-left: 5px; }
 
   /* ------------------------------------------------------------------------
      3. DIVISION HEADER ROWS
@@ -148,21 +139,25 @@
     }
 
     .dnfl-col-seed {
-      width: 86px !important;
-      min-width: 86px !important;
-      padding: 6px 2px !important;
+      width: 72px !important;
+      min-width: 72px !important;
+      padding: 6px 2px 6px 8px !important; /* Balanced 8px left breathing margin */
       white-space: nowrap !important;
+
+      i[class*="dnfl-icon-"] {
+        margin-left: 3px !important; /* Tighter mobile icon spacing */
+      }
     }
 
     .dnfl-col-record {
-      width: 86px !important;
-      min-width: 86px !important;
+      width: 70px !important;
+      min-width: 70px !important;
       padding: 6px 2px !important;
     }
 
     .dnfl-col-franchise {
-      width: 154px !important;
-      max-width: 154px !important;
+      width: 168px !important;
+      max-width: 168px !important;
       min-width: 150px !important;
       padding: 6px 4px !important;
       overflow-wrap: break-word !important;
@@ -171,12 +166,12 @@
     }
 
     .franchiseicon {
-      width: 2.25rem !important;
-      height: 2.25rem !important;
-      min-width: 2.25rem !important;
-      max-width: 2.25rem !important;
-      min-height: 2.25rem !important;
-      max-height: 2.25rem !important;
+      width: 1.5rem !important;
+      height: 1.5rem !important;
+      min-width: 1.5rem !important;
+      max-width: 1.5rem !important;
+      min-height: 1.5rem !important;
+      max-height: 1.5rem !important;
       flex-shrink: 0 !important;
     }
   }

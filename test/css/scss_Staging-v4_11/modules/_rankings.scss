@@ -1,11 +1,11 @@
 /* ==========================================================================
-   DNFL POWER RANKINGS MODULE - SCOPED ALIGNMENTS & CONFERENCES
+   DNFL POWER RANKINGS MODULE - SCOPED ALIGNMENTS & CONFERENCES (Step 8)
    ==========================================================================
    Module: modules/_rankings.scss
-   Description: Encapsulates scoped styles for #dnfl-rankings-container: explicit
-                centered column alignments across headers and cells, conference
-                rank badges (.color-1..6 matching v4_58.css palette), fluid
-                table-layout (table-layout: auto !important), and nested commentary callout boxes.
+   Description: Encapsulates scoped styles for #dnfl-rankings-container: clean
+                single-class column alignments matching _standings.scss, conference
+                rank badges (.color-1..6), fluid table-layout, division header rows,
+                and nested commentary callout boxes.
    ========================================================================== */
 
 #dnfl-rankings-container {
@@ -15,19 +15,15 @@
   }
 
   /* ------------------------------------------------------------------------
-     1. EXPLICIT COLUMN ALIGNMENTS & WIDTHS (HEADERS & CELLS CENTERED)
+     1. EXPLICIT COLUMN ALIGNMENTS & WIDTHS (SIMPLIFIED SINGLE-CLASS SELECTORS)
      ------------------------------------------------------------------------ */
   /* Rank Column */
-  th.dnfl-col-rank,
-  td.dnfl-col-rank,
   .dnfl-col-rank {
     width: 56px !important;
     text-align: center !important;
   }
 
   /* Rank Change Column */
-  th.dnfl-col-change,
-  td.dnfl-col-change,
   .dnfl-col-change {
     width: 62px !important;
     text-align: center !important;
@@ -37,43 +33,26 @@
     }
   }
 
-  /* Power Index Grade Column */
-  th.dnfl-col-index,
-  td.dnfl-col-index,
+  /* Power Index Column & Pill Emphasis */
   .dnfl-col-index {
     width: 100px !important;
-    min-width: 100px !important;
     text-align: center !important;
-    font-weight: 600 !important;
 
-    .dnfl-pill,
-    .dnfl-pill-blue {
-      min-width: 58px !important;
-      background-color: var(--dnfl-badge-blue, #3b82f6) !important;
-      color: #ffffff !important;
+    .dnfl-pill {
+      min-width: 68px !important;
+      font-size: 0.95rem !important;
+      font-weight: 700 !important;
+      letter-spacing: 0.02em !important;
     }
   }
 
-  /* Comments Column Header & Cell */
-  th.dnfl-col-comment,
-  td.dnfl-col-comment,
-  .dnfl-col-comment {
-    width: 50px !important;
-    text-align: center !important;
-    white-space: nowrap !important;
-  }
-
   /* Projected W-L / Record Column in Rankings */
-  th.dnfl-col-record,
-  td.dnfl-col-record,
   .dnfl-col-record {
     width: 95px !important;
     text-align: center !important;
   }
 
   /* Points For Column in Rankings */
-  th.dnfl-col-pf,
-  td.dnfl-col-pf,
   .dnfl-col-pf {
     width: 100px !important;
     text-align: center !important;
@@ -107,21 +86,78 @@
       border: 1px solid var(--dnfl-chart-3-border, rgb(75, 192, 192)) !important;
     }
     &.color-4 {
-      background-color: var(--dnfl-chart-4, rgba(255, 205, 86, 0.85)) !important; /* Yellow/Gold */
+      background-color: var(--dnfl-chart-4, rgba(255, 205, 86, 0.85)) !important;
       border: 1px solid var(--dnfl-chart-4-border, rgb(255, 205, 86)) !important;
     }
     &.color-5 {
-      background-color: var(--dnfl-chart-5, rgba(153, 102, 255, 0.85)) !important;/* Lavender Purple */
+      background-color: var(--dnfl-chart-5, rgba(153, 102, 255, 0.85)) !important;
       border: 1px solid var(--dnfl-chart-5-border, rgb(153, 102, 255)) !important;
     }
     &.color-6 {
-      background-color: var(--dnfl-chart-6, rgba(255, 159, 64, 0.85)) !important; /* Amber Orange */
+      background-color: var(--dnfl-chart-6, rgba(255, 159, 64, 0.85)) !important;
       border: 1px solid var(--dnfl-chart-6-border, rgb(255, 159, 64)) !important;
     }
   }
 
+  /* Full-Row Click Target Affordance for Commentary Toggles */
+  tr.dnfl-has-comment {
+    cursor: pointer !important;
+
+    &:hover {
+      background-color: var(--dnfl-bg-hover, #e2e8f0) !important;
+    }
+  }
+
+  /* Franchise Click & Selection Reset */
+  .dnfl-franchise-cell {
+    user-select: none !important;
+  }
+
+  .dnfl-team-name {
+    color: var(--dnfl-text-main, #121212) !important;
+    text-decoration: none !important;
+  }
+
   /* ------------------------------------------------------------------------
-     3. NESTED COMMENTARY CALLOUT BOX
+     3. DIVISION HEADER ROWS & SUBHEADERS
+     ------------------------------------------------------------------------ */
+  .dnfl-division-header-cell {
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+    border-bottom: 2px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    padding: 10px 16px !important;
+  }
+
+  .dnfl-division-header-content {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+
+    h3 {
+      margin: 0 !important;
+      font-size: 1rem !important;
+      font-weight: 700 !important;
+      color: var(--dnfl-text-heading, #0f172a) !important;
+      text-transform: capitalize !important;
+      letter-spacing: 0.5px !important;
+    }
+  }
+
+  tr.dnfl-table-subheader {
+    background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+
+    th {
+      font-size: 0.75rem !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.5px !important;
+      color: var(--dnfl-text-subtle, #555555) !important;
+      padding: 8px 12px !important;
+      border-bottom: 1px solid var(--dnfl-border-medium, #cbd5e1) !important;
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     3b. NESTED COMMENTARY CALLOUT BOX
      ------------------------------------------------------------------------ */
   .dnfl-comment-row {
     background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
@@ -131,14 +167,20 @@
   }
 
   .dnfl-comment-cell {
-    padding: 10px 14px !important;
-    border-left: 3px solid var(--dnfl-primary, #0577B1) !important;
+    padding: 8px 16px 10px 24px !important;
+    border-left: none !important;
     text-align: left !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
   }
 
   .dnfl-comment-box {
+    position: relative !important;
+    overflow: hidden !important;
+    background-color: var(--dnfl-bg-card, #ffffff) !important;
+    border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    border-radius: var(--dnfl-radius-md, 8px) !important;
+    padding: 10px 14px 10px 18px !important;
     font-size: 0.85rem !important;
     color: var(--dnfl-text-main, #121212) !important;
     font-style: italic !important;
@@ -149,6 +191,18 @@
     max-width: 100% !important;
     width: 100% !important;
     box-sizing: border-box !important;
+    box-shadow: var(--dnfl-shadow-subtle, 0 1px 3px rgba(0, 0, 0, 0.05)) !important;
+
+    /* Accent vertical bar */
+    &::before {
+      content: '' !important;
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      bottom: 0 !important;
+      width: 3px !important;
+      background-color: var(--dnfl-primary, #0577B1) !important;
+    }
   }
 
   &.dnfl-preseason {
@@ -192,14 +246,6 @@
       line-height: 1.15 !important;
     }
 
-    .dnfl-col-comment {
-      width: 60px !important;
-      min-width: 60px !important;
-      max-width: 65px !important;
-      white-space: nowrap !important;
-      text-align: center !important;
-    }
-
     .dnfl-col-franchise {
       width: 154px !important;
       max-width: 154px !important;
@@ -211,12 +257,12 @@
     }
 
     .franchiseicon {
-      width: 2.25rem !important;
-      height: 2.25rem !important;
-      min-width: 2.25rem !important;
-      max-width: 2.25rem !important;
-      min-height: 2.25rem !important;
-      max-height: 2.25rem !important;
+      width: 1.5rem !important;
+      height: 1.5rem !important;
+      min-width: 1.5rem !important;
+      max-width: 1.5rem !important;
+      min-height: 1.5rem !important;
+      max-height: 1.5rem !important;
       flex-shrink: 0 !important;
     }
 
@@ -225,11 +271,12 @@
     }
 
     .dnfl-comment-cell {
-      padding: 10px 12px !important;
+      padding: 6px 10px 8px 14px !important;
       box-sizing: border-box !important;
     }
 
     .dnfl-comment-box {
+      padding: 8px 10px !important;
       font-size: 0.85rem !important;
       line-height: 1.4 !important;
       overflow-wrap: break-word !important;
