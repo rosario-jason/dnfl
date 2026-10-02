@@ -569,8 +569,8 @@
             <tr class="dnfl-table-subheader">
                 <th class="dnfl-col-seed">Seed</th>
                 <th class="dnfl-col-franchise">Franchise</th>
-                <th class="dnfl-col-pf dnfl-hide-mobile">Points For</th>
-                <th class="dnfl-col-pa dnfl-hide-mobile">Points Against</th>
+                <th class="dnfl-col-pf dnfl-hide-mobile">PF</th>
+                <th class="dnfl-col-pa dnfl-hide-mobile">PA</th>
                 <th class="dnfl-col-record">Record</th>
                 <th class="dnfl-col-bbid dnfl-hide-mobile">BBID $</th>
             </tr>
@@ -647,8 +647,8 @@
                     <tr class="dnfl-table-subheader dnfl-div-row-${div.id}">
                         <th class="dnfl-col-seed">Seed</th>
                         <th class="dnfl-col-franchise">Franchise</th>
-                        <th class="dnfl-col-pf dnfl-hide-mobile">Points For</th>
-                        <th class="dnfl-col-pa dnfl-hide-mobile">Points Against</th>
+                        <th class="dnfl-col-pf dnfl-hide-mobile">PF</th>
+                        <th class="dnfl-col-pa dnfl-hide-mobile">PA</th>
                         <th class="dnfl-col-record">Record</th>
                         <th class="dnfl-col-bbid dnfl-hide-mobile">BBID $</th>
                     </tr>
