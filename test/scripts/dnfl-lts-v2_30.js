@@ -571,13 +571,13 @@
             '<th class="dnfl-col-week dnfl-sticky-col">Week</th>';
 
         if (ltsOn) {
-            html += '<th class="dnfl-col-franchise">Eliminated Franchise</th>' +
-                '<th class="dnfl-col-score">Knockout Score</th>';
+            html += '<th class="dnfl-col-franchise">LTS Eliminated Team</th>' +
+                '<th class="dnfl-col-score">&nbsp;</th>';
         }
 
         if (hsOn) {
             html += '<th class="dnfl-col-franchise">Weekly High Scorer</th>' +
-                '<th class="dnfl-col-score">High Score</th>';
+                '<th class="dnfl-col-score">&nbsp;</th>';
         }
 
         html += '</tr></thead><tbody>';
