@@ -261,14 +261,20 @@
             }
             if (infoBanner) {
                 infoBanner.classList.remove('dnfl-is-hidden');
-                infoBanner.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> Weekly score summary will populate once Week 1 scores are finalized.';
+                infoBanner.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> Survival eliminations will activate once Week 1 scores are finalized.';
             }
 
             var ltsOnPre = rules.lts_isEnabled;
             var hsOnPre = rules.highScore_isEnabled;
             var cardTitleElemPre = document.getElementById('dnfl-lts-card-title');
             if (cardTitleElemPre) {
-                cardTitleElemPre.innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> DNFL - Pre-Season Mode';
+                if (ltsOnPre) {
+                    cardTitleElemPre.innerHTML = '<i class="fa-solid fa-skull"></i> ' + confName + ' Last Team Standing & Weekly Summary';
+                } else if (hsOnPre) {
+                    cardTitleElemPre.innerHTML = '<i class="fa-solid fa-star"></i> ' + confName + ' High Score Tracker & Weekly Summary';
+                } else {
+                    cardTitleElemPre.innerHTML = '<i class="fa-solid fa-list"></i> ' + confName + ' Weekly Summary';
+                }
             }
             return;
         }
@@ -288,9 +294,9 @@
         var cardTitleElem = document.getElementById('dnfl-lts-card-title');
         if (cardTitleElem) {
             if (ltsOn) {
-                cardTitleElem.innerHTML = '<i class="fa-solid fa-skull"></i> ' + confName + ' Last Team Standing';
+                cardTitleElem.innerHTML = '<i class="fa-solid fa-skull"></i> ' + confName + ' Last Team Standing & Weekly Summary';
             } else if (hsOn) {
-                cardTitleElem.innerHTML = '<i class="fa-solid fa-star"></i> ' + confName + ' Weekly High Scores';
+                cardTitleElem.innerHTML = '<i class="fa-solid fa-star"></i> ' + confName + ' High Score Tracker & Weekly Summary';
             } else {
                 cardTitleElem.innerHTML = '<i class="fa-solid fa-list"></i> ' + confName + ' Weekly Summary';
             }
@@ -546,7 +552,7 @@
 
         if (weeklySummaries.length === 0) {
             summarySection.classList.remove('dnfl-is-hidden');
-            container.innerHTML = '<div class="dnfl-status-loading"><i class="fa-solid fa-clock-rotate-left"></i> Last Team Standing will activate once Week 1 scores are finalized.</div>';
+            container.innerHTML = '<div class="dnfl-status-loading"><i class="fa-solid fa-clock-rotate-left"></i> Survival eliminations will activate once Week 1 scores are finalized.</div>';
             return;
         }
 
