@@ -1,12 +1,7 @@
 /* ==========================================================================
-   DNFL Power Rankings Dashboard Engine v4.26 (Architecture Aligned - Step 7)
-   Duke Networking Fantasy League (DNFL)
-   Fully aligned with dnfl-global-v3_36.css & _test_v4_46.scss design tokens.
-   Supports dynamic API metadata fetch via DNFL.Client, weeks.json loading,
-   MFL API standings & points for, Chart.js horizontal bar graphs with dynamic palette mapping,
-   and expandable commentary rows with accordion auto-close & global subheader toggle.
-   Zero Inline Handlers - Standard DNFL Framework Architecture.
+   DNFL Power Rankings Engine v4.11
    ========================================================================== */
+
 (function() {
     'use strict';
 
@@ -168,18 +163,39 @@
 
         try {
             if (apiClient && typeof apiClient.fetchRawText === 'function') {
-                const rawJson = await apiClient.fetchRawText(weeksUrl);
+                // Force bypassCache so newly added weeks load immediately
+                const rawJson = await apiClient.fetchRawText(weeksUrl, { bypassCache: true });
                 publishedWeeks = JSON.parse(rawJson);
             } else {
-                const resp = await fetch(weeksUrl);
+                const resp = await fetch(weeksUrl + '?v=' + Date.now());
+                if (!resp.ok) throw new Error(`HTTP ${resp.status} (${resp.statusText})`);
                 publishedWeeks = await resp.json();
             }
+
+            if (!Array.isArray(publishedWeeks) || publishedWeeks.length === 0) {
+                throw new Error("Invalid or empty weeks manifest format");
+            }
         } catch (err) {
-            console.warn("[DNFL Rankings] Could not load weeks.json, applying fallback weeks.", err);
-            publishedWeeks = [
-                { id: "00_pre-season", display: "Pre-Season" },
-                { id: "01", display: "Week 1" }
-            ];
+            console.error("[DNFL Rankings] Failed to load weeks.json:", err);
+
+            // Update Selector Dropdown to indicate error state
+            selector.innerHTML = `<option value="">⚠️ Error Loading Weeks</option>`;
+
+            // Render error state in table body using global framework .dnfl-status-error class
+            const tableBody = document.getElementById('dnfl_tableBody');
+            if (tableBody) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6">
+                            <div class="dnfl-status-error">
+                                <i class="fa-solid fa-circle-exclamation"></i> <strong>Failed to load weeks manifest (weeks.json)</strong>
+                                <div>${err.message}</div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+            return; // Halt initialization
         }
 
         selector.innerHTML = '';
