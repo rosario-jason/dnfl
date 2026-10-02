@@ -576,7 +576,7 @@
         }
 
         if (hsOn) {
-            html += '<th class="dnfl-col-franchise">Weekly High Scorer</th>' +
+            html += '<th class="dnfl-col-franchise">Weekly High Winner</th>' +
                 '<th class="dnfl-col-score">Score</th>';
         }
 
