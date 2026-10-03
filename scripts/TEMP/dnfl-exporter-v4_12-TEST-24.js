@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Commissioner Data Exporter Engine v4.12-TEST-22
+   DNFL Commissioner Data Exporter Engine v4.12-TEST-24
    ========================================================================== */
 
 (function() {
@@ -1142,7 +1142,7 @@
         const client = getApiClient();
         await getLeagueInfo();
         const playersMap = await getPlayersMap();
-        const weekNum = (week !== undefined && week !== null && week !== "") ? parseInt(week, 10) : 0;
+        const weekNum = (week !== undefined && week !== null && String(week).trim() !== "") ? parseInt(week, 10) : 0;
 
         const queryParams = { TRANS_TYPE: 'DEFAULT' };
         if (weekNum > 0) {
@@ -1153,6 +1153,21 @@
         const rawTransactions = toArray(transData?.transactions?.transaction);
         const rows = [];
 
+        function isPlayerId(token) {
+            if (!token) return false;
+            const clean = String(token).trim();
+            if (!clean) return false;
+            const unpadded = clean.replace(/^0+/, '');
+            const padded = unpadded.padStart(4, '0');
+            if (playersMap[clean] || playersMap[unpadded] || playersMap[padded]) {
+                return true;
+            }
+            if (/^\d+$/.test(clean) && clean.length >= 4 && parseInt(clean, 10) >= 100) {
+                return true;
+            }
+            return false;
+        }
+
         function formatPlayerById(pid) {
             const cleanPid = String(pid).trim();
             if (!cleanPid) return '';
@@ -1160,10 +1175,10 @@
             const padded = unpadded.padStart(4, '0');
             const pInfo = playersMap[cleanPid] || playersMap[unpadded] || playersMap[padded];
             if (pInfo && pInfo.name) {
-                const posStr = pInfo.position && pInfo.position !== 'N/A' ? ` (${pInfo.position}${pInfo.team && pInfo.team !== 'FA' ? ' - ' + pInfo.team : ''})` : '';
-                return `${pInfo.name}${posStr}`;
+                const posStr = pInfo.position && pInfo.position !== 'N/A' ? ' (' + pInfo.position + (pInfo.team && pInfo.team !== 'FA' ? ' - ' + pInfo.team : '') + ')' : '';
+                return pInfo.name + posStr;
             }
-            return `Player ${cleanPid}`;
+            return 'Player ' + cleanPid;
         }
 
         function formatTransactionType(rawType) {
@@ -1196,7 +1211,31 @@
             });
         }
 
-        rawTransactions.forEach((t, idx) => {
+        function getWeekFromTimestamp(ts, seasonYear) {
+            if (!ts) return 0;
+            const sec = parseInt(ts, 10);
+            if (isNaN(sec) || sec <= 0) return 0;
+
+            const dt = new Date(sec * 1000);
+            const yr = parseInt(seasonYear, 10) || dt.getFullYear();
+
+            const sept1 = new Date(yr, 8, 1);
+            const dayOfWeek = sept1.getDay();
+            const laborDayDate = 1 + ((8 - dayOfWeek) % 7);
+
+            const week1Start = new Date(yr, 8, laborDayDate + 2, 0, 0, 0);
+            const week1StartSec = Math.floor(week1Start.getTime() / 1000);
+
+            if (sec < week1StartSec) {
+                return 0;
+            }
+
+            const diffSec = sec - week1StartSec;
+            const calculatedWk = Math.floor(diffSec / 604800) + 1;
+            return calculatedWk > 0 ? calculatedWk : 0;
+        }
+
+        rawTransactions.forEach((t) => {
             let franchiseStr = '';
             if (t.franchise_name || t.franchisename) {
                 franchiseStr = t.franchise_name || t.franchisename;
@@ -1214,17 +1253,37 @@
                 detailStr = String(t.description || t.details).replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
             } else if (t.transaction) {
                 const rawDetails = String(t.transaction).trim();
-                if (rawDetails.includes('|') || /^\d[\d,\s|]*$/.test(rawDetails)) {
-                    const parts = rawDetails.split('|');
-                    const addedPids = parts[0] ? parts[0].split(',').map(s => s.trim()).filter(Boolean) : [];
-                    const droppedPids = parts[1] ? parts[1].split(',').map(s => s.trim()).filter(Boolean) : [];
+                if (rawDetails.includes('|') || /^\d[\d,\s|.]*$/.test(rawDetails)) {
+                    const parts = rawDetails.split('|').map(s => s.trim());
+                    const addedPids = [];
+                    const droppedPids = [];
+                    let bidVal = t.bid || t.amount || t.bbid || null;
+
+                    parts.forEach((part, pIdx) => {
+                        if (!part) return;
+                        const tokens = part.split(',').map(s => s.trim()).filter(Boolean);
+                        tokens.forEach(tok => {
+                            if (isPlayerId(tok)) {
+                                if (pIdx === 0 && typeStr !== 'Dropped') {
+                                    addedPids.push(tok);
+                                } else {
+                                    droppedPids.push(tok);
+                                }
+                            } else if (/^\d+(\.\d+)?$/.test(tok)) {
+                                bidVal = tok;
+                            }
+                        });
+                    });
 
                     const actionParts = [];
                     if (addedPids.length > 0) {
                         let addedText = 'Acquired ' + addedPids.map(formatPlayerById).join(', ');
-                        if (t.bid || t.amount || t.bbid) {
-                            const bidVal = parseFloat(t.bid || t.amount || t.bbid || 0).toFixed(2);
-                            addedText += ` for $${bidVal}`;
+                        if (bidVal !== null && bidVal !== undefined && String(bidVal).trim() !== '') {
+                            const numericBid = parseFloat(bidVal);
+                            const formattedBid = isNaN(numericBid) ? String(bidVal) : numericBid.toFixed(2);
+                            addedText += ' for $' + formattedBid;
+                        } else if (typeStr === 'Waiver') {
+                            addedText += ' for $0.00';
                         }
                         actionParts.push(addedText);
                     }
@@ -1240,26 +1299,42 @@
                 detailStr = 'N/A';
             }
 
-            let itemWeek = weekNum > 0 ? weekNum : (t.week ? parseInt(t.week, 10) : 0);
+            let itemWeek = 0;
+            if (weekNum > 0) {
+                itemWeek = weekNum;
+            } else if (t.week || t.w) {
+                itemWeek = parseInt(t.week || t.w, 10) || 0;
+            } else {
+                itemWeek = getWeekFromTimestamp(t.timestamp, targetYear);
+            }
+
+            const rawTs = parseInt(t.timestamp || 0, 10);
 
             rows.push({
-                "#": idx + 1,
-                "Week": itemWeek > 0 ? `Week ${itemWeek}` : 'Full Season',
+                "#": 0,
+                "Week": itemWeek > 0 ? 'Week ' + itemWeek : 'Pre-Season',
                 "Franchise": franchiseStr,
                 "Type": typeStr,
                 "Transaction": detailStr,
-                "Date": formatTimestamp(t.timestamp)
+                "Date": formatTimestamp(t.timestamp),
+                _rawTimestamp: rawTs
             });
         });
 
-        rows.reverse();
-        rows.forEach((r, idx) => r["#"] = idx + 1);
+        // Sort rows by timestamp descending (most recent first)
+        rows.sort((a, b) => b._rawTimestamp - a._rawTimestamp);
 
-        const reportTitleWeek = weekNum > 0 ? `Week ${weekNum}` : `Full Season`;
+        // Assign clean 1..N indices
+        rows.forEach((r, idx) => {
+            r["#"] = idx + 1;
+            delete r._rawTimestamp;
+        });
+
+        const reportTitleWeek = weekNum > 0 ? 'Week ' + weekNum : 'Full Season';
 
         return {
-            title: `DNFL League Transactions (${reportTitleWeek}, ${targetYear})`,
-            description: `Official league transaction log including waivers, trades, free agent add/drops, and roster moves for ${reportTitleWeek}.`,
+            title: 'DNFL League Transactions (' + reportTitleWeek + ', ' + targetYear + ')',
+            description: 'Official league transaction log including waivers, trades, free agent add/drops, and roster moves for ' + reportTitleWeek + '.',
             columns: ["#", "Week", "Franchise", "Type", "Transaction", "Date"],
             rows: rows
         };
