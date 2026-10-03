@@ -2268,14 +2268,18 @@
 
         currentReportType = reportSelect.value;
         currentReportFormat = formatSelect.value;
-        currentSelectedWeek = weekSelect ? parseInt(weekSelect.value || '1', 10) : 1;
+        const rawWk = weekSelect ? weekSelect.value : '0';
+        currentSelectedWeek = (rawWk !== undefined && rawWk !== null && rawWk !== '') ? parseInt(rawWk, 10) : 0;
+        if (isNaN(currentSelectedWeek)) currentSelectedWeek = 0;
 
         statusEl.className = 'dnfl-status-loading';
         statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Fetching MFL data via DNFL.Client...';
         if (actionsEl) actionsEl.classList.add('dnfl-is-hidden');
 
         try {
-            if (currentReportType === 'powerRankings') {
+            if (currentReportType === 'publishedPowerRankings') {
+                currentReportData = await generatePublishedPowerRankingsReport(currentSelectedWeek);
+            } else if (currentReportType === 'powerRankings') {
                 currentReportData = await generatePowerRankingsReport(currentSelectedWeek);
             } else if (currentReportType === 'rosters') {
                 currentReportData = await generateRostersReport(currentSelectedWeek);

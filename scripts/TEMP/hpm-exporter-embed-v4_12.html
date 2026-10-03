@@ -1,50 +1,63 @@
 <!-- DNFL Exporter Module Shell v4.12 -->
-<div id="dnfl-exporter-container" class="dnfl-exporter-wrapper">
-    <div class="dnfl-exporter-header">
-        <h2 class="dnfl-exporter-title">DNFL Data Exporter Module</h2>
-        <p class="dnfl-exporter-subtitle">Extract, preview, and download official Duke Networking Fantasy League data in CSV, JSON, or Markdown formats.</p>
+<div class="dnfl-card" id="dnfl-exporter-container">
+    <div class="dnfl-card-header">
+        <h3 id="dnfl-exporter-title" class="dnfl-card-title">
+            <i class="fa-solid fa-file-export"></i> DNFL Data Exporter
+        </h3>
     </div>
+    
+    <div class="dnfl-card-body">
+        <div class="dnfl-toolbar">
+            <div class="dnfl-filter-group">
+                <label for="dnfl-export-report-select">Report</label>
+                <select id="dnfl-export-report-select" class="dnfl-select">
+                    <option value="standings">1. League Standings</option>
+                    <option value="rosters">2. Franchise Rosters</option>
+                    <option value="matchups">3. Weekly Matchups</option>
+                    <option value="weeklyDetails">4. Weekly Lineups</option>
+                    <option value="transactions">5. League Transactions</option>
+                    <option value="publishedPowerRankings">6. Power Rankings</option>
+                    <option value="powerRankings">7. Power Rank Calc</option>
+                </select>
+            </div>
 
-    <div class="dnfl-exporter-toolbar">
-        <div class="dnfl-filter-group">
-            <label for="dnfl-export-report-select" class="dnfl-label">Select Report</label>
-            <select id="dnfl-export-report-select" class="dnfl-select">
-                <option value="standings">1. League Standings</option>
-                <option value="rosters">2. Franchise Rosters</option>
-                <option value="matchups">3. Weekly Matchups</option>
-                <option value="weeklyDetails">4. Weekly Lineups</option>
-                <option value="transactions">5. League Transactions</option>
-                <option value="publishedPowerRankings">6. Power Rankings</option>
-                <option value="powerRankings">7. Power Rankings Calc</option>
-            </select>
+            <div class="dnfl-filter-group" id="dnfl-export-week-group">
+                <label for="dnfl-export-week-select">Week</label>
+                <select id="dnfl-export-week-select" class="dnfl-select"></select>
+            </div>
+
+            <div class="dnfl-filter-group">
+                <label for="dnfl-export-format-select">Format</label>
+                <select id="dnfl-export-format-select" class="dnfl-select">
+                    <option value="csv">CSV (Spreadsheet)</option>
+                    <option value="json">JSON (Programmatic Data)</option>
+                    <option value="markdown">Markdown (AI Prompt)</option>
+                </select>
+            </div>
+
+            <div class="dnfl-buttons-right">
+                <button id="dnfl-export-generate-btn" class="dnfl-btn dnfl-btn-primary">
+                    <i class="fa-solid fa-bolt"></i> Generate Report
+                </button>
+            </div>
         </div>
 
-        <div class="dnfl-filter-group" id="dnfl-export-week-group">
-            <label for="dnfl-export-week-select" class="dnfl-label">Select Week</label>
-            <select id="dnfl-export-week-select" class="dnfl-select">
-                <!-- Dynamically populated by dnfl-exporter JS -->
-            </select>
+        <!-- Notification / Status Bar -->
+        <div id="dnfl-export-status" class="dnfl-status-loading">
+            Select report options above and click Generate.
         </div>
 
-        <div class="dnfl-filter-group">
-            <label for="dnfl-export-format-select" class="dnfl-label">Export Format</label>
-            <select id="dnfl-export-format-select" class="dnfl-select">
-                <option value="csv">CSV (Spreadsheet)</option>
-                <option value="json">JSON (API / Data)</option>
-                <option value="markdown">Markdown (AI / Docs)</option>
-            </select>
+        <!-- Action Toolbar -->
+        <div id="dnfl-export-actions" class="dnfl-action-toolbar dnfl-toolbar dnfl-is-hidden">
+            <button id="dnfl-export-copy-btn" class="dnfl-btn dnfl-btn-secondary">
+                <i class="fa-solid fa-copy"></i> Copy to Clipboard
+            </button>
+            <button id="dnfl-export-download-btn" class="dnfl-btn dnfl-btn-secondary">
+                <i class="fa-solid fa-download"></i> Download File
+            </button>
         </div>
 
-        <div class="dnfl-action-group">
-            <button id="dnfl-export-btn-preview" class="dnfl-btn dnfl-btn-primary">Generate Report</button>
-            <button id="dnfl-export-btn-copy" class="dnfl-btn dnfl-btn-secondary">Copy to Clipboard</button>
-            <button id="dnfl-export-btn-download" class="dnfl-btn dnfl-btn-success">Download File</button>
-        </div>
-    </div>
-
-    <div class="dnfl-exporter-preview-container">
-        <div id="dnfl-exporter-status" class="dnfl-status-message">Ready to generate report. Select options above.</div>
-        <div id="dnfl-exporter-preview-table-wrap" class="dnfl-preview-table-wrap"></div>
-        <pre id="dnfl-exporter-preview-text" class="dnfl-preview-text dnfl-is-hidden"></pre>
+        <!-- Data Preview Region -->
+        <div class="dnfl-table-wrapper" id="dnfl-export-preview-container"></div>
     </div>
 </div>
