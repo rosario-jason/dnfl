@@ -37,7 +37,7 @@
     "seedingModel": "tiered_div_finish_pf",
     "playoffCutoff": 16,
     "hasDivisionCrown": true,
-    "relegation": { "enabled": true, "type": "division", "count": 1 },
+    "relegation": { "enabled": true, "type": "division", "count": 2 },
     "promotion": { "enabled": false, "count": 0 }
   },
 
