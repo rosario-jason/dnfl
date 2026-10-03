@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Commissioner Data Exporter Engine v4.12-TEST-2
+   DNFL Commissioner Data Exporter Engine v4.12-TEST-10
    ========================================================================== */
 
 (function() {
@@ -10,7 +10,13 @@
 
     // Standings & Seeding Configuration Cache
     let STANDINGS_RULES = {};
-    let RANKINGS_OVERRIDES = {};
+    
+    function scale60To100(val, minVal, maxVal) {
+        if (maxVal <= minVal) return 80.0;
+        const scaled = 60.0 + (40.0 * (val - minVal) / (maxVal - minVal));
+        return Math.min(100.0, Math.max(60.0, scaled));
+    }
+
     let FANTASYCALC_MAP = null;
 
     // Global Context Resolver Variables
@@ -173,20 +179,7 @@
         return f ? (f.owner_name || f.username || 'N/A') : 'N/A';
     }
 
-    async function loadRankingsOverrides() {
-        if (Object.keys(RANKINGS_OVERRIDES).length > 0) return RANKINGS_OVERRIDES;
-        try {
-            const url = 'https://dnfl.live/dnfl_standings/rankings_overrides.json';
-            const client = getApiClient();
-            const rawJson = await client.fetchRawText(url).catch(() => null);
-            if (rawJson) {
-                RANKINGS_OVERRIDES = JSON.parse(rawJson);
-            }
-        } catch (e) {
-            console.warn('[DNFL Exporter] No rankings_overrides.json found or fetch failed. Proceeding with algorithm.', e);
-        }
-        return RANKINGS_OVERRIDES;
-    }
+    
 
     async function loadStandingsRules() {
         if (Object.keys(STANDINGS_RULES).length > 0) return STANDINGS_RULES;
@@ -838,15 +831,14 @@
         const client = getApiClient();
         await getLeagueInfo();
         await getPlayersMap();
-        await loadRankingsOverrides();
+        
         const fcMap = await fetchFantasyCalcMap();
 
         const weekNum = (targetWeek !== undefined && targetWeek !== null && targetWeek !== "") ? parseInt(targetWeek, 10) : 0;
         const totalRegWeeks = parseInt(cachedLeague?.lastRegularSeasonWeek || 12, 10);
 
         // Check for manual overrides for current year/week
-        const yrOverrides = RANKINGS_OVERRIDES[targetYear] && RANKINGS_OVERRIDES[targetYear][weekNum];
-
+        
         const leagueFranchises = toArray(cachedLeague?.franchises?.franchise);
         const divisions = toArray(cachedLeague?.divisions?.division);
         const conferences = toArray(cachedLeague?.conferences?.conference);
@@ -1023,14 +1015,26 @@
 
         const statList = Object.values(stats);
 
-        // Max Normalization Helper (0 to 100 Scale)
-        const maxRawRosterVal = Math.max(...statList.map(s => s.rawRosterVal), 0);
-        const maxPf = Math.max(...statList.map(s => s.pf), 0);
+        // Step 1: Compute Sub-Indices using True Min-Max 60-100 Scaling
+        const starterVals = statList.map(s => s.avgStarterVal);
+        const minStarterVal = Math.min(...starterVals);
+        const maxStarterVal = Math.max(...starterVals);
 
-        // Step 1: Compute Roster Value Index & Performance Sub-Indices
+        const benchVals = statList.map(s => s.avgBenchVal);
+        const minBenchVal = Math.min(...benchVals);
+        const maxBenchVal = Math.max(...benchVals);
+
+        const pfVals = statList.map(s => s.pf);
+        const minPf = Math.min(...pfVals);
+        const maxPf = Math.max(...pfVals);
+
         statList.forEach(s => {
-            // Roster Value Index (0-100)
-            s.rosterIndex = maxRawRosterVal > 0 ? (s.rawRosterVal / maxRawRosterVal) * 100.0 : 0.0;
+            // Starter & Bench Sub-Indices (60-100)
+            s.starterIndex = scale60To100(s.avgStarterVal, minStarterVal, maxStarterVal);
+            s.benchIndex = scale60To100(s.avgBenchVal, minBenchVal, maxBenchVal);
+
+            // Roster Value Index (70% Starters / 30% Bench)
+            s.rosterIndex = (s.starterIndex * 0.70) + (s.benchIndex * 0.30);
 
             // Performance Metrics
             const totalGames = s.wins + s.losses + s.ties;
@@ -1038,15 +1042,26 @@
 
             const totalAllPlay = s.allPlayWins + s.allPlayLosses + s.allPlayTies;
             s.allPlayPctVal = totalAllPlay > 0 ? (s.allPlayWins + 0.5 * s.allPlayTies) / totalAllPlay : 0.0;
+        });
 
-            // Max Normalized Performance Sub-Scores
-            s.pfScore = maxPf > 0 ? (s.pf / maxPf) * 100.0 : 0.0;
-            s.h2hScore = s.h2hPctVal * 100.0;
-            s.allPlayScore = s.allPlayPctVal * 100.0;
+        // Performance Sub-Indices across league (60-100)
+        const h2hVals = statList.map(s => s.h2hPctVal);
+        const minH2h = Math.min(...h2hVals);
+        const maxH2h = Math.max(...h2hVals);
+
+        const allPlayVals = statList.map(s => s.allPlayPctVal);
+        const minAllPlay = Math.min(...allPlayVals);
+        const maxAllPlay = Math.max(...allPlayVals);
+
+        statList.forEach(s => {
+            s.pfScore = scale60To100(s.pf, minPf, maxPf);
+            s.h2hScore = scale60To100(s.h2hPctVal, minH2h, maxH2h);
+            s.allPlayScore = scale60To100(s.allPlayPctVal, minAllPlay, maxAllPlay);
 
             // Composite Performance Index (40% PF, 20% H2H, 40% All-Play)
+            const totalGames = s.wins + s.losses + s.ties;
             if (weekNum === 0 || totalGames === 0) {
-                s.perfIndex = 0.0;
+                s.perfIndex = 60.0;
             } else {
                 s.perfIndex = (s.pfScore * 0.40) + (s.h2hScore * 0.20) + (s.allPlayScore * 0.40);
             }
@@ -1064,39 +1079,16 @@
                 const blended = (s.perfIndex * perfWeight) + (s.rosterIndex * rosterWeight);
                 s.calculatedIndex = parseFloat(blended.toFixed(1));
             }
+            s.finalIndex = s.calculatedIndex.toFixed(1);
+            s.comment = '';
         });
 
-        // Apply Manual Overrides if present in rankings_overrides.json
-        statList.forEach(s => {
-            if (yrOverrides && yrOverrides[s.fid]) {
-                const ovr = yrOverrides[s.fid];
-                if (ovr.powerIndex !== undefined) s.finalIndex = parseFloat(ovr.powerIndex).toFixed(1);
-                if (ovr.rank !== undefined) s.overrideRank = parseInt(ovr.rank, 10);
-                if (ovr.tier !== undefined) s.overrideTier = ovr.tier;
-                if (ovr.comment !== undefined) s.comment = ovr.comment;
-            } else {
-                s.finalIndex = s.calculatedIndex.toFixed(1);
-                s.comment = 'Automated FantasyCalc & Performance calculation.';
-            }
-        });
-
-        // Sort by rank override or power index
-        statList.sort((a, b) => {
-            if (a.overrideRank && b.overrideRank) return a.overrideRank - b.overrideRank;
-            return parseFloat(b.finalIndex) - parseFloat(a.finalIndex);
-        });
+        // Sort by Power Index descending
+        statList.sort((a, b) => parseFloat(b.finalIndex) - parseFloat(a.finalIndex));
 
         // Format Output Rows
         const rows = statList.map((s, idx) => {
-            const rank = s.overrideRank || (idx + 1);
-            let tier = s.overrideTier;
-            if (!tier) {
-                if (rank <= 6) tier = 'Tier 1: Championship Contenders';
-                else if (rank <= 18) tier = 'Tier 2: Playoff Lock';
-                else if (rank <= 28) tier = 'Tier 3: On the Bubble';
-                else tier = 'Tier 4: Rebuilding';
-            }
-
+            const rank = idx + 1;
             const allPlayStr = `${s.allPlayWins}-${s.allPlayLosses}${s.allPlayTies > 0 ? '-' + s.allPlayTies : ''}`;
             const h2hStr = `${s.wins}-${s.losses}${s.ties > 0 ? '-' + s.ties : ''}`;
 
@@ -1106,25 +1098,26 @@
                 "Team Name": s.name,
                 "Owner": s.owner,
                 "Conference": s.confName,
-                "Points For (PF)": s.pf.toFixed(2),
+                "Points For": s.pf.toFixed(2),
                 "H2H Record": h2hStr,
-                "H2H Win %": (s.h2hPctVal * 100).toFixed(1) + '%',
+                "H2H %": (s.h2hPctVal * 100).toFixed(1) + '%',
                 "All-Play Record": allPlayStr,
-                "All-Play Win %": (s.allPlayPctVal * 100).toFixed(1) + '%',
-                "Perf Index": s.perfIndex.toFixed(1),
-                "Avg Starter Val": s.avgStarterVal.toFixed(1),
-                "Avg Bench Val": s.avgBenchVal.toFixed(1),
-                "Roster Index": s.rosterIndex.toFixed(1),
+                "All-Play %": (s.allPlayPctVal * 100).toFixed(1) + '%',
+                "Performance Index": s.perfIndex.toFixed(1),
+                "Starter Value": s.avgStarterVal.toFixed(1),
+                "Starter Index": s.starterIndex.toFixed(1),
+                "Bench Value": s.avgBenchVal.toFixed(1),
+                "Bench Index": s.benchIndex.toFixed(1),
+                "Roster Value Index": s.rosterIndex.toFixed(1),
                 "Power Index": s.finalIndex,
-                "Tier": tier,
-                "Owner Roast / Commentary": s.comment || ''
+                "Rank Comments": s.comment || ''
             };
         });
 
         return {
             title: `DNFL Power Rankings Data (${weekNum === 0 ? "Pre-Season" : "Week " + weekNum}, ${targetYear})`,
             description: `FantasyCalc Trade Value (7 Starters / Top 7 Bench) + MFL Realized Performance (${(perfWeight * 100).toFixed(1)}% Perf / ${(rosterWeight * 100).toFixed(1)}% Roster Value at Week ${weekNum} of ${totalRegWeeks}).`,
-            columns: ["Rank", "Franchise ID", "Team Name", "Owner", "Conference", "Points For (PF)", "H2H Record", "H2H Win %", "All-Play Record", "All-Play Win %", "Perf Index", "Avg Starter Val", "Avg Bench Val", "Roster Index", "Power Index", "Tier", "Owner Roast / Commentary"],
+            columns: ["Rank", "Franchise ID", "Team Name", "Owner", "Conference", "Points For", "H2H Record", "H2H %", "All-Play Record", "All-Play %", "Performance Index", "Starter Value", "Starter Index", "Bench Value", "Bench Index", "Roster Value Index", "Power Index", "Rank Comments"],
             rows: rows
         };
     }
