@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Commissioner Data Exporter Engine v4.12-TEST-20
+   DNFL Commissioner Data Exporter Engine v4.12-TEST-22
    ========================================================================== */
 
 (function() {
@@ -1144,7 +1144,10 @@
         const playersMap = await getPlayersMap();
         const weekNum = (week !== undefined && week !== null && week !== "") ? parseInt(week, 10) : 0;
 
-        const queryParams = weekNum > 0 ? { W: weekNum } : { W: 'YTD' };
+        const queryParams = { TRANS_TYPE: 'DEFAULT' };
+        if (weekNum > 0) {
+            queryParams.W = weekNum;
+        }
         const transData = await client.fetchData('transactions', queryParams).catch(() => null);
 
         const rawTransactions = toArray(transData?.transactions?.transaction);
@@ -1451,14 +1454,7 @@
     }
 
     function updateControlVisibility() {
-        const reportSelect = document.getElementById('dnfl-export-report-select');
-        const weekGroup = document.getElementById('dnfl-export-week-group');
-        if (!reportSelect || !weekGroup) return;
-
-        const val = reportSelect.value;
-        const requiresWeek = (val === 'rosters' || val === 'matchups' || val === 'weeklyDetails' || val === 'powerRankings' || val === 'transactions');
-
-        weekGroup.classList.toggle('dnfl-is-hidden', !requiresWeek);
+        populateWeekDropdown();
     }
 
     let userHasSelectedWeek = false;
@@ -1477,7 +1473,10 @@
 
     function populateWeekDropdown() {
         const weekSelect = document.getElementById('dnfl-export-week-select');
+        const reportSelect = document.getElementById('dnfl-export-report-select');
         if (!weekSelect) return;
+
+        const reportType = reportSelect ? reportSelect.value : 'standings';
 
         let lastRegWk = 12;
         if (cachedLeague && cachedLeague.lastRegularSeasonWeek) {
@@ -1506,20 +1505,64 @@
 
         const prevVal = weekSelect.value;
         weekSelect.innerHTML = '';
-        for (let w = 0; w <= maxWeek; w++) {
+
+        if (reportType === 'standings') {
             const opt = document.createElement('option');
-            opt.value = w;
-            opt.innerText = w === 0 ? 'Pre-Season / All Weeks (Week 0)' : `Week ${w}`;
+            opt.value = '0';
+            opt.innerText = 'Current';
+            weekSelect.appendChild(opt);
+            weekSelect.value = '0';
+            return;
+        }
+
+        let startWk = 1;
+        if (reportType === 'rosters') {
+            const opt0 = document.createElement('option');
+            opt0.value = '0';
+            opt0.innerText = 'Current';
+            weekSelect.appendChild(opt0);
+            startWk = 1;
+        } else if (reportType === 'powerRankings') {
+            const opt0 = document.createElement('option');
+            opt0.value = '0';
+            opt0.innerText = 'Pre-Season';
+            weekSelect.appendChild(opt0);
+            startWk = 1;
+        } else if (reportType === 'transactions') {
+            const opt0 = document.createElement('option');
+            opt0.value = '0';
+            opt0.innerText = 'All Weeks';
+            weekSelect.appendChild(opt0);
+            startWk = 1;
+        }
+
+        for (let w = startWk; w <= maxWeek; w++) {
+            const opt = document.createElement('option');
+            opt.value = String(w);
+            opt.innerText = `Week ${w}`;
             weekSelect.appendChild(opt);
         }
 
-        // Auto-select detected current week unless user explicitly selected a different week
-        if (userHasSelectedWeek && prevVal && parseInt(prevVal, 10) <= maxWeek) {
-            weekSelect.value = prevVal;
-        } else if (detectedWk !== null && detectedWk <= maxWeek) {
-            weekSelect.value = String(detectedWk);
+        if (reportType === 'transactions') {
+            if (userHasSelectedWeek && prevVal && parseInt(prevVal, 10) <= maxWeek) {
+                weekSelect.value = prevVal;
+            } else {
+                weekSelect.value = '0';
+            }
+        } else if (reportType === 'rosters') {
+            if (userHasSelectedWeek && prevVal && parseInt(prevVal, 10) <= maxWeek) {
+                weekSelect.value = prevVal;
+            } else {
+                weekSelect.value = '0';
+            }
         } else {
-            weekSelect.value = String(maxWeek);
+            if (userHasSelectedWeek && prevVal && parseInt(prevVal, 10) <= maxWeek && parseInt(prevVal, 10) >= startWk) {
+                weekSelect.value = prevVal;
+            } else if (detectedWk !== null && detectedWk <= maxWeek && detectedWk >= startWk) {
+                weekSelect.value = String(detectedWk);
+            } else {
+                weekSelect.value = String(maxWeek);
+            }
         }
     }
 
