@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Commissioner Data Exporter Engine v4.12-TEST-25
+   DNFL Commissioner Data Exporter Engine v4.12-TEST-27
    ========================================================================== */
 
 (function() {
@@ -1211,30 +1211,6 @@
             });
         }
 
-        function getWeekFromTimestamp(ts, seasonYear) {
-            if (!ts) return 0;
-            const sec = parseInt(ts, 10);
-            if (isNaN(sec) || sec <= 0) return 0;
-
-            const dt = new Date(sec * 1000);
-            const yr = parseInt(seasonYear, 10) || dt.getFullYear();
-
-            const sept1 = new Date(yr, 8, 1);
-            const dayOfWeek = sept1.getDay();
-            const laborDayDate = 1 + ((8 - dayOfWeek) % 7);
-
-            const week1Start = new Date(yr, 8, laborDayDate + 2, 0, 0, 0);
-            const week1StartSec = Math.floor(week1Start.getTime() / 1000);
-
-            if (sec < week1StartSec) {
-                return 0;
-            }
-
-            const diffSec = sec - week1StartSec;
-            const calculatedWk = Math.floor(diffSec / 604800) + 1;
-            return calculatedWk > 0 ? calculatedWk : 0;
-        }
-
         rawTransactions.forEach((t) => {
             let franchiseStr = '';
             if (t.franchise_name || t.franchisename) {
@@ -1299,20 +1275,10 @@
                 detailStr = 'N/A';
             }
 
-            let itemWeek = 0;
-            if (weekNum > 0) {
-                itemWeek = weekNum;
-            } else if (t.week || t.w) {
-                itemWeek = parseInt(t.week || t.w, 10) || 0;
-            } else {
-                itemWeek = getWeekFromTimestamp(t.timestamp, targetYear);
-            }
-
             const rawTs = parseInt(t.timestamp || 0, 10);
 
             rows.push({
                 "#": 0,
-                "Week": itemWeek > 0 ? 'Week ' + itemWeek : 'Pre-Season',
                 "Franchise": franchiseStr,
                 "Type": typeStr,
                 "Transaction": detailStr,
@@ -1335,7 +1301,7 @@
         return {
             title: 'DNFL League Transactions (' + reportTitleWeek + ', ' + targetYear + ')',
             description: 'Official league transaction log including waivers, trades, free agent add/drops, and roster moves for ' + reportTitleWeek + '.',
-            columns: ["#", "Week", "Franchise", "Type", "Transaction", "Date"],
+            columns: ["#", "Franchise", "Type", "Transaction", "Date"],
             rows: rows
         };
     }
@@ -1568,11 +1534,7 @@
 
         if (parsedTargetYear >= currentYearNum) {
             if (detectedWk !== null) {
-                if (reportType === 'transactions') {
-                    maxWeek = Math.min(detectedWk + 1, lastRegWk);
-                } else {
-                    maxWeek = Math.min(detectedWk, lastRegWk);
-                }
+                maxWeek = Math.min(detectedWk, lastRegWk);
             } else {
                 maxWeek = 1;
             }
