@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Commissioner Data Exporter Engine v4.12-TEST-11
+   DNFL Commissioner Data Exporter Engine v4.12-TEST-25
    ========================================================================== */
 
 (function() {
@@ -178,8 +178,6 @@
         const f = cachedFranchises.find(item => normFranchiseId(item.id) === normFid);
         return f ? (f.owner_name || f.username || 'N/A') : 'N/A';
     }
-
-    
 
     async function loadStandingsRules() {
         if (Object.keys(STANDINGS_RULES).length > 0) return STANDINGS_RULES;
@@ -1137,9 +1135,215 @@
     }
 
     /* ==========================================================================
+       REPORT GENERATOR 6: LEAGUE TRANSACTIONS ENGINE v4.12
+       ========================================================================== */
+
+    async function generateTransactionsReport(week) {
+        const client = getApiClient();
+        await getLeagueInfo();
+        const playersMap = await getPlayersMap();
+        const weekNum = (week !== undefined && week !== null && String(week).trim() !== "") ? parseInt(week, 10) : 0;
+
+        const queryParams = { TRANS_TYPE: 'DEFAULT' };
+        if (weekNum > 0) {
+            queryParams.W = weekNum;
+        }
+        const transData = await client.fetchData('transactions', queryParams).catch(() => null);
+
+        const rawTransactions = toArray(transData?.transactions?.transaction);
+        const rows = [];
+
+        function isPlayerId(token) {
+            if (!token) return false;
+            const clean = String(token).trim();
+            if (!clean) return false;
+            const unpadded = clean.replace(/^0+/, '');
+            const padded = unpadded.padStart(4, '0');
+            if (playersMap[clean] || playersMap[unpadded] || playersMap[padded]) {
+                return true;
+            }
+            if (/^\d+$/.test(clean) && clean.length >= 4 && parseInt(clean, 10) >= 100) {
+                return true;
+            }
+            return false;
+        }
+
+        function formatPlayerById(pid) {
+            const cleanPid = String(pid).trim();
+            if (!cleanPid) return '';
+            const unpadded = cleanPid.replace(/^0+/, '');
+            const padded = unpadded.padStart(4, '0');
+            const pInfo = playersMap[cleanPid] || playersMap[unpadded] || playersMap[padded];
+            if (pInfo && pInfo.name) {
+                const posStr = pInfo.position && pInfo.position !== 'N/A' ? ' (' + pInfo.position + (pInfo.team && pInfo.team !== 'FA' ? ' - ' + pInfo.team : '') + ')' : '';
+                return pInfo.name + posStr;
+            }
+            return 'Player ' + cleanPid;
+        }
+
+        function formatTransactionType(rawType) {
+            if (!rawType) return 'Transaction';
+            const t = String(rawType).trim().toUpperCase();
+            if (t === 'FREE_AGENT' || t === 'ADD_DROP') return 'Add/Drop';
+            if (t === 'BBID_WAIVER' || t === 'WAIVER') return 'Waiver';
+            if (t === 'TRADE') return 'Trade';
+            if (t === 'DROPPED' || t === 'DROP') return 'Dropped';
+            if (t === 'IR') return 'IR';
+            if (t === 'TAXI') return 'Taxi';
+            if (t === 'COMMISH') return 'Commish';
+            return t.charAt(0) + t.slice(1).toLowerCase();
+        }
+
+        function formatTimestamp(ts) {
+            if (!ts) return 'N/A';
+            const sec = parseInt(ts, 10);
+            if (isNaN(sec)) return String(ts);
+            const d = new Date(sec * 1000);
+            return d.toLocaleString('en-US', {
+                weekday: 'short',
+                month: 'short',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: true,
+                year: 'numeric'
+            });
+        }
+
+        function getWeekFromTimestamp(ts, seasonYear) {
+            if (!ts) return 0;
+            const sec = parseInt(ts, 10);
+            if (isNaN(sec) || sec <= 0) return 0;
+
+            const dt = new Date(sec * 1000);
+            const yr = parseInt(seasonYear, 10) || dt.getFullYear();
+
+            const sept1 = new Date(yr, 8, 1);
+            const dayOfWeek = sept1.getDay();
+            const laborDayDate = 1 + ((8 - dayOfWeek) % 7);
+
+            const week1Start = new Date(yr, 8, laborDayDate + 2, 0, 0, 0);
+            const week1StartSec = Math.floor(week1Start.getTime() / 1000);
+
+            if (sec < week1StartSec) {
+                return 0;
+            }
+
+            const diffSec = sec - week1StartSec;
+            const calculatedWk = Math.floor(diffSec / 604800) + 1;
+            return calculatedWk > 0 ? calculatedWk : 0;
+        }
+
+        rawTransactions.forEach((t) => {
+            let franchiseStr = '';
+            if (t.franchise_name || t.franchisename) {
+                franchiseStr = t.franchise_name || t.franchisename;
+            } else if (t.franchise) {
+                const fids = String(t.franchise).split(',').map(s => s.trim()).filter(Boolean);
+                franchiseStr = fids.map(fid => getFranchiseName(fid)).join(' / ');
+            } else {
+                franchiseStr = 'League / All Franchises';
+            }
+
+            const typeStr = formatTransactionType(t.type);
+
+            let detailStr = '';
+            if (t.description || t.details) {
+                detailStr = String(t.description || t.details).replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+            } else if (t.transaction) {
+                const rawDetails = String(t.transaction).trim();
+                if (rawDetails.includes('|') || /^\d[\d,\s|.]*$/.test(rawDetails)) {
+                    const parts = rawDetails.split('|').map(s => s.trim());
+                    const addedPids = [];
+                    const droppedPids = [];
+                    let bidVal = t.bid || t.amount || t.bbid || null;
+
+                    parts.forEach((part, pIdx) => {
+                        if (!part) return;
+                        const tokens = part.split(',').map(s => s.trim()).filter(Boolean);
+                        tokens.forEach(tok => {
+                            if (isPlayerId(tok)) {
+                                if (pIdx === 0 && typeStr !== 'Dropped') {
+                                    addedPids.push(tok);
+                                } else {
+                                    droppedPids.push(tok);
+                                }
+                            } else if (/^\d+(\.\d+)?$/.test(tok)) {
+                                bidVal = tok;
+                            }
+                        });
+                    });
+
+                    const actionParts = [];
+                    if (addedPids.length > 0) {
+                        let addedText = 'Acquired ' + addedPids.map(formatPlayerById).join(', ');
+                        if (bidVal !== null && bidVal !== undefined && String(bidVal).trim() !== '') {
+                            const numericBid = parseFloat(bidVal);
+                            const formattedBid = isNaN(numericBid) ? String(bidVal) : numericBid.toFixed(2);
+                            addedText += ' for $' + formattedBid;
+                        } else if (typeStr === 'Waiver') {
+                            addedText += ' for $0.00';
+                        }
+                        actionParts.push(addedText);
+                    }
+                    if (droppedPids.length > 0) {
+                        actionParts.push('Dropped ' + droppedPids.map(formatPlayerById).join(', '));
+                    }
+
+                    detailStr = actionParts.join(' | ') || rawDetails;
+                } else {
+                    detailStr = rawDetails.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim();
+                }
+            } else {
+                detailStr = 'N/A';
+            }
+
+            let itemWeek = 0;
+            if (weekNum > 0) {
+                itemWeek = weekNum;
+            } else if (t.week || t.w) {
+                itemWeek = parseInt(t.week || t.w, 10) || 0;
+            } else {
+                itemWeek = getWeekFromTimestamp(t.timestamp, targetYear);
+            }
+
+            const rawTs = parseInt(t.timestamp || 0, 10);
+
+            rows.push({
+                "#": 0,
+                "Week": itemWeek > 0 ? 'Week ' + itemWeek : 'Pre-Season',
+                "Franchise": franchiseStr,
+                "Type": typeStr,
+                "Transaction": detailStr,
+                "Date": formatTimestamp(t.timestamp),
+                _rawTimestamp: rawTs
+            });
+        });
+
+        // Sort rows by timestamp descending (most recent first)
+        rows.sort((a, b) => b._rawTimestamp - a._rawTimestamp);
+
+        // Assign clean 1..N indices
+        rows.forEach((r, idx) => {
+            r["#"] = idx + 1;
+            delete r._rawTimestamp;
+        });
+
+        const reportTitleWeek = weekNum > 0 ? 'Week ' + weekNum : 'Full Season';
+
+        return {
+            title: 'DNFL League Transactions (' + reportTitleWeek + ', ' + targetYear + ')',
+            description: 'Official league transaction log including waivers, trades, free agent add/drops, and roster moves for ' + reportTitleWeek + '.',
+            columns: ["#", "Week", "Franchise", "Type", "Transaction", "Date"],
+            rows: rows
+        };
+    }
+
+    /* ==========================================================================
        FORMATTERS & EXPORT GENERATORS
        ========================================================================== */
-    function formatAsCsv(report) {
+        function formatAsCsv(report) {
         if (window.Papa && typeof window.Papa.unparse === 'function') {
             return window.Papa.unparse({
                 fields: report.columns,
@@ -1174,19 +1378,18 @@
     }
 
     function formatAsMarkdown(report) {
-        let md = `# ${report.title}
-`;
-        md += `> **Source**: DNFL Exporter | **League ID**: ${getLeagueId()} | **Season**: ${targetYear} | **Generated**: ${new Date().toLocaleString()}
-`;
-        md += `> **Description**: ${report.description}
-
-`;
+        let md = `# ${report.title}\n`;
+        md += `> **Source**: DNFL Exporter | **League ID**: ${getLeagueId()} | **Season**: ${targetYear} | **Generated**: ${new Date().toLocaleString()}\n`;
+        md += `> **Description**: ${report.description}\n\n`;
 
         md += '| ' + report.columns.join(' | ') + ' |\n';
         md += '| ' + report.columns.map(() => '---').join(' | ') + ' |\n';
 
         report.rows.forEach(row => {
-            const values = report.columns.map(col => String(row[col] || '').replace(/\|/g, '\|'));
+            const values = report.columns.map(col => {
+                let val = row[col] !== undefined && row[col] !== null ? String(row[col]) : '';
+                return val.replace(/[\r\n]+/g, ' ').replace(/\|/g, '\\|');
+            });
             md += '| ' + values.join(' | ') + ' |\n';
         });
         return md;
@@ -1267,6 +1470,8 @@
                 currentReportData = await generateWeeklyDetailsReport(currentSelectedWeek);
             } else if (currentReportType === 'standings') {
                 currentReportData = await generateStandingsReport();
+            } else if (currentReportType === 'transactions') {
+                currentReportData = await generateTransactionsReport(currentSelectedWeek);
             }
 
             statusEl.className = 'dnfl-status-success';
@@ -1324,14 +1529,7 @@
     }
 
     function updateControlVisibility() {
-        const reportSelect = document.getElementById('dnfl-export-report-select');
-        const weekGroup = document.getElementById('dnfl-export-week-group');
-        if (!reportSelect || !weekGroup) return;
-
-        const val = reportSelect.value;
-        const requiresWeek = (val === 'rosters' || val === 'matchups' || val === 'weeklyDetails' || val === 'powerRankings');
-
-        weekGroup.classList.toggle('dnfl-is-hidden', !requiresWeek);
+        populateWeekDropdown();
     }
 
     let userHasSelectedWeek = false;
@@ -1350,7 +1548,10 @@
 
     function populateWeekDropdown() {
         const weekSelect = document.getElementById('dnfl-export-week-select');
+        const reportSelect = document.getElementById('dnfl-export-report-select');
         if (!weekSelect) return;
+
+        const reportType = reportSelect ? reportSelect.value : 'standings';
 
         let lastRegWk = 12;
         if (cachedLeague && cachedLeague.lastRegularSeasonWeek) {
@@ -1367,7 +1568,11 @@
 
         if (parsedTargetYear >= currentYearNum) {
             if (detectedWk !== null) {
-                maxWeek = Math.min(detectedWk, lastRegWk);
+                if (reportType === 'transactions') {
+                    maxWeek = Math.min(detectedWk + 1, lastRegWk);
+                } else {
+                    maxWeek = Math.min(detectedWk, lastRegWk);
+                }
             } else {
                 maxWeek = 1;
             }
@@ -1379,20 +1584,64 @@
 
         const prevVal = weekSelect.value;
         weekSelect.innerHTML = '';
-        for (let w = 0; w <= maxWeek; w++) {
+
+        if (reportType === 'standings') {
             const opt = document.createElement('option');
-            opt.value = w;
-            opt.innerText = w === 0 ? 'Pre-Season (Week 0)' : `Week ${w}`;
+            opt.value = '0';
+            opt.innerText = 'Current';
+            weekSelect.appendChild(opt);
+            weekSelect.value = '0';
+            return;
+        }
+
+        let startWk = 1;
+        if (reportType === 'rosters') {
+            const opt0 = document.createElement('option');
+            opt0.value = '0';
+            opt0.innerText = 'Current';
+            weekSelect.appendChild(opt0);
+            startWk = 1;
+        } else if (reportType === 'powerRankings') {
+            const opt0 = document.createElement('option');
+            opt0.value = '0';
+            opt0.innerText = 'Pre-Season';
+            weekSelect.appendChild(opt0);
+            startWk = 1;
+        } else if (reportType === 'transactions') {
+            const opt0 = document.createElement('option');
+            opt0.value = '0';
+            opt0.innerText = 'All Weeks';
+            weekSelect.appendChild(opt0);
+            startWk = 1;
+        }
+
+        for (let w = startWk; w <= maxWeek; w++) {
+            const opt = document.createElement('option');
+            opt.value = String(w);
+            opt.innerText = `Week ${w}`;
             weekSelect.appendChild(opt);
         }
 
-        // Auto-select detected current week unless user explicitly selected a different week
-        if (userHasSelectedWeek && prevVal && parseInt(prevVal, 10) <= maxWeek) {
-            weekSelect.value = prevVal;
-        } else if (detectedWk !== null && detectedWk <= maxWeek) {
-            weekSelect.value = String(detectedWk);
+        if (reportType === 'transactions') {
+            if (userHasSelectedWeek && prevVal && parseInt(prevVal, 10) <= maxWeek) {
+                weekSelect.value = prevVal;
+            } else {
+                weekSelect.value = '0';
+            }
+        } else if (reportType === 'rosters') {
+            if (userHasSelectedWeek && prevVal && parseInt(prevVal, 10) <= maxWeek) {
+                weekSelect.value = prevVal;
+            } else {
+                weekSelect.value = '0';
+            }
         } else {
-            weekSelect.value = String(maxWeek);
+            if (userHasSelectedWeek && prevVal && parseInt(prevVal, 10) <= maxWeek && parseInt(prevVal, 10) >= startWk) {
+                weekSelect.value = prevVal;
+            } else if (detectedWk !== null && detectedWk <= maxWeek && detectedWk >= startWk) {
+                weekSelect.value = String(detectedWk);
+            } else {
+                weekSelect.value = String(maxWeek);
+            }
         }
     }
 
@@ -1454,7 +1703,8 @@
         generateRostersReport: generateRostersReport,
         generateMatchupsReport: generateMatchupsReport,
         generateWeeklyDetailsReport: generateWeeklyDetailsReport,
-        generateStandingsReport: generateStandingsReport
+        generateStandingsReport: generateStandingsReport,
+        generateTransactionsReport: generateTransactionsReport
     };
 
     window.addEventListener('dnfl:ready', init);
