@@ -827,162 +827,6 @@
 
     let cachedPublishedWeeks = null;
 
-    async function fetchPublishedWeeks() {
-        if (cachedPublishedWeeks) return cachedPublishedWeeks;
-        const urls = [
-            'https://dnfl.live/dnfl_rankings/weeks.json',
-            '/dnfl_rankings/weeks.json'
-        ];
-        for (const url of urls) {
-            try {
-                const resp = await fetch(url + '?_=' + Date.now());
-                if (resp.ok) {
-                    const data = await resp.json();
-                    if (Array.isArray(data)) {
-                        cachedPublishedWeeks = data;
-                        return data;
-                    } else if (data && Array.isArray(data.weeks)) {
-                        cachedPublishedWeeks = data.weeks;
-                        return data.weeks;
-                    }
-                }
-            } catch (e) {}
-        }
-        return null;
-    }
-
-    async function generatePublishedPowerRankingsReport(targetWeek) {
-        const client = getApiClient();
-        await getLeagueInfo();
-        await getPlayersMap();
-
-        const weekNum = (targetWeek !== undefined && targetWeek !== null && String(targetWeek).trim() !== "") ? parseInt(targetWeek, 10) : 0;
-
-        // 1. Fetch live MFL standings for Franchise Name, Record, Points For
-        const standingsData = await client.fetchData('leagueStandings', { COLUMN_NAMES: 1, ALL: 1 }).catch(() => null);
-        const standingsMap = {};
-        const standingsList = toArray(standingsData?.leagueStandings?.franchise);
-        standingsList.forEach(f => {
-            const fid = normFranchiseId(f.id);
-            const wins = parseInt(f.h2hw || f.wins || 0, 10);
-            const losses = parseInt(f.h2hl || f.losses || 0, 10);
-            const ties = parseInt(f.h2ht || f.ties || 0, 10);
-            const rec = ties > 0 ? `${wins}-${losses}-${ties}` : `${wins}-${losses}`;
-            const pf = parseFloat(f.pf || f.points_for || f.pointsFor || 0).toFixed(2);
-            standingsMap[fid] = { record: rec, pf: pf };
-        });
-
-        // 2. Fetch CSV file for published power rankings
-        const candidateUrls = [
-            `https://dnfl.live/dnfl_rankings/rankings_week_${weekNum}.csv`,
-            `https://dnfl.live/dnfl_rankings/data/rankings_week_${weekNum}.csv`,
-            `https://dnfl.live/dnfl_rankings/data_${String(weekNum).padStart(2, '0')}.csv`,
-            `https://dnfl.live/dnfl_rankings/data_${weekNum}.csv`
-        ];
-
-        let csvText = null;
-        for (const url of candidateUrls) {
-            try {
-                const resp = await fetch(url + '?_=' + Date.now());
-                if (resp.ok) {
-                    csvText = await resp.text();
-                    if (csvText && csvText.trim().length > 0) break;
-                }
-            } catch (e) {}
-        }
-
-        const weekTitle = weekNum === 0 ? 'Pre-Season' : `Week ${weekNum}`;
-
-        if (!csvText) {
-            return {
-                title: `DNFL Published Power Rankings (${weekTitle}, ${targetYear})`,
-                description: `Published power rankings data for ${weekTitle} is not yet available.`,
-                columns: ["Rank", "Change", "Franchise", "Power Index", "Record", "Points For", "Comments"],
-                rows: []
-            };
-        }
-
-        // 3. Parse CSV data
-        function parseCsv(text) {
-            const lines = [];
-            let row = [''];
-            let inQuotes = false;
-            for (let i = 0; i < text.length; i++) {
-                const c = text[i];
-                const next = text[i+1];
-                if (c === '"') {
-                    if (inQuotes && next === '"') { row[row.length - 1] += '"'; i++; }
-                    else { inQuotes = !inQuotes; }
-                } else if (c === ',' && !inQuotes) {
-                    row.push('');
-                } else if ((c === '\r' || c === '\n') && !inQuotes) {
-                    if (c === '\r' && next === '\n') i++;
-                    if (row.length > 1 || row[0] !== '') lines.push(row);
-                    row = [''];
-                } else {
-                    row[row.length - 1] += c;
-                }
-            }
-            if (row.length > 1 || row[0] !== '') lines.push(row);
-            if (lines.length === 0) return [];
-            const headers = lines[0].map(h => h.trim().replace(/^"|"$/g, ''));
-            const records = [];
-            for (let i = 1; i < lines.length; i++) {
-                const r = lines[i];
-                if (r.length === 1 && r[0].trim() === '') continue;
-                const obj = {};
-                headers.forEach((h, idx) => {
-                    obj[h] = r[idx] !== undefined ? r[idx].trim() : '';
-                });
-                records.push(obj);
-            }
-            return records;
-        }
-
-        const parsedRecords = parseCsv(csvText);
-
-        const rows = [];
-        parsedRecords.forEach(r => {
-            const rawFid = r['Franchise ID'] || r['franchise_id'] || r['FID'] || r['fid'] || r['id'] || '';
-            const fid = normFranchiseId(rawFid);
-            const franchiseName = getFranchiseName(fid) || r['Franchise Name'] || `Franchise ${fid}`;
-
-            const rankVal = r['Rank'] || r['rank'] || r['#'] || '';
-            const changeVal = r['Change'] || r['change'] || r['Rank Change'] || '--';
-            const powerIndexVal = r['Power Index'] || r['power_index'] || r['PowerIndex'] || r['PI'] || '0.00';
-            
-            let recordVal = '';
-            let pfVal = '0.00';
-
-            if (weekNum === 0) {
-                recordVal = r['Projected Record'] || r['projected_record'] || r['Record'] || '0-0';
-                pfVal = r['Points For'] || r['points_for'] || '0.00';
-            } else {
-                recordVal = standingsMap[fid]?.record || r['Record'] || '0-0';
-                pfVal = standingsMap[fid]?.pf || r['Points For'] || '0.00';
-            }
-
-            const commentsVal = r['Rank Comments'] || r['Comments'] || r['comments'] || r['rank_comments'] || r['commentary'] || '';
-
-            rows.push({
-                "Rank": rankVal ? parseInt(rankVal, 10) : (rows.length + 1),
-                "Change": changeVal,
-                "Franchise": franchiseName,
-                "Power Index": powerIndexVal,
-                "Record": recordVal,
-                "Points For": pfVal,
-                "Comments": commentsVal
-            });
-        });
-
-        return {
-            title: `DNFL Published Power Rankings (${weekTitle}, ${targetYear})`,
-            description: `Official published power rankings with live API team names, standings, and points for ${weekTitle}.`,
-            columns: ["Rank", "Change", "Franchise", "Power Index", "Record", "Points For", "Comments"],
-            rows: rows
-        };
-    }
-
     async function generatePowerRankingsReport(targetWeek) {
         const client = getApiClient();
         await getLeagueInfo();
@@ -1352,34 +1196,53 @@
         return cachedPublishedWeeks;
     }
 
-    async function fetchRankingCsv(fileOrId) {
+        async function fetchRankingCsv(fileOrId, weekNum) {
         const client = getApiClient();
-        let cleanFile = String(fileOrId).trim();
-        if (!cleanFile.endsWith('.csv')) {
-            cleanFile = cleanFile.includes('pre-season') ? 'data_00_pre-season.csv' : `data_${cleanFile.padStart(2, '0')}.csv`;
+        let cleanFile = String(fileOrId || '').trim();
+        
+        const candidateFiles = [];
+        if (cleanFile) {
+            candidateFiles.push(cleanFile);
+            if (!cleanFile.endsWith('.csv')) {
+                candidateFiles.push(cleanFile + '.csv');
+            }
         }
 
-        const urls = [
-            `https://dnfl.live/dnfl_rankings/${targetYear}/${cleanFile}`,
-            `https://dnfl.live/dnfl_rankings/${cleanFile}`,
-            `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/${targetYear}/${cleanFile}`,
-            `/dnfl_rankings/${targetYear}/${cleanFile}`
-        ];
+        const wkVal = (weekNum !== undefined && weekNum !== null) ? parseInt(weekNum, 10) : (parseInt(cleanFile.replace(/\D/g, ''), 10) || 0);
+        const padWk = String(wkVal).padStart(2, '0');
 
-        for (const url of urls) {
-            try {
-                let text = null;
-                if (client && typeof client.fetchRawText === 'function') {
-                    text = await client.fetchRawText(url, { ttl: 86400000 }).catch(() => null);
-                }
-                if (!text) {
-                    const resp = await fetch(url + '?_=' + Date.now());
-                    if (resp.ok) text = await resp.text();
-                }
-                if (text && text.includes(',')) {
-                    return text;
-                }
-            } catch (e) {}
+        if (wkVal === 0 || cleanFile.includes('pre-season')) {
+            candidateFiles.push('data_00_pre-season.csv', 'data_00.csv', 'rankings_week_0.csv', 'data_pre-season.csv');
+        } else {
+            candidateFiles.push(`data_${padWk}.csv`, `data_${wkVal}.csv`, `rankings_week_${wkVal}.csv`, `rankings_week_${padWk}.csv`);
+        }
+
+        const uniqueFiles = [...new Set(candidateFiles)];
+
+        for (const filename of uniqueFiles) {
+            const urls = [
+                `https://dnfl.live/dnfl_rankings/${targetYear}/${filename}`,
+                `https://dnfl.live/dnfl_rankings/${filename}`,
+                `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/${targetYear}/${filename}`,
+                `/dnfl_rankings/${targetYear}/${filename}`,
+                `/dnfl_rankings/${filename}`
+            ];
+
+            for (const url of urls) {
+                try {
+                    let text = null;
+                    if (client && typeof client.fetchRawText === 'function') {
+                        text = await client.fetchRawText(url, { ttl: 86400000 }).catch(() => null);
+                    }
+                    if (!text) {
+                        const resp = await fetch(url + '?_=' + Date.now());
+                        if (resp.ok) text = await resp.text();
+                    }
+                    if (text && text.includes(',')) {
+                        return text;
+                    }
+                } catch (e) {}
+            }
         }
         return null;
     }
@@ -1411,8 +1274,8 @@
         const prevItem = (!isPreseason && selIndex > 0) ? weeksList[selIndex - 1] : null;
 
         const [currCsvText, prevCsvText, standingsData] = await Promise.all([
-            fetchRankingCsv(selItem.file || selItem.id),
-            prevItem ? fetchRankingCsv(prevItem.file || prevItem.id) : Promise.resolve(null),
+            fetchRankingCsv(selItem.file || selItem.id, weekNum),
+            prevItem ? fetchRankingCsv(prevItem.file || prevItem.id, prevItem.weekNum) : Promise.resolve(null),
             (!isPreseason && client) ? client.fetchData('leagueStandings', { W: weekNum, COLUMN_NAMES: 1, ALL: 1 }).catch(() => null) : Promise.resolve(null)
         ]);
 
@@ -1436,7 +1299,7 @@
         const prevRankMap = {};
         if (prevCsvText && window.Papa) {
             try {
-                const prevParsed = Papa.parse(prevCsvText, { header: true, dynamicTyping: true, skipEmptyLines: true });
+                const prevParsed = (window.Papa || Papa).parse(prevCsvText, { header: true, dynamicTyping: true, skipEmptyLines: true });
                 prevParsed.data.forEach(r => {
                     const fid = normFranchiseId(r['Franchise ID'] || r['FranchiseId'] || r['TeamID'] || r['id']);
                     const rk = parseInt(r['Rank'] || 0, 10);
@@ -1449,11 +1312,11 @@
             throw new Error(`Published power rankings dataset for ${selItem ? selItem.display : 'Week ' + targetWeek} is not available.`);
         }
 
-        if (!window.Papa) {
+        if (!window.Papa && typeof Papa === "undefined") {
             throw new Error("PapaParse library is required to parse power rankings CSV.");
         }
 
-        const parsed = Papa.parse(currCsvText, { header: true, dynamicTyping: true, skipEmptyLines: true });
+        const parsed = (window.Papa || Papa).parse(currCsvText, { header: true, dynamicTyping: true, skipEmptyLines: true });
         const rows = [];
 
         parsed.data.forEach(row => {
@@ -1517,162 +1380,6 @@
        ========================================================================== */
 
     
-
-    async function fetchPublishedWeeks() {
-        if (cachedPublishedWeeks) return cachedPublishedWeeks;
-        const urls = [
-            'https://dnfl.live/dnfl_rankings/weeks.json',
-            '/dnfl_rankings/weeks.json'
-        ];
-        for (const url of urls) {
-            try {
-                const resp = await fetch(url + '?_=' + Date.now());
-                if (resp.ok) {
-                    const data = await resp.json();
-                    if (Array.isArray(data)) {
-                        cachedPublishedWeeks = data;
-                        return data;
-                    } else if (data && Array.isArray(data.weeks)) {
-                        cachedPublishedWeeks = data.weeks;
-                        return data.weeks;
-                    }
-                }
-            } catch (e) {}
-        }
-        return null;
-    }
-
-    async function generatePublishedPowerRankingsReport(targetWeek) {
-        const client = getApiClient();
-        await getLeagueInfo();
-        await getPlayersMap();
-
-        const weekNum = (targetWeek !== undefined && targetWeek !== null && String(targetWeek).trim() !== "") ? parseInt(targetWeek, 10) : 0;
-
-        // 1. Fetch live MFL standings for Franchise Name, Record, Points For
-        const standingsData = await client.fetchData('leagueStandings', { COLUMN_NAMES: 1, ALL: 1 }).catch(() => null);
-        const standingsMap = {};
-        const standingsList = toArray(standingsData?.leagueStandings?.franchise);
-        standingsList.forEach(f => {
-            const fid = normFranchiseId(f.id);
-            const wins = parseInt(f.h2hw || f.wins || 0, 10);
-            const losses = parseInt(f.h2hl || f.losses || 0, 10);
-            const ties = parseInt(f.h2ht || f.ties || 0, 10);
-            const rec = ties > 0 ? `${wins}-${losses}-${ties}` : `${wins}-${losses}`;
-            const pf = parseFloat(f.pf || f.points_for || f.pointsFor || 0).toFixed(2);
-            standingsMap[fid] = { record: rec, pf: pf };
-        });
-
-        // 2. Fetch CSV file for published power rankings
-        const candidateUrls = [
-            `https://dnfl.live/dnfl_rankings/rankings_week_${weekNum}.csv`,
-            `https://dnfl.live/dnfl_rankings/data/rankings_week_${weekNum}.csv`,
-            `https://dnfl.live/dnfl_rankings/data_${String(weekNum).padStart(2, '0')}.csv`,
-            `https://dnfl.live/dnfl_rankings/data_${weekNum}.csv`
-        ];
-
-        let csvText = null;
-        for (const url of candidateUrls) {
-            try {
-                const resp = await fetch(url + '?_=' + Date.now());
-                if (resp.ok) {
-                    csvText = await resp.text();
-                    if (csvText && csvText.trim().length > 0) break;
-                }
-            } catch (e) {}
-        }
-
-        const weekTitle = weekNum === 0 ? 'Pre-Season' : `Week ${weekNum}`;
-
-        if (!csvText) {
-            return {
-                title: `DNFL Published Power Rankings (${weekTitle}, ${targetYear})`,
-                description: `Published power rankings data for ${weekTitle} is not yet available.`,
-                columns: ["Rank", "Change", "Franchise", "Power Index", "Record", "Points For", "Comments"],
-                rows: []
-            };
-        }
-
-        // 3. Parse CSV data
-        function parseCsv(text) {
-            const lines = [];
-            let row = [''];
-            let inQuotes = false;
-            for (let i = 0; i < text.length; i++) {
-                const c = text[i];
-                const next = text[i+1];
-                if (c === '"') {
-                    if (inQuotes && next === '"') { row[row.length - 1] += '"'; i++; }
-                    else { inQuotes = !inQuotes; }
-                } else if (c === ',' && !inQuotes) {
-                    row.push('');
-                } else if ((c === '\r' || c === '\n') && !inQuotes) {
-                    if (c === '\r' && next === '\n') i++;
-                    if (row.length > 1 || row[0] !== '') lines.push(row);
-                    row = [''];
-                } else {
-                    row[row.length - 1] += c;
-                }
-            }
-            if (row.length > 1 || row[0] !== '') lines.push(row);
-            if (lines.length === 0) return [];
-            const headers = lines[0].map(h => h.trim().replace(/^"|"$/g, ''));
-            const records = [];
-            for (let i = 1; i < lines.length; i++) {
-                const r = lines[i];
-                if (r.length === 1 && r[0].trim() === '') continue;
-                const obj = {};
-                headers.forEach((h, idx) => {
-                    obj[h] = r[idx] !== undefined ? r[idx].trim() : '';
-                });
-                records.push(obj);
-            }
-            return records;
-        }
-
-        const parsedRecords = parseCsv(csvText);
-
-        const rows = [];
-        parsedRecords.forEach(r => {
-            const rawFid = r['Franchise ID'] || r['franchise_id'] || r['FID'] || r['fid'] || r['id'] || '';
-            const fid = normFranchiseId(rawFid);
-            const franchiseName = getFranchiseName(fid) || r['Franchise Name'] || `Franchise ${fid}`;
-
-            const rankVal = r['Rank'] || r['rank'] || r['#'] || '';
-            const changeVal = r['Change'] || r['change'] || r['Rank Change'] || '--';
-            const powerIndexVal = r['Power Index'] || r['power_index'] || r['PowerIndex'] || r['PI'] || '0.00';
-            
-            let recordVal = '';
-            let pfVal = '0.00';
-
-            if (weekNum === 0) {
-                recordVal = r['Projected Record'] || r['projected_record'] || r['Record'] || '0-0';
-                pfVal = r['Points For'] || r['points_for'] || '0.00';
-            } else {
-                recordVal = standingsMap[fid]?.record || r['Record'] || '0-0';
-                pfVal = standingsMap[fid]?.pf || r['Points For'] || '0.00';
-            }
-
-            const commentsVal = r['Rank Comments'] || r['Comments'] || r['comments'] || r['rank_comments'] || r['commentary'] || '';
-
-            rows.push({
-                "Rank": rankVal ? parseInt(rankVal, 10) : (rows.length + 1),
-                "Change": changeVal,
-                "Franchise": franchiseName,
-                "Power Index": powerIndexVal,
-                "Record": recordVal,
-                "Points For": pfVal,
-                "Comments": commentsVal
-            });
-        });
-
-        return {
-            title: `DNFL Published Power Rankings (${weekTitle}, ${targetYear})`,
-            description: `Official published power rankings with live API team names, standings, and points for ${weekTitle}.`,
-            columns: ["Rank", "Change", "Franchise", "Power Index", "Record", "Points For", "Comments"],
-            rows: rows
-        };
-    }
 
     async function generatePowerRankingsReport(targetWeek) {
         const client = getApiClient();
