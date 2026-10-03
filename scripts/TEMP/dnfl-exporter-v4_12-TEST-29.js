@@ -1292,6 +1292,697 @@
         };
     }
 
+        /* ==========================================================================
+       REPORT GENERATOR 6: PUBLISHED POWER RANKINGS ENGINE
+       ========================================================================== */
+
+    
+
+    async function fetchPublishedWeeks() {
+        if (cachedPublishedWeeks) return cachedPublishedWeeks;
+        const client = getApiClient();
+        const urls = [
+            `https://dnfl.live/dnfl_rankings/${targetYear}/weeks.json`,
+            `https://dnfl.live/dnfl_rankings/weeks.json`,
+            `/dnfl_rankings/${targetYear}/weeks.json`,
+            `/dnfl_rankings/weeks.json`
+        ];
+
+        for (const url of urls) {
+            try {
+                let text = null;
+                if (client && typeof client.fetchRawText === 'function') {
+                    text = await client.fetchRawText(url, { ttl: 86400000 }).catch(() => null);
+                }
+                if (!text) {
+                    const resp = await fetch(url + '?_=' + Date.now());
+                    if (resp.ok) text = await resp.text();
+                }
+                if (text) {
+                    const parsed = JSON.parse(text);
+                    const list = Array.isArray(parsed) ? parsed : (parsed.weeks || []);
+                    if (list.length > 0) {
+                        cachedPublishedWeeks = list.map((w, idx) => {
+                            const rawId = String(w.id || idx).trim();
+                            let displayLabel = w.display || w.label || w.name || rawId;
+                            if (rawId === '00' || rawId.includes('00') || rawId.includes('pre-season')) {
+                                displayLabel = 'Pre-Season';
+                            } else if (/^\d+$/.test(rawId)) {
+                                displayLabel = `Week ${parseInt(rawId, 10)}`;
+                            }
+                            const filename = w.file || (rawId.includes('data') ? rawId : (rawId.includes('pre-season') ? 'data_00_pre-season.csv' : `data_${rawId.padStart(2, '0')}.csv`));
+                            return {
+                                id: rawId,
+                                display: displayLabel,
+                                file: filename,
+                                weekNum: rawId.includes('pre-season') || rawId === '00' ? 0 : (parseInt(rawId.replace(/\D/g, ''), 10) || 0)
+                            };
+                        });
+                        return cachedPublishedWeeks;
+                    }
+                }
+            } catch (e) {}
+        }
+
+        cachedPublishedWeeks = [
+            { id: "00_pre-season", display: "Pre-Season", file: "data_00_pre-season.csv", weekNum: 0 },
+            { id: "01", display: "Week 1", file: "data_01.csv", weekNum: 1 },
+            { id: "02", display: "Week 2", file: "data_02.csv", weekNum: 2 }
+        ];
+        return cachedPublishedWeeks;
+    }
+
+    async function fetchRankingCsv(fileOrId) {
+        const client = getApiClient();
+        let cleanFile = String(fileOrId).trim();
+        if (!cleanFile.endsWith('.csv')) {
+            cleanFile = cleanFile.includes('pre-season') ? 'data_00_pre-season.csv' : `data_${cleanFile.padStart(2, '0')}.csv`;
+        }
+
+        const urls = [
+            `https://dnfl.live/dnfl_rankings/${targetYear}/${cleanFile}`,
+            `https://dnfl.live/dnfl_rankings/${cleanFile}`,
+            `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/${targetYear}/${cleanFile}`,
+            `/dnfl_rankings/${targetYear}/${cleanFile}`
+        ];
+
+        for (const url of urls) {
+            try {
+                let text = null;
+                if (client && typeof client.fetchRawText === 'function') {
+                    text = await client.fetchRawText(url, { ttl: 86400000 }).catch(() => null);
+                }
+                if (!text) {
+                    const resp = await fetch(url + '?_=' + Date.now());
+                    if (resp.ok) text = await resp.text();
+                }
+                if (text && text.includes(',')) {
+                    return text;
+                }
+            } catch (e) {}
+        }
+        return null;
+    }
+
+    async function generatePublishedPowerRankingsReport(targetWeek) {
+        const client = getApiClient();
+        await getLeagueInfo();
+        await getPlayersMap();
+
+        const weeksList = await fetchPublishedWeeks();
+        let selItem = null;
+        let selIndex = -1;
+
+        if (typeof targetWeek === 'string' && isNaN(parseInt(targetWeek, 10))) {
+            selIndex = weeksList.findIndex(w => w.id === targetWeek || w.file === targetWeek);
+        } else {
+            const targetNum = parseInt(targetWeek, 10) || 0;
+            selIndex = weeksList.findIndex(w => w.weekNum === targetNum);
+        }
+
+        if (selIndex === -1 && weeksList.length > 0) {
+            selIndex = weeksList.length - 1;
+        }
+
+        selItem = weeksList[selIndex] || weeksList[weeksList.length - 1];
+        const weekNum = selItem ? selItem.weekNum : 0;
+        const isPreseason = weekNum === 0 || (selItem && selItem.id.includes('pre-season'));
+
+        const prevItem = (!isPreseason && selIndex > 0) ? weeksList[selIndex - 1] : null;
+
+        const [currCsvText, prevCsvText, standingsData] = await Promise.all([
+            fetchRankingCsv(selItem.file || selItem.id),
+            prevItem ? fetchRankingCsv(prevItem.file || prevItem.id) : Promise.resolve(null),
+            (!isPreseason && client) ? client.fetchData('leagueStandings', { W: weekNum, COLUMN_NAMES: 1, ALL: 1 }).catch(() => null) : Promise.resolve(null)
+        ]);
+
+        const standingsMap = {};
+        if (standingsData?.leagueStandings) {
+            const ls = standingsData.leagueStandings;
+            const raw = ls.franchise || (ls.franchises ? ls.franchises.franchise : null);
+            const fList = toArray(raw);
+            fList.forEach(f => {
+                const fid = normFranchiseId(f.id);
+                const wins = parseInt(f.h2hw !== undefined ? f.h2hw : (f.wins || f.w || 0), 10);
+                const losses = parseInt(f.h2hl !== undefined ? f.h2hl : (f.losses || f.l || 0), 10);
+                const ties = parseInt(f.h2ht !== undefined ? f.h2ht : (f.ties || f.t || 0), 10);
+                const rec = ties > 0 ? `${wins}-${losses}-${ties}` : `${wins}-${losses}`;
+                const rawPf = parseFloat(f.pf !== undefined ? f.pf : (f.points || f.pts || 0));
+                const pfStr = isNaN(rawPf) ? '0.00' : rawPf.toFixed(2);
+                standingsMap[fid] = { record: rec, pf: pfStr };
+            });
+        }
+
+        const prevRankMap = {};
+        if (prevCsvText && window.Papa) {
+            try {
+                const prevParsed = Papa.parse(prevCsvText, { header: true, dynamicTyping: true, skipEmptyLines: true });
+                prevParsed.data.forEach(r => {
+                    const fid = normFranchiseId(r['Franchise ID'] || r['FranchiseId'] || r['TeamID'] || r['id']);
+                    const rk = parseInt(r['Rank'] || 0, 10);
+                    if (fid && rk > 0) prevRankMap[fid] = rk;
+                });
+            } catch (e) {}
+        }
+
+        if (!currCsvText) {
+            throw new Error(`Published power rankings dataset for ${selItem ? selItem.display : 'Week ' + targetWeek} is not available.`);
+        }
+
+        if (!window.Papa) {
+            throw new Error("PapaParse library is required to parse power rankings CSV.");
+        }
+
+        const parsed = Papa.parse(currCsvText, { header: true, dynamicTyping: true, skipEmptyLines: true });
+        const rows = [];
+
+        parsed.data.forEach(row => {
+            const fid = normFranchiseId(row['Franchise ID'] || row['FranchiseId'] || row['TeamID'] || row['id']);
+            if (!fid) return;
+
+            const currentRank = parseInt(row['Rank'] || 0, 10);
+            const powerIndexNum = parseFloat(row['Power Index'] || row['PowerIndex'] || row['power_index'] || 0);
+            const powerIndexStr = isNaN(powerIndexNum) ? '0.0' : powerIndexNum.toFixed(1);
+
+            const franchiseName = getFranchiseName(fid);
+
+            let changeStr = '--';
+            if (!isPreseason && prevRankMap[fid]) {
+                const diff = prevRankMap[fid] - currentRank;
+                if (diff > 0) changeStr = `+${diff}`;
+                else if (diff < 0) changeStr = `${diff}`;
+                else changeStr = '--';
+            }
+
+            let recordStr = '0-0';
+            let pfStr = '0.00';
+
+            if (isPreseason) {
+                recordStr = String(row['Projected W-L'] || row['Projected Record'] || '0-0').trim();
+                pfStr = '0.00';
+            } else {
+                const mflSt = standingsMap[fid] || {};
+                recordStr = mflSt.record || '0-0';
+                pfStr = mflSt.pf || '0.00';
+            }
+
+            const commentsStr = String(row['Rank Comments'] || row['Comments'] || row['Commentary'] || '').trim();
+
+            rows.push({
+                "Rank": currentRank,
+                "Change": changeStr,
+                "Franchise": franchiseName,
+                "Power Index": powerIndexStr,
+                "Record": recordStr,
+                "Points For": pfStr,
+                "Comments": commentsStr
+            });
+        });
+
+        rows.sort((a, b) => a["Rank"] - b["Rank"]);
+
+        const titleWeekStr = selItem ? selItem.display : (isPreseason ? 'Pre-Season' : `Week ${weekNum}`);
+
+        return {
+            title: `DNFL Published Power Rankings (${titleWeekStr}, ${targetYear})`,
+            description: `Official published power rankings with live API team names, standings, and points for ${titleWeekStr}.`,
+            columns: ["Rank", "Change", "Franchise", "Power Index", "Record", "Points For", "Comments"],
+            rows: rows
+        };
+    }
+
+
+    /* ==========================================================================
+       REPORT GENERATOR 5: AUTOMATED POWER RANKINGS ENGINE v4.12
+       ========================================================================== */
+
+    
+
+    async function fetchPublishedWeeks() {
+        if (cachedPublishedWeeks) return cachedPublishedWeeks;
+        const urls = [
+            'https://dnfl.live/dnfl_rankings/weeks.json',
+            '/dnfl_rankings/weeks.json'
+        ];
+        for (const url of urls) {
+            try {
+                const resp = await fetch(url + '?_=' + Date.now());
+                if (resp.ok) {
+                    const data = await resp.json();
+                    if (Array.isArray(data)) {
+                        cachedPublishedWeeks = data;
+                        return data;
+                    } else if (data && Array.isArray(data.weeks)) {
+                        cachedPublishedWeeks = data.weeks;
+                        return data.weeks;
+                    }
+                }
+            } catch (e) {}
+        }
+        return null;
+    }
+
+    async function generatePublishedPowerRankingsReport(targetWeek) {
+        const client = getApiClient();
+        await getLeagueInfo();
+        await getPlayersMap();
+
+        const weekNum = (targetWeek !== undefined && targetWeek !== null && String(targetWeek).trim() !== "") ? parseInt(targetWeek, 10) : 0;
+
+        // 1. Fetch live MFL standings for Franchise Name, Record, Points For
+        const standingsData = await client.fetchData('leagueStandings', { COLUMN_NAMES: 1, ALL: 1 }).catch(() => null);
+        const standingsMap = {};
+        const standingsList = toArray(standingsData?.leagueStandings?.franchise);
+        standingsList.forEach(f => {
+            const fid = normFranchiseId(f.id);
+            const wins = parseInt(f.h2hw || f.wins || 0, 10);
+            const losses = parseInt(f.h2hl || f.losses || 0, 10);
+            const ties = parseInt(f.h2ht || f.ties || 0, 10);
+            const rec = ties > 0 ? `${wins}-${losses}-${ties}` : `${wins}-${losses}`;
+            const pf = parseFloat(f.pf || f.points_for || f.pointsFor || 0).toFixed(2);
+            standingsMap[fid] = { record: rec, pf: pf };
+        });
+
+        // 2. Fetch CSV file for published power rankings
+        const candidateUrls = [
+            `https://dnfl.live/dnfl_rankings/rankings_week_${weekNum}.csv`,
+            `https://dnfl.live/dnfl_rankings/data/rankings_week_${weekNum}.csv`,
+            `https://dnfl.live/dnfl_rankings/data_${String(weekNum).padStart(2, '0')}.csv`,
+            `https://dnfl.live/dnfl_rankings/data_${weekNum}.csv`
+        ];
+
+        let csvText = null;
+        for (const url of candidateUrls) {
+            try {
+                const resp = await fetch(url + '?_=' + Date.now());
+                if (resp.ok) {
+                    csvText = await resp.text();
+                    if (csvText && csvText.trim().length > 0) break;
+                }
+            } catch (e) {}
+        }
+
+        const weekTitle = weekNum === 0 ? 'Pre-Season' : `Week ${weekNum}`;
+
+        if (!csvText) {
+            return {
+                title: `DNFL Published Power Rankings (${weekTitle}, ${targetYear})`,
+                description: `Published power rankings data for ${weekTitle} is not yet available.`,
+                columns: ["Rank", "Change", "Franchise", "Power Index", "Record", "Points For", "Comments"],
+                rows: []
+            };
+        }
+
+        // 3. Parse CSV data
+        function parseCsv(text) {
+            const lines = [];
+            let row = [''];
+            let inQuotes = false;
+            for (let i = 0; i < text.length; i++) {
+                const c = text[i];
+                const next = text[i+1];
+                if (c === '"') {
+                    if (inQuotes && next === '"') { row[row.length - 1] += '"'; i++; }
+                    else { inQuotes = !inQuotes; }
+                } else if (c === ',' && !inQuotes) {
+                    row.push('');
+                } else if ((c === '\r' || c === '\n') && !inQuotes) {
+                    if (c === '\r' && next === '\n') i++;
+                    if (row.length > 1 || row[0] !== '') lines.push(row);
+                    row = [''];
+                } else {
+                    row[row.length - 1] += c;
+                }
+            }
+            if (row.length > 1 || row[0] !== '') lines.push(row);
+            if (lines.length === 0) return [];
+            const headers = lines[0].map(h => h.trim().replace(/^"|"$/g, ''));
+            const records = [];
+            for (let i = 1; i < lines.length; i++) {
+                const r = lines[i];
+                if (r.length === 1 && r[0].trim() === '') continue;
+                const obj = {};
+                headers.forEach((h, idx) => {
+                    obj[h] = r[idx] !== undefined ? r[idx].trim() : '';
+                });
+                records.push(obj);
+            }
+            return records;
+        }
+
+        const parsedRecords = parseCsv(csvText);
+
+        const rows = [];
+        parsedRecords.forEach(r => {
+            const rawFid = r['Franchise ID'] || r['franchise_id'] || r['FID'] || r['fid'] || r['id'] || '';
+            const fid = normFranchiseId(rawFid);
+            const franchiseName = getFranchiseName(fid) || r['Franchise Name'] || `Franchise ${fid}`;
+
+            const rankVal = r['Rank'] || r['rank'] || r['#'] || '';
+            const changeVal = r['Change'] || r['change'] || r['Rank Change'] || '--';
+            const powerIndexVal = r['Power Index'] || r['power_index'] || r['PowerIndex'] || r['PI'] || '0.00';
+            
+            let recordVal = '';
+            let pfVal = '0.00';
+
+            if (weekNum === 0) {
+                recordVal = r['Projected Record'] || r['projected_record'] || r['Record'] || '0-0';
+                pfVal = r['Points For'] || r['points_for'] || '0.00';
+            } else {
+                recordVal = standingsMap[fid]?.record || r['Record'] || '0-0';
+                pfVal = standingsMap[fid]?.pf || r['Points For'] || '0.00';
+            }
+
+            const commentsVal = r['Rank Comments'] || r['Comments'] || r['comments'] || r['rank_comments'] || r['commentary'] || '';
+
+            rows.push({
+                "Rank": rankVal ? parseInt(rankVal, 10) : (rows.length + 1),
+                "Change": changeVal,
+                "Franchise": franchiseName,
+                "Power Index": powerIndexVal,
+                "Record": recordVal,
+                "Points For": pfVal,
+                "Comments": commentsVal
+            });
+        });
+
+        return {
+            title: `DNFL Published Power Rankings (${weekTitle}, ${targetYear})`,
+            description: `Official published power rankings with live API team names, standings, and points for ${weekTitle}.`,
+            columns: ["Rank", "Change", "Franchise", "Power Index", "Record", "Points For", "Comments"],
+            rows: rows
+        };
+    }
+
+    async function generatePowerRankingsReport(targetWeek) {
+        const client = getApiClient();
+        await getLeagueInfo();
+        await getPlayersMap();
+        
+        const fcMap = await fetchFantasyCalcMap();
+
+        const weekNum = (targetWeek !== undefined && targetWeek !== null && targetWeek !== "") ? parseInt(targetWeek, 10) : 0;
+        const totalRegWeeks = parseInt(cachedLeague?.lastRegularSeasonWeek || 12, 10);
+
+        // Check for manual overrides for current year/week
+        
+        const leagueFranchises = toArray(cachedLeague?.franchises?.franchise);
+        const divisions = toArray(cachedLeague?.divisions?.division);
+        const conferences = toArray(cachedLeague?.conferences?.conference);
+
+        const confMap = {};
+        conferences.forEach(c => confMap[norm(c.id)] = c.name);
+
+        const divMap = {};
+        divisions.forEach(d => divMap[norm(d.id)] = d.name);
+
+        const divToConfMap = {};
+        divisions.forEach(d => divToConfMap[norm(d.id)] = norm(d.conference));
+
+        // 1. Fetch completed weeklyResults up to weekNum in parallel (if weekNum > 0)
+        const pastWeeklyPromises = [];
+        for (let w = 1; w <= weekNum; w++) {
+            pastWeeklyPromises.push(client.fetchData('weeklyResults', { W: w }).catch(() => null));
+        }
+
+        // 2. Fetch rosters for the selected week (or current week)
+        const rosterWeek = weekNum > 0 ? weekNum : 1;
+        const [pastResults, rostersData] = await Promise.all([
+            Promise.all(pastWeeklyPromises),
+            client.fetchData('rosters', { W: rosterWeek }).catch(() => null)
+        ]);
+
+        // Initialize Franchise Accumulators
+        const stats = {};
+        leagueFranchises.forEach(f => {
+            const fid = normFranchiseId(f.id);
+            const divIdNorm = norm(f.division || f.div);
+            const confIdNorm = norm(f.conference || f.conf || divToConfMap[divIdNorm]);
+
+            const confRaw = confMap[confIdNorm] || '';
+            const divRaw = divMap[divIdNorm] || '';
+            let confDivStr = 'DNFL';
+            if (confRaw && divRaw) {
+                confDivStr = `${confRaw} ${divRaw}`;
+            } else if (confRaw) {
+                confDivStr = confRaw;
+            } else if (divRaw) {
+                confDivStr = divRaw;
+            }
+
+            stats[fid] = {
+                fid: fid,
+                name: f.name || `Franchise ${fid}`,
+                owner: f.owner_name || 'N/A',
+                confName: confDivStr,
+                wins: 0,
+                losses: 0,
+                ties: 0,
+                pf: 0,
+                pa: 0,
+                allPlayWins: 0,
+                allPlayLosses: 0,
+                allPlayTies: 0,
+                avgStarterVal: 0,
+                avgBenchVal: 0,
+                rawRosterVal: 0
+            };
+        });
+
+        // Process Head-to-Head & All-Play Record up to weekNum
+        if (weekNum > 0 && pastResults) {
+            pastResults.forEach(wData => {
+                if (!wData?.weeklyResults) return;
+                const rawMatchups = wData.weeklyResults.matchup || wData.weeklyResults.matchUp || wData.weeklyResults.schedule?.matchup;
+                const matchups = toArray(rawMatchups);
+                const weekScoresThisWeek = [];
+
+                matchups.forEach(m => {
+                    const franchises = toArray(m.franchise);
+                    if (franchises.length >= 2) {
+                        const f1 = franchises[0];
+                        const f2 = franchises[1];
+                        const f1Id = normFranchiseId(f1.id);
+                        const f2Id = normFranchiseId(f2.id);
+                        const f1Score = parseFloat(f1.score || 0);
+                        const f2Score = parseFloat(f2.score || 0);
+
+                        if (stats[f1Id]) {
+                            stats[f1Id].pf += f1Score;
+                            stats[f1Id].pa += f2Score;
+                            if (f1Score > f2Score) stats[f1Id].wins++;
+                            else if (f2Score > f1Score) stats[f1Id].losses++;
+                            else if (f1Score > 0) stats[f1Id].ties++;
+                            weekScoresThisWeek.push({ fid: f1Id, score: f1Score });
+                        }
+
+                        if (stats[f2Id]) {
+                            stats[f2Id].pf += f2Score;
+                            stats[f2Id].pa += f1Score;
+                            if (f2Score > f1Score) stats[f2Id].wins++;
+                            else if (f1Score > f2Score) stats[f2Id].losses++;
+                            else if (f2Score > 0) stats[f2Id].ties++;
+                            weekScoresThisWeek.push({ fid: f2Id, score: f2Score });
+                        }
+                    }
+                });
+
+                weekScoresThisWeek.forEach(itemA => {
+                    weekScoresThisWeek.forEach(itemB => {
+                        if (itemA.fid !== itemB.fid) {
+                            if (itemA.score > itemB.score) stats[itemA.fid].allPlayWins++;
+                            else if (itemB.score > itemA.score) stats[itemA.fid].allPlayLosses++;
+                            else if (itemA.score > 0) stats[itemA.fid].allPlayTies++;
+                        }
+                    });
+                });
+            });
+        }
+
+        // Process Rosters & Calculate 7 Optimal Starters + Top 7 Bench Trade Values (Ignoring K and DEF)
+        const rosterList = toArray(rostersData?.rosters?.franchise);
+        rosterList.forEach(f => {
+            const fid = normFranchiseId(f.id);
+            if (!stats[fid]) return;
+
+            const players = toArray(f.player);
+            const eligiblePlayers = [];
+
+            players.forEach(p => {
+                const pid = String(p.id).trim();
+                const unpaddedPid = pid.replace(/^0+/, '');
+                const paddedPid = unpaddedPid.padStart(4, '0');
+                const pInfo = cachedPlayersMap[pid] || cachedPlayersMap[unpaddedPid] || cachedPlayersMap[paddedPid] || {};
+                const pos = (pInfo.position || p.position || p.pos || '').toUpperCase();
+
+                // 1. Filter OUT Kickers and Defenses completely
+                if (pos !== 'K' && pos !== 'PK' && pos !== 'DEF' && pos !== 'ST' && pos !== 'DT' && pos !== 'DE') {
+                    const tradeVal = fcMap[pid] || fcMap[unpaddedPid] || fcMap[paddedPid] || 0;
+                    eligiblePlayers.push({
+                        id: pid,
+                        pos: pos,
+                        tradeVal: tradeVal
+                    });
+                }
+            });
+
+            // 2. Greedily select top 7 starters: 1 QB, 2 RB, 2 WR, 1 TE, 1 FLEX
+            const qbs = eligiblePlayers.filter(p => p.pos === 'QB').sort((a, b) => b.tradeVal - a.tradeVal);
+            const rbs = eligiblePlayers.filter(p => p.pos === 'RB').sort((a, b) => b.tradeVal - a.tradeVal);
+            const wrs = eligiblePlayers.filter(p => p.pos === 'WR').sort((a, b) => b.tradeVal - a.tradeVal);
+            const tes = eligiblePlayers.filter(p => p.pos === 'TE').sort((a, b) => b.tradeVal - a.tradeVal);
+
+            const selectedStarters = [];
+            const remainingPool = [];
+
+            if (qbs.length > 0) selectedStarters.push(qbs[0]);
+            remainingPool.push(...qbs.slice(1));
+
+            if (rbs.length > 0) selectedStarters.push(rbs[0]);
+            if (rbs.length > 1) selectedStarters.push(rbs[1]);
+            remainingPool.push(...rbs.slice(2));
+
+            if (wrs.length > 0) selectedStarters.push(wrs[0]);
+            if (wrs.length > 1) selectedStarters.push(wrs[1]);
+            remainingPool.push(...wrs.slice(2));
+
+            if (tes.length > 0) selectedStarters.push(tes[0]);
+            remainingPool.push(...tes.slice(1));
+
+            // FLEX Slot (highest remaining RB, WR, or TE)
+            remainingPool.sort((a, b) => b.tradeVal - a.tradeVal);
+            if (remainingPool.length > 0) {
+                selectedStarters.push(remainingPool[0]);
+            }
+
+            const starterIds = new Set(selectedStarters.map(s => s.id));
+            const benchPool = eligiblePlayers.filter(p => !starterIds.has(p.id)).sort((a, b) => b.tradeVal - a.tradeVal);
+
+            // Select top 7 bench players (or pad with 0 if fewer than 7 remain)
+            const top7Bench = benchPool.slice(0, 7);
+
+            const starterValSum = selectedStarters.reduce((acc, p) => acc + p.tradeVal, 0);
+            const benchValSum = top7Bench.reduce((acc, p) => acc + p.tradeVal, 0);
+
+            // Always divide by 7 to preserve depth denominator
+            const avgStarterVal = starterValSum / 7.0;
+            const avgBenchVal = benchValSum / 7.0;
+            const rawRosterVal = (avgStarterVal * 0.70) + (avgBenchVal * 0.30);
+
+            stats[fid].avgStarterVal = avgStarterVal;
+            stats[fid].avgBenchVal = avgBenchVal;
+            stats[fid].rawRosterVal = rawRosterVal;
+        });
+
+        const statList = Object.values(stats);
+
+        // Step 1: Compute Sub-Indices using True Min-Max 60-100 Scaling
+        const starterVals = statList.map(s => s.avgStarterVal);
+        const minStarterVal = Math.min(...starterVals);
+        const maxStarterVal = Math.max(...starterVals);
+
+        const benchVals = statList.map(s => s.avgBenchVal);
+        const minBenchVal = Math.min(...benchVals);
+        const maxBenchVal = Math.max(...benchVals);
+
+        const pfVals = statList.map(s => s.pf);
+        const minPf = Math.min(...pfVals);
+        const maxPf = Math.max(...pfVals);
+
+        statList.forEach(s => {
+            // Starter & Bench Sub-Indices (60-100)
+            s.starterIndex = scale60To100(s.avgStarterVal, minStarterVal, maxStarterVal);
+            s.benchIndex = scale60To100(s.avgBenchVal, minBenchVal, maxBenchVal);
+
+            // Roster Value Index (70% Starters / 30% Bench)
+            s.rosterIndex = (s.starterIndex * 0.70) + (s.benchIndex * 0.30);
+
+            // Performance Metrics
+            const totalGames = s.wins + s.losses + s.ties;
+            s.h2hPctVal = totalGames > 0 ? (s.wins + 0.5 * s.ties) / totalGames : 0.0;
+
+            const totalAllPlay = s.allPlayWins + s.allPlayLosses + s.allPlayTies;
+            s.allPlayPctVal = totalAllPlay > 0 ? (s.allPlayWins + 0.5 * s.allPlayTies) / totalAllPlay : 0.0;
+        });
+
+        // Performance Sub-Indices across league (60-100)
+        const h2hVals = statList.map(s => s.h2hPctVal);
+        const minH2h = Math.min(...h2hVals);
+        const maxH2h = Math.max(...h2hVals);
+
+        const allPlayVals = statList.map(s => s.allPlayPctVal);
+        const minAllPlay = Math.min(...allPlayVals);
+        const maxAllPlay = Math.max(...allPlayVals);
+
+        statList.forEach(s => {
+            s.pfScore = scale60To100(s.pf, minPf, maxPf);
+            s.h2hScore = scale60To100(s.h2hPctVal, minH2h, maxH2h);
+            s.allPlayScore = scale60To100(s.allPlayPctVal, minAllPlay, maxAllPlay);
+
+            // Composite Performance Index (40% PF, 20% H2H, 40% All-Play)
+            const totalGames = s.wins + s.losses + s.ties;
+            if (weekNum === 0 || totalGames === 0) {
+                s.perfIndex = 60.0;
+            } else {
+                s.perfIndex = (s.pfScore * 0.40) + (s.h2hScore * 0.20) + (s.allPlayScore * 0.40);
+            }
+        });
+
+        // Step 2: Dynamic Season Weighting
+        const perfWeight = Math.min(1.0, Math.max(0.0, weekNum / totalRegWeeks));
+        const rosterWeight = 1.0 - perfWeight;
+
+        // Step 3: Compute Final Power Rating Index
+        statList.forEach(s => {
+            if (weekNum === 0) {
+                s.calculatedIndex = parseFloat(s.rosterIndex.toFixed(1));
+            } else {
+                const blended = (s.perfIndex * perfWeight) + (s.rosterIndex * rosterWeight);
+                s.calculatedIndex = parseFloat(blended.toFixed(1));
+            }
+            s.finalIndex = s.calculatedIndex.toFixed(1);
+            s.comment = '';
+        });
+
+        // Sort by Power Index descending
+        statList.sort((a, b) => parseFloat(b.finalIndex) - parseFloat(a.finalIndex));
+
+        // Format Output Rows
+        const rows = statList.map((s, idx) => {
+            const rank = idx + 1;
+            const allPlayStr = `${s.allPlayWins}-${s.allPlayLosses}${s.allPlayTies > 0 ? '-' + s.allPlayTies : ''}`;
+            const h2hStr = `${s.wins}-${s.losses}${s.ties > 0 ? '-' + s.ties : ''}`;
+
+            return {
+                "Rank": rank,
+                "Franchise ID": s.fid,
+                "Franchise Name": s.name,
+                "Owner": s.owner,
+                "Conference": s.confName,
+                "Points For": s.pf.toFixed(2),
+                "H2H Record": h2hStr,
+                "H2H %": (s.h2hPctVal * 100).toFixed(1) + '%',
+                "All-Play Record": allPlayStr,
+                "All-Play %": (s.allPlayPctVal * 100).toFixed(1) + '%',
+                "Performance Index": s.perfIndex.toFixed(1),
+                "Starter Value": s.avgStarterVal.toFixed(1),
+                "Starter Index": s.starterIndex.toFixed(1),
+                "Bench Value": s.avgBenchVal.toFixed(1),
+                "Bench Index": s.benchIndex.toFixed(1),
+                "Roster Value Index": s.rosterIndex.toFixed(1),
+                "Power Index": s.finalIndex,
+                "Rank Comments": s.comment || ''
+            };
+        });
+
+        return {
+            title: `DNFL Power Rankings Data (${weekNum === 0 ? "Pre-Season" : "Week " + weekNum}, ${targetYear})`,
+            description: `FantasyCalc Trade Value (7 Starters / Top 7 Bench) + MFL Realized Performance (${(perfWeight * 100).toFixed(1)}% Perf / ${(rosterWeight * 100).toFixed(1)}% Roster Value at Week ${weekNum} of ${totalRegWeeks}).`,
+            columns: ["Rank", "Franchise ID", "Franchise Name", "Owner", "Conference", "Points For", "H2H Record", "H2H %", "All-Play Record", "All-Play %", "Performance Index", "Starter Value", "Starter Index", "Bench Value", "Bench Index", "Roster Value Index", "Power Index", "Rank Comments"],
+            rows: rows
+        };
+    }
+
     /* ==========================================================================
        REPORT GENERATOR 6: LEAGUE TRANSACTIONS ENGINE v4.12
        ========================================================================== */
