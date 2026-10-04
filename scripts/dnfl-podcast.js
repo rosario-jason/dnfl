@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Podcast Engine v4.11
+   DNFL Podcast Engine v4.12
    ========================================================================== */
 
 (function (window, document) {
@@ -47,10 +47,13 @@
         const selector = document.getElementById('dnfl_podcast_selector');
         if (!selector) return;
 
-        const episodesUrl = `https://dnfl.live/dnfl_podcast/${podcastYear}/episodes.json`;
+        const episodesUrl = `https://dnfl.live/dnfl_podcast/${podcastYear}/episodes.json?_=${Date.now()}`;
 
         try {
-            const rawJson = await client.fetchRawText(episodesUrl);
+            const rawJson = await client.fetchRawText(episodesUrl, {
+                ttl: client.TTL ? client.TTL.REALTIME : 30000,
+                forceRefresh: true
+            });
             const parsed = JSON.parse(rawJson);
             const rawEpisodes = Array.isArray(parsed) ? parsed : (parsed.episodes || []);
 
