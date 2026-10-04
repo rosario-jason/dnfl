@@ -448,16 +448,95 @@
         });
     }
 
-    function downloadPDF() {
+    
+    /**
+     * Helper: Render Standard DNFL Alert Banner inside Container
+     */
+    function showRulesAlert(message, type) {
+        type = type || 'error';
+        const container = document.getElementById('dnfl-rules-container');
+        if (!container) return;
+
+        const cardBody = container.querySelector('.dnfl-card-body') || container;
+        let alertBox = container.querySelector('.dnfl-rules-alert-banner');
+
+        if (!alertBox) {
+            alertBox = document.createElement('div');
+            alertBox.className = 'dnfl-rules-alert-banner';
+            const toolbar = container.querySelector('#dnfl-rules-actions');
+            if (toolbar && toolbar.nextSibling) {
+                cardBody.insertBefore(alertBox, toolbar.nextSibling);
+            } else {
+                cardBody.appendChild(alertBox);
+            }
+        }
+
+        const iconClass = (type === 'error') ? 'fa-triangle-exclamation' : 'fa-circle-info';
+        const bgStyle = (type === 'error') ? 'background: #fef2f2; border: 1px solid #fecaca; color: #dc2626;' : 'background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8;';
+
+        alertBox.innerHTML = `
+            <div class="dnfl-status-error" style="padding: 0.75rem 1rem; margin: 0.75rem 0; ${bgStyle} border-radius: 6px; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; transition: all 0.3s ease;">
+                <span><i class="fa-solid ${iconClass}" style="margin-right: 0.5rem;"></i> ${message}</span>
+                <button type="button" onclick="this.closest('.dnfl-rules-alert-banner').remove()" style="background: none; border: none; color: inherit; cursor: pointer; font-size: 1.1rem; font-weight: bold; padding: 0 0.25rem; line-height: 1;">&times;</button>
+            </div>
+        `;
+
+        setTimeout(() => {
+            if (alertBox && alertBox.parentElement) {
+                alertBox.remove();
+            }
+        }, 7000);
+    }
+
+    /**
+     * Action: Download CDN Hosted PDF Rulebook with 404 Pre-Check & DNFL Alert Handling
+     */
+    async function downloadPDF() {
         const year = rulesMFLYear || 2026;
         const pdfUrl = `https://dnfl.live/dnfl_rules/${year}/DNFL_Official_Rulebook_${year}.pdf`;
-        const link = document.createElement('a');
-        link.href = pdfUrl;
-        link.download = `DNFL_Official_Rulebook_${year}.pdf`;
-        link.target = '_blank';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const pdfBtn = document.getElementById('dnfl-rules-pdf-btn');
+
+        if (pdfBtn) {
+            pdfBtn.disabled = true;
+            pdfBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
+        }
+
+        try {
+            // Asynchronously check if the PDF resource exists before opening a tab
+            let response = null;
+            try {
+                response = await fetch(pdfUrl, { method: 'HEAD' });
+                // If HEAD method is blocked or fails, retry with GET
+                if (!response.ok && response.status === 405) {
+                    response = await fetch(pdfUrl, { method: 'GET' });
+                }
+            } catch (fetchErr) {
+                // If fetch fails (CORS/network), attempt direct GET
+                response = null;
+            }
+
+            if (!response || !response.ok) {
+                showRulesAlert(`Official ${year} Rulebook PDF is not yet available for download.`, 'error');
+                return;
+            }
+
+            // PDF exists - initiate direct browser download
+            const link = document.createElement('a');
+            link.href = pdfUrl;
+            link.download = `DNFL_Official_Rulebook_${year}.pdf`;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+        } catch (err) {
+            showRulesAlert(`Official ${year} Rulebook PDF is not yet available for download.`, 'error');
+        } finally {
+            if (pdfBtn) {
+                pdfBtn.disabled = false;
+                pdfBtn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Download PDF';
+            }
+        }
     }
 
     /**
@@ -511,6 +590,7 @@
         expandAll: expandAll,
         collapseAll: collapseAll,
         downloadPDF: downloadPDF,
+        showRulesAlert: showRulesAlert,
         compileMarkdownToAccordionHtml: compileMarkdownToAccordionHtml
     };
 
