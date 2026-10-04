@@ -1,0 +1,35 @@
+<!-- DNFL Official Rules Module Shell v4.13 -->
+<div id="dnfl-rules-container" class="dnfl-card">
+    <!-- Card Header -->
+    <div class="dnfl-card-header">
+        <h3 id="dnfl-rules-title" class="dnfl-card-title">
+            <i class="fa-solid fa-book"></i> DNFL Official Rulebook
+        </h3>
+    </div>
+
+    <!-- Card Body -->
+    <div class="dnfl-card-body">
+        <!-- Control Toolbar -->
+        <div id="dnfl-rules-actions" class="dnfl-action-toolbar dnfl-toolbar">
+            <button id="dnfl-rules-expand-btn" class="dnfl-btn dnfl-btn-secondary" onclick="DNFL.Rules.expandAll()">
+                <i class="fa-solid fa-angles-down"></i> Expand All
+            </button>
+            <button id="dnfl-rules-submenus-btn" class="dnfl-btn dnfl-btn-secondary" onclick="DNFL.Rules.showSubMenus()">
+                <i class="fa-solid fa-angle-down"></i> Show Submenus
+            </button>
+            <button id="dnfl-rules-collapse-btn" class="dnfl-btn dnfl-btn-secondary" onclick="DNFL.Rules.collapseAll()">
+                <i class="fa-solid fa-angles-up"></i> Collapse All
+            </button>
+            <button id="dnfl-rules-pdf-btn" class="dnfl-btn dnfl-btn-primary" onclick="DNFL.Rules.downloadPDF()">
+                <i class="fa-solid fa-file-pdf"></i> Download PDF
+            </button>
+        </div>
+
+        <!-- Dynamic Rulebook Accordion Container (Populated by dnfl-rules-v4_2.js) -->
+        <div class="dnfl-rules-wrapper">
+            <div class="dnfl-status-loading">
+                <i class="fa-solid fa-spinner fa-spin"></i> Loading Official Rulebook...
+            </div>
+        </div>
+    </div>
+</div>
