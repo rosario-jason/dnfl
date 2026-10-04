@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Commissioner Data Exporter Engine v4.12-TEST-27
+   DNFL Commissioner Data Exporter Engine v4.12-TEST-33
    ========================================================================== */
 
 (function() {
@@ -806,7 +806,6 @@
             const totalMapped = Object.keys(map).length;
             console.log(`✓ Total unique MFL players mapped: ${totalMapped / 3 | 0} (${totalMapped} dictionary keys)`);
 
-            // Sample test lookups with real MFL IDs from FantasyCalc feed
             const sampleIds = ['13130', '15281', '15711', '12626', '14802', '99999'];
             sampleIds.forEach(id => {
                 console.log(`  - Player MFL ID "${id}": Trade Value = ${map[id] || 0}`);
@@ -835,8 +834,6 @@
         const weekNum = (targetWeek !== undefined && targetWeek !== null && targetWeek !== "") ? parseInt(targetWeek, 10) : 0;
         const totalRegWeeks = parseInt(cachedLeague?.lastRegularSeasonWeek || 12, 10);
 
-        // Check for manual overrides for current year/week
-        
         const leagueFranchises = toArray(cachedLeague?.franchises?.franchise);
         const divisions = toArray(cachedLeague?.divisions?.division);
         const conferences = toArray(cachedLeague?.conferences?.conference);
@@ -850,20 +847,17 @@
         const divToConfMap = {};
         divisions.forEach(d => divToConfMap[norm(d.id)] = norm(d.conference));
 
-        // 1. Fetch completed weeklyResults up to weekNum in parallel (if weekNum > 0)
         const pastWeeklyPromises = [];
         for (let w = 1; w <= weekNum; w++) {
             pastWeeklyPromises.push(client.fetchData('weeklyResults', { W: w }).catch(() => null));
         }
 
-        // 2. Fetch rosters for the selected week (or current week)
         const rosterWeek = weekNum > 0 ? weekNum : 1;
         const [pastResults, rostersData] = await Promise.all([
             Promise.all(pastWeeklyPromises),
             client.fetchData('rosters', { W: rosterWeek }).catch(() => null)
         ]);
 
-        // Initialize Franchise Accumulators
         const stats = {};
         leagueFranchises.forEach(f => {
             const fid = normFranchiseId(f.id);
@@ -900,7 +894,6 @@
             };
         });
 
-        // Process Head-to-Head & All-Play Record up to weekNum
         if (weekNum > 0 && pastResults) {
             pastResults.forEach(wData => {
                 if (!wData?.weeklyResults) return;
@@ -950,7 +943,6 @@
             });
         }
 
-        // Process Rosters & Calculate 7 Optimal Starters + Top 7 Bench Trade Values (Ignoring K and DEF)
         const rosterList = toArray(rostersData?.rosters?.franchise);
         rosterList.forEach(f => {
             const fid = normFranchiseId(f.id);
@@ -966,7 +958,6 @@
                 const pInfo = cachedPlayersMap[pid] || cachedPlayersMap[unpaddedPid] || cachedPlayersMap[paddedPid] || {};
                 const pos = (pInfo.position || p.position || p.pos || '').toUpperCase();
 
-                // 1. Filter OUT Kickers and Defenses completely
                 if (pos !== 'K' && pos !== 'PK' && pos !== 'DEF' && pos !== 'ST' && pos !== 'DT' && pos !== 'DE') {
                     const tradeVal = fcMap[pid] || fcMap[unpaddedPid] || fcMap[paddedPid] || 0;
                     eligiblePlayers.push({
@@ -977,7 +968,6 @@
                 }
             });
 
-            // 2. Greedily select top 7 starters: 1 QB, 2 RB, 2 WR, 1 TE, 1 FLEX
             const qbs = eligiblePlayers.filter(p => p.pos === 'QB').sort((a, b) => b.tradeVal - a.tradeVal);
             const rbs = eligiblePlayers.filter(p => p.pos === 'RB').sort((a, b) => b.tradeVal - a.tradeVal);
             const wrs = eligiblePlayers.filter(p => p.pos === 'WR').sort((a, b) => b.tradeVal - a.tradeVal);
@@ -1000,7 +990,6 @@
             if (tes.length > 0) selectedStarters.push(tes[0]);
             remainingPool.push(...tes.slice(1));
 
-            // FLEX Slot (highest remaining RB, WR, or TE)
             remainingPool.sort((a, b) => b.tradeVal - a.tradeVal);
             if (remainingPool.length > 0) {
                 selectedStarters.push(remainingPool[0]);
@@ -1008,14 +997,11 @@
 
             const starterIds = new Set(selectedStarters.map(s => s.id));
             const benchPool = eligiblePlayers.filter(p => !starterIds.has(p.id)).sort((a, b) => b.tradeVal - a.tradeVal);
-
-            // Select top 7 bench players (or pad with 0 if fewer than 7 remain)
             const top7Bench = benchPool.slice(0, 7);
 
             const starterValSum = selectedStarters.reduce((acc, p) => acc + p.tradeVal, 0);
             const benchValSum = top7Bench.reduce((acc, p) => acc + p.tradeVal, 0);
 
-            // Always divide by 7 to preserve depth denominator
             const avgStarterVal = starterValSum / 7.0;
             const avgBenchVal = benchValSum / 7.0;
             const rawRosterVal = (avgStarterVal * 0.70) + (avgBenchVal * 0.30);
@@ -1027,7 +1013,6 @@
 
         const statList = Object.values(stats);
 
-        // Step 1: Compute Sub-Indices using True Min-Max 60-100 Scaling
         const starterVals = statList.map(s => s.avgStarterVal);
         const minStarterVal = Math.min(...starterVals);
         const maxStarterVal = Math.max(...starterVals);
@@ -1041,14 +1026,10 @@
         const maxPf = Math.max(...pfVals);
 
         statList.forEach(s => {
-            // Starter & Bench Sub-Indices (60-100)
             s.starterIndex = scale60To100(s.avgStarterVal, minStarterVal, maxStarterVal);
             s.benchIndex = scale60To100(s.avgBenchVal, minBenchVal, maxBenchVal);
-
-            // Roster Value Index (70% Starters / 30% Bench)
             s.rosterIndex = (s.starterIndex * 0.70) + (s.benchIndex * 0.30);
 
-            // Performance Metrics
             const totalGames = s.wins + s.losses + s.ties;
             s.h2hPctVal = totalGames > 0 ? (s.wins + 0.5 * s.ties) / totalGames : 0.0;
 
@@ -1056,7 +1037,6 @@
             s.allPlayPctVal = totalAllPlay > 0 ? (s.allPlayWins + 0.5 * s.allPlayTies) / totalAllPlay : 0.0;
         });
 
-        // Performance Sub-Indices across league (60-100)
         const h2hVals = statList.map(s => s.h2hPctVal);
         const minH2h = Math.min(...h2hVals);
         const maxH2h = Math.max(...h2hVals);
@@ -1070,7 +1050,6 @@
             s.h2hScore = scale60To100(s.h2hPctVal, minH2h, maxH2h);
             s.allPlayScore = scale60To100(s.allPlayPctVal, minAllPlay, maxAllPlay);
 
-            // Composite Performance Index (40% PF, 20% H2H, 40% All-Play)
             const totalGames = s.wins + s.losses + s.ties;
             if (weekNum === 0 || totalGames === 0) {
                 s.perfIndex = 60.0;
@@ -1079,11 +1058,9 @@
             }
         });
 
-        // Step 2: Dynamic Season Weighting
         const perfWeight = Math.min(1.0, Math.max(0.0, weekNum / totalRegWeeks));
         const rosterWeight = 1.0 - perfWeight;
 
-        // Step 3: Compute Final Power Rating Index
         statList.forEach(s => {
             if (weekNum === 0) {
                 s.calculatedIndex = parseFloat(s.rosterIndex.toFixed(1));
@@ -1095,10 +1072,8 @@
             s.comment = '';
         });
 
-        // Sort by Power Index descending
         statList.sort((a, b) => parseFloat(b.finalIndex) - parseFloat(a.finalIndex));
 
-        // Format Output Rows
         const rows = statList.map((s, idx) => {
             const rank = idx + 1;
             const allPlayStr = `${s.allPlayWins}-${s.allPlayLosses}${s.allPlayTies > 0 ? '-' + s.allPlayTies : ''}`;
@@ -1135,7 +1110,245 @@
     }
 
     /* ==========================================================================
-       REPORT GENERATOR 6: LEAGUE TRANSACTIONS ENGINE v4.12
+       REPORT GENERATOR 6: PUBLISHED POWER RANKINGS ENGINE
+       ========================================================================== */
+
+    let cachedPublishedWeeks = null;
+
+    async function fetchPublishedWeeks() {
+        if (cachedPublishedWeeks) return cachedPublishedWeeks;
+        const client = getApiClient();
+        const urls = [
+            `https://dnfl.live/dnfl_rankings/${targetYear}/weeks.json`,
+            `https://dnfl.live/dnfl_rankings/weeks.json`,
+            `/dnfl_rankings/${targetYear}/weeks.json`,
+            `/dnfl_rankings/weeks.json`
+        ];
+
+        for (const url of urls) {
+            try {
+                let text = null;
+                if (client && typeof client.fetchRawText === 'function') {
+                    text = await client.fetchRawText(url, { ttl: 86400000 }).catch(() => null);
+                }
+                if (!text) {
+                    const resp = await fetch(url + '?_=' + Date.now());
+                    if (resp.ok) text = await resp.text();
+                }
+                if (text) {
+                    const parsed = JSON.parse(text);
+                    const list = Array.isArray(parsed) ? parsed : (parsed.weeks || []);
+                    if (list.length > 0) {
+                        cachedPublishedWeeks = list.map((w, idx) => {
+                            const rawId = String(w.id || idx).trim();
+                            let displayLabel = w.display || w.label || w.name || rawId;
+                            if (rawId === '00' || rawId.includes('00') || rawId.includes('pre-season')) {
+                                displayLabel = 'Pre-Season';
+                            } else if (/^\d+$/.test(rawId)) {
+                                displayLabel = `Week ${parseInt(rawId, 10)}`;
+                            }
+                            const filename = w.file || (rawId.includes('data') ? rawId : (rawId.includes('pre-season') ? 'data_00_pre-season.csv' : `data_${rawId.padStart(2, '0')}.csv`));
+                            return {
+                                id: rawId,
+                                display: displayLabel,
+                                file: filename,
+                                weekNum: rawId.includes('pre-season') || rawId === '00' ? 0 : (parseInt(rawId.replace(/\D/g, ''), 10) || 0)
+                            };
+                        });
+                        return cachedPublishedWeeks;
+                    }
+                }
+            } catch (e) {}
+        }
+
+        cachedPublishedWeeks = [
+            { id: "00_pre-season", display: "Pre-Season", file: "data_00_pre-season.csv", weekNum: 0 },
+            { id: "01", display: "Week 1", file: "data_01.csv", weekNum: 1 },
+            { id: "02", display: "Week 2", file: "data_02.csv", weekNum: 2 }
+        ];
+        return cachedPublishedWeeks;
+    }
+
+    async function fetchRankingCsv(fileOrId, weekNum) {
+        const client = getApiClient();
+        let cleanFile = String(fileOrId || '').trim();
+        
+        const candidateFiles = [];
+        if (cleanFile) {
+            candidateFiles.push(cleanFile);
+            if (!cleanFile.endsWith('.csv')) {
+                candidateFiles.push(cleanFile + '.csv');
+            }
+        }
+
+        const wkVal = (weekNum !== undefined && weekNum !== null) ? parseInt(weekNum, 10) : (parseInt(cleanFile.replace(/\D/g, ''), 10) || 0);
+        const padWk = String(wkVal).padStart(2, '0');
+
+        if (wkVal === 0 || cleanFile.includes('pre-season')) {
+            candidateFiles.push('data_00_pre-season.csv', 'data_00.csv', 'rankings_week_0.csv', 'data_pre-season.csv');
+        } else {
+            candidateFiles.push(`data_${padWk}.csv`, `data_${wkVal}.csv`, `rankings_week_${wkVal}.csv`, `rankings_week_${padWk}.csv`);
+        }
+
+        const uniqueFiles = [...new Set(candidateFiles)];
+
+        for (const filename of uniqueFiles) {
+            const urls = [
+                `https://dnfl.live/dnfl_rankings/${targetYear}/${filename}`,
+                `https://dnfl.live/dnfl_rankings/${filename}`,
+                `https://raw.githubusercontent.com/rosario-jason/dnfl/main/dnfl_rankings/${targetYear}/${filename}`,
+                `/dnfl_rankings/${targetYear}/${filename}`,
+                `/dnfl_rankings/${filename}`
+            ];
+
+            for (const url of urls) {
+                try {
+                    let text = null;
+                    if (client && typeof client.fetchRawText === 'function') {
+                        text = await client.fetchRawText(url, { ttl: 86400000 }).catch(() => null);
+                    }
+                    if (!text) {
+                        const resp = await fetch(url + '?_=' + Date.now());
+                        if (resp.ok) text = await resp.text();
+                    }
+                    if (text && text.includes(',')) {
+                        return text;
+                    }
+                } catch (e) {}
+            }
+        }
+        return null;
+    }
+
+    async function generatePublishedPowerRankingsReport(targetWeek) {
+        const client = getApiClient();
+        await getLeagueInfo();
+        await getPlayersMap();
+
+        const weeksList = await fetchPublishedWeeks();
+        let selItem = null;
+        let selIndex = -1;
+
+        if (typeof targetWeek === 'string' && isNaN(parseInt(targetWeek, 10))) {
+            selIndex = weeksList.findIndex(w => w.id === targetWeek || w.file === targetWeek);
+        } else {
+            const targetNum = parseInt(targetWeek, 10) || 0;
+            selIndex = weeksList.findIndex(w => w.weekNum === targetNum);
+        }
+
+        if (selIndex === -1 && weeksList.length > 0) {
+            selIndex = weeksList.length - 1;
+        }
+
+        selItem = weeksList[selIndex] || weeksList[weeksList.length - 1];
+        const weekNum = selItem ? selItem.weekNum : 0;
+        const isPreseason = weekNum === 0 || (selItem && selItem.id.includes('pre-season'));
+
+        const prevItem = (!isPreseason && selIndex > 0) ? weeksList[selIndex - 1] : null;
+
+        const [currCsvText, prevCsvText, standingsData] = await Promise.all([
+            fetchRankingCsv(selItem.file || selItem.id, weekNum),
+            prevItem ? fetchRankingCsv(prevItem.file || prevItem.id, prevItem.weekNum) : Promise.resolve(null),
+            (!isPreseason && client) ? client.fetchData('leagueStandings', { W: weekNum, COLUMN_NAMES: 1, ALL: 1 }).catch(() => null) : Promise.resolve(null)
+        ]);
+
+        const standingsMap = {};
+        if (standingsData?.leagueStandings) {
+            const ls = standingsData.leagueStandings;
+            const raw = ls.franchise || (ls.franchises ? ls.franchises.franchise : null);
+            const fList = toArray(raw);
+            fList.forEach(f => {
+                const fid = normFranchiseId(f.id);
+                const wins = parseInt(f.h2hw !== undefined ? f.h2hw : (f.wins || f.w || 0), 10);
+                const losses = parseInt(f.h2hl !== undefined ? f.h2hl : (f.losses || f.l || 0), 10);
+                const ties = parseInt(f.h2ht !== undefined ? f.h2ht : (f.ties || f.t || 0), 10);
+                const rec = ties > 0 ? `${wins}-${losses}-${ties}` : `${wins}-${losses}`;
+                const rawPf = parseFloat(f.pf !== undefined ? f.pf : (f.points || f.pts || 0));
+                const pfStr = isNaN(rawPf) ? '0.00' : rawPf.toFixed(2);
+                standingsMap[fid] = { record: rec, pf: pfStr };
+            });
+        }
+
+        const prevRankMap = {};
+        if (prevCsvText && window.Papa) {
+            try {
+                const prevParsed = (window.Papa || Papa).parse(prevCsvText, { header: true, dynamicTyping: true, skipEmptyLines: true });
+                prevParsed.data.forEach(r => {
+                    const fid = normFranchiseId(r['Franchise ID'] || r['FranchiseId'] || r['TeamID'] || r['id']);
+                    const rk = parseInt(r['Rank'] || 0, 10);
+                    if (fid && rk > 0) prevRankMap[fid] = rk;
+                });
+            } catch (e) {}
+        }
+
+        if (!currCsvText) {
+            throw new Error(`Published power rankings dataset for ${selItem ? selItem.display : 'Week ' + targetWeek} is not available.`);
+        }
+
+        if (!window.Papa && typeof Papa === "undefined") {
+            throw new Error("PapaParse library is required to parse power rankings CSV.");
+        }
+
+        const parsed = (window.Papa || Papa).parse(currCsvText, { header: true, dynamicTyping: true, skipEmptyLines: true });
+        const rows = [];
+
+        parsed.data.forEach(row => {
+            const fid = normFranchiseId(row['Franchise ID'] || row['FranchiseId'] || row['TeamID'] || row['id']);
+            if (!fid) return;
+
+            const currentRank = parseInt(row['Rank'] || 0, 10);
+            const powerIndexNum = parseFloat(row['Power Index'] || row['PowerIndex'] || row['power_index'] || 0);
+            const powerIndexStr = isNaN(powerIndexNum) ? '0.0' : powerIndexNum.toFixed(1);
+
+            const franchiseName = getFranchiseName(fid);
+
+            let changeStr = '--';
+            if (!isPreseason && prevRankMap[fid]) {
+                const diff = prevRankMap[fid] - currentRank;
+                if (diff > 0) changeStr = `+${diff}`;
+                else if (diff < 0) changeStr = `${diff}`;
+                else changeStr = '--';
+            }
+
+            let recordStr = '0-0';
+            let pfStr = '0.00';
+
+            if (isPreseason) {
+                recordStr = String(row['Projected W-L'] || row['Projected Record'] || '0-0').trim();
+                pfStr = '0.00';
+            } else {
+                const mflSt = standingsMap[fid] || {};
+                recordStr = mflSt.record || '0-0';
+                pfStr = mflSt.pf || '0.00';
+            }
+
+            const commentsStr = String(row['Rank Comments'] || row['Comments'] || row['Commentary'] || '').trim();
+
+            rows.push({
+                "Rank": currentRank,
+                "Change": changeStr,
+                "Franchise": franchiseName,
+                "Power Index": powerIndexStr,
+                "Record": recordStr,
+                "Points For": pfStr,
+                "Comments": commentsStr
+            });
+        });
+
+        rows.sort((a, b) => a["Rank"] - b["Rank"]);
+
+        const titleWeekStr = selItem ? selItem.display : (isPreseason ? 'Pre-Season' : `Week ${weekNum}`);
+
+        return {
+            title: `DNFL Published Power Rankings (${titleWeekStr}, ${targetYear})`,
+            description: `Official published power rankings with live API team names, standings, and points for ${titleWeekStr}.`,
+            columns: ["Rank", "Change", "Franchise", "Power Index", "Record", "Points For", "Comments"],
+            rows: rows
+        };
+    }
+
+    /* ==========================================================================
+       REPORT GENERATOR 7: LEAGUE TRANSACTIONS ENGINE v4.12
        ========================================================================== */
 
     async function generateTransactionsReport(week) {
@@ -1287,10 +1500,8 @@
             });
         });
 
-        // Sort rows by timestamp descending (most recent first)
         rows.sort((a, b) => b._rawTimestamp - a._rawTimestamp);
 
-        // Assign clean 1..N indices
         rows.forEach((r, idx) => {
             r["#"] = idx + 1;
             delete r._rawTimestamp;
@@ -1307,9 +1518,84 @@
     }
 
     /* ==========================================================================
+       REPORT GENERATOR 8: OFFICIAL LEAGUE RULES ENGINE v4.12
+       ========================================================================== */
+
+    async function generateRulesReport() {
+        const client = getApiClient();
+        const year = targetYear || 2026;
+
+        const urls = [
+            `https://dnfl.live/dnfl_rules/${year}/DNFL_Rulebook.md`,
+            `/dnfl_rules/${year}/DNFL_Rulebook.md`,
+            `https://dnfl.live/dnfl_rules/2026/DNFL_Rulebook.md`,
+            `/dnfl_rules/2026/DNFL_Rulebook.md`
+        ];
+
+        let mdText = null;
+
+        for (const url of urls) {
+            try {
+                if (client && typeof client.fetchRawText === 'function') {
+                    mdText = await client.fetchRawText(url, { ttl: client.TTL ? client.TTL.DAILY : 86400000 }).catch(() => null);
+                }
+                if (!mdText) {
+                    const resp = await fetch(url + (url.includes('?') ? '&' : '?') + '_=' + Date.now());
+                    if (resp.ok) mdText = await resp.text();
+                }
+                if (mdText && mdText.trim().length > 0) {
+                    break;
+                }
+            } catch (e) {
+                // Try next URL candidate
+            }
+        }
+
+        if (!mdText) {
+            throw new Error(`Official ${year} Rulebook Markdown dataset is not available.`);
+        }
+
+        // Parse section headers for structured table view if needed
+        const lines = mdText.split(/\r?\n/);
+        const rows = [];
+        let curSec = 'General';
+        let curSub = 'Overview';
+        let curTop = 'Details';
+
+        lines.forEach(line => {
+            const sline = line.trim();
+            if (!sline) return;
+
+            if (sline.startsWith('# ') && !sline.startsWith('## ')) {
+                curSec = sline.substring(2).trim();
+            } else if (sline.startsWith('## ') && !sline.startsWith('### ')) {
+                curSub = sline.substring(3).trim();
+            } else if (sline.startsWith('### ')) {
+                curTop = sline.substring(4).trim();
+            } else if (!sline.startsWith('|') && !sline.startsWith('[Table:')) {
+                rows.push({
+                    "Section": curSec,
+                    "Subsection": curSub,
+                    "Topic": curTop,
+                    "Rule Text": sline.replace(/^\d+\.\s*|^[\-\*]\s*/, '')
+                });
+            }
+        });
+
+        return {
+            title: `DNFL Official Rulebook (${year})`,
+            description: `Official Bylaws, League Structure, Scoring System, Waivers/Trades, and Relegation Guidelines for the ${year} season.`,
+            rawMarkdown: mdText,
+            columns: ["Section", "Subsection", "Topic", "Rule Text"],
+            rows: rows
+        };
+    }
+
+    /* ==========================================================================
        FORMATTERS & EXPORT GENERATORS
        ========================================================================== */
-        function formatAsCsv(report) {
+    
+    function formatAsCsv(report) {
         if (window.Papa && typeof window.Papa.unparse === 'function') {
             return window.Papa.unparse({
                 fields: report.columns,
@@ -1329,6 +1615,20 @@
     }
 
     function formatAsJson(report) {
+        if (report.rawMarkdown) {
+            return JSON.stringify({
+                metadata: {
+                    title: report.title,
+                    description: report.description,
+                    season: targetYear,
+                    leagueId: getLeagueId(),
+                    generatedAt: new Date().toISOString()
+                },
+                rawMarkdown: report.rawMarkdown,
+                structuredRules: report.rows
+            }, null, 2);
+        }
+
         return JSON.stringify({
             metadata: {
                 title: report.title,
@@ -1344,6 +1644,10 @@
     }
 
     function formatAsMarkdown(report) {
+        if (report.rawMarkdown) {
+            return report.rawMarkdown;
+        }
+
         let md = `# ${report.title}\n`;
         md += `> **Source**: DNFL Exporter | **League ID**: ${getLeagueId()} | **Season**: ${targetYear} | **Generated**: ${new Date().toLocaleString()}\n`;
         md += `> **Description**: ${report.description}\n\n`;
@@ -1408,25 +1712,51 @@
         if (textarea) textarea.value = formattedContent;
     }
 
+    function renderPdfSummaryCard(year) {
+        const previewContainer = document.getElementById('dnfl-export-preview-container');
+        if (!previewContainer) return;
+        
+        previewContainer.innerHTML = `
+            <div class="dnfl-game-card">
+                <div class="dnfl-game-header">
+                    <i class="fa-solid fa-file-pdf dnfl-icon-red"></i> Official DNFL Rulebook PDF (${year})
+                </div>
+                <div class="dnfl-game-team">
+                    <span class="dnfl-team-name">Document File:</span>
+                    <span class="dnfl-pill-blue dnfl-pill">DNFL_Official_Rulebook_${year}.pdf</span>
+                </div>
+                <div class="dnfl-disclaimer-note">
+                    Click <strong>Download PDF File</strong> below to save the printable vector document.
+                </div>
+            </div>
+        `;
+    }
+
     async function handleGenerateReport() {
         const statusEl = document.getElementById('dnfl-export-status');
         const actionsEl = document.getElementById('dnfl-export-actions');
         const reportSelect = document.getElementById('dnfl-export-report-select');
         const formatSelect = document.getElementById('dnfl-export-format-select');
         const weekSelect = document.getElementById('dnfl-export-week-select');
+        const copyBtn = document.getElementById('dnfl-export-copy-btn');
+        const downloadBtn = document.getElementById('dnfl-export-download-btn');
 
         if (!statusEl || !reportSelect || !formatSelect) return;
 
         currentReportType = reportSelect.value;
         currentReportFormat = formatSelect.value;
-        currentSelectedWeek = weekSelect ? parseInt(weekSelect.value || '1', 10) : 1;
+        const rawWk = weekSelect ? weekSelect.value : '0';
+        currentSelectedWeek = (rawWk !== undefined && rawWk !== null && rawWk !== '') ? parseInt(rawWk, 10) : 0;
+        if (isNaN(currentSelectedWeek)) currentSelectedWeek = 0;
 
         statusEl.className = 'dnfl-status-loading';
         statusEl.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Fetching MFL data via DNFL.Client...';
         if (actionsEl) actionsEl.classList.add('dnfl-is-hidden');
 
         try {
-            if (currentReportType === 'powerRankings') {
+            if (currentReportType === 'publishedPowerRankings') {
+                currentReportData = await generatePublishedPowerRankingsReport(currentSelectedWeek);
+            } else if (currentReportType === 'powerRankings') {
                 currentReportData = await generatePowerRankingsReport(currentSelectedWeek);
             } else if (currentReportType === 'rosters') {
                 currentReportData = await generateRostersReport(currentSelectedWeek);
@@ -1438,21 +1768,37 @@
                 currentReportData = await generateStandingsReport();
             } else if (currentReportType === 'transactions') {
                 currentReportData = await generateTransactionsReport(currentSelectedWeek);
+            } else if (currentReportType === 'rules') {
+                currentReportData = await generateRulesReport();
             }
 
             statusEl.className = 'dnfl-status-success';
-            statusEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Loaded ${currentReportData.rows.length} rows for report: ${currentReportData.title}`;
+            if (currentReportType === 'rules') {
+                statusEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Loaded Official Rulebook dataset for ${targetYear}`;
+            } else {
+                statusEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Loaded ${currentReportData.rows.length} rows for report: ${currentReportData.title}`;
+            }
             
             if (actionsEl) actionsEl.classList.remove('dnfl-is-hidden');
 
             let outputContent = '';
-            if (currentReportFormat === 'csv') {
+            if (currentReportFormat === 'pdf') {
+                if (copyBtn) copyBtn.classList.add('dnfl-is-hidden');
+                if (downloadBtn) downloadBtn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Download PDF File';
+                renderPdfSummaryCard(targetYear);
+            } else if (currentReportFormat === 'csv') {
+                if (copyBtn) copyBtn.classList.remove('dnfl-is-hidden');
+                if (downloadBtn) downloadBtn.innerHTML = '<i class="fa-solid fa-download"></i> Download File';
                 outputContent = formatAsCsv(currentReportData);
                 renderPreviewTable(currentReportData);
             } else if (currentReportFormat === 'json') {
+                if (copyBtn) copyBtn.classList.remove('dnfl-is-hidden');
+                if (downloadBtn) downloadBtn.innerHTML = '<i class="fa-solid fa-download"></i> Download File';
                 outputContent = formatAsJson(currentReportData);
                 renderPreviewText(outputContent);
-            } else {
+            } else { // markdown
+                if (copyBtn) copyBtn.classList.remove('dnfl-is-hidden');
+                if (downloadBtn) downloadBtn.innerHTML = '<i class="fa-solid fa-download"></i> Download File';
                 outputContent = formatAsMarkdown(currentReportData);
                 renderPreviewText(outputContent);
             }
@@ -1465,7 +1811,19 @@
 
     function handleCopyClipboard() {
         if (!currentReportData) return;
-        let content = currentReportFormat === 'csv' ? formatAsCsv(currentReportData) : (currentReportFormat === 'json' ? formatAsJson(currentReportData) : formatAsMarkdown(currentReportData));
+        if (currentReportFormat === 'pdf') return; // Hidden in PDF mode
+
+        let content = '';
+        if (currentReportType === 'rules' && currentReportFormat === 'markdown') {
+            content = currentReportData.rawMarkdown;
+        } else if (currentReportFormat === 'csv') {
+            content = formatAsCsv(currentReportData);
+        } else if (currentReportFormat === 'json') {
+            content = formatAsJson(currentReportData);
+        } else {
+            content = formatAsMarkdown(currentReportData);
+        }
+
         navigator.clipboard.writeText(content).then(() => {
             const btn = document.getElementById('dnfl-export-copy-btn');
             if (btn) {
@@ -1476,12 +1834,77 @@
         });
     }
 
-    function handleDownloadFile() {
+    async function handleDownloadFile() {
         if (!currentReportData) return;
-        let content = formatAsCsv(currentReportData);
+
+        if (currentReportFormat === 'pdf') {
+            const year = targetYear || 2026;
+            const pdfUrl = `https://dnfl.live/dnfl_rules/${year}/DNFL_Official_Rulebook_${year}.pdf`;
+            const downloadBtn = document.getElementById('dnfl-export-download-btn');
+            const statusEl = document.getElementById('dnfl-export-status');
+
+            if (downloadBtn) {
+                downloadBtn.disabled = true;
+                downloadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
+            }
+
+            try {
+                let response = null;
+                try {
+                    response = await fetch(pdfUrl, { method: 'HEAD' });
+                    if (!response.ok && response.status === 405) {
+                        response = await fetch(pdfUrl, { method: 'GET' });
+                    }
+                } catch (err) {
+                    response = null;
+                }
+
+                if (!response || !response.ok) {
+                    if (statusEl) {
+                        statusEl.className = 'dnfl-status-error';
+                        statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Official ${year} Rulebook PDF is not yet available for download.`;
+                    }
+                    return;
+                }
+
+                const link = document.createElement('a');
+                link.href = pdfUrl;
+                link.download = `DNFL_Official_Rulebook_${year}.pdf`;
+                link.target = '_blank';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            } catch (e) {
+                if (statusEl) {
+                    statusEl.className = 'dnfl-status-error';
+                    statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Official ${year} Rulebook PDF is not yet available for download.`;
+                }
+            } finally {
+                if (downloadBtn) {
+                    downloadBtn.disabled = false;
+                    downloadBtn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Download PDF File';
+                }
+            }
+            return;
+        }
+
+        let content = '';
         let ext = 'csv';
-        if (currentReportFormat === 'json') { content = formatAsJson(currentReportData); ext = 'json'; }
-        else if (currentReportFormat === 'markdown') { content = formatAsMarkdown(currentReportData); ext = 'md'; }
+
+        if (currentReportType === 'rules' && currentReportFormat === 'markdown') {
+            content = currentReportData.rawMarkdown;
+            ext = 'md';
+        } else if (currentReportFormat === 'json') {
+            content = formatAsJson(currentReportData);
+            ext = 'json';
+        } else if (currentReportFormat === 'markdown') {
+            content = formatAsMarkdown(currentReportData);
+            ext = 'md';
+        } else {
+            content = formatAsCsv(currentReportData);
+            ext = 'csv';
+        }
 
         const filename = `dnfl_${currentReportType}_L${getLeagueId()}_W${currentSelectedWeek}.${ext}`;
         const blob = new Blob([content], { type: 'text/plain;charset=utf-8;' });
@@ -1495,7 +1918,51 @@
     }
 
     function updateControlVisibility() {
-        populateWeekDropdown();
+        const reportSelect = document.getElementById('dnfl-export-report-select');
+        const formatSelect = document.getElementById('dnfl-export-format-select');
+        const weekSelect = document.getElementById('dnfl-export-week-select');
+
+        if (!reportSelect || !formatSelect) return;
+
+        // 1. Ensure Option 8 "rules" exists
+        if (!reportSelect.querySelector('option[value="rules"]')) {
+            const optRules = document.createElement('option');
+            optRules.value = 'rules';
+            optRules.innerText = '8. Official League Rules';
+            reportSelect.appendChild(optRules);
+        }
+
+        // 2. Ensure "pdf" option exists in format select
+        let pdfOpt = formatSelect.querySelector('option[value="pdf"]');
+        if (!pdfOpt) {
+            pdfOpt = document.createElement('option');
+            pdfOpt.value = 'pdf';
+            pdfOpt.innerText = 'PDF (Printable Document)';
+            formatSelect.appendChild(pdfOpt);
+        }
+
+        const reportType = reportSelect.value;
+        const csvOpt = formatSelect.querySelector('option[value="csv"]');
+
+        if (reportType === 'rules') {
+            if (csvOpt) csvOpt.disabled = true;
+            if (formatSelect.value === 'csv') {
+                formatSelect.value = 'pdf';
+            }
+            if (weekSelect) {
+                weekSelect.disabled = true;
+                weekSelect.innerHTML = '<option value="0">Full Season</option>';
+            }
+        } else {
+            if (csvOpt) csvOpt.disabled = false;
+            if (formatSelect.value === 'pdf') {
+                formatSelect.value = 'csv';
+            }
+            if (weekSelect) {
+                weekSelect.disabled = false;
+            }
+            populateWeekDropdown();
+        }
     }
 
     let userHasSelectedWeek = false;
@@ -1518,6 +1985,12 @@
         if (!weekSelect) return;
 
         const reportType = reportSelect ? reportSelect.value : 'standings';
+
+        if (reportType === 'rules') {
+            weekSelect.disabled = true;
+            weekSelect.innerHTML = '<option value="0">Full Season</option>';
+            return;
+        }
 
         let lastRegWk = 12;
         if (cachedLeague && cachedLeague.lastRegularSeasonWeek) {
@@ -1553,6 +2026,44 @@
             opt.innerText = 'Current';
             weekSelect.appendChild(opt);
             weekSelect.value = '0';
+            return;
+        }
+
+        if (reportType === 'publishedPowerRankings') {
+            const opt0 = document.createElement('option');
+            opt0.value = '0';
+            opt0.innerText = 'Pre-Season';
+            weekSelect.appendChild(opt0);
+            for (let w = 1; w <= maxWeek; w++) {
+                const opt = document.createElement('option');
+                opt.value = String(w);
+                opt.innerText = `Week ${w}`;
+                weekSelect.appendChild(opt);
+            }
+            weekSelect.value = String(maxWeek);
+
+            fetchPublishedWeeks().then(pubWeeks => {
+                if (!pubWeeks || pubWeeks.length === 0) return;
+                const weekSelectEl = document.getElementById('dnfl-export-week-select');
+                if (!weekSelectEl) return;
+                weekSelectEl.innerHTML = '';
+                let maxWkVal = 0;
+                pubWeeks.forEach(wObj => {
+                    const wVal = typeof wObj === 'object' ? (wObj.week !== undefined ? wObj.week : wObj.id) : wObj;
+                    const wNum = parseInt(wVal, 10);
+                    if (isNaN(wNum)) return;
+                    const opt = document.createElement('option');
+                    opt.value = String(wNum);
+                    opt.innerText = wNum === 0 ? 'Pre-Season' : `Week ${wNum}`;
+                    weekSelectEl.appendChild(opt);
+                    if (wNum > maxWkVal) maxWkVal = wNum;
+                });
+                if (userHasSelectedWeek && prevVal && weekSelectEl.querySelector(`option[value="${prevVal}"]`)) {
+                    weekSelectEl.value = prevVal;
+                } else {
+                    weekSelectEl.value = String(maxWkVal);
+                }
+            }).catch(() => {});
             return;
         }
 
@@ -1619,7 +2130,6 @@
             return;
         }
 
-        populateWeekDropdown();
         updateControlVisibility();
 
         const reportSelect = document.getElementById('dnfl-export-report-select');
@@ -1640,7 +2150,10 @@
 
         const formatSelect = document.getElementById('dnfl-export-format-select');
         if (formatSelect) {
-            formatSelect.addEventListener('change', resetExportState);
+            formatSelect.addEventListener('change', () => {
+                updateControlVisibility();
+                resetExportState();
+            });
         }
 
         const genBtn = document.getElementById('dnfl-export-generate-btn');
@@ -1661,12 +2174,14 @@
         init: init,
         fetchFantasyCalcMap: fetchFantasyCalcMap,
         testFantasyCalcFetch: testFantasyCalcFetch,
+        generatePublishedPowerRankingsReport: generatePublishedPowerRankingsReport,
         generatePowerRankingsReport: generatePowerRankingsReport,
         generateRostersReport: generateRostersReport,
         generateMatchupsReport: generateMatchupsReport,
         generateWeeklyDetailsReport: generateWeeklyDetailsReport,
         generateStandingsReport: generateStandingsReport,
-        generateTransactionsReport: generateTransactionsReport
+        generateTransactionsReport: generateTransactionsReport,
+        generateRulesReport: generateRulesReport
     };
 
     window.addEventListener('dnfl:ready', init);
