@@ -130,18 +130,30 @@
             }
         }
 
+        function formatInlineMarkdown(str) {
+            if (!str) return '';
+            let s = str;
+            // Bold
+            s = s.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            s = s.replace(/__(.*?)__/g, '<b>$1</b>');
+            // Italics
+            s = s.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            s = s.replace(/_(.*?)_/g, '<em>$1</em>');
+            return s;
+        }
+
         function closeTable() {
             if (inTable) {
                 closeList();
                 htmlOut.push('                    <div class="dnfl-table-wrapper">');
                 htmlOut.push('                      <table class="dnfl-table dnfl-rules-table">');
                 if (tableCaption) {
-                    htmlOut.push(`                        <caption><span>${tableCaption}</span></caption>`);
+                    htmlOut.push(`                        <caption><span>${formatInlineMarkdown(tableCaption)}</span></caption>`);
                 }
                 if (tableRows.length > 0) {
                     htmlOut.push('                        <thead><tr>');
                     tableRows[0].forEach(h => {
-                        htmlOut.push(`                            <th>${h.trim()}</th>`);
+                        htmlOut.push(`                            <th>${formatInlineMarkdown(h.trim())}</th>`);
                     });
                     htmlOut.push('                          </tr></thead><tbody>');
 
@@ -149,7 +161,7 @@
                         const rowCls = (rIdx % 2 === 1) ? 'dnfl-row-odd' : 'dnfl-row-even';
                         htmlOut.push(`                          <tr class="${rowCls}">`);
                         tableRows[rIdx].forEach(c => {
-                            htmlOut.push(`                            <td>${c.trim()}</td>`);
+                            htmlOut.push(`                            <td>${formatInlineMarkdown(c.trim())}</td>`);
                         });
                         htmlOut.push('                          </tr>');
                     }
@@ -190,18 +202,6 @@
             }
         }
 
-        function formatInlineMarkdown(str) {
-            if (!str) return '';
-            let s = str;
-            // Bold
-            s = s.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            s = s.replace(/__(.*?)__/g, '<b>$1</b>');
-            // Italics
-            s = s.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            s = s.replace(/_(.*?)_/g, '<em>$1</em>');
-            return s;
-        }
-
         for (let i = 0; i < lines.length; i++) {
             const line = lines[i];
             const sline = line.trim();
@@ -227,7 +227,7 @@
                 htmlOut.push(`            <span><i class="fa-solid fa-chevron-right dnfl-rules-icon"></i> ${roman}. ${rawTitle.toUpperCase()}</span>`);
                 htmlOut.push(`            <span class="dnfl-rules-badge">Section ${secIdx}</span>`);
                 htmlOut.push('          </div>');
-                htmlOut.push('          <div class="dnfl-rules-main-content">');
+                htmlOut.push('          <div class="dnfl-rules-main-content dnfl-is-hidden">');
                 continue;
             }
 
@@ -244,7 +244,7 @@
                 htmlOut.push('              <div class="dnfl-rules-subhead" onclick="DNFL.Rules.toggleElement(this)">');
                 htmlOut.push(`                <span><i class="fa-solid fa-caret-right dnfl-sub-icon"></i> ${currentSubLetter}) ${rawTitle}</span>`);
                 htmlOut.push('              </div>');
-                htmlOut.push('              <div class="dnfl-rules-sub-content">');
+                htmlOut.push('              <div class="dnfl-rules-sub-content dnfl-is-hidden">');
                 continue;
             }
 
@@ -260,7 +260,7 @@
                 htmlOut.push('                  <div class="dnfl-rules-topichead" onclick="DNFL.Rules.toggleElement(this)">');
                 htmlOut.push(`                    <span><i class="fa-solid fa-angle-right dnfl-topic-icon"></i> ${topicCode}. ${rawTitle}</span>`);
                 htmlOut.push('                  </div>');
-                htmlOut.push('                  <div class="dnfl-rules-topic-content">');
+                htmlOut.push('                  <div class="dnfl-rules-topic-content dnfl-is-hidden">');
                 continue;
             }
 
@@ -269,7 +269,7 @@
                 closeList();
                 closeTable();
                 const rawTitle = sline.substring(5).trim();
-                htmlOut.push(`                    <p class="dnfl-rules-schedule-header">${formatInlineMarkdown(rawTitle)}</p>`);
+                htmlOut.push(`                    <p class="dnfl-rules-schedule-header" style="padding-left: 2rem; margin-top: 0.75rem; margin-bottom: 0.5rem;">${formatInlineMarkdown(rawTitle)}</p>`);
                 continue;
             }
 
@@ -310,9 +310,9 @@
                 closeList();
             }
 
-            // Regular Paragraph / Note Line
+            // Regular Paragraph / Note Line (Apply 2rem left padding to align with hanging list text indent)
             if (sline) {
-                htmlOut.push(`                    <p>${formatInlineMarkdown(sline)}</p>`);
+                htmlOut.push(`                    <p style="padding-left: 2rem; margin-top: 0.5rem; margin-bottom: 0.5rem;">${formatInlineMarkdown(sline)}</p>`);
             }
         }
 
@@ -332,14 +332,18 @@
         const contentChild = parentSection.querySelector('.dnfl-rules-main-content, .dnfl-rules-sub-content, .dnfl-rules-topic-content');
         if (!contentChild) return;
 
-        const isExpanded = contentChild.classList.contains('is-expanded');
+        const isExpanded = contentChild.classList.contains('is-expanded') && !contentChild.classList.contains('dnfl-is-hidden');
 
         if (isExpanded) {
             contentChild.classList.remove('is-expanded');
+            contentChild.classList.add('dnfl-is-hidden', 'is-collapsed');
             parentSection.classList.remove('is-expanded');
+            parentSection.classList.add('is-collapsed');
         } else {
             contentChild.classList.add('is-expanded');
+            contentChild.classList.remove('dnfl-is-hidden', 'is-collapsed');
             parentSection.classList.add('is-expanded');
+            parentSection.classList.remove('dnfl-is-hidden', 'is-collapsed');
         }
 
         // Update Icon
@@ -362,8 +366,12 @@
         const sections = document.querySelectorAll('#dnfl-rules-container .dnfl-rules-section, #dnfl-rules-container .dnfl-rules-subsection, #dnfl-rules-container .dnfl-rules-topicsection');
         sections.forEach(sec => {
             sec.classList.add('is-expanded');
+            sec.classList.remove('dnfl-is-hidden', 'is-collapsed');
             const content = sec.querySelector('.dnfl-rules-main-content, .dnfl-rules-sub-content, .dnfl-rules-topic-content');
-            if (content) content.classList.add('is-expanded');
+            if (content) {
+                content.classList.add('is-expanded');
+                content.classList.remove('dnfl-is-hidden', 'is-collapsed');
+            }
 
             const icon = sec.querySelector('.dnfl-rules-tabhead i, .dnfl-rules-subhead i, .dnfl-rules-topichead i');
             if (icon) {
@@ -382,8 +390,12 @@
         const lvl1And2 = document.querySelectorAll('#dnfl-rules-container .dnfl-rules-section, #dnfl-rules-container .dnfl-rules-subsection');
         lvl1And2.forEach(sec => {
             sec.classList.add('is-expanded');
+            sec.classList.remove('dnfl-is-hidden', 'is-collapsed');
             const content = sec.querySelector('.dnfl-rules-main-content, .dnfl-rules-sub-content');
-            if (content) content.classList.add('is-expanded');
+            if (content) {
+                content.classList.add('is-expanded');
+                content.classList.remove('dnfl-is-hidden', 'is-collapsed');
+            }
 
             const icon = sec.querySelector('.dnfl-rules-tabhead i, .dnfl-rules-subhead i');
             if (icon) {
@@ -396,8 +408,12 @@
         const lvl3 = document.querySelectorAll('#dnfl-rules-container .dnfl-rules-topicsection');
         lvl3.forEach(sec => {
             sec.classList.remove('is-expanded');
+            sec.classList.add('dnfl-is-hidden', 'is-collapsed');
             const content = sec.querySelector('.dnfl-rules-topic-content');
-            if (content) content.classList.remove('is-expanded');
+            if (content) {
+                content.classList.remove('is-expanded');
+                content.classList.add('dnfl-is-hidden', 'is-collapsed');
+            }
 
             const icon = sec.querySelector('.dnfl-rules-topichead i');
             if (icon) icon.className = 'fa-solid fa-angle-right dnfl-topic-icon';
@@ -411,8 +427,12 @@
         const sections = document.querySelectorAll('#dnfl-rules-container .dnfl-rules-section, #dnfl-rules-container .dnfl-rules-subsection, #dnfl-rules-container .dnfl-rules-topicsection');
         sections.forEach(sec => {
             sec.classList.remove('is-expanded');
+            sec.classList.add('dnfl-is-hidden', 'is-collapsed');
             const content = sec.querySelector('.dnfl-rules-main-content, .dnfl-rules-sub-content, .dnfl-rules-topic-content');
-            if (content) content.classList.remove('is-expanded');
+            if (content) {
+                content.classList.remove('is-expanded');
+                content.classList.add('dnfl-is-hidden', 'is-collapsed');
+            }
 
             const icon = sec.querySelector('.dnfl-rules-tabhead i, .dnfl-rules-subhead i, .dnfl-rules-topichead i');
             if (icon) {
