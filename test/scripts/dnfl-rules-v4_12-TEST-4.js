@@ -324,6 +324,10 @@
     /**
      * Interactivity: Accordion Container Toggle
      */
+    
+    /**
+     * Interactivity: Accordion Container Toggle
+     */
     function toggleElement(triggerEl) {
         if (!triggerEl) return;
         const parentSection = triggerEl.closest('.dnfl-rules-section, .dnfl-rules-subsection, .dnfl-rules-topicsection');
@@ -339,6 +343,7 @@
             contentChild.classList.add('dnfl-is-hidden', 'is-collapsed');
             parentSection.classList.remove('is-expanded');
             parentSection.classList.add('is-collapsed');
+            parentSection.classList.remove('dnfl-is-hidden');
         } else {
             contentChild.classList.add('is-expanded');
             contentChild.classList.remove('dnfl-is-hidden', 'is-collapsed');
@@ -407,8 +412,8 @@
         // Collapse Level 3
         const lvl3 = document.querySelectorAll('#dnfl-rules-container .dnfl-rules-topicsection');
         lvl3.forEach(sec => {
-            sec.classList.remove('is-expanded');
-            sec.classList.add('dnfl-is-hidden', 'is-collapsed');
+            sec.classList.remove('is-expanded', 'dnfl-is-hidden');
+            sec.classList.add('is-collapsed');
             const content = sec.querySelector('.dnfl-rules-topic-content');
             if (content) {
                 content.classList.remove('is-expanded');
@@ -426,8 +431,8 @@
     function collapseAll() {
         const sections = document.querySelectorAll('#dnfl-rules-container .dnfl-rules-section, #dnfl-rules-container .dnfl-rules-subsection, #dnfl-rules-container .dnfl-rules-topicsection');
         sections.forEach(sec => {
-            sec.classList.remove('is-expanded');
-            sec.classList.add('dnfl-is-hidden', 'is-collapsed');
+            sec.classList.remove('is-expanded', 'dnfl-is-hidden');
+            sec.classList.add('is-collapsed');
             const content = sec.querySelector('.dnfl-rules-main-content, .dnfl-rules-sub-content, .dnfl-rules-topic-content');
             if (content) {
                 content.classList.remove('is-expanded');
@@ -443,9 +448,6 @@
         });
     }
 
-    /**
-     * Action: Download CDN Hosted PDF Rulebook
-     */
     function downloadPDF() {
         const year = rulesMFLYear || 2026;
         const pdfUrl = `https://dnfl.live/dnfl_rules/${year}/DNFL_Official_Rulebook_${year}.pdf`;
