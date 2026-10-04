@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Power Rankings Engine v4.11
+   DNFL Power Rankings Engine v4.12
    ========================================================================== */
 
 (function() {
@@ -158,22 +158,19 @@
         const selector = document.getElementById('dnfl_weekSelector');
         if (!selector) return;
 
-        const weeksUrl = `https://dnfl.live/dnfl_rankings/${rankingsMFLYear}/weeks.json`;
+        const weeksUrl = `https://dnfl.live/dnfl_rankings/${rankingsMFLYear}/weeks.json?_=${Date.now()}`;
         const apiClient = getApiClient();
 
         try {
             if (apiClient && typeof apiClient.fetchRawText === 'function') {
-                // Force bypassCache so newly added weeks load immediately
-                const rawJson = await apiClient.fetchRawText(weeksUrl, { bypassCache: true });
+                const rawJson = await apiClient.fetchRawText(weeksUrl, {
+                    ttl: apiClient.TTL ? apiClient.TTL.REALTIME : 30000,
+                    forceRefresh: true
+                });
                 publishedWeeks = JSON.parse(rawJson);
             } else {
-                const resp = await fetch(weeksUrl + '?v=' + Date.now());
-                if (!resp.ok) throw new Error(`HTTP ${resp.status} (${resp.statusText})`);
+                const resp = await fetch(weeksUrl);
                 publishedWeeks = await resp.json();
-            }
-
-            if (!Array.isArray(publishedWeeks) || publishedWeeks.length === 0) {
-                throw new Error("Invalid or empty weeks manifest format");
             }
         } catch (err) {
             console.error("[DNFL Rankings] Failed to load weeks.json:", err);
