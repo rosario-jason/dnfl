@@ -1,6 +1,6 @@
 /**
  * ============================================================================
- * DNFL OFFICIAL BYLAWS & RULES MODULE v4.2
+ * DNFL OFFICIAL BYLAWS & RULES MODULE v4.12-TEST-7
  * ============================================================================
  * Dynamic Markdown Rulebook Engine for Duke Networking Fantasy League (DNFL)
  * Fetches unnumbered /dnfl_rules/{YEAR}/DNFL_Rulebook.md on page load,
@@ -18,6 +18,8 @@
     let isInitialized = false;
     let rulesMFLYear = 2026;
     let loadedMdText = null;
+
+    
 
     /**
      * Roman Numeral Generator for Level 1 Sections (1 -> I, 2 -> II, etc.)
@@ -130,18 +132,6 @@
             }
         }
 
-        function formatInlineMarkdown(str) {
-            if (!str) return '';
-            let s = str;
-            // Bold
-            s = s.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-            s = s.replace(/__(.*?)__/g, '<b>$1</b>');
-            // Italics
-            s = s.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            s = s.replace(/_(.*?)_/g, '<em>$1</em>');
-            return s;
-        }
-
         function closeTable() {
             if (inTable) {
                 closeList();
@@ -200,6 +190,18 @@
                 htmlOut.push('        </div>'); // close dnfl-rules-section
                 inSec = false;
             }
+        }
+
+        function formatInlineMarkdown(str) {
+            if (!str) return '';
+            let s = str;
+            // Bold
+            s = s.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+            s = s.replace(/__(.*?)__/g, '<b>$1</b>');
+            // Italics
+            s = s.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            s = s.replace(/_(.*?)_/g, '<em>$1</em>');
+            return s;
         }
 
         for (let i = 0; i < lines.length; i++) {
@@ -269,7 +271,7 @@
                 closeList();
                 closeTable();
                 const rawTitle = sline.substring(5).trim();
-                htmlOut.push(`                    <p class="dnfl-rules-schedule-header" style="padding-left: 2rem; margin-top: 0.75rem; margin-bottom: 0.5rem;">${formatInlineMarkdown(rawTitle)}</p>`);
+                htmlOut.push(`                    <p class="dnfl-rules-schedule-header">${formatInlineMarkdown(rawTitle)}</p>`);
                 continue;
             }
 
@@ -301,7 +303,7 @@
             if (listMatch) {
                 const itemText = listMatch[1].trim();
                 if (!inList) {
-                    inList = true;
+                    inList = true || true;
                     htmlOut.push('                    <ol class="subnum">');
                 }
                 htmlOut.push(`                      <li class="subtext">${formatInlineMarkdown(itemText)}</li>`);
@@ -310,9 +312,9 @@
                 closeList();
             }
 
-            // Regular Paragraph / Note Line (Apply 2rem left padding to align with hanging list text indent)
+            // Regular Paragraph / Note Line
             if (sline) {
-                htmlOut.push(`                    <p style="padding-left: 2rem; margin-top: 0.5rem; margin-bottom: 0.5rem;">${formatInlineMarkdown(sline)}</p>`);
+                htmlOut.push(`                    <p class="dnfl-rules-note">${formatInlineMarkdown(sline)}</p>`);
             }
         }
 
@@ -321,10 +323,6 @@
         return htmlOut.join('\n');
     }
 
-    /**
-     * Interactivity: Accordion Container Toggle
-     */
-    
     /**
      * Interactivity: Accordion Container Toggle
      */
@@ -343,7 +341,6 @@
             contentChild.classList.add('dnfl-is-hidden', 'is-collapsed');
             parentSection.classList.remove('is-expanded');
             parentSection.classList.add('is-collapsed');
-            parentSection.classList.remove('dnfl-is-hidden');
         } else {
             contentChild.classList.add('is-expanded');
             contentChild.classList.remove('dnfl-is-hidden', 'is-collapsed');
@@ -448,7 +445,6 @@
         });
     }
 
-    
     /**
      * Helper: Render Standard DNFL Alert Banner inside Container
      */
@@ -462,7 +458,6 @@
 
         if (!alertBox) {
             alertBox = document.createElement('div');
-            alertBox.className = 'dnfl-rules-alert-banner';
             const toolbar = container.querySelector('#dnfl-rules-actions');
             if (toolbar && toolbar.nextSibling) {
                 cardBody.insertBefore(alertBox, toolbar.nextSibling);
@@ -471,14 +466,13 @@
             }
         }
 
+        const statusClass = (type === 'error') ? 'dnfl-status-error' : 'dnfl-status-info';
         const iconClass = (type === 'error') ? 'fa-triangle-exclamation' : 'fa-circle-info';
-        const bgStyle = (type === 'error') ? 'background: #fef2f2; border: 1px solid #fecaca; color: #dc2626;' : 'background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8;';
 
+        alertBox.className = `dnfl-rules-alert-banner ${statusClass}`;
         alertBox.innerHTML = `
-            <div class="dnfl-status-error" style="padding: 0.75rem 1rem; margin: 0.75rem 0; ${bgStyle} border-radius: 6px; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; transition: all 0.3s ease;">
-                <span><i class="fa-solid ${iconClass}" style="margin-right: 0.5rem;"></i> ${message}</span>
-                <button type="button" onclick="this.closest('.dnfl-rules-alert-banner').remove()" style="background: none; border: none; color: inherit; cursor: pointer; font-size: 1.1rem; font-weight: bold; padding: 0 0.25rem; line-height: 1;">&times;</button>
-            </div>
+            <span><i class="fa-solid ${iconClass}"></i> ${message}</span>
+            <button type="button" class="dnfl-alert-close" onclick="this.closest('.dnfl-rules-alert-banner').remove()">&times;</button>
         `;
 
         setTimeout(() => {
@@ -543,6 +537,7 @@
      * Render Rules Engine into DOM
      */
     async function renderRulesModule() {
+        
         rulesMFLYear = resolveSeasonYear();
         const container = document.getElementById('dnfl-rules-container');
         if (!container) return;
@@ -590,7 +585,6 @@
         expandAll: expandAll,
         collapseAll: collapseAll,
         downloadPDF: downloadPDF,
-        showRulesAlert: showRulesAlert,
         compileMarkdownToAccordionHtml: compileMarkdownToAccordionHtml
     };
 

@@ -1727,8 +1727,8 @@ a.dnfl-btn-secondary:hover,
    Module: modules/_rules.scss
    Description: Encapsulates scoped styles for #dnfl-rules-container: 3-level bylaws
                 accordion hierarchy (.dnfl-rules-tabhead, .dnfl-rules-subhead,
-                .dnfl-rules-topichead), list hanging indents, blockquotes, and
-                scoring table matrices (table.dnfl-rules-table).
+                .dnfl-rules-topichead), list hanging indents, blockquotes,
+                alert banners, and scoring table matrices (table.dnfl-rules-table).
    ========================================================================== */
 @media (max-width: 768px) {
   #dnfl-rules-container table {
@@ -1811,10 +1811,17 @@ a.dnfl-btn-secondary:hover,
 }
 #dnfl-rules-container .dnfl-rules-table:has(th:nth-child(4)) { /* Total $ */ }
 #dnfl-rules-container {
-  /* --- AUTOMATED RULE LIST NUMBERING ACROSS HEADERS --- */
+  /* --- AUTOMATED RULE LIST NUMBERING & PARAGRAPH ALIGNMENT --- */
 }
 #dnfl-rules-container .dnfl-rules-topic-content {
   counter-reset: rule-counter;
+  /* Indent standalone notes & example paragraphs to match list hanging indent */
+}
+#dnfl-rules-container .dnfl-rules-topic-content > p,
+#dnfl-rules-container .dnfl-rules-topic-content .dnfl-rules-note {
+  padding-left: 2rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 #dnfl-rules-container ol.subnum {
   list-style-type: none !important;
@@ -1833,6 +1840,54 @@ a.dnfl-btn-secondary:hover,
   top: 0;
   font-weight: 600;
   color: var(--dnfl-text-heading, #0f172a);
+}
+#dnfl-rules-container {
+  /* --- DISMISSIBLE ALERT BANNERS --- */
+}
+#dnfl-rules-container .dnfl-rules-alert-banner {
+  margin: 0.75rem 0;
+  border-radius: var(--dnfl-radius-sm, 6px);
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all var(--dnfl-transition-smooth, 0.2s ease);
+}
+#dnfl-rules-container .dnfl-rules-alert-banner.dnfl-status-error {
+  padding: 0.75rem 1rem;
+  background-color: var(--dnfl-red-bg, #fee2e2);
+  border: 1px solid var(--dnfl-red-border, #fecaca);
+  color: var(--dnfl-red-text, #b91c1c);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+#dnfl-rules-container .dnfl-rules-alert-banner.dnfl-status-error i, #dnfl-rules-container .dnfl-rules-alert-banner.dnfl-status-error i.fa-triangle-exclamation {
+  color: var(--dnfl-red-text, #b91c1c) !important;
+  margin-right: 0.5rem;
+}
+#dnfl-rules-container .dnfl-rules-alert-banner.dnfl-status-info {
+  padding: 0.75rem 1rem;
+  background-color: var(--dnfl-blue-bg, #dbeafe);
+  border: 1px solid var(--dnfl-blue-border, #bfdbfe);
+  color: var(--dnfl-blue-text, #1d4ed8);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+#dnfl-rules-container .dnfl-rules-alert-banner.dnfl-status-info i {
+  color: var(--dnfl-blue-text, #1d4ed8) !important;
+  margin-right: 0.5rem;
+}
+#dnfl-rules-container .dnfl-rules-alert-banner .dnfl-alert-close {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: bold;
+  padding: 0 0.25rem;
+  line-height: 1;
 }
 
 .dnfl-rules-wrapper {
@@ -2011,6 +2066,7 @@ a.dnfl-btn-secondary:hover,
   text-decoration: underline;
   color: var(--dnfl-text-heading, #0f172a);
   margin: 1rem 0 0.5rem 0;
+  padding-left: 2rem;
 }
 
 @media (max-width: 768px) {
