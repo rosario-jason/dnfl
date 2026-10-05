@@ -8,6 +8,27 @@
                 and franchise logo centering (.franchiselogo).
    ========================================================================== */
 
+.myfantasyleague_menu {
+  border-bottom: 0;
+  border-top: 0;
+  background: var(--accent, #0577B1) !important; /* Duke Shale Blue */
+  box-shadow: none;
+  height: 2.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.mobile-wrap,
+.settings-mobile-wrap,
+#options_45 #container-wrap table.report,
+#body_live_scoring_summary #live_scoring_summary table.scoresummary table,
+#body_live_scoring_summary #live_scoring_summary table.teamscoresummary table,
+#body_live_scoring_summary #live_scoring_summary table[width="90%"],
+#body_live_scoring_summary #live_scoring_summary span.reportnavigation + table {
+  border-radius: var(--dnfl-radius-lg, 12px) !important;
+}
+
 .franchiseicon {
   min-width: 2.5rem !important;
   max-width: 2.5rem !important;
@@ -28,6 +49,17 @@
   display: flex;
   margin-left: auto;
   margin-right: auto;
+}
+
+.homepagecolumn .homepagemodule caption,
+caption,
+#commissioner_setup table.two_column_layout th {
+  font-size: 1.1rem;
+  text-align: left;
+  background: none;
+  padding: 0.5rem 0.313rem;
+  line-height: 100%;
+  text-transform: capitalize;
 }
 
 .dnfl {

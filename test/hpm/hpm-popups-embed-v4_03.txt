@@ -1,0 +1,21 @@
+<!-- DNFL Popups Subsystem Shell v4.03 -->
+<div id="dnfl-popups-subsystem-shell">
+    <div id="dnfl-modal-overlay" class="dnfl-modal-overlay dnfl-is-hidden">
+        <div id="dnfl-modal-container" class="dnfl-card dnfl-modal-card">
+            <div class="dnfl-card-header dnfl-modal-header">
+                <h3 id="dnfl-modal-title" class="dnfl-card-title">
+                    <i id="dnfl-modal-icon" class="fa-solid fa-circle-info"></i>
+                    <span id="dnfl-modal-title-text">Modal Title</span>
+                </h3>
+                <button id="dnfl-modal-close-btn" class="dnfl-modal-close" aria-label="Close Modal">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="dnfl-modal-content-wrapper" class="dnfl-card-body dnfl-modal-body">
+                <div class="dnfl-status-loading">
+                    <i class="fa-solid fa-spinner fa-spin"></i> Initializing modal subsystem...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,401 @@
+/* ==========================================================================
+   DNFL Popups & Modal Subsystem Partial (_popups.scss)
+   Duke Networking Fantasy League (DNFL)
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Notification Bell & Menu Bar Badge
+   -------------------------------------------------------------------------- */
+.dnfl-notification-holder {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 0.5rem;
+  padding: 0.25rem;
+
+  .dnfl-notification-link {
+    position: relative;
+    color: var(--dnfl-text-muted, #94a3b8);
+    font-size: 1.15rem;
+    text-decoration: none;
+    transition: color var(--dnfl-transition-smooth, 0.2s ease);
+
+    &:hover {
+      color: #ffffff;
+    }
+
+    &.has-unread {
+      color: var(--dnfl-accent-gold, #f59e0b) !important;
+    }
+  }
+
+  .dnfl-notification-badge {
+    position: absolute;
+    top: -6px;
+    right: -10px;
+    background-color: var(--dnfl-accent-red, #ef4444);
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    line-height: 1;
+    padding: 0.2rem 0.4rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    border: 1px solid #ffffff;
+
+    &.dnfl-is-hidden {
+      display: none !important;
+    }
+  }
+}
+
+/* Bell bounce animation keyframes */
+@keyframes dnfl-bell-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.dnfl-bell-bounce {
+  animation: dnfl-bell-bounce 1s infinite ease-in-out;
+}
+
+/* --------------------------------------------------------------------------
+   2. Modal Overlay & Container Card
+   -------------------------------------------------------------------------- */
+.dnfl-modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  background-color: rgba(15, 23, 42, 0.8) !important; // Midnight Slate blur
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  z-index: 999999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem !important;
+
+  &.dnfl-is-hidden {
+    display: none !important;
+  }
+}
+
+.dnfl-modal-card {
+  width: 100% !important;
+  max-width: 42rem !important;
+  max-height: 90vh !important;
+  display: flex !important;
+  flex-direction: column !important;
+  background-color: #ffffff !important;
+  border-radius: 10px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4) !important;
+  border: 1px solid var(--dnfl-border-light, #cbd5e1) !important;
+  overflow: hidden !important;
+
+  .dnfl-modal-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    background-color: #0f172a !important; // Midnight Slate
+    color: #ffffff !important;
+    padding: 0.85rem 1.25rem !important;
+    border-bottom: 3px solid var(--dnfl-primary, #0577B1) !important;
+
+    .dnfl-card-title {
+      font-size: 1.1rem !important;
+      font-weight: 700 !important;
+      color: #ffffff !important;
+      margin: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.6rem !important;
+
+      i {
+        color: var(--dnfl-primary, #0577B1) !important;
+      }
+    }
+
+    .dnfl-modal-close {
+      background: transparent !important;
+      border: none !important;
+      color: #94a3b8 !important;
+      font-size: 1.25rem !important;
+      cursor: pointer !important;
+      padding: 0.25rem 0.5rem !important;
+      border-radius: 4px !important;
+      transition: color 0.2s ease, background-color 0.2s ease !important;
+
+      &:hover {
+        color: #ffffff !important;
+        background-color: rgba(255, 255, 255, 0.1) !important;
+      }
+    }
+  }
+
+  .dnfl-modal-body {
+    overflow-y: auto !important;
+    padding: 1rem 1.25rem !important;
+    max-height: calc(90vh - 4rem) !important;
+    color: #0f172a !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   3. ESPN Hero Card & Faded Watermark
+   -------------------------------------------------------------------------- */
+.dnfl-player-hero-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  color: #ffffff;
+  overflow: hidden;
+
+  /* Low-opacity Watermark Logo */
+  .dnfl-hero-watermark {
+    position: absolute;
+    right: -1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 140%;
+    width: auto;
+    max-width: 14rem;
+    opacity: 0.15;
+    filter: grayscale(10%);
+    pointer-events: none;
+    z-index: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  .dnfl-hero-avatar-wrapper {
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+
+    .dnfl-hero-headshot {
+      width: 5.5rem;
+      height: 5.5rem;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--dnfl-primary, #0577B1);
+      background-color: #ffffff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    }
+
+    .dnfl-position-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      padding: 0.2rem 0.5rem;
+      border-radius: 12px;
+      color: #ffffff;
+      background-color: var(--dnfl-primary, #0577B1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+
+      &.pos-qb { background-color: #0284c7; }
+      &.pos-rb { background-color: #16a34a; }
+      &.pos-wr { background-color: #d97706; }
+      &.pos-te { background-color: #9333ea; }
+      &.pos-def { background-color: #dc2626; }
+    }
+  }
+
+  .dnfl-hero-meta {
+    position: relative;
+    z-index: 2;
+
+    .dnfl-hero-name {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 0 0.4rem 0;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    }
+
+    .dnfl-hero-tags {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+
+      .dnfl-pill-blue {
+        background-color: var(--dnfl-primary, #0577B1);
+        color: #ffffff;
+        padding: 0.25rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+      }
+
+      .dnfl-pill-gray {
+        background-color: rgba(255, 255, 255, 0.15);
+        color: #f1f5f9;
+        padding: 0.25rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .dnfl-pill-gold {
+        background-color: var(--dnfl-accent-gold, #f59e0b);
+        color: #0f172a;
+        padding: 0.25rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 800;
+      }
+    }
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    text-align: center;
+
+    .dnfl-hero-watermark {
+      right: 50%;
+      transform: translate(50%, -50%);
+      height: 120%;
+    }
+
+    .dnfl-hero-tags {
+      justify-content: center;
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   4. Modal Navigation Tabs
+   -------------------------------------------------------------------------- */
+.dnfl-modal-tabs {
+  display: flex;
+  gap: 0.4rem;
+  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: 1rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+
+  .dnfl-modal-tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.2s ease, border-color 0.2s ease;
+
+    &:hover {
+      color: var(--dnfl-primary, #0577B1);
+    }
+
+    &.is-active {
+      color: var(--dnfl-primary, #0577B1);
+      border-bottom-color: var(--dnfl-primary, #0577B1);
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. Multi-Conference Rostered Grid & Chips
+   -------------------------------------------------------------------------- */
+.dnfl-multi-conf-wrapper {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid #e2e8f0;
+
+  .dnfl-section-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0 0 0.75rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    i {
+      color: var(--dnfl-primary, #0577B1);
+    }
+  }
+
+  .dnfl-conf-teams-grid {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+
+    .dnfl-conf-team-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.75rem;
+      background-color: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+
+      &:hover {
+        background-color: #f1f5f9;
+        border-color: var(--dnfl-primary, #0577B1);
+        transform: translateY(-1px);
+      }
+
+      .dnfl-owner-subtext {
+        font-size: 0.75rem;
+        color: #64748b;
+      }
+    }
+  }
+}
+
+/* --------------------------------------------------------------------------
+   6. Modal Action Toolbar
+   -------------------------------------------------------------------------- */
+.dnfl-modal-actions {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #e2e8f0;
+
+  .dnfl-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s ease;
+
+    &.dnfl-btn-primary {
+      background-color: var(--dnfl-primary, #0577B1);
+      color: #ffffff;
+      border: 1px solid #045e8c;
+
+      &:hover {
+        background-color: #045e8c;
+      }
+    }
+
+    &.dnfl-btn-secondary {
+      background-color: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+
+      &:hover {
+        background-color: #e2e8f0;
+      }
+    }
+  }
+}
