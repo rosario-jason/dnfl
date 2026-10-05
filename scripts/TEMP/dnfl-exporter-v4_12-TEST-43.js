@@ -1560,8 +1560,8 @@
 
         htmlOut.push(`
             <div id="dnfl-rules-container" class="dnfl-rules-pdf-view">
-                <div style="font-family: Arial, Helvetica, sans-serif; color: #0f172a; padding: 20px; line-height: 1.5; font-size: 11pt; text-align: left;">
-                    <div style="text-align: left; border-bottom: 3px solid #0577B1; padding-bottom: 12px; margin-bottom: 24px;">
+                <div style="font-family: Arial, Helvetica, sans-serif; color: #0f172a; padding: 10px 0; line-height: 1.5; font-size: 10pt; text-align: left;">
+                    <div style="text-align: left; border-bottom: 3px solid #0577B1; padding-bottom: 12px; margin-bottom: 20px; page-break-inside: avoid; break-inside: avoid;">
                         <h1 style="font-size: 20pt; font-weight: 800; color: #0577B1; margin: 0; text-align: left; text-transform: uppercase; letter-spacing: 0.5px;">Duke Networking Fantasy League</h1>
                         <h2 style="font-size: 13pt; font-weight: 700; color: #334155; margin: 6px 0 0 0; text-align: left; text-transform: uppercase;">Official Bylaws & League Rules — ${year} Season</h2>
                         <div style="font-size: 9pt; color: #64748b; margin-top: 4px; text-align: left;">Published Document | League ID: ${getLeagueId()}</div>
@@ -1575,7 +1575,7 @@
 
         function closeList() {
             if (inList) {
-                htmlOut.push('</ol>');
+                htmlOut.push('</ul>');
                 inList = false;
             }
         }
@@ -1583,9 +1583,9 @@
         function closeTable() {
             if (inTable) {
                 closeList();
-                htmlOut.push('<table class="dnfl-table dnfl-rules-table" style="width: 100%; border-collapse: collapse; margin: 14px 0 18px 0; font-size: 9.5pt; border: 1px solid #cbd5e1; page-break-inside: avoid; break-inside: avoid;">');
+                htmlOut.push('<table class="dnfl-table dnfl-rules-table" style="width: 100%; border-collapse: collapse; margin: 12px 0 16px 0; font-size: 9.5pt; border: 1px solid #cbd5e1; page-break-inside: avoid; break-inside: avoid;">');
                 if (tableCaption) {
-                    htmlOut.push(`<caption><strong style="color: #0f172a; text-transform: uppercase; border-bottom: 2px solid #0577B1; padding-bottom: 2px; font-size: 9pt;">${formatInline(tableCaption)}</strong></caption>`);
+                    htmlOut.push(`<caption><strong style="color: #0f172a; text-transform: uppercase; border-bottom: 2px solid #0577B1; padding-bottom: 2px; font-size: 8.5pt;">${formatInline(tableCaption)}</strong></caption>`);
                 }
                 if (tableRows.length > 0) {
                     htmlOut.push('<thead><tr style="background-color: #0577B1; color: #ffffff; border-bottom: 2px solid #045e8c;">');
@@ -1596,7 +1596,7 @@
 
                     for (let rIdx = 1; rIdx < tableRows.length; rIdx++) {
                         const bg = (rIdx % 2 === 1) ? '#ffffff' : '#f8fafc';
-                        htmlOut.push(`<tr style="background-color: ${bg}; border-bottom: 1px solid #e2e8f0;">`);
+                        htmlOut.push(`<tr style="background-color: ${bg}; border-bottom: 1px solid #e2e8f0; page-break-inside: avoid; break-inside: avoid;">`);
                         tableRows[rIdx].forEach(c => {
                             htmlOut.push(`<td style="padding: 8px 12px; color: #1e293b; text-align: left;">${formatInline(c.trim())}</td>`);
                         });
@@ -1661,11 +1661,10 @@
                 topIdx = 0;
                 const rawTitle = sline.substring(2).trim();
                 const roman = toRoman(secIdx);
-                const pageBreakStyle = secIdx > 1 ? 'page-break-before: always; break-before: page;' : '';
 
                 htmlOut.push(`
-                    <div class="dnfl-rules-tabhead" style="margin-top: 24px; margin-bottom: 12px; background-color: #f1f5f9; border-left: 5px solid #0577B1; padding: 10px 14px; border-radius: 4px; page-break-inside: avoid; break-inside: avoid; text-align: left; ${pageBreakStyle}">
-                        <h2 style="font-size: 13pt; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase; text-align: left; letter-spacing: 0.5px;">SECTION ${roman}. ${rawTitle}</h2>
+                    <div class="dnfl-rules-tabhead" style="margin-top: 20px; margin-bottom: 10px; background-color: #f1f5f9; border-left: 5px solid #0577B1; padding: 10px 14px; border-radius: 4px; page-break-inside: avoid; break-inside: avoid; text-align: left;">
+                        <h2 style="font-size: 14.5pt; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase; text-align: left; letter-spacing: 0.5px;">SECTION ${roman}. ${rawTitle}</h2>
                     </div>
                 `);
                 continue;
@@ -1681,8 +1680,8 @@
                 currentSubLetter = toLetter(subIdx);
 
                 htmlOut.push(`
-                    <div class="dnfl-rules-subhead" style="margin-top: 16px; margin-bottom: 8px; border-left: 4px solid #0577B1; padding: 8px 12px; background-color: #f8fafc; border-radius: 0 4px 4px 0; page-break-inside: avoid; break-inside: avoid; text-align: left;">
-                        <h3 style="font-size: 11pt; font-weight: 700; color: #0577B1; margin: 0; text-align: left;">${currentSubLetter}) ${rawTitle}</h3>
+                    <div class="dnfl-rules-subhead" style="margin-top: 14px; margin-bottom: 8px; border-left: 4px solid #0577B1; padding: 6px 12px; background-color: #f8fafc; border-radius: 0 4px 4px 0; page-break-inside: avoid; break-inside: avoid; text-align: left;">
+                        <h3 style="font-size: 12.5pt; font-weight: 700; color: #0577B1; margin: 0; text-align: left;">${currentSubLetter}) ${rawTitle}</h3>
                     </div>
                 `);
                 continue;
@@ -1698,18 +1697,18 @@
 
                 htmlOut.push(`
                     <div class="dnfl-rules-topichead" style="margin-top: 12px; margin-bottom: 6px; page-break-inside: avoid; break-inside: avoid; text-align: left;">
-                        <h4 style="font-size: 10pt; font-weight: 700; color: #0f172a; margin: 0; padding: 2px 0; text-align: left;">${topicCode}. ${rawTitle}</h4>
+                        <h4 style="font-size: 11pt; font-weight: 700; color: #0f172a; margin: 0; padding: 2px 0; text-align: left;">${topicCode}. ${rawTitle}</h4>
                     </div>
                 `);
                 continue;
             }
 
-            // Level 4 Sub-Header (#### Heading)
+            // Level 4 Sub-Header / Schedule Header (#### Heading)
             if (sline.startsWith('#### ')) {
                 closeList();
                 closeTable();
                 const rawTitle = sline.substring(5).trim();
-                htmlOut.push(`<p style="font-weight: 700; font-style: italic; text-decoration: underline; color: #0f172a; margin: 10px 0 4px 0; padding-left: 1rem; text-align: left;">${formatInline(rawTitle)}</p>`);
+                htmlOut.push(`<p style="font-size: 10.5pt; font-weight: 700; font-style: italic; text-decoration: underline; color: #0f172a; margin: 10px 0 4px 0; padding-left: 0; text-align: left; page-break-inside: avoid; break-inside: avoid;">${formatInline(rawTitle)}</p>`);
                 continue;
             }
 
@@ -1733,15 +1732,26 @@
                 closeTable();
             }
 
-            // List Items
-            const listMatch = sline.match(/^(?:\d+\.|\-|\*)\s+(.*)$/);
-            if (listMatch) {
-                const itemText = listMatch[1].trim();
+            // List Items & Rule Numbering
+            const numMatch = sline.match(/^(\d+\.|[A-Za-z]\.)\s+(.*)$/);
+            const bulletMatch = sline.match(/^([\-\*])\s+(.*)$/);
+
+            if (numMatch) {
+                const numPrefix = numMatch[1].trim();
+                const itemText = numMatch[2].trim();
                 if (!inList) {
                     inList = true;
-                    htmlOut.push('<ol style="margin: 4px 0 8px 0; padding-left: 1.5rem; list-style-position: outside; text-align: left;">');
+                    htmlOut.push('<ul style="margin: 4px 0 8px 0; padding-left: 0; list-style: none; text-align: left;">');
                 }
-                htmlOut.push(`<li style="margin-bottom: 4px; color: #1e293b; text-align: left;">${formatInline(itemText)}</li>`);
+                htmlOut.push(`<li style="margin-bottom: 4px; color: #1e293b; text-align: left; page-break-inside: avoid; break-inside: avoid;"><strong style="font-weight: 700; color: #0f172a;">${numPrefix}</strong> ${formatInline(itemText)}</li>`);
+                continue;
+            } else if (bulletMatch) {
+                const itemText = bulletMatch[2].trim();
+                if (!inList) {
+                    inList = true;
+                    htmlOut.push('<ul style="margin: 4px 0 8px 0; padding-left: 1.2rem; list-style-type: disc; text-align: left;">');
+                }
+                htmlOut.push(`<li style="margin-bottom: 4px; color: #1e293b; text-align: left; page-break-inside: avoid; break-inside: avoid;">${formatInline(itemText)}</li>`);
                 continue;
             } else if (inList) {
                 closeList();
@@ -1749,7 +1759,7 @@
 
             // Regular Paragraph / Note
             if (sline) {
-                htmlOut.push(`<p style="margin: 4px 0 8px 0; padding-left: 1rem; color: #334155; text-align: left;">${formatInline(sline)}</p>`);
+                htmlOut.push(`<p style="margin: 4px 0 8px 0; padding-left: 0; color: #334155; text-align: left; page-break-inside: avoid; break-inside: avoid;">${formatInline(sline)}</p>`);
             }
         }
 
@@ -2099,12 +2109,12 @@
                 pdfTargetEl.classList.add('is-expanded');
 
                 const opt = {
-                    margin:       [0.4, 0.4, 0.4, 0.4],
+                    margin:       [0.6, 0.5, 0.6, 0.5],
                     filename:     filename,
                     image:        { type: 'jpeg', quality: 0.98 },
                     html2canvas:  { scale: 2, useCORS: true, logging: false },
                     jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' },
-                    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+                    pagebreak:    { mode: ['css', 'legacy'], avoid: ['.dnfl-rules-tabhead', '.dnfl-rules-subhead', '.dnfl-rules-topichead', 'table', 'tr', 'caption'] }
                 };
 
                 await window.html2pdf().set(opt).from(pdfTargetEl).save();
