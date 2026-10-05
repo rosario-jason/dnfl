@@ -30,7 +30,7 @@
             { name: "standings", url: "dnfl-standings.js" },
             { name: "rankings",  url: "dnfl-rankings.js" },
             { name: "podcast",   url: "dnfl-podcast.js" },
-            { name: "rules",     url: "TEMP/dnfl-rules-v4_12-TEST-7.js" },
+            { name: "rules",     url: "dnfl-rules.js" },
             { name: "exporter",  url: "TEMP/dnfl-exporter-v4_12-TEST-47.js" },
             { name: "lts",       url: "dnfl-lts.js" }
         ],
