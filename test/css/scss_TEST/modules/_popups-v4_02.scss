@@ -1,0 +1,525 @@
+/* ==========================================================================
+   DNFL Popups & Modal Subsystem Partial (_popups-v4_02.scss)
+   Duke Networking Fantasy League (DNFL) Architecture
+   ========================================================================== */
+
+/* 1. Modal Base Overlay & Card */
+.dnfl-modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  background-color: rgba(15, 23, 42, 0.8) !important;
+  backdrop-filter: blur(5px) !important;
+  -webkit-backdrop-filter: blur(5px) !important;
+  z-index: 999999 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 1rem !important;
+  opacity: 1;
+  transition: opacity 0.25s ease !important;
+
+  &.dnfl-is-hidden {
+    display: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+  }
+}
+
+.dnfl-modal-card {
+  width: 100% !important;
+  max-width: 46rem !important;
+  max-height: 90vh !important;
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  font-family: var(--dnfl-font-main, Arial, Helvetica, sans-serif) !important;
+
+  .dnfl-modal-header {
+    padding: 1rem 1.25rem !important;
+    background: #0f172a !important;
+    color: #ffffff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    border-bottom: 3px solid #0577B1 !important;
+
+    h3 {
+      margin: 0 !important;
+      font-size: 1.15rem !important;
+      font-weight: 700 !important;
+      color: #ffffff !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.6rem !important;
+    }
+
+    .dnfl-modal-close {
+      background: transparent !important;
+      border: none !important;
+      color: #94a3b8 !important;
+      font-size: 1.25rem !important;
+      cursor: pointer !important;
+      padding: 0.25rem 0.5rem !important;
+      border-radius: 4px !important;
+      transition: color 0.2s ease !important;
+
+      &:hover {
+        color: #ffffff !important;
+      }
+    }
+  }
+
+  .dnfl-modal-body {
+    padding: 1.25rem !important;
+    overflow-y: auto !important;
+    max-height: calc(90vh - 4.5rem) !important;
+  }
+}
+
+/* 2. Notification Bell & Menu Items */
+.dnfl-menu-bell-item {
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.dnfl-notification-holder {
+  &.has-unread .dnfl-notification-link {
+    color: #f59e0b !important;
+  }
+}
+
+.dnfl-notification-link {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0.5rem 0.75rem !important;
+  color: #94a3b8 !important;
+  text-decoration: none !important;
+  font-size: 1.1rem !important;
+  transition: color 0.2s ease !important;
+}
+
+.dnfl-notification-badge {
+  position: absolute !important;
+  top: 2px !important;
+  right: 2px !important;
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+  font-size: 0.7rem !important;
+  font-weight: 800 !important;
+  padding: 0.1rem 0.35rem !important;
+  border-radius: 9999px !important;
+  line-height: 1 !important;
+  box-shadow: 0 0 0 2px #0f172a !important;
+
+  &.dnfl-is-hidden {
+    display: none !important;
+  }
+}
+
+/* 3. Player & Franchise Hero Header Banner */
+.dnfl-player-hero-card {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 1.25rem !important;
+  padding: 1.25rem 1.5rem !important;
+  margin-bottom: 1rem !important;
+  border-radius: 8px !important;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
+  color: #ffffff !important;
+  overflow: hidden !important;
+
+  .dnfl-hero-watermark {
+    position: absolute !important;
+    left: 15% !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    height: 180% !important;
+    max-width: 18rem !important;
+    opacity: 0.14 !important;
+    filter: grayscale(10%) !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
+
+  .dnfl-hero-logo {
+    width: 6.5rem !important;
+    height: 6.5rem !important;
+    object-fit: contain !important;
+    filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5)) !important;
+    border: none !important;
+    z-index: 2 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .dnfl-hero-icon {
+    width: 1.6rem !important;
+    height: 1.6rem !important;
+    object-fit: contain !important;
+    vertical-align: middle !important;
+    margin-right: 0.35rem !important;
+  }
+
+  .dnfl-hero-avatar-wrapper {
+    position: relative !important;
+    z-index: 2 !important;
+    flex-shrink: 0 !important;
+
+    .dnfl-hero-headshot {
+      width: 5.5rem !important;
+      height: 5.5rem !important;
+      border-radius: 50% !important;
+      object-fit: cover !important;
+      border: 3px solid #0577B1 !important;
+      background-color: #ffffff !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    }
+  }
+
+  .dnfl-hero-meta {
+    position: relative !important;
+    z-index: 2 !important;
+
+    .dnfl-hero-name {
+      font-size: 1.65rem !important;
+      font-weight: 900 !important;
+      color: #ffffff !important;
+      margin: 0 0 0.4rem 0 !important;
+      line-height: 1.15 !important;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.5rem !important;
+    }
+
+    .dnfl-hero-tags {
+      display: flex !important;
+      gap: 0.5rem !important;
+      flex-wrap: wrap !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column !important;
+    text-align: center !important;
+    padding: 1rem !important;
+
+    .dnfl-hero-logo {
+      width: 5rem !important;
+      height: 5rem !important;
+    }
+
+    .dnfl-hero-tags {
+      justify-content: center !important;
+    }
+  }
+}
+
+/* 4. Navigation Tabs */
+.dnfl-modal-tabs {
+  display: flex !important;
+  gap: 0.5rem !important;
+  margin-bottom: 1rem !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+  padding-bottom: 0.5rem !important;
+  overflow-x: auto !important;
+
+  .dnfl-modal-tab-btn {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    border: 1px solid #cbd5e1 !important;
+    padding: 0.45rem 0.9rem !important;
+    border-radius: 6px !important;
+    font-weight: 700 !important;
+    font-size: 0.85rem !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+
+    &:hover {
+      background: #e2e8f0 !important;
+      color: #0f172a !important;
+    }
+
+    &.is-active {
+      background: #0577B1 !important;
+      color: #ffffff !important;
+      border-color: #0577B1 !important;
+    }
+  }
+}
+
+/* 5. Broadcast Scorecard Stat Grid */
+.dnfl-scorecard-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 0.75rem !important;
+  margin-bottom: 1.25rem !important;
+
+  @media (max-width: 640px) {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .dnfl-stat-card {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    border-top: 3px solid #0577B1 !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 0.85rem !important;
+    text-align: center !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+
+    .dnfl-stat-lbl {
+      font-size: 0.725rem !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      color: #64748b !important;
+      margin-bottom: 0.25rem !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 0.35rem !important;
+    }
+
+    .dnfl-stat-val {
+      font-size: 1.35rem !important;
+      font-weight: 800 !important;
+      color: #0f172a !important;
+    }
+  }
+}
+
+/* 6. Top Franchise Stars Section */
+.dnfl-stars-wrapper {
+  margin-top: 1.25rem !important;
+
+  .dnfl-section-title {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    color: #0577B1 !important;
+    margin: 0 0 0.6rem 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+  }
+
+  .dnfl-stars-grid {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 0.85rem !important;
+
+    @media (max-width: 540px) {
+      grid-template-columns: 1fr !important;
+    }
+
+    .dnfl-star-card {
+      background: #f8fafc !important;
+      border: 1px solid #cbd5e1 !important;
+      border-radius: 8px !important;
+      padding: 0.75rem !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.75rem !important;
+      cursor: pointer !important;
+      transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+
+      &:hover {
+        border-color: #0577B1 !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 4px 12px rgba(5, 119, 177, 0.15) !important;
+      }
+
+      .dnfl-star-avatar-wrapper {
+        position: relative !important;
+        flex-shrink: 0 !important;
+
+        .dnfl-star-avatar {
+          width: 3.25rem !important;
+          height: 3.25rem !important;
+          border-radius: 50% !important;
+          object-fit: cover !important;
+          border: 2px solid #0577B1 !important;
+          background: #ffffff !important;
+        }
+      }
+
+      .dnfl-star-info {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.15rem !important;
+
+        .dnfl-star-name {
+          font-size: 0.9rem !important;
+          font-weight: 800 !important;
+          color: #0f172a !important;
+        }
+
+        .dnfl-star-pts {
+          font-size: 0.75rem !important;
+          color: #64748b !important;
+          font-weight: 600 !important;
+        }
+      }
+    }
+  }
+}
+
+/* 7. Position Badges */
+.dnfl-position-badge {
+  position: absolute !important;
+  bottom: -2px !important;
+  right: -2px !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  padding: 0.2rem 0.45rem !important;
+  border-radius: 12px !important;
+  color: #ffffff !important;
+  background-color: #0577B1 !important;
+
+  &.pos-qb { background-color: #0284c7 !important; }
+  &.pos-rb { background-color: #16a34a !important; }
+  &.pos-wr { background-color: #d97706 !important; }
+  &.pos-te { background-color: #9333ea !important; }
+  &.pos-def { background-color: #dc2626 !important; }
+}
+
+/* 8. Utility Pills & Badges */
+.dnfl-pill-gray {
+  display: inline-block !important;
+  background: #e2e8f0 !important;
+  color: #334155 !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  padding: 0.2rem 0.5rem !important;
+  border-radius: 4px !important;
+  width: fit-content !important;
+}
+
+.dnfl-pill-blue {
+  display: inline-block !important;
+  background: #0577B1 !important;
+  color: #ffffff !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  padding: 0.2rem 0.5rem !important;
+  border-radius: 4px !important;
+}
+
+.dnfl-pill-gold {
+  display: inline-block !important;
+  background: #d97706 !important;
+  color: #ffffff !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  padding: 0.2rem 0.5rem !important;
+  border-radius: 4px !important;
+}
+
+.dnfl-subtext {
+  font-size: 0.75rem !important;
+  color: #64748b !important;
+}
+
+/* 9. Multi-Conference Teams Grid */
+.dnfl-multi-conf-wrapper {
+  margin-top: 1rem !important;
+  padding-top: 1rem !important;
+  border-top: 1px solid #e2e8f0 !important;
+
+  .dnfl-section-title {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    margin: 0 0 0.5rem 0 !important;
+    color: #0f172a !important;
+  }
+
+  .dnfl-conf-teams-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+    gap: 0.75rem !important;
+    margin-top: 0.5rem !important;
+
+    .dnfl-conf-team-chip {
+      background: #f8fafc !important;
+      border: 1px solid #cbd5e1 !important;
+      padding: 0.6rem 0.8rem !important;
+      border-radius: 6px !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 0.25rem !important;
+      cursor: pointer !important;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+
+      &:hover {
+        border-color: #0577B1 !important;
+        box-shadow: 0 2px 8px rgba(5, 119, 177, 0.15) !important;
+      }
+    }
+  }
+}
+
+/* 10. Status & Notification Drawer Styles */
+.dnfl-status-error {
+  padding: 1rem !important;
+  background: #fef2f2 !important;
+  border: 1px solid #fca5a5 !important;
+  color: #991b1b !important;
+  border-radius: 6px !important;
+}
+
+.dnfl-status-loading {
+  padding: 1.5rem !important;
+  text-align: center !important;
+  color: #64748b !important;
+}
+
+.dnfl-hpm-section {
+  margin-bottom: 1.25rem !important;
+
+  .dnfl-hpm-section-title {
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    color: #0577B1 !important;
+    margin: 0 0 0.5rem 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+  }
+}
+
+.dnfl-hpm-card {
+  background: #f8fafc !important;
+  border-left: 4px solid #0577B1 !important;
+  padding: 0.85rem 1rem !important;
+  margin-bottom: 0.85rem !important;
+  border-radius: 0 6px 6px 0 !important;
+  border-top: 1px solid #e2e8f0 !important;
+  border-right: 1px solid #e2e8f0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+
+  .dnfl-hpm-title {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin: 0 0 0.4rem 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+  }
+}
+
+/* 11. Auto-hide Native Page Body Containers */
+#body_home .homepagemessage,
+#league_reminders,
+.tdalert,
+.alert,
+#warning {
+  display: none !important;
+}
