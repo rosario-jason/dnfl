@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Commissioner Data Exporter Engine v4.12-TEST-33
+   DNFL Commissioner Data Exporter Engine v4.12-TEST-34
    ========================================================================== */
 
 (function() {
@@ -94,29 +94,37 @@
         return str;
     }
 
+    let leagueInfoPromise = null;
+
     async function getLeagueInfo() {
         if (cachedLeague && cachedLeague.currentWk) return cachedLeague;
-        const client = getApiClient();
-        try {
-            const [leagueData, weeklyData] = await Promise.all([
-                client.fetchData('league').catch(() => ({})),
-                client.fetchData('weeklyResults').catch(() => ({}))
-            ]);
-            cachedLeague = leagueData?.league || {};
-            cachedFranchises = toArray(cachedLeague?.franchises?.franchise);
+        if (leagueInfoPromise) return leagueInfoPromise;
 
-            const curWk = weeklyData?.weeklyResults?.week 
-                || weeklyData?.weeklyResults?.currentWk
-                || (typeof window !== 'undefined' && (window.current_week || window.mflCurrentWk || window.mfl_current_week));
-            
-            if (curWk) {
-                cachedLeague.currentWk = String(curWk);
+        leagueInfoPromise = (async () => {
+            const client = getApiClient();
+            try {
+                const [leagueData, weeklyData] = await Promise.all([
+                    client.fetchData('league').catch(() => ({})),
+                    client.fetchData('weeklyResults').catch(() => ({}))
+                ]);
+                cachedLeague = leagueData?.league || {};
+                cachedFranchises = toArray(cachedLeague?.franchises?.franchise);
+
+                const curWk = weeklyData?.weeklyResults?.week 
+                    || weeklyData?.weeklyResults?.currentWk
+                    || (typeof window !== 'undefined' && (window.current_week || window.mflCurrentWk || window.mfl_current_week));
+                
+                if (curWk) {
+                    cachedLeague.currentWk = String(curWk);
+                }
+            } catch (err) {
+                console.warn('[DNFL Exporter] Error in getLeagueInfo:', err);
+                cachedLeague = cachedLeague || {};
             }
-        } catch (err) {
-            console.warn('[DNFL Exporter] Error in getLeagueInfo:', err);
-            cachedLeague = cachedLeague || {};
-        }
-        return cachedLeague;
+            return cachedLeague;
+        })();
+
+        return leagueInfoPromise;
     }
 
     async function getPlayersMap() {
@@ -755,7 +763,7 @@
                         rawJson = await client.fetchRawText(url, { ttl: client.TTL ? client.TTL.DAILY : 86400000 }).catch(() => null);
                     }
                     if (!rawJson) {
-                        const resp = await fetch(url + (url.includes('?') ? '&' : '?') + 'v=' + Date.now());
+                        const resp = await fetch(url);
                         if (resp.ok) rawJson = await resp.text();
                     }
                     if (rawJson && (rawJson.trim().startsWith('[') || rawJson.trim().startsWith('{'))) {
@@ -1132,7 +1140,7 @@
                     text = await client.fetchRawText(url, { ttl: 86400000 }).catch(() => null);
                 }
                 if (!text) {
-                    const resp = await fetch(url + '?_=' + Date.now());
+                    const resp = await fetch(url);
                     if (resp.ok) text = await resp.text();
                 }
                 if (text) {
@@ -1208,7 +1216,7 @@
                         text = await client.fetchRawText(url, { ttl: 86400000 }).catch(() => null);
                     }
                     if (!text) {
-                        const resp = await fetch(url + '?_=' + Date.now());
+                        const resp = await fetch(url);
                         if (resp.ok) text = await resp.text();
                     }
                     if (text && text.includes(',')) {
@@ -1521,7 +1529,238 @@
        REPORT GENERATOR 8: OFFICIAL LEAGUE RULES ENGINE v4.12
        ========================================================================== */
 
-    async function generateRulesReport() {
+    
+    /**
+     * Async Loader for html2pdf.js Library
+     */
+    function ensureHtml2PdfLoaded() {
+        if (window.html2pdf) return Promise.resolve();
+        return new Promise((resolve, reject) => {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error('Failed to load PDF generation engine (html2pdf.js).'));
+            document.head.appendChild(script);
+        });
+    }
+
+    /**
+     * Convert Markdown Rulebook to Print-Optimized HTML for PDF Generation
+     */
+    function compileMarkdownToPrintHtml(mdText, year) {
+        if (!mdText) return '<div>No rulebook content available.</div>';
+
+        const lines = mdText.split(/\r?\n/);
+        let secIdx = 0;
+        let subIdx = 0;
+        let topIdx = 0;
+        let currentSubLetter = 'A';
+
+        const htmlOut = [];
+
+        htmlOut.push(`
+            <div id="dnfl-rules-container" class="dnfl-rules-pdf-view">
+                <div style="font-family: Arial, Helvetica, sans-serif; color: #0f172a; padding: 20px; line-height: 1.5; font-size: 11pt; text-align: left;">
+                    <div style="text-align: left; border-bottom: 3px solid #0577B1; padding-bottom: 12px; margin-bottom: 24px;">
+                        <h1 style="font-size: 20pt; font-weight: 800; color: #0577B1; margin: 0; text-align: left; text-transform: uppercase; letter-spacing: 0.5px;">Duke Networking Fantasy League</h1>
+                        <h2 style="font-size: 13pt; font-weight: 700; color: #334155; margin: 6px 0 0 0; text-align: left; text-transform: uppercase;">Official Bylaws & League Rules — ${year} Season</h2>
+                        <div style="font-size: 9pt; color: #64748b; margin-top: 4px; text-align: left;">Published Document | League ID: ${getLeagueId()}</div>
+                    </div>
+        `);
+
+        let inList = false;
+        let inTable = false;
+        let tableRows = [];
+        let tableCaption = '';
+
+        function closeList() {
+            if (inList) {
+                htmlOut.push('</ol>');
+                inList = false;
+            }
+        }
+
+        function closeTable() {
+            if (inTable) {
+                closeList();
+                htmlOut.push('<table class="dnfl-table dnfl-rules-table" style="width: 100%; border-collapse: collapse; margin: 14px 0 18px 0; font-size: 9.5pt; border: 1px solid #cbd5e1; page-break-inside: avoid; break-inside: avoid;">');
+                if (tableCaption) {
+                    htmlOut.push(`<caption><strong style="color: #0f172a; text-transform: uppercase; border-bottom: 2px solid #0577B1; padding-bottom: 2px; font-size: 9pt;">${formatInline(tableCaption)}</strong></caption>`);
+                }
+                if (tableRows.length > 0) {
+                    htmlOut.push('<thead><tr style="background-color: #0577B1; color: #ffffff; border-bottom: 2px solid #045e8c;">');
+                    tableRows[0].forEach(h => {
+                        htmlOut.push(`<th style="padding: 8px 12px; font-weight: 700; color: #ffffff; text-align: left; text-transform: uppercase; font-size: 8.5pt;">${formatInline(h.trim())}</th>`);
+                    });
+                    htmlOut.push('</tr></thead><tbody>');
+
+                    for (let rIdx = 1; rIdx < tableRows.length; rIdx++) {
+                        const bg = (rIdx % 2 === 1) ? '#ffffff' : '#f8fafc';
+                        htmlOut.push(`<tr style="background-color: ${bg}; border-bottom: 1px solid #e2e8f0;">`);
+                        tableRows[rIdx].forEach(c => {
+                            htmlOut.push(`<td style="padding: 8px 12px; color: #1e293b; text-align: left;">${formatInline(c.trim())}</td>`);
+                        });
+                        htmlOut.push('</tr>');
+                    }
+                    htmlOut.push('</tbody>');
+                }
+                htmlOut.push('</table>');
+                inTable = false;
+                tableRows = [];
+                tableCaption = '';
+            }
+        }
+
+        function formatInline(str) {
+            if (!str) return '';
+            let s = str;
+            s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            s = s.replace(/__(.*?)__/g, '<strong>$1</strong>');
+            s = s.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            s = s.replace(/_(.*?)_/g, '<em>$1</em>');
+            return s;
+        }
+
+        function toRoman(num) {
+            const lookup = { M: 1000, CM: 900, D: 500, CD: 400, C: 100, XC: 90, L: 50, XL: 40, X: 10, IX: 9, V: 5, IV: 4, I: 1 };
+            let roman = '';
+            for (let i in lookup) {
+                while (num >= lookup[i]) {
+                    roman += i;
+                    num -= lookup[i];
+                }
+            }
+            return roman || 'I';
+        }
+
+        function toLetter(num) {
+            let letter = '';
+            while (num > 0) {
+                let rem = (num - 1) % 26;
+                letter = String.fromCharCode(65 + rem) + letter;
+                num = Math.floor((num - 1) / 26);
+            }
+            return letter || 'A';
+        }
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            const sline = line.trim();
+
+            if (!sline) {
+                closeList();
+                continue;
+            }
+
+            // Level 1 Section (# Heading) -> .dnfl-rules-tabhead
+            if (sline.startsWith('# ') && !sline.startsWith('## ')) {
+                closeList();
+                closeTable();
+                secIdx++;
+                subIdx = 0;
+                topIdx = 0;
+                const rawTitle = sline.substring(2).trim();
+                const roman = toRoman(secIdx);
+                const pageBreakStyle = secIdx > 1 ? 'page-break-before: always; break-before: page;' : '';
+
+                htmlOut.push(`
+                    <div class="dnfl-rules-tabhead" style="margin-top: 24px; margin-bottom: 12px; background-color: #f1f5f9; border-left: 5px solid #0577B1; padding: 10px 14px; border-radius: 4px; page-break-inside: avoid; break-inside: avoid; text-align: left; ${pageBreakStyle}">
+                        <h2 style="font-size: 13pt; font-weight: 800; color: #0f172a; margin: 0; text-transform: uppercase; text-align: left; letter-spacing: 0.5px;">SECTION ${roman}. ${rawTitle}</h2>
+                    </div>
+                `);
+                continue;
+            }
+
+            // Level 2 Subsection (## Heading) -> .dnfl-rules-subhead
+            if (sline.startsWith('## ') && !sline.startsWith('### ')) {
+                closeList();
+                closeTable();
+                subIdx++;
+                topIdx = 0;
+                const rawTitle = sline.substring(3).trim();
+                currentSubLetter = toLetter(subIdx);
+
+                htmlOut.push(`
+                    <div class="dnfl-rules-subhead" style="margin-top: 16px; margin-bottom: 8px; border-left: 4px solid #0577B1; padding: 8px 12px; background-color: #f8fafc; border-radius: 0 4px 4px 0; page-break-inside: avoid; break-inside: avoid; text-align: left;">
+                        <h3 style="font-size: 11pt; font-weight: 700; color: #0577B1; margin: 0; text-align: left;">${currentSubLetter}) ${rawTitle}</h3>
+                    </div>
+                `);
+                continue;
+            }
+
+            // Level 3 Topic (### Heading) -> .dnfl-rules-topichead
+            if (sline.startsWith('### ')) {
+                closeList();
+                closeTable();
+                topIdx++;
+                const rawTitle = sline.substring(4).trim();
+                const topicCode = `${currentSubLetter}${topIdx}`;
+
+                htmlOut.push(`
+                    <div class="dnfl-rules-topichead" style="margin-top: 12px; margin-bottom: 6px; page-break-inside: avoid; break-inside: avoid; text-align: left;">
+                        <h4 style="font-size: 10pt; font-weight: 700; color: #0f172a; margin: 0; padding: 2px 0; text-align: left;">${topicCode}. ${rawTitle}</h4>
+                    </div>
+                `);
+                continue;
+            }
+
+            // Level 4 Sub-Header (#### Heading)
+            if (sline.startsWith('#### ')) {
+                closeList();
+                closeTable();
+                const rawTitle = sline.substring(5).trim();
+                htmlOut.push(`<p style="font-weight: 700; font-style: italic; text-decoration: underline; color: #0f172a; margin: 10px 0 4px 0; padding-left: 1rem; text-align: left;">${formatInline(rawTitle)}</p>`);
+                continue;
+            }
+
+            // Table Caption
+            if (sline.startsWith('[Table:') && sline.endsWith(']')) {
+                tableCaption = sline.substring(7, sline.length - 1).trim();
+                continue;
+            }
+
+            // Table Grid Row
+            if (sline.startsWith('|') && sline.endsWith('|')) {
+                if (/^\|[\s:-|-]+\|$/.test(sline)) continue;
+                const cols = sline.split('|').slice(1, -1).map(c => c.trim());
+                if (!inTable) {
+                    inTable = true;
+                    tableRows = [];
+                }
+                tableRows.push(cols);
+                continue;
+            } else if (inTable) {
+                closeTable();
+            }
+
+            // List Items
+            const listMatch = sline.match(/^(?:\d+\.|\-|\*)\s+(.*)$/);
+            if (listMatch) {
+                const itemText = listMatch[1].trim();
+                if (!inList) {
+                    inList = true;
+                    htmlOut.push('<ol style="margin: 4px 0 8px 0; padding-left: 1.5rem; list-style-position: outside; text-align: left;">');
+                }
+                htmlOut.push(`<li style="margin-bottom: 4px; color: #1e293b; text-align: left;">${formatInline(itemText)}</li>`);
+                continue;
+            } else if (inList) {
+                closeList();
+            }
+
+            // Regular Paragraph / Note
+            if (sline) {
+                htmlOut.push(`<p style="margin: 4px 0 8px 0; padding-left: 1rem; color: #334155; text-align: left;">${formatInline(sline)}</p>`);
+            }
+        }
+
+        closeList();
+        closeTable();
+
+        htmlOut.push('</div></div>');
+        return htmlOut.join('\n');
+    }
+
+        async function generateRulesReport() {
         const client = getApiClient();
         const year = targetYear || 2026;
 
@@ -1540,7 +1779,7 @@
                     mdText = await client.fetchRawText(url, { ttl: client.TTL ? client.TTL.DAILY : 86400000 }).catch(() => null);
                 }
                 if (!mdText) {
-                    const resp = await fetch(url + (url.includes('?') ? '&' : '?') + '_=' + Date.now());
+                    const resp = await fetch(url);
                     if (resp.ok) mdText = await resp.text();
                 }
                 if (mdText && mdText.trim().length > 0) {
@@ -1712,25 +1951,7 @@
         if (textarea) textarea.value = formattedContent;
     }
 
-    function renderPdfSummaryCard(year) {
-        const previewContainer = document.getElementById('dnfl-export-preview-container');
-        if (!previewContainer) return;
-        
-        previewContainer.innerHTML = `
-            <div class="dnfl-game-card">
-                <div class="dnfl-game-header">
-                    <i class="fa-solid fa-file-pdf dnfl-icon-red"></i> Official DNFL Rulebook PDF (${year})
-                </div>
-                <div class="dnfl-game-team">
-                    <span class="dnfl-team-name">Document File:</span>
-                    <span class="dnfl-pill-blue dnfl-pill">DNFL_Official_Rulebook_${year}.pdf</span>
-                </div>
-                <div class="dnfl-disclaimer-note">
-                    Click <strong>Download PDF File</strong> below to save the printable vector document.
-                </div>
-            </div>
-        `;
-    }
+    
 
     async function handleGenerateReport() {
         const statusEl = document.getElementById('dnfl-export-status');
@@ -1782,25 +2003,31 @@
             if (actionsEl) actionsEl.classList.remove('dnfl-is-hidden');
 
             let outputContent = '';
+            const copyBtns = document.querySelectorAll('#dnfl-export-copy-btn, .dnfl-export-copy-btn, [id*="copy-btn"]');
+
             if (currentReportFormat === 'pdf') {
-                if (copyBtn) copyBtn.classList.add('dnfl-is-hidden');
-                if (downloadBtn) downloadBtn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Download PDF File';
-                renderPdfSummaryCard(targetYear);
-            } else if (currentReportFormat === 'csv') {
-                if (copyBtn) copyBtn.classList.remove('dnfl-is-hidden');
+                copyBtns.forEach(btn => btn.classList.add('dnfl-is-hidden'));
                 if (downloadBtn) downloadBtn.innerHTML = '<i class="fa-solid fa-download"></i> Download File';
-                outputContent = formatAsCsv(currentReportData);
-                renderPreviewTable(currentReportData);
-            } else if (currentReportFormat === 'json') {
-                if (copyBtn) copyBtn.classList.remove('dnfl-is-hidden');
+                
+                const pdfHtml = compileMarkdownToPrintHtml(currentReportData.rawMarkdown, targetYear);
+                const previewContainer = document.getElementById('dnfl-export-preview-container');
+                if (previewContainer) {
+                    previewContainer.innerHTML = `<div id="dnfl-pdf-preview-content" class="dnfl-table-wrapper dnfl-card-body">${pdfHtml}</div>`;
+                }
+            } else {
+                copyBtns.forEach(btn => btn.classList.remove('dnfl-is-hidden'));
                 if (downloadBtn) downloadBtn.innerHTML = '<i class="fa-solid fa-download"></i> Download File';
-                outputContent = formatAsJson(currentReportData);
-                renderPreviewText(outputContent);
-            } else { // markdown
-                if (copyBtn) copyBtn.classList.remove('dnfl-is-hidden');
-                if (downloadBtn) downloadBtn.innerHTML = '<i class="fa-solid fa-download"></i> Download File';
-                outputContent = formatAsMarkdown(currentReportData);
-                renderPreviewText(outputContent);
+
+                if (currentReportFormat === 'csv') {
+                    outputContent = formatAsCsv(currentReportData);
+                    renderPreviewTable(currentReportData);
+                } else if (currentReportFormat === 'json') {
+                    outputContent = formatAsJson(currentReportData);
+                    renderPreviewText(outputContent);
+                } else { // markdown
+                    outputContent = formatAsMarkdown(currentReportData);
+                    renderPreviewText(outputContent);
+                }
             }
         } catch (err) {
             console.error('[DNFL Exporter Exception]:', err);
@@ -1839,51 +2066,66 @@
 
         if (currentReportFormat === 'pdf') {
             const year = targetYear || 2026;
-            const pdfUrl = `https://dnfl.live/dnfl_rules/${year}/DNFL_Official_Rulebook_${year}.pdf`;
+            const filename = `DNFL_Official_Rulebook_${year}.pdf`;
             const downloadBtn = document.getElementById('dnfl-export-download-btn');
             const statusEl = document.getElementById('dnfl-export-status');
 
             if (downloadBtn) {
                 downloadBtn.disabled = true;
-                downloadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Checking...';
+                downloadBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generating PDF...';
+            }
+            if (statusEl) {
+                statusEl.className = 'dnfl-status-loading';
+                statusEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Compiling PDF document...`;
             }
 
             try {
-                let response = null;
-                try {
-                    response = await fetch(pdfUrl, { method: 'HEAD' });
-                    if (!response.ok && response.status === 405) {
-                        response = await fetch(pdfUrl, { method: 'GET' });
-                    }
-                } catch (err) {
-                    response = null;
+                await ensureHtml2PdfLoaded();
+
+                const previewContainer = document.getElementById('dnfl-export-preview-container');
+                let pdfTargetEl = document.getElementById('dnfl-pdf-preview-content');
+
+                if (!pdfTargetEl && currentReportData && currentReportData.rawMarkdown) {
+                    const pdfHtml = compileMarkdownToPrintHtml(currentReportData.rawMarkdown, year);
+                    previewContainer.innerHTML = `<div id="dnfl-pdf-preview-content" style="background-color: #ffffff; padding: 20px; border-radius: 6px; border: 1px solid #cbd5e1; color: #0f172a;">${pdfHtml}</div>`;
+                    pdfTargetEl = document.getElementById('dnfl-pdf-preview-content');
                 }
 
-                if (!response || !response.ok) {
-                    if (statusEl) {
-                        statusEl.className = 'dnfl-status-error';
-                        statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Official ${year} Rulebook PDF is not yet available for download.`;
-                    }
-                    return;
+                if (!pdfTargetEl) {
+                    throw new Error('No rulebook content found to generate PDF.');
                 }
 
-                const link = document.createElement('a');
-                link.href = pdfUrl;
-                link.download = `DNFL_Official_Rulebook_${year}.pdf`;
-                link.target = '_blank';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                // Temporary scroll reset for full document canvas capture
+                pdfTargetEl.classList.add('is-expanded');
 
-            } catch (e) {
+                const opt = {
+                    margin:       [0.4, 0.4, 0.4, 0.4],
+                    filename:     filename,
+                    image:        { type: 'jpeg', quality: 0.98 },
+                    html2canvas:  { scale: 2, useCORS: true, logging: false },
+                    jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' },
+                    pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+                };
+
+                await window.html2pdf().set(opt).from(pdfTargetEl).save();
+
+                pdfTargetEl.classList.remove('is-expanded');
+
+                if (statusEl) {
+                    statusEl.className = 'dnfl-status-success';
+                    statusEl.innerHTML = `<i class="fa-solid fa-circle-check"></i> Generated and downloaded ${filename}`;
+                }
+
+            } catch (err) {
+                console.error('[DNFL Exporter PDF Generation Error]:', err);
                 if (statusEl) {
                     statusEl.className = 'dnfl-status-error';
-                    statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Official ${year} Rulebook PDF is not yet available for download.`;
+                    statusEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Error generating PDF: ${err.message}`;
                 }
             } finally {
                 if (downloadBtn) {
                     downloadBtn.disabled = false;
-                    downloadBtn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> Download PDF File';
+                    downloadBtn.innerHTML = '<i class="fa-solid fa-download"></i> Download File';
                 }
             }
             return;
@@ -1924,28 +2166,13 @@
 
         if (!reportSelect || !formatSelect) return;
 
-        // 1. Ensure Option 8 "rules" exists
-        if (!reportSelect.querySelector('option[value="rules"]')) {
-            const optRules = document.createElement('option');
-            optRules.value = 'rules';
-            optRules.innerText = '8. Official League Rules';
-            reportSelect.appendChild(optRules);
-        }
-
-        // 2. Ensure "pdf" option exists in format select
-        let pdfOpt = formatSelect.querySelector('option[value="pdf"]');
-        if (!pdfOpt) {
-            pdfOpt = document.createElement('option');
-            pdfOpt.value = 'pdf';
-            pdfOpt.innerText = 'PDF (Printable Document)';
-            formatSelect.appendChild(pdfOpt);
-        }
-
         const reportType = reportSelect.value;
         const csvOpt = formatSelect.querySelector('option[value="csv"]');
+        const pdfOpt = formatSelect.querySelector('option[value="pdf"]');
 
         if (reportType === 'rules') {
             if (csvOpt) csvOpt.disabled = true;
+            if (pdfOpt) pdfOpt.disabled = false;
             if (formatSelect.value === 'csv') {
                 formatSelect.value = 'pdf';
             }
@@ -1955,6 +2182,7 @@
             }
         } else {
             if (csvOpt) csvOpt.disabled = false;
+            if (pdfOpt) pdfOpt.disabled = true;
             if (formatSelect.value === 'pdf') {
                 formatSelect.value = 'csv';
             }
@@ -1962,6 +2190,23 @@
                 weekSelect.disabled = false;
             }
             populateWeekDropdown();
+        }
+        updateActionToolbarForFormat();
+    }
+
+    function updateActionToolbarForFormat() {
+        const formatSelect = document.getElementById('dnfl-export-format-select');
+        const copyBtns = document.querySelectorAll('#dnfl-export-copy-btn, .dnfl-export-copy-btn, [id*="copy-btn"]');
+        const downloadBtn = document.getElementById('dnfl-export-download-btn');
+        if (!formatSelect) return;
+
+        if (formatSelect.value === 'pdf') {
+            copyBtns.forEach(btn => btn.classList.add('dnfl-is-hidden'));
+        } else {
+            copyBtns.forEach(btn => btn.classList.remove('dnfl-is-hidden'));
+        }
+        if (downloadBtn) {
+            downloadBtn.innerHTML = '<i class="fa-solid fa-download"></i> Download File';
         }
     }
 
@@ -2118,7 +2363,11 @@
         }
     }
 
+    let isInitialized = false;
+
     function init() {
+        if (isInitialized) return;
+
         ensureViewportMeta();
 
         const container = document.getElementById('dnfl-exporter-container');
@@ -2129,6 +2378,8 @@
             }
             return;
         }
+
+        isInitialized = true;
 
         updateControlVisibility();
 
