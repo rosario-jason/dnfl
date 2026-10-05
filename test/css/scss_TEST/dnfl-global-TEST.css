@@ -1139,10 +1139,58 @@ a.dnfl-btn-secondary:hover,
   }
 }
 /* ==========================================================================
-   DNFL Popups & Modal Subsystem Partial (_popups-v4_02.scss)
+   DNFL Popups & Modal Subsystem Partial (_popups-v4_03.scss)
    Duke Networking Fantasy League (DNFL) Architecture
    ========================================================================== */
-/* 1. Modal Base Overlay & Card */
+/* ------------------------------------------------------------------------
+   FRANCHISE ICON & LOGO DESIGN TOKENS
+   ------------------------------------------------------------------------ */
+:root {
+  --dnfl-ficon-xs: 1.25rem; /* 20px */
+  --dnfl-ficon-sm: 1.5rem; /* 24px — Mobile tables, tickers & dropdowns */
+  --dnfl-ficon-md: 2.5rem; /* 40px — Standard table rows (Desktop) */
+  --dnfl-ficon-lg: 3.5rem; /* 56px — Scoreboards & game cards */
+  --dnfl-ficon-xl: 4.0rem; /* 64px — Hero profile cards & modals */
+  --dnfl-flogo-max-h: 25rem; /* Banner logo height limit */
+}
+
+/* Design Token Utility Classes */
+.franchise-icon-xs, .dnfl-ficon-xs {
+  width: var(--dnfl-ficon-xs) !important;
+  height: var(--dnfl-ficon-xs) !important;
+  -o-object-fit: contain !important;
+     object-fit: contain !important;
+}
+
+.franchise-icon-sm, .dnfl-ficon-sm {
+  width: var(--dnfl-ficon-sm) !important;
+  height: var(--dnfl-ficon-sm) !important;
+  -o-object-fit: contain !important;
+     object-fit: contain !important;
+}
+
+.franchise-icon-md, .dnfl-ficon-md {
+  width: var(--dnfl-ficon-md) !important;
+  height: var(--dnfl-ficon-md) !important;
+  -o-object-fit: contain !important;
+     object-fit: contain !important;
+}
+
+.franchise-icon-lg, .dnfl-ficon-lg {
+  width: var(--dnfl-ficon-lg) !important;
+  height: var(--dnfl-ficon-lg) !important;
+  -o-object-fit: contain !important;
+     object-fit: contain !important;
+}
+
+.franchise-icon-xl, .dnfl-ficon-xl {
+  width: var(--dnfl-ficon-xl) !important;
+  height: var(--dnfl-ficon-xl) !important;
+  -o-object-fit: contain !important;
+     object-fit: contain !important;
+}
+
+/* 1. Modal Base Overlay & Card Shell */
 .dnfl-modal-overlay {
   position: fixed !important;
   inset: 0 !important;
@@ -1165,7 +1213,7 @@ a.dnfl-btn-secondary:hover,
 
 .dnfl-modal-card {
   width: 100% !important;
-  max-width: 46rem !important;
+  max-width: 48rem !important;
   max-height: 90vh !important;
   background: #ffffff !important;
   border-radius: 12px !important;
@@ -1214,7 +1262,7 @@ a.dnfl-btn-secondary:hover,
   max-height: calc(90vh - 4.5rem) !important;
 }
 
-/* 2. Notification Bell & Menu Items */
+/* 2. Notification Bell & Navigation Bar Integration */
 .dnfl-menu-bell-item {
   display: inline-flex !important;
   align-items: center !important;
@@ -1258,6 +1306,7 @@ a.dnfl-btn-secondary:hover,
   position: relative !important;
   display: flex !important;
   align-items: center !important;
+  justify-content: space-between !important;
   gap: 1.25rem !important;
   padding: 1.25rem 1.5rem !important;
   margin-bottom: 1rem !important;
@@ -1268,33 +1317,35 @@ a.dnfl-btn-secondary:hover,
 }
 .dnfl-player-hero-card .dnfl-hero-watermark {
   position: absolute !important;
-  left: 15% !important;
+  left: 20% !important;
   top: 50% !important;
   transform: translateY(-50%) !important;
   height: 180% !important;
-  max-width: 18rem !important;
-  opacity: 0.14 !important;
+  max-width: 20rem !important;
+  opacity: 0.12 !important;
   filter: grayscale(10%) !important;
   pointer-events: none !important;
   z-index: 1 !important;
 }
-.dnfl-player-hero-card .dnfl-hero-logo {
-  width: 6.5rem !important;
-  height: 6.5rem !important;
+.dnfl-player-hero-card {
+  /* Prominent Franchise Logo on RIGHT Side */
+}
+.dnfl-player-hero-card .dnfl-hero-logo-right {
+  height: 100% !important;
+  max-height: 9.5rem !important;
+  width: auto !important;
+  max-width: 18rem !important;
   -o-object-fit: contain !important;
      object-fit: contain !important;
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.5)) !important;
   border: none !important;
   z-index: 2 !important;
   flex-shrink: 0 !important;
+  margin-left: auto !important;
 }
 .dnfl-player-hero-card .dnfl-hero-icon {
-  width: 1.6rem !important;
-  height: 1.6rem !important;
-  -o-object-fit: contain !important;
-     object-fit: contain !important;
   vertical-align: middle !important;
-  margin-right: 0.35rem !important;
+  margin-right: 0.5rem !important;
 }
 .dnfl-player-hero-card .dnfl-hero-avatar-wrapper {
   position: relative !important;
@@ -1319,8 +1370,8 @@ a.dnfl-btn-secondary:hover,
   font-size: 1.65rem !important;
   font-weight: 900 !important;
   color: #ffffff !important;
-  margin: 0 0 0.4rem 0 !important;
-  line-height: 1.15 !important;
+  margin: 0 0 0.5rem 0 !important;
+  line-height: 1.2 !important;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6) !important;
   display: flex !important;
   align-items: center !important;
@@ -1331,15 +1382,16 @@ a.dnfl-btn-secondary:hover,
   gap: 0.5rem !important;
   flex-wrap: wrap !important;
 }
-@media (max-width: 480px) {
+@media (max-width: 600px) {
   .dnfl-player-hero-card {
     flex-direction: column !important;
     text-align: center !important;
     padding: 1rem !important;
   }
-  .dnfl-player-hero-card .dnfl-hero-logo {
-    width: 5rem !important;
-    height: 5rem !important;
+  .dnfl-player-hero-card .dnfl-hero-logo-right {
+    max-height: 6rem !important;
+    max-width: 12rem !important;
+    margin: 0.5rem auto 0 auto !important;
   }
   .dnfl-player-hero-card .dnfl-hero-tags {
     justify-content: center !important;
@@ -1377,7 +1429,7 @@ a.dnfl-btn-secondary:hover,
   border-color: #0577B1 !important;
 }
 
-/* 5. Broadcast Scorecard Stat Grid */
+/* 5. Interactive Broadcast Scorecard Stat Grid */
 .dnfl-scorecard-grid {
   display: grid !important;
   grid-template-columns: repeat(4, 1fr) !important;
@@ -1397,6 +1449,20 @@ a.dnfl-btn-secondary:hover,
   padding: 0.75rem 0.85rem !important;
   text-align: center !important;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  text-decoration: none !important;
+}
+.dnfl-scorecard-grid .dnfl-stat-card.dnfl-stat-card-link {
+  display: block !important;
+  cursor: pointer !important;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+.dnfl-scorecard-grid .dnfl-stat-card.dnfl-stat-card-link:hover {
+  transform: translateY(-2px) !important;
+  border-color: #0577B1 !important;
+  box-shadow: 0 4px 12px rgba(5, 119, 177, 0.18) !important;
+}
+.dnfl-scorecard-grid .dnfl-stat-card.dnfl-stat-card-link:hover .dnfl-stat-val {
+  color: #0577B1 !important;
 }
 .dnfl-scorecard-grid .dnfl-stat-card .dnfl-stat-lbl {
   font-size: 0.725rem !important;
@@ -1413,6 +1479,7 @@ a.dnfl-btn-secondary:hover,
   font-size: 1.35rem !important;
   font-weight: 800 !important;
   color: #0f172a !important;
+  transition: color 0.2s ease !important;
 }
 
 /* 6. Top Franchise Stars Section */

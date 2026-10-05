@@ -10,11 +10,11 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "Popups 7",
+        VERSION: "Popups 8",
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
-            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-TEST-popups_2.css" }
+            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-TEST-popups_3.css" }
         ],
 
         INFRASTRUCTURE: [
@@ -26,7 +26,7 @@
 
         FEATURE_MODULES: [
             // { name: "ui-enhancements", url: "dnfl-ui-enhancements-TEST.js" },
-            { name: "popups",    url: "dnfl-popups-v4_07.js" },
+            { name: "popups",    url: "dnfl-popups-v4_08.js" },
             { name: "standings", url: "dnfl-standings-v4_11.js" },
             { name: "rankings",  url: "dnfl-rankings-v4_11.js" },
             { name: "podcast",   url: "dnfl-podcast-v4_11.js" },
