@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Popups & Modal Subsystem Engine v4.04
+   DNFL Popups & Modal Subsystem Engine v4.05
    Duke Networking Fantasy League (DNFL)
    ========================================================================== */
 (function (window, document) {
@@ -13,6 +13,14 @@
     let capturedLeagueReminders = [];
 
     /**
+     * Array normalization helper to prevent non-array crashes
+     */
+    function toArray(val) {
+        if (!val) return [];
+        return Array.isArray(val) ? val : [val];
+    }
+
+    /**
      * Safely resolve API Client Middleware
      */
     function getApiClient() {
@@ -24,7 +32,20 @@
     }
 
     /**
-     * Inject Subsystem Dynamic CSS for Fallbacks
+     * Safe TTL option builder
+     */
+    function getTtl(client, type) {
+        if (client && client.TTL && client.TTL[type]) {
+            return client.TTL[type];
+        }
+        if (type === 'FIVE_MIN') return 300000;
+        if (type === 'HOURLY') return 3600000;
+        if (type === 'DAILY') return 86400000;
+        return 300000;
+    }
+
+    /**
+     * Inject Subsystem Dynamic CSS
      */
     function injectSubsystemStyles() {
         if (document.getElementById('dnfl-popups-dynamic-css')) return;
@@ -411,37 +432,51 @@
             const client = getApiClient();
             
             const [playerMap, leagueData, rosterData] = await Promise.all([
-                client.fetchData('players', { DETAILS: 1 }, { ttl: client.TTL.DAILY }),
-                client.fetchData('league', {}, { ttl: client.TTL.HOURLY }),
-                client.fetchData('rosters', {}, { ttl: client.TTL.FIVE_MIN })
+                client.fetchData('players', { DETAILS: 1 }, { ttl: getTtl(client, 'DAILY') }).catch(err => {
+                    console.warn("[DNFL Popups] Non-fatal error loading players endpoint:", err);
+                    return null;
+                }),
+                client.fetchData('league', {}, { ttl: getTtl(client, 'HOURLY') }).catch(err => {
+                    console.warn("[DNFL Popups] Non-fatal error loading league endpoint:", err);
+                    return null;
+                }),
+                client.fetchData('rosters', {}, { ttl: getTtl(client, 'FIVE_MIN') }).catch(err => {
+                    console.warn("[DNFL Popups] Non-fatal error loading rosters endpoint:", err);
+                    return null;
+                })
             ]);
 
-            const pData = (playerMap?.players?.player || []).find(p => String(p.id).replace(/^0+/, '') === String(playerId).replace(/^0+/, ''));
-            if (!pData) throw new Error("Player data not found in league database.");
+            const playerList = toArray(playerMap?.players?.player);
+            const pData = playerList.find(p => {
+                const pId = String(p.id || '').trim().replace(/^0+/, '');
+                const targetId = String(playerId || '').trim().replace(/^0+/, '');
+                return pId === targetId;
+            });
 
-            const name = pData.name || `Player #${playerId}`;
-            const pos = (pData.position || 'N/A').toUpperCase();
-            const nflTeam = pData.team || 'FA';
-            const espnId = pData.espn_id || pData.espn_id_full;
+            const name = pData?.name || `Player #${playerId}`;
+            const pos = (pData?.position || pData?.pos || 'N/A').toUpperCase();
+            const nflTeam = pData?.team || pData?.nflTeam || 'FA';
+            const espnId = pData?.espn_id || pData?.espn_id_full;
 
-            const userFid = client.getLoggedInFranchiseId();
+            const userFid = (client && typeof client.getLoggedInFranchiseId === 'function') ? client.getLoggedInFranchiseId() : null;
             const isCommish = !userFid || userFid === '0000';
-            const userFranchise = client.getUserFranchise() || {};
-            const userConfId = userFranchise.conference_id;
+            const userFranchise = (client && typeof client.getUserFranchise === 'function') ? client.getUserFranchise() : {};
+            const userConfId = userFranchise?.conference_id;
 
-            const franchises = [].concat(leagueData?.league?.franchises?.franchise || []);
-            const conferences = [].concat(leagueData?.league?.conferences?.conference || []);
+            const franchises = toArray(leagueData?.league?.franchises?.franchise);
+            const conferences = toArray(leagueData?.league?.conferences?.conference);
+            const rosterFranchises = toArray(rosterData?.rosters?.franchise);
 
-            const owningFranchises = (rosterData?.rosters?.franchise || []).filter(r => {
-                const playerList = [].concat(r.player || []).map(pl => String(pl.id).replace(/^0+/, ''));
-                return playerList.includes(String(playerId).replace(/^0+/, ''));
+            const owningFranchises = rosterFranchises.filter(r => {
+                const plList = toArray(r.player).map(pl => String(pl.id || '').trim().replace(/^0+/, ''));
+                return plList.includes(String(playerId || '').trim().replace(/^0+/, ''));
             }).map(r => {
                 const franMeta = franchises.find(f => String(f.id) === String(r.id)) || {};
                 const confMeta = conferences.find(c => String(c.id) === String(franMeta.conference_id)) || {};
                 return {
                     id: String(r.id),
                     name: franMeta.name || `Franchise #${r.id}`,
-                    logo: franMeta.logo,
+                    logo: franMeta.logo || franMeta.icon,
                     owner: franMeta.owner_name || 'N/A',
                     confId: franMeta.conference_id,
                     confName: confMeta.name || 'League'
@@ -484,7 +519,7 @@
                     <div class="dnfl-hero-meta">
                         <h3 class="dnfl-hero-name">${name}</h3>
                         <div class="dnfl-hero-tags">
-                            <span class="dnfl-pill-blue">${nflTeam} (Bye Wk ${pData.bye_week || 'N/A'})</span>
+                            <span class="dnfl-pill-blue">${nflTeam} (Bye Wk ${pData?.bye_week || 'N/A'})</span>
                             ${isCommish ? '<span class="dnfl-pill-gold"><i class="fa-solid fa-user-shield"></i> Commissioner Mode</span>' : ''}
                         </div>
                     </div>
@@ -499,12 +534,12 @@
                 </div>
 
                 <div id="dnfl-player-tab-body">
-                    ${renderPlayerTabContent(pData, owningFranchises, activeTab)}
+                    ${renderPlayerTabContent(pData || { id: playerId, name: name, position: pos, team: nflTeam }, owningFranchises, activeTab)}
                 </div>
             `;
         } catch (err) {
-            console.error("[DNFL Popups] Player popup error:", err);
-            content.innerHTML = `<div class="dnfl-status-error"><i class="fa-solid fa-triangle-exclamation"></i> Unable to load player details.</div>`;
+            console.error("[DNFL Popups] Error in openPlayerPopup:", err);
+            content.innerHTML = `<div class="dnfl-status-error"><i class="fa-solid fa-triangle-exclamation"></i> Unable to load player details. (${err.message || 'Unknown error'})</div>`;
         }
     }
 
@@ -621,13 +656,30 @@
         try {
             const client = getApiClient();
             const [leagueData, rosterData] = await Promise.all([
-                client.fetchData('league', {}, { ttl: client.TTL.HOURLY }),
-                client.fetchData('rosters', { FRANCHISE: franchiseId }, { ttl: client.TTL.FIVE_MIN }).catch(() => null)
+                client.fetchData('league', {}, { ttl: getTtl(client, 'HOURLY') }).catch(err => {
+                    console.warn("[DNFL Popups] Non-fatal error loading league data for franchise:", err);
+                    return null;
+                }),
+                client.fetchData('rosters', { FRANCHISE: franchiseId }, { ttl: getTtl(client, 'FIVE_MIN') }).catch(err => {
+                    console.warn("[DNFL Popups] Non-fatal error loading roster data for franchise:", err);
+                    return null;
+                })
             ]);
 
-            const franchises = [].concat(leagueData?.league?.franchises?.franchise || []);
-            const targetFran = franchises.find(f => String(f.id) === String(franchiseId));
-            if (!targetFran) throw new Error("Franchise not found.");
+            const franchises = toArray(leagueData?.league?.franchises?.franchise);
+            let targetFran = franchises.find(f => {
+                const fid = String(f.id || '').trim().padStart(4, '0');
+                const tid = String(franchiseId || '').trim().padStart(4, '0');
+                return fid === tid || String(f.id) === String(franchiseId);
+            });
+
+            if (!targetFran) {
+                targetFran = {
+                    id: franchiseId,
+                    name: `Franchise #${franchiseId}`,
+                    owner_name: 'N/A'
+                };
+            }
 
             const name = targetFran.name || `Franchise #${franchiseId}`;
             const logo = targetFran.logo || targetFran.icon;
@@ -658,7 +710,8 @@
                 </table>
             `;
         } catch (err) {
-            content.innerHTML = `<div class="dnfl-status-error"><i class="fa-solid fa-triangle-exclamation"></i> Error loading franchise profile.</div>`;
+            console.error("[DNFL Popups] Error in openFranchisePopup:", err);
+            content.innerHTML = `<div class="dnfl-status-error"><i class="fa-solid fa-triangle-exclamation"></i> Error loading franchise profile. (${err.message || 'Unknown error'})</div>`;
         }
     }
 
@@ -744,14 +797,14 @@
 
         try {
             const client = getApiClient();
-            const userFid = client.getLoggedInFranchiseId();
+            const userFid = (client && typeof client.getLoggedInFranchiseId === 'function') ? client.getLoggedInFranchiseId() : null;
             if (userFid) {
-                const transData = await client.fetchData('transactions', { TRANS_TYPE: 'TRADE', W: '0' }, { ttl: client.TTL.FIVE_MIN }).catch(() => null);
-                const pendingTrades = (transData?.transactions?.transaction || []).length;
+                const transData = await client.fetchData('transactions', { TRANS_TYPE: 'TRADE', W: '0' }, { ttl: getTtl(client, 'FIVE_MIN') }).catch(() => null);
+                const pendingTrades = toArray(transData?.transactions?.transaction).length;
                 totalCount += pendingTrades;
             }
         } catch (err) {
-            console.warn("[DNFL Popups] Non-fatal transaction check notice:", err);
+            console.warn("[DNFL Popups] Non-fatal notification check warning:", err);
         }
 
         totalCount += capturedHomepageMessages.length;
@@ -781,6 +834,10 @@
         }
     }
 
+    function toggleWatchlist(playerId) {
+        alert("Player #" + playerId + " toggled in Watchlist.");
+    }
+
     function showModal(title, iconClass) {
         const overlay = document.getElementById('dnfl-modal-overlay');
         const titleEl = document.getElementById('dnfl-modal-title-text');
@@ -801,9 +858,8 @@
      */
     function init() {
         injectSubsystemStyles();
-        captureHomepageMessages();
-
         let overlay = document.getElementById('dnfl-modal-overlay');
+
         if (!overlay) {
             if (retryCount < maxRetries) {
                 retryCount++;
@@ -831,6 +887,7 @@
         openFranchisePopup: openFranchisePopup,
         switchPlayerTab: switchPlayerTab,
         swapWatermark: swapWatermark,
+        toggleWatchlist: toggleWatchlist,
         openNotificationsModal: openNotificationsModal,
         checkNotifications: checkNotifications,
         closeModal: closeModal

@@ -10,7 +10,7 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "Popup 5",
+        VERSION: "Popup 5b",
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
