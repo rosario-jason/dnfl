@@ -1,62 +1,49 @@
 /* ==========================================================================
-   DNFL Popups Subsystem v4.22
+   DNFL Popups Subsystem v4.23
    Duke Networking Fantasy League (DNFL) Architecture
    ========================================================================== */
 
 (function () {
     'use strict';
 
-    if (window.DNFL && window.DNFL.Popups && window.DNFL.Popups.v22_ready) {
+    if (window.DNFL && window.DNFL.Popups && window.DNFL.Popups.v23_ready) {
         return;
     }
 
     window.DNFL = window.DNFL || {};
 
     let isInitialized = false;
-    const capturedHomepageMessages = [];
-    const capturedLeagueReminders = [];
+    let capturedHomepageMessages = [];
+    let capturedLeagueReminders = [];
 
     function getApiClient() {
         if (window.DNFL && window.DNFL.Client) {
             return window.DNFL.Client;
         }
         return {
-            fetchData: async function (endpoint, params) {
-                const year = window.MFL_YEAR || new Date().getFullYear().toString();
-                const leagueId = window.MFL_LEAGUE_ID || '00000';
-                const baseUrl = window.MFL_BASE_URL || 'www.myfantasyleague.com';
-                let url = `https://${baseUrl}/${year}/export?TYPE=${endpoint}&L=${leagueId}&JSON=1`;
-                if (params) {
-                    Object.keys(params).forEach(k => {
-                        url += `&${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`;
-                    });
-                }
-                const res = await fetch(url, { credentials: 'include' });
-                return await res.json();
-            },
-            fetchRawText: async function (url) {
-                const res = await fetch(url);
-                return await res.text();
-            },
+            fetchData: async function () { return null; },
+            fetchRawText: async function () { return null; },
             clearCache: function () {}
         };
     }
 
     function toArray(obj) {
         if (!obj) return [];
-        return Array.isArray(obj) ? obj : [obj];
+        if (Array.isArray(obj)) return obj;
+        return [obj];
     }
 
-    function norm(str) {
-        if (str === null || str === undefined) return '';
-        return String(str).padStart(4, '0').trim();
+    function norm(id) {
+        if (id === null || id === undefined) return '';
+        const s = String(id).trim();
+        return s.length < 4 ? s.padStart(4, '0') : s;
     }
 
-    function getTtl(client, type, defaultVal) {
-        if (client && client.TTL && client.TTL[type] !== undefined) {
-            return client.TTL[type];
+    function getTtl(client, level, defaultMs) {
+        if (client && client.TTLS && client.TTLS[level]) {
+            return client.TTLS[level];
         }
-        return defaultVal;
+        return defaultMs;
     }
 
     function getLoggedInFranchiseId(client) {
@@ -79,9 +66,9 @@
         return false;
     }
 
-    function escapeXml(unsafe) {
-        if (!unsafe) return '';
-        return String(unsafe)
+    function escapeXml(str) {
+        if (!str) return '';
+        return String(str)
             .replace(/&/g, '&amp;')
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
@@ -106,23 +93,20 @@
                     cards.forEach((card, idx) => {
                         const html = card.innerHTML;
                         if (html && html.trim()) {
-                            capturedHomepageMessages.push({ id: idx + 1, html: html });
+                            capturedHomepageMessages.push({ id: idx + 1, html: html.trim() });
                         }
                     });
-                } else {
-                    const html = hpMsgContainer.innerHTML;
-                    if (html && html.trim()) {
-                        capturedHomepageMessages.push({ id: 1, html: html });
-                    }
+                } else if (hpMsgContainer.innerHTML.trim()) {
+                    capturedHomepageMessages.push({ id: 1, html: hpMsgContainer.innerHTML.trim() });
                 }
             }
         } catch (e) {
-            console.warn("[DNFL Popups] Error capturing homepage messages:", e);
+            console.warn("[DNFL Popups] Non-fatal issue capturing homepage messages:", e);
         }
     }
 
     function attachLinkInterceptors() {
-        document.addEventListener('click', function (e) {
+        document.body.addEventListener('click', function (e) {
             const link = e.target.closest('a');
             if (!link || !link.href) return;
 
@@ -133,7 +117,7 @@
                 const targetFid = m ? m[1] : (window.MFL_USER_ID || window.franchise_id);
                 if (targetFid) {
                     e.preventDefault();
-                    openFranchisePopup(targetFid, 'overview', true);
+                    openFranchisePopup(targetFid, 'overview', false);
                     return;
                 }
             }
@@ -195,24 +179,26 @@
 
         const csvUrl = `https://dnfl.live/dnfl_rankings/${year}/${targetCsv}`;
         const map = {};
+
         try {
-            const csvText = await client.fetchRawText(csvUrl, { ttl: 1800000 });
-            if (csvText && csvText.includes(',')) {
-                const lines = csvText.split(/\r?\n/);
+            const rawCsv = await client.fetchRawText(csvUrl, { ttl: 1800000 });
+            if (rawCsv && !rawCsv.startsWith('<')) {
+                const lines = rawCsv.split('\n');
                 if (lines.length > 1) {
-                    const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-                    const fidIdx = headers.findIndex(h => h.includes('franchise') || h === 'fid' || h === 'id');
-                    const rankIdx = headers.findIndex(h => h === 'rank' || h === 'overall_rank');
-                    const powerIdx = headers.findIndex(h => h.includes('power') || h.includes('index') || h === 'pi');
+                    const header = lines[0].split(',').map(s => s.trim().toLowerCase());
+                    const idIdx = header.findIndex(h => h === 'id' || h === 'fid' || h === 'franchise');
+                    const rankIdx = header.findIndex(h => h === 'rank' || h === 'pos');
+                    const piIdx = header.findIndex(h => h === 'powerindex' || h === 'pi' || h === 'power_index' || h === 'score');
 
                     for (let i = 1; i < lines.length; i++) {
-                        if (!lines[i].trim()) continue;
-                        const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
-                        if (fidIdx >= 0 && cols[fidIdx]) {
-                            const fidPadded = norm(cols[fidIdx]);
-                            map[fidPadded] = {
-                                rank: rankIdx >= 0 ? cols[rankIdx] : String(i),
-                                powerIndex: powerIdx >= 0 ? cols[powerIdx] : '85.00'
+                        const cols = lines[i].split(',').map(s => s.trim());
+                        if (cols.length > 1 && idIdx >= 0) {
+                            const fid = norm(cols[idIdx]);
+                            const rankVal = rankIdx >= 0 ? cols[rankIdx] : String(i);
+                            const piVal = piIdx >= 0 ? cols[piIdx] : '85.00';
+                            map[fid] = {
+                                rank: rankVal,
+                                powerIndex: piVal
                             };
                         }
                     }
@@ -292,6 +278,7 @@
             closeModal();
             return;
         }
+
         const overlay = document.getElementById('dnfl-modal-overlay');
         if (overlay && e.target === overlay) {
             closeModal();
@@ -302,6 +289,8 @@
         activeTab = activeTab || 'overview';
         const content = document.getElementById('dnfl-modal-content-wrapper');
 
+        showModal("Player Card", '<i class="fa-solid fa-user"></i> <span>Player Profile</span>', false, null, false);
+
         content.innerHTML = `
             <div class="dnfl-status-loading">
                 <i class="fa-solid fa-spinner fa-spin"></i> Loading player #${playerId}...
@@ -310,39 +299,27 @@
 
         try {
             const client = getApiClient();
-            const hourlyTtl = getTtl(client, 'HOURLY', 3600000);
             const dailyTtl = getTtl(client, 'DAILY', 86400000);
+            const hourlyTtl = getTtl(client, 'HOURLY', 3600000);
 
-            const [playerData, rosterData, leagueData] = await Promise.all([
+            const [playerData, leagueData, scoresData] = await Promise.all([
                 client.fetchData('players', { P: playerId, DETAILS: 1 }, { ttl: dailyTtl }).catch(() => null),
-                client.fetchData('rosters', {}, { ttl: hourlyTtl }).catch(() => null),
-                client.fetchData('league', {}, { ttl: hourlyTtl }).catch(() => null)
+                client.fetchData('league', {}, { ttl: hourlyTtl }).catch(() => null),
+                client.fetchData('playerScores', { P: playerId, W: 'YTD' }, { ttl: hourlyTtl }).catch(() => null)
             ]);
 
-            const pList = toArray(playerData?.players?.player);
-            const p = pList.find(item => norm(item.id) === norm(playerId)) || { name: `Player #${playerId}`, position: 'N/A', team: 'FA' };
+            const players = toArray(playerData?.players?.player);
+            const p = players.find(x => String(x.id) === String(playerId)) || players[0] || { id: playerId, name: `Player #${playerId}` };
 
             const franchises = toArray(leagueData?.league?.franchises?.franchise);
-            const rosters = toArray(rosterData?.rosters?.franchise);
 
-            let owningFranchises = [];
-            rosters.forEach(r => {
-                const rPlayers = toArray(r.player);
-                if (rPlayers.some(rp => norm(rp.id) === norm(playerId))) {
-                    const fObj = franchises.find(f => norm(f.id) === norm(r.id));
-                    if (fObj) owningFranchises.push(fObj);
-                }
-            });
-
-            const headerHtml = `
-                <i class="fa-solid fa-user"></i>
-                <span>${p.name}</span>
-            `;
-            showModal(p.name, headerHtml, false, null, false);
-
-            const ownerHtml = owningFranchises.length > 0 
-                ? owningFranchises.map(f => `<span class="dnfl-pill-blue">${f.name}</span>`).join(' ')
-                : '<span class="dnfl-pill-gray">Free Agent</span>';
+            let ownerHtml = '<span class="dnfl-pill-gray">Free Agent</span>';
+            if (p.roster_status === 'ROSTER' || p.roster_franchise_id) {
+                const fid = norm(p.roster_franchise_id);
+                const fran = franchises.find(f => norm(f.id) === fid);
+                const franName = fran ? fran.name : `Franchise #${fid}`;
+                ownerHtml = `<span class="dnfl-pill-blue"><i class="fa-solid fa-shield-halved"></i> ${franName}</span>`;
+            }
 
             const espnId = p.espn_id || p.espn_id_full;
             const headshot = espnId 
@@ -366,52 +343,61 @@
             `;
 
             let tabButtonsHtml = `
-                <div class="dnfl-modal-tabs dnfl-full-width-tabs">
+                <div class="dnfl-modal-tabs">
                     <button class="dnfl-modal-tab-btn ${activeTab === 'overview' ? 'is-active' : ''}" onclick="DNFL.Popups.switchPlayerTab('${playerId}', 'overview')"><i class="fa-solid fa-chart-line"></i> <span class="dnfl-tab-label">Overview</span></button>
                     <button class="dnfl-modal-tab-btn ${activeTab === 'gamelog' ? 'is-active' : ''}" onclick="DNFL.Popups.switchPlayerTab('${playerId}', 'gamelog')"><i class="fa-solid fa-list-check"></i> <span class="dnfl-tab-label">Game Log</span></button>
                     <button class="dnfl-modal-tab-btn ${activeTab === 'news' ? 'is-active' : ''}" onclick="DNFL.Popups.switchPlayerTab('${playerId}', 'news')"><i class="fa-solid fa-newspaper"></i> <span class="dnfl-tab-label">News</span></button>
                 </div>
             `;
 
-            content.innerHTML = heroHtml + tabButtonsHtml + renderPlayerTabContent(p, owningFranchises, activeTab);
+            content.innerHTML = heroHtml + tabButtonsHtml + renderPlayerTabContent(p, scoresData, activeTab);
 
         } catch (e) {
             console.error("[DNFL Popups] Error opening player popup:", e);
             content.innerHTML = `
                 <div class="dnfl-status-error">
-                    <i class="fa-solid fa-triangle-exclamation"></i> Error loading player card: ${e.message}
+                    <i class="fa-solid fa-triangle-exclamation"></i> Error loading player details: ${e.message}
                 </div>
             `;
         }
     }
 
-    function renderPlayerTabContent(pData, owningFranchises, tabName) {
+    function renderPlayerTabContent(p, scoresData, tabName) {
         if (tabName === 'overview') {
+            const rawScore = scoresData?.playerScores?.playerScore?.score || '0.00';
             return `
-                <table class="dnfl-table">
-                    <thead>
-                        <tr>
-                            <th>Attribute</th>
-                            <th>Detail</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="dnfl-row-odd"><td>NFL Team</td><td>${pData.team || 'FA'}</td></tr>
-                        <tr class="dnfl-row-even"><td>Position</td><td>${pData.position || 'N/A'}</td></tr>
-                        <tr class="dnfl-row-odd"><td>Status</td><td>${owningFranchises.length > 0 ? 'Rostered' : 'Free Agent'}</td></tr>
-                        <tr class="dnfl-row-even"><td>Birthdate / Age</td><td>${pData.birthdate || 'N/A'}</td></tr>
-                    </tbody>
-                </table>
+                <div class="dnfl-tab-pane">
+                    <table class="dnfl-table">
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="dnfl-row-odd"><td>YTD Total Fantasy Points</td><td><strong>${rawScore}</strong></td></tr>
+                            <tr class="dnfl-row-even"><td>NFL Status / Team</td><td>${p.team || 'Free Agent'}</td></tr>
+                            <tr class="dnfl-row-odd"><td>Position</td><td>${p.position || 'N/A'}</td></tr>
+                            <tr class="dnfl-row-even"><td>Bye Week</td><td>Week ${p.bye_week || '--'}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             `;
         } else if (tabName === 'gamelog') {
             return `
-                <div class="dnfl-status-loading">
-                    <i class="fa-solid fa-spinner fa-spin"></i> Loading season gamelogs...
+                <div class="dnfl-tab-pane">
+                    <div class="dnfl-status-loading">
+                        <i class="fa-solid fa-calendar-week"></i> Season Game Log available during live weeks.
+                    </div>
                 </div>
             `;
         } else if (tabName === 'news') {
             return `
-                <div class="dnfl-subtext">No recent player news available.</div>
+                <div class="dnfl-tab-pane">
+                    <div class="dnfl-status-loading">
+                        <i class="fa-solid fa-newspaper"></i> No recent news updates found for ${p.name}.
+                    </div>
+                </div>
             `;
         }
     }
@@ -450,7 +436,7 @@
             const targetFidNorm = norm(franchiseId);
             const loggedInFid = getLoggedInFranchiseId(client);
             const isCommish = isUserCommish(client);
-            const canEditSetup = loggedInFid && (loggedInFid === targetFidNorm || isCommish);
+            const canEditSetup = isCommish || (Boolean(loggedInFid) && loggedInFid === targetFidNorm);
 
             const franchises = toArray(leagueData?.league?.franchises?.franchise);
             const conferences = toArray(leagueData?.league?.conferences?.conference);
@@ -463,11 +449,14 @@
             const logo = targetFran.logo;
             const icon = targetFran.icon;
 
-            const divObj = divisions.find(d => norm(d.id) === norm(targetFran.division));
-            let confObj = conferences.find(c => norm(c.id) === norm(targetFran.conference_id));
-            if (!confObj && divObj && divObj.conference_id) {
-                confObj = conferences.find(c => norm(c.id) === norm(divObj.conference_id));
-            }
+            const targetConfId = targetFran.conference_id || targetFran.conference;
+            const targetDivId = targetFran.division;
+
+            const divObj = divisions.find(d => norm(d.id) === norm(targetDivId));
+            const divConfId = divObj ? (divObj.conference_id || divObj.conference) : null;
+
+            const finalConfId = targetConfId || divConfId;
+            const confObj = conferences.find(c => norm(c.id) === norm(finalConfId));
 
             const confName = confObj ? confObj.name : '';
             const divName = divObj ? divObj.name : '';
@@ -556,11 +545,11 @@
             }
 
             if (!seedVal && standingsList.length > 0) {
-                const confIdNorm = norm(targetFran.conference_id);
+                const confIdNorm = norm(targetFran.conference_id || targetFran.conference);
                 if (confIdNorm && conferences.length > 0) {
                     const confTeams = standingsList.filter(s => {
                         const fObj = franchises.find(f => norm(f.id) === norm(s.id));
-                        return fObj && norm(fObj.conference_id) === confIdNorm;
+                        return fObj && norm(fObj.conference_id || fObj.conference) === confIdNorm;
                     });
                     const confIdx = confTeams.findIndex(s => norm(s.id) === targetFidNorm);
                     seedVal = confIdx >= 0 ? confIdx + 1 : '1';
@@ -577,7 +566,9 @@
             const rawPrVal = prMeta.powerIndex || (franStandings.power_rank ? parseFloat(franStandings.power_rank).toFixed(2) : '85.00');
             const prVal = !isNaN(parseFloat(rawPrVal)) ? parseFloat(rawPrVal).toFixed(2) : rawPrVal;
             const prRankNum = prMeta.rank || franStandings.rank || '1';
-            const prSubStr = `#${prRankNum} Overall`;
+            
+            const prMainStr = `#${prRankNum}`;
+            const prSubStr = `${prVal} Grade`;
 
             const scoreCardHtml = `
                 <div class="dnfl-scorecard-grid">
@@ -608,7 +599,7 @@
                     </div>
                     <div class="dnfl-stat-card card-rank">
                         <div class="dnfl-stat-lbl">Rank</div>
-                        <div class="dnfl-stat-val-main">${prVal}</div>
+                        <div class="dnfl-stat-val-main">${prMainStr}</div>
                         <div class="dnfl-stat-val-sub">${prSubStr}</div>
                     </div>
                 </div>
@@ -618,8 +609,8 @@
                 <div class="dnfl-franchise-hero-header">
                     <div class="dnfl-hero-left-meta">
                         <div class="dnfl-owner-details-card">
-                            <div><strong>OWNER:</strong> <strong>${targetFran.owner_name || 'N/A'}</strong></div>
-                            ${fullLoc ? `<div><strong>DIVISION:</strong> ${fullLoc}</div>` : ''}
+                            <div><span class="dnfl-stat-lbl">OWNER:</span> <strong class="dnfl-owner-val">${targetFran.owner_name || 'N/A'}</strong></div>
+                            ${fullLoc ? `<div><span class="dnfl-stat-lbl">DIVISION:</span> <strong class="dnfl-div-val">${fullLoc}</strong></div>` : ''}
                         </div>
                         ${scoreCardHtml}
                     </div>
@@ -1113,11 +1104,11 @@
         ensureMenuBellInjected();
         checkNotifications();
 
-        console.log("DNFL Popups Subsystem v4.22 ready.");
+        console.log("DNFL Popups Subsystem v4.23 ready.");
     }
 
     window.DNFL.Popups = {
-        v22_ready: true,
+        v23_ready: true,
         init: init,
         openPlayerPopup: openPlayerPopup,
         openFranchisePopup: openFranchisePopup,
