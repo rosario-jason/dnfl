@@ -1,12 +1,12 @@
 /* ==========================================================================
-   DNFL Popups Subsystem v4.23
+   DNFL Popups Subsystem v4.24
    Duke Networking Fantasy League (DNFL) Architecture
    ========================================================================== */
 
 (function () {
     'use strict';
 
-    if (window.DNFL && window.DNFL.Popups && window.DNFL.Popups.v23_ready) {
+    if (window.DNFL && window.DNFL.Popups && window.DNFL.Popups.v24_ready) {
         return;
     }
 
@@ -111,6 +111,19 @@
             if (!link || !link.href) return;
 
             const href = link.href;
+
+            
+            if (href.includes('csetup?') && href.includes('C=FRANCHISE')) {
+                e.preventDefault();
+                const client = getApiClient();
+                const loggedInFid = getLoggedInFranchiseId(client);
+                const isCommish = isUserCommish(client);
+                if (loggedInFid || isCommish) {
+                    const fid = loggedInFid || '0001';
+                    openFranchisePopup(fid, 'overview', true);
+                }
+                return;
+            }
 
             if (href.includes('options?L=') && href.includes('O=01') && !href.includes('PRINTER=1')) {
                 const m = href.match(/F=(\d{4})/i) || href.match(/FRANCHISE=(\d{4})/i);
@@ -1104,11 +1117,11 @@
         ensureMenuBellInjected();
         checkNotifications();
 
-        console.log("DNFL Popups Subsystem v4.23 ready.");
+        console.log("DNFL Popups Subsystem v4.24 ready.");
     }
 
     window.DNFL.Popups = {
-        v23_ready: true,
+        v24_ready: true,
         init: init,
         openPlayerPopup: openPlayerPopup,
         openFranchisePopup: openFranchisePopup,

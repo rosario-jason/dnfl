@@ -1139,7 +1139,7 @@ a.dnfl-btn-secondary:hover,
   }
 }
 /* ==========================================================================
-   DNFL Popups & Modal Subsystem Partial (_popups-v4_17.scss)
+   DNFL Popups & Modal Subsystem Partial (_popups-v4_18.scss)
    Duke Networking Fantasy League (DNFL) Architecture
    ========================================================================== */
 /* 0. Design Tokens */
@@ -1218,6 +1218,7 @@ a.dnfl-btn-secondary:hover,
   -moz-appearance: none !important;
        appearance: none !important;
   -webkit-appearance: none !important;
+  appearance: none !important;
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
@@ -1248,6 +1249,61 @@ a.dnfl-btn-secondary:hover,
   background-color: #ffffff !important;
   position: relative !important;
   z-index: 2 !important;
+}
+
+/* Icon Utility Classes */
+.franchise-icon-md, .dnfl-ficon-md {
+  width: var(--dnfl-ficon-md, 2.25rem) !important;
+  height: var(--dnfl-ficon-md, 2.25rem) !important;
+  -o-object-fit: cover !important;
+     object-fit: cover !important;
+  flex-shrink: 0 !important;
+}
+
+.dnfl-ficon-rounded {
+  border-radius: 6px !important;
+  overflow: hidden !important;
+}
+
+.dnfl-btn-sm {
+  padding: 0.25rem 0.6rem !important;
+  font-size: 0.75rem !important;
+}
+
+.dnfl-tab-pane {
+  position: relative !important;
+}
+
+/* Homepage & Notification Cards */
+.dnfl-hpm-section {
+  margin-bottom: 1.25rem !important;
+}
+.dnfl-hpm-section .dnfl-hpm-section-title {
+  font-size: 0.95rem !important;
+  font-weight: 700 !important;
+  color: #0577B1 !important;
+  margin: 0 0 0.5rem 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+}
+.dnfl-hpm-section .dnfl-hpm-card {
+  background: #f8fafc !important;
+  border: 1px solid #e2e8f0 !important;
+  border-left: 4px solid #0577B1 !important;
+  border-radius: 6px !important;
+  padding: 0.75rem 1rem !important;
+  margin-bottom: 0.5rem !important;
+  color: #334155 !important;
+  font-size: 0.85rem !important;
+}
+.dnfl-hpm-section .dnfl-hpm-card .dnfl-hpm-title {
+  font-weight: 700 !important;
+  color: #0f172a !important;
+  margin-bottom: 0.25rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
 }
 
 /* 2. Notification Bell & Menu Items */
