@@ -1,6 +1,6 @@
 /* ==========================================================================
-   DNFL Popups & Modal Subsystem Engine v4.10
-   Duke Networking Fantasy League (DNFL)
+   DNFL Popups & Modal Subsystem Engine v4.13
+   Duke Networking Fantasy League (DNFL) Architecture
    ========================================================================== */
 (function (window, document) {
     'use strict';
@@ -24,19 +24,23 @@
     }
 
     /**
-     * Resolve Active User Franchise ID (Framework Multi-Tier Resolution)
+     * Resolve Logged In Franchise ID
      */
     function getLoggedInFranchiseId(client) {
-        try {
-            if (client && typeof client.getUserFranchise === 'function') {
-                const userFran = client.getUserFranchise();
-                if (userFran && userFran.id) return String(userFran.id).padStart(4, '0');
-            }
-        } catch (e) {}
-
-        const globalFid = window.franchise_id || globalThis.franchise_id || '';
-        if (globalFid) return String(globalFid).padStart(4, '0');
-
+        if (client && typeof client.getLoggedInFranchiseId === 'function') {
+            try {
+                const fid = client.getLoggedInFranchiseId();
+                if (fid) return fid;
+            } catch (e) {}
+        }
+        if (client && typeof client.getUserFranchise === 'function') {
+            try {
+                const uFran = client.getUserFranchise();
+                if (uFran && uFran.id) return uFran.id;
+            } catch (e) {}
+        }
+        if (typeof window.franchise_id !== 'undefined' && window.franchise_id) return window.franchise_id;
+        if (typeof globalThis.franchise_id !== 'undefined' && globalThis.franchise_id) return globalThis.franchise_id;
         return '';
     }
 
@@ -59,7 +63,246 @@
     }
 
     /**
-     * Capture Homepage Messages & League Reminders from Page DOM
+     * Normalize ID String
+     */
+    function norm(id) {
+        if (!id && id !== 0) return '';
+        return String(id).trim().replace(/^0+/, '');
+    }
+
+    /**
+     * CSV Line Parser
+     */
+    function parseCsvLine(text) {
+        const result = [];
+        let cur = '';
+        let inQuotes = false;
+        for (let i = 0; i < text.length; i++) {
+            const c = text[i];
+            if (c === '"') {
+                inQuotes = !inQuotes;
+            } else if (c === ',' && !inQuotes) {
+                result.push(cur.trim());
+                cur = '';
+            } else {
+                cur += c;
+            }
+        }
+        result.push(cur.trim());
+        return result;
+    }
+
+    /**
+     * Fetch Power Rankings CSV dynamically using weeks.json manifest
+     */
+    async function fetchPowerRankingsCsv(client) {
+        const dailyTtl = getTtl(client, 'DAILY', 86400000);
+        const year = (client && typeof client.getYear === 'function') ? client.getYear() : (window.year || '2026');
+        
+        let activeCsvFile = 'data_02.csv';
+
+        // 1. Fetch weeks.json manifest to resolve latest published CSV
+        const manifestUrls = [
+            `https://dnfl.live/dnfl_rankings/${year}/weeks.json`,
+            `https://dnfl.live/dnfl_rankings/weeks.json`,
+            `/dnfl_rankings/${year}/weeks.json`,
+            `/dnfl_rankings/weeks.json`
+        ];
+
+        for (const mUrl of manifestUrls) {
+            try {
+                const manifestText = await client.fetchRawText(mUrl, { ttl: dailyTtl });
+                if (manifestText) {
+                    const manifest = JSON.parse(manifestText);
+                    const weekFiles = manifest.weeks || manifest.published_weeks || manifest.files;
+                    if (Array.isArray(weekFiles) && weekFiles.length > 0) {
+                        const lastEntry = weekFiles[weekFiles.length - 1];
+                        activeCsvFile = lastEntry.file || lastEntry.filename || lastEntry.csv || (typeof lastEntry === 'string' ? lastEntry : activeCsvFile);
+                    } else if (manifest.active_week_file) {
+                        activeCsvFile = manifest.active_week_file;
+                    }
+                    break;
+                }
+            } catch (e) {}
+        }
+
+        // 2. Fetch active week CSV
+        const csvUrls = [
+            `https://dnfl.live/dnfl_rankings/${year}/${activeCsvFile}`,
+            `https://dnfl.live/dnfl_rankings/${activeCsvFile}`,
+            `/dnfl_rankings/${year}/${activeCsvFile}`,
+            `/dnfl_rankings/${activeCsvFile}`
+        ];
+
+        for (const url of csvUrls) {
+            try {
+                const text = await client.fetchRawText(url, { ttl: dailyTtl });
+                if (text && text.includes('Power Index')) {
+                    return parsePowerRankingsCsv(text);
+                }
+            } catch (e) {}
+        }
+        return {};
+    }
+
+    /**
+     * Parse Power Rankings CSV Data
+     */
+    function parsePowerRankingsCsv(csvText) {
+        const map = {};
+        if (!csvText) return map;
+
+        const lines = csvText.split(/\r?\n/);
+        if (lines.length < 2) return map;
+
+        const headers = parseCsvLine(lines[0]).map(h => h.toLowerCase());
+        const idIdx = headers.findIndex(h => h.includes('franchise id') || h.includes('id'));
+        const rankIdx = headers.findIndex(h => h === 'rank');
+        const piIdx = headers.findIndex(h => h.includes('power index') || h.includes('power_index'));
+
+        for (let i = 1; i < lines.length; i++) {
+            if (!lines[i].trim()) continue;
+            const cols = parseCsvLine(lines[i]);
+            if (cols.length > idIdx && idIdx !== -1) {
+                const fid = norm(cols[idIdx]);
+                if (fid) {
+                    map[fid] = {
+                        rank: cols[rankIdx] || 'N/A',
+                        powerIndex: cols[piIdx] || 'N/A'
+                    };
+                }
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Execute Official DNFL Standings Module Seeding Algorithm
+     */
+    async function calculateDnflStandingsSeeds(client, standingsList, leagueData) {
+        // 1. Check if DNFL.Standings module is active in memory
+        if (window.DNFL && window.DNFL.Standings) {
+            if (typeof window.DNFL.Standings.getTeamSeed === 'function') {
+                const seedsMap = {};
+                standingsList.forEach(s => {
+                    const fidNorm = norm(s.id);
+                    seedsMap[fidNorm] = window.DNFL.Standings.getTeamSeed(fidNorm);
+                });
+                if (Object.keys(seedsMap).length > 0) return seedsMap;
+            } else if (window.DNFL.Standings.cachedTeamSeeds) {
+                return window.DNFL.Standings.cachedTeamSeeds;
+            }
+        }
+
+        // 2. Fetch standings_rules.json to evaluate official seeding
+        let rules = { seedingScope: 'conference', seedingModel: 'tiered_div_finish_pf' };
+        try {
+            const year = (client && typeof client.getYear === 'function') ? client.getYear() : (window.year || '2026');
+            const rulesText = await client.fetchRawText(`https://dnfl.live/dnfl_standings/standings_rules.json`, { ttl: getTtl(client, 'DAILY', 86400000) });
+            if (rulesText) {
+                const parsedRules = JSON.parse(rulesText);
+                const yearRules = parsedRules[year] || parsedRules['default'] || parsedRules;
+                rules = { ...rules, ...yearRules };
+            }
+        } catch (e) {}
+
+        const teamSeeds = {};
+        const divLeaders = {};
+        const divRunnerUps = {};
+
+        const divisions = toArray(leagueData?.league?.divisions?.division);
+        const conferences = toArray(leagueData?.league?.conferences?.conference);
+        const leagueFranchises = toArray(leagueData?.league?.franchises?.franchise);
+
+        const divToConfMap = {};
+        divisions.forEach(d => divToConfMap[norm(d.id)] = norm(d.conference));
+
+        const getMflIndex = (id) => standingsList.findIndex(s => norm(s.id) === norm(id));
+        const getPf = (id) => {
+            const s = standingsList.find(item => norm(item.id) === norm(id));
+            return parseFloat(s?.pf || s?.h2hpf || s?.points_for || 0);
+        };
+
+        const sortByPfThenMfl = (a, b) => {
+            const pfDiff = getPf(b) - getPf(a);
+            if (pfDiff !== 0) return pfDiff;
+            return getMflIndex(a) - getMflIndex(b);
+        };
+
+        divisions.forEach(div => {
+            const divIdNorm = norm(div.id);
+            const teamsInDiv = leagueFranchises.filter(f => norm(f.division || f.div) === divIdNorm).map(f => norm(f.id));
+            teamsInDiv.sort((a, b) => getMflIndex(a) - getMflIndex(b));
+
+            if (teamsInDiv.length > 0) divLeaders[divIdNorm] = teamsInDiv[0];
+            if (teamsInDiv.length > 1) divRunnerUps[divIdNorm] = teamsInDiv[1];
+        });
+
+        let scopesToProcess = [];
+
+        if (rules.seedingScope === 'league') {
+            scopesToProcess.push({
+                scopeId: 'league',
+                teams: leagueFranchises.map(f => norm(f.id)),
+                leaders: Object.values(divLeaders),
+                runnersUp: Object.values(divRunnerUps)
+            });
+        } else {
+            conferences.forEach(conf => {
+                const confIdNorm = norm(conf.id);
+                const confTeams = leagueFranchises.filter(f => {
+                    const fDivNorm = norm(f.division || f.div);
+                    const fConfNorm = norm(f.conference || f.conf || divToConfMap[fDivNorm]);
+                    return fConfNorm === confIdNorm;
+                }).map(f => norm(f.id));
+
+                const confDivs = divisions.filter(d => norm(d.conference) === confIdNorm).map(d => norm(d.id));
+                const confLeaders = confDivs.map(dId => divLeaders[dId]).filter(id => id !== undefined);
+                const confRunners = confDivs.map(dId => divRunnerUps[dId]).filter(id => id !== undefined);
+
+                scopesToProcess.push({
+                    scopeId: confIdNorm,
+                    teams: confTeams,
+                    leaders: confLeaders,
+                    runnersUp: confRunners
+                });
+            });
+        }
+
+        scopesToProcess.forEach(scope => {
+            if (rules.seedingModel === 'tiered_div_finish_pf') {
+                const winners = scope.leaders.slice();
+                winners.sort(sortByPfThenMfl);
+                winners.forEach((id, idx) => teamSeeds[id] = idx + 1);
+
+                const runners = scope.runnersUp.slice();
+                runners.sort(sortByPfThenMfl);
+                runners.forEach((id, idx) => teamSeeds[id] = idx + 1 + winners.length);
+
+                const assigned = new Set([...winners, ...runners]);
+                const remaining = scope.teams.filter(id => !assigned.has(id));
+                remaining.sort(sortByPfThenMfl);
+                remaining.forEach((id, idx) => teamSeeds[id] = idx + 1 + winners.length + runners.length);
+            } else if (rules.seedingModel === 'standard_div_winners_first') {
+                const winners = scope.leaders.slice();
+                winners.sort((a, b) => getMflIndex(a) - getMflIndex(b));
+                winners.forEach((id, idx) => teamSeeds[id] = idx + 1);
+
+                const remaining = scope.teams.filter(id => !winners.includes(id));
+                remaining.sort((a, b) => getMflIndex(a) - getMflIndex(b));
+                remaining.forEach((id, idx) => teamSeeds[id] = idx + 1 + winners.length);
+            } else {
+                const allTeams = scope.teams.slice();
+                allTeams.sort((a, b) => getMflIndex(a) - getMflIndex(b));
+                allTeams.forEach((id, idx) => teamSeeds[id] = idx + 1);
+            }
+        });
+
+        return teamSeeds;
+    }
+
+    /**
+     * Capture Homepage Messages & League Reminders from DOM
      */
     function captureHomepageMessages() {
         capturedHomepageMessages = [];
@@ -75,13 +318,16 @@
         messageNodes.forEach((node, idx) => {
             const html = node.innerHTML.trim();
             if (html) {
-                capturedHomepageMessages.push({ id: idx + 1, html: html });
+                capturedHomepageMessages.push({
+                    id: idx + 1,
+                    html: html
+                });
             }
         });
     }
 
     /**
-     * Intercept Player & Franchise Hyperlinks
+     * Intercept Player & Franchise Links
      */
     function attachLinkInterceptors() {
         document.addEventListener('click', function (e) {
@@ -90,6 +336,7 @@
 
             const href = link.getAttribute('href') || '';
 
+            // 1. Intercept Player Links
             if (/player\?.*[?&]P=(\d+)/i.test(href) || /launch_player_modal/i.test(href)) {
                 const match = href.match(/[?&]P=(\d+)/i) || href.match(/launch_player_modal\('?\d*'?,?'?(\d+)'?\)/i);
                 if (match && match[1]) {
@@ -97,7 +344,10 @@
                     e.stopPropagation();
                     openPlayerPopup(match[1]);
                 }
-            } else if (/options\?.*[?&]F=(\d{4})/i.test(href) && (href.includes('O=01') || href.includes('O=07'))) {
+            }
+
+            // 2. Intercept Franchise Links
+            else if (/options\?.*[?&]F=(\d{4})/i.test(href) && (href.includes('O=01') || href.includes('O=07'))) {
                 const match = href.match(/[?&]F=(\d{4})/i);
                 if (match && match[1] && match[1] !== '0000') {
                     e.preventDefault();
@@ -109,16 +359,53 @@
     }
 
     /**
-     * Open Player Card Modal
+     * Show Modal Shell
+     */
+    function showModal(titleText, headerInnerHtml) {
+        const overlay = document.getElementById('dnfl-modal-overlay');
+        const titleEl = document.getElementById('dnfl-modal-title');
+
+        if (titleEl) {
+            titleEl.innerHTML = headerInnerHtml;
+        }
+        if (overlay) overlay.classList.remove('dnfl-is-hidden');
+    }
+
+    /**
+     * Set Persistent Left-Side Card Watermark
+     */
+    function setCardWatermark(logoUrl) {
+        const container = document.getElementById('dnfl-modal-container');
+        if (!container) return;
+
+        let wm = document.getElementById('dnfl-persistent-card-watermark');
+        if (!wm) {
+            wm = document.createElement('img');
+            wm.id = 'dnfl-persistent-card-watermark';
+            wm.className = 'dnfl-persistent-watermark';
+            wm.alt = 'Watermark';
+            wm.onerror = function() { this.style.display = 'none'; };
+            container.appendChild(wm);
+        }
+
+        if (logoUrl) {
+            wm.src = logoUrl;
+            wm.style.display = 'block';
+        } else {
+            wm.style.display = 'none';
+        }
+    }
+
+    /**
+     * Open Player Modal
      */
     async function openPlayerPopup(playerId, activeTab) {
         activeTab = activeTab || 'overview';
-        showModal("Player Card", "fa-user");
-        const content = document.getElementById('dnfl-modal-content-wrapper');
 
+        const content = document.getElementById('dnfl-modal-content-wrapper');
         content.innerHTML = `
             <div class="dnfl-status-loading">
-                <i class="fa-solid fa-spinner fa-spin"></i> Loading player card #${playerId}...
+                <i class="fa-solid fa-spinner fa-spin"></i> Loading player profile #${playerId}...
             </div>
         `;
 
@@ -135,8 +422,7 @@
             ]);
 
             const playerList = toArray(playerMap?.players?.player);
-            let pData = playerList.find(p => String(p.id).replace(/^0+/, '') === String(playerId).replace(/^0+/, ''));
-            
+            let pData = playerList.find(p => norm(p.id) === norm(playerId));
             if (!pData) {
                 pData = { id: playerId, name: `Player #${playerId}`, position: 'N/A', team: 'FA' };
             }
@@ -146,9 +432,12 @@
             const nflTeam = pData.team || 'FA';
             const espnId = pData.espn_id || pData.espn_id_full;
 
+            const headerHtml = `<i class="fa-solid fa-user"></i> <span>${name}</span>`;
+            showModal(name, headerHtml);
+
             const userFid = getLoggedInFranchiseId(client);
             const isCommish = !userFid || userFid === '0000';
-            const userFranchise = (client && typeof client.getUserFranchise === 'function') ? (client.getUserFranchise() || {}) : {};
+            const userFranchise = (client.getUserFranchise && client.getUserFranchise()) || {};
             const userConfId = userFranchise.conference_id;
 
             const franchises = toArray(leagueData?.league?.franchises?.franchise);
@@ -156,11 +445,11 @@
             const rosterFranchises = toArray(rosterData?.rosters?.franchise);
 
             const owningFranchises = rosterFranchises.filter(r => {
-                const pList = toArray(r.player).map(pl => String(pl.id).replace(/^0+/, ''));
-                return pList.includes(String(playerId).replace(/^0+/, ''));
+                const pList = toArray(r.player).map(pl => norm(pl.id));
+                return pList.includes(norm(playerId));
             }).map(r => {
-                const franMeta = franchises.find(f => String(f.id) === String(r.id)) || {};
-                const confMeta = conferences.find(c => String(c.id) === String(franMeta.conference_id)) || {};
+                const franMeta = franchises.find(f => norm(f.id) === norm(r.id)) || {};
+                const confMeta = conferences.find(c => norm(c.id) === norm(franMeta.conference_id)) || {};
                 return {
                     id: String(r.id),
                     name: franMeta.name || `Franchise #${r.id}`,
@@ -175,8 +464,8 @@
             let activeWatermark = `https://www.mflscripts.com/ImageDirectory/script-images/nflTeamsvg_2/${nflTeam}.svg`;
 
             if (!isCommish && owningFranchises.length > 0) {
-                const userOwned = owningFranchises.find(f => f.id === String(userFid));
-                const confOwned = owningFranchises.find(f => String(f.confId) === String(userConfId));
+                const userOwned = owningFranchises.find(f => norm(f.id) === norm(userFid));
+                const confOwned = owningFranchises.find(f => norm(f.confId) === norm(userConfId));
 
                 if (userOwned && userOwned.logo) {
                     activeWatermark = userOwned.logo;
@@ -187,17 +476,16 @@
                 }
             }
 
+            setCardWatermark(activeWatermark);
+
             const espnHeadshotUrl = espnId 
                 ? `https://a.espncdn.com/i/headshots/nfl/players/full/${espnId}.png`
                 : `https://www.mflscripts.com/playerImages_96x96/mfl_${playerId}.png`;
             const mflBackupUrl = `https://www.mflscripts.com/playerImages_96x96/mfl_${playerId}.png`;
             const silhouetteUrl = `https://www.mflscripts.com/playerImages_96x96/free_agent.png`;
 
-            document.getElementById('dnfl-modal-title-text').textContent = name;
-
             content.innerHTML = `
                 <div class="dnfl-player-hero-card">
-                    <img id="dnfl-hero-watermark-img" src="${activeWatermark}" alt="Watermark" class="dnfl-hero-watermark" onerror="this.style.display='none'" />
                     <div class="dnfl-hero-avatar-wrapper">
                         <img src="${espnHeadshotUrl}" 
                              alt="${name}" 
@@ -209,17 +497,17 @@
                         <h3 class="dnfl-hero-name">${name}</h3>
                         <div class="dnfl-hero-tags">
                             <span class="dnfl-pill-blue">${nflTeam} (Bye Wk ${pData.bye_week || 'N/A'})</span>
-                            ${isCommish ? '<span class="dnfl-pill-gold"><i class="fa-solid fa-user-shield"></i> Commissioner View</span>' : ''}
+                            ${isCommish ? '<span class="dnfl-pill-gold"><i class="fa-solid fa-user-shield"></i> Commissioner Mode</span>' : ''}
                         </div>
                     </div>
                 </div>
 
                 <div class="dnfl-modal-tabs">
-                    <button class="dnfl-modal-tab-btn ${activeTab === 'overview' ? 'is-active' : ''}" onclick="DNFL.Popups.switchPlayerTab('${playerId}', 'overview')"><i class="fa-solid fa-address-card"></i> Overview & Bio</button>
-                    <button class="dnfl-modal-tab-btn ${activeTab === 'gamelog' ? 'is-active' : ''}" onclick="DNFL.Popups.switchPlayerTab('${playerId}', 'gamelog')"><i class="fa-solid fa-calendar-days"></i> Game Log</button>
-                    <button class="dnfl-modal-tab-btn ${activeTab === 'season' ? 'is-active' : ''}" onclick="DNFL.Popups.switchPlayerTab('${playerId}', 'season')"><i class="fa-solid fa-chart-line"></i> Season Stats</button>
-                    <button class="dnfl-modal-tab-btn ${activeTab === 'career' ? 'is-active' : ''}" onclick="DNFL.Popups.switchPlayerTab('${playerId}', 'career')"><i class="fa-solid fa-award"></i> Career Stats</button>
-                    <button class="dnfl-modal-tab-btn ${activeTab === 'transactions' ? 'is-active' : ''}" onclick="DNFL.Popups.switchPlayerTab('${playerId}', 'transactions')"><i class="fa-solid fa-right-left"></i> Transactions</button>
+                    <button class="dnfl-modal-tab-btn ${activeTab === 'overview' ? 'is-active' : ''}" onclick="DNFL.Popups.switchPlayerTab('${playerId}', 'overview')"><i class="fa-solid fa-address-card"></i> <span class="dnfl-tab-label">Overview & Bio</span></button>
+                    <button class="dnfl-modal-tab-btn ${activeTab === 'gamelog' ? 'is-active' : ''}" onclick="DNFL.Popups.switchPlayerTab('${playerId}', 'gamelog')"><i class="fa-solid fa-calendar-days"></i> <span class="dnfl-tab-label">Game Log</span></button>
+                    <button class="dnfl-modal-tab-btn ${activeTab === 'season' ? 'is-active' : ''}" onclick="DNFL.Popups.switchPlayerTab('${playerId}', 'season')"><i class="fa-solid fa-chart-line"></i> <span class="dnfl-tab-label">Season Stats</span></button>
+                    <button class="dnfl-modal-tab-btn ${activeTab === 'career' ? 'is-active' : ''}" onclick="DNFL.Popups.switchPlayerTab('${playerId}', 'career')"><i class="fa-solid fa-award"></i> <span class="dnfl-tab-label">Career Stats</span></button>
+                    <button class="dnfl-modal-tab-btn ${activeTab === 'transactions' ? 'is-active' : ''}" onclick="DNFL.Popups.switchPlayerTab('${playerId}', 'transactions')"><i class="fa-solid fa-right-left"></i> <span class="dnfl-tab-label">Transactions</span></button>
                 </div>
 
                 <div id="dnfl-player-tab-body">
@@ -245,7 +533,7 @@
                             <div class="dnfl-conf-team-chip" onclick="DNFL.Popups.swapWatermark('${f.logo}')" title="Click to preview watermark">
                                 <span class="dnfl-pill-gray">${f.confName}</span>
                                 <strong>${f.name}</strong>
-                                <span class="dnfl-subtext">Owner: ${f.owner}</span>
+                                <span class="dnfl-subtext">${f.owner}</span>
                             </div>
                         `).join('')}
                     </div>
@@ -330,13 +618,12 @@
     }
 
     /**
-     * Open Franchise Scouting Modal
+     * Open Franchise Modal
      */
     async function openFranchisePopup(franchiseId, activeTab) {
         activeTab = activeTab || 'overview';
-        showModal("Franchise Scouting Report", "fa-shield-halved");
-        const content = document.getElementById('dnfl-modal-content-wrapper');
 
+        const content = document.getElementById('dnfl-modal-content-wrapper');
         content.innerHTML = `
             <div class="dnfl-status-loading">
                 <i class="fa-solid fa-spinner fa-spin"></i> Loading franchise #${franchiseId}...
@@ -349,92 +636,100 @@
             const dailyTtl = getTtl(client, 'DAILY', 86400000);
             const fiveMinTtl = getTtl(client, 'FIVE_MIN', 300000);
 
-            const [leagueData, standingsData, rosterData, playerMap] = await Promise.all([
+            const [leagueData, standingsData, rosterData, playerMap, ytdScoresData, powerRankingsMap] = await Promise.all([
                 client.fetchData('league', {}, { ttl: hourlyTtl }).catch(() => null),
                 client.fetchData('leagueStandings', { COLUMN_NAMES: 1, ALL: 1 }, { ttl: hourlyTtl }).catch(() => null),
                 client.fetchData('rosters', { FRANCHISE: franchiseId }, { ttl: fiveMinTtl }).catch(() => null),
-                client.fetchData('players', { DETAILS: 1 }, { ttl: dailyTtl }).catch(() => null)
+                client.fetchData('players', { DETAILS: 1 }, { ttl: dailyTtl }).catch(() => null),
+                client.fetchData('playerScores', { W: 'YTD' }, { ttl: hourlyTtl }).catch(() => null),
+                fetchPowerRankingsCsv(client).catch(() => ({}))
             ]);
 
+            const targetFidNorm = norm(franchiseId);
             const franchises = toArray(leagueData?.league?.franchises?.franchise);
             const conferences = toArray(leagueData?.league?.conferences?.conference);
             const divisions = toArray(leagueData?.league?.divisions?.division);
 
-            const targetFran = franchises.find(f => String(f.id).replace(/^0+/, '') === String(franchiseId).replace(/^0+/, ''));
+            const targetFran = franchises.find(f => norm(f.id) === targetFidNorm);
             if (!targetFran) throw new Error("Franchise not found in league database.");
 
             const name = targetFran.name || `Franchise #${franchiseId}`;
             const logo = targetFran.logo;
-            const icon = targetFran.icon || logo;
+            const icon = targetFran.icon;
 
-            const confObj = conferences.find(c => String(c.id) === String(targetFran.conference_id));
-            const divObj = divisions.find(d => String(d.id) === String(targetFran.division));
+            const confObj = conferences.find(c => norm(c.id) === norm(targetFran.conference_id));
+            const divObj = divisions.find(d => norm(d.id) === norm(targetFran.division));
+            
             const confName = confObj ? confObj.name : '';
             const divName = divObj ? divObj.name : '';
-            const locationStr = `${confName} ${divName}`.trim() || 'League Member';
+            const fullLoc = [confName, divName].filter(Boolean).join(' ');
 
-            // Resolve Standings Data
+            const headerHtml = `
+                ${icon ? `<img src="${icon}" alt="Icon" class="franchise-icon-md dnfl-ficon-rounded" onerror="this.style.display='none'" />` : ''}
+                <span>${name}</span>
+            `;
+            showModal(name, headerHtml);
+            setCardWatermark(logo);
+
+            // Standings Parsing & Record
             const standingsList = toArray(standingsData?.leagueStandings?.franchise);
-            const franStandings = standingsList.find(s => String(s.id).replace(/^0+/, '') === String(franchiseId).replace(/^0+/, '')) || {};
+            const franStandings = standingsList.find(s => norm(s.id) === targetFidNorm) || {};
 
-            const wins = franStandings.h2hw || franStandings.w || '0';
-            const losses = franStandings.h2hl || franStandings.l || '0';
-            const ties = franStandings.h2ht || franStandings.t || '0';
+            const wins = parseInt(franStandings.h2hw || franStandings.w || 0, 10);
+            const losses = parseInt(franStandings.h2hl || franStandings.l || 0, 10);
+            const ties = parseInt(franStandings.h2ht || franStandings.t || 0, 10);
             const recordStr = `${wins}-${losses}-${ties}`;
 
-            const totalWins = parseFloat(wins) || 0;
-            const totalLosses = parseFloat(losses) || 0;
-            const totalTies = parseFloat(ties) || 0;
-            const totalGames = totalWins + totalLosses + totalTies;
-            const winPctVal = totalGames > 0 ? ((totalWins + 0.5 * totalTies) / totalGames).toFixed(3).replace(/^0/, '') : '.000';
-            const winPctStr = `${winPctVal} Win %`;
+            const totalGames = wins + losses + ties;
+            const winPct = totalGames > 0 ? ((wins + 0.5 * ties) / totalGames) : 0;
+            const winPctStr = `.${Math.round(winPct * 1000).toString().padStart(3, '0')} Win %`;
 
             const pfVal = parseFloat(franStandings.pf || franStandings.points_for || 0);
             const paVal = parseFloat(franStandings.pa || franStandings.points_against || 0);
+
+            const currentWk = parseInt(leagueData?.league?.currentWk || 1, 10);
+            const completedWeeks = totalGames > 0 ? totalGames : Math.max(1, currentWk - 1);
+
+            const pfPpgVal = (pfVal / completedWeeks).toFixed(1);
+            const paPpgVal = (paVal / completedWeeks).toFixed(1);
+
+            const pfMainStr = `${pfPpgVal} PPG`;
             const pfTotalStr = `${pfVal.toFixed(2)} Total`;
+
+            const paMainStr = `${paPpgVal} PPG`;
             const paTotalStr = `${paVal.toFixed(2)} Total`;
 
-            const ppgVal = totalGames > 0 ? (pfVal / totalGames).toFixed(1) : '0.0';
-            const paPpgVal = totalGames > 0 ? (paVal / totalGames).toFixed(1) : '0.0';
-            const pfMainStr = `${ppgVal} PPG`;
-            const paMainStr = `${paPpgVal} PPG`;
+            // Calculate Official DNFL Playoff Seeds
+            const dnflSeedsMap = await calculateDnflStandingsSeeds(client, standingsList, leagueData);
+            const seedVal = dnflSeedsMap[targetFidNorm] || '1';
 
-            const seedVal = franStandings.seed || franStandings.playoff_seed || franStandings.pseed || franStandings.rank || 'N/A';
-            const seedMainStr = seedVal !== 'N/A' ? `#${seedVal}` : 'N/A';
+            // Power Rank & Power Index Resolution
+            const prMeta = powerRankingsMap[targetFidNorm] || {};
+            const prVal = prMeta.powerIndex || (franStandings.power_rank ? parseFloat(franStandings.power_rank).toFixed(1) : '85.0');
+            const prRankNum = prMeta.rank || franStandings.rank || '1';
+            const prSubStr = `#${prRankNum} Overall`;
 
-            const prVal = franStandings.power_rank || franStandings.prank || franStandings.pwr_index || franStandings.power_index || '90.0';
-            const overallRankVal = franStandings.rank || franStandings.overall_rank || seedVal || 'N/A';
-            const prSubStr = overallRankVal !== 'N/A' ? `#${overallRankVal} Overall` : 'League Rank';
-
-            // Set Header Modal Title
-            const titleEl = document.getElementById('dnfl-modal-title-text');
-            if (titleEl) {
-                titleEl.innerHTML = `${icon ? `<img src="${icon}" class="franchise-icon-md" alt="Icon" />` : ''} ${name}`;
-            }
-
-            // Render Hero Banner
             let heroHtml = `
                 <div class="dnfl-franchise-hero-header">
-                    ${(activeTab === 'overview' && logo) ? `<img src="${logo}" alt="${name}" class="dnfl-hero-watermark" onerror="this.style.display='none'" />` : ''}
                     <div class="dnfl-hero-left-meta">
                         <h3 class="dnfl-franchise-title-text">${name}</h3>
                         <div class="dnfl-hero-tags">
-                            <span class="dnfl-pill-blue"><i class="fa-solid fa-user"></i> Owner: ${targetFran.owner_name || 'N/A'}</span>
-                            <span class="dnfl-pill-gray"><i class="fa-solid fa-sitemap"></i> ${locationStr}</span>
+                            <span class="dnfl-pill-blue">${targetFran.owner_name || 'N/A'}</span>
+                            <span class="dnfl-pill-gray">${fullLoc}</span>
                         </div>
                     </div>
-                    ${(activeTab === 'overview' && logo) ? `<img src="${logo}" alt="${name}" class="dnfl-hero-large-logo" onerror="this.style.display='none'" />` : ''}
+                    ${logo ? `<img src="${logo}" alt="${name}" class="dnfl-hero-large-logo" onerror="this.style.display='none'" />` : ''}
                 </div>
 
                 <div class="dnfl-modal-tabs">
-                    <button class="dnfl-modal-tab-btn ${activeTab === 'overview' ? 'is-active' : ''}" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'overview')"><i class="fa-solid fa-chart-pie"></i> Overview</button>
-                    <button class="dnfl-modal-tab-btn ${activeTab === 'roster' ? 'is-active' : ''}" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'roster')"><i class="fa-solid fa-users"></i> Roster</button>
-                    <button class="dnfl-modal-tab-btn ${activeTab === 'schedule' ? 'is-active' : ''}" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'schedule')"><i class="fa-solid fa-calendar"></i> Schedule</button>
-                    <button class="dnfl-modal-tab-btn ${activeTab === 'history' ? 'is-active' : ''}" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'history')"><i class="fa-solid fa-trophy"></i> Awards & History</button>
+                    <button class="dnfl-modal-tab-btn ${activeTab === 'overview' ? 'is-active' : ''}" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'overview')"><i class="fa-solid fa-chart-pie"></i> <span class="dnfl-tab-label">Overview</span></button>
+                    <button class="dnfl-modal-tab-btn ${activeTab === 'roster' ? 'is-active' : ''}" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'roster')"><i class="fa-solid fa-users"></i> <span class="dnfl-tab-label">Roster</span></button>
+                    <button class="dnfl-modal-tab-btn ${activeTab === 'schedule' ? 'is-active' : ''}" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'schedule')"><i class="fa-solid fa-calendar"></i> <span class="dnfl-tab-label">Schedule</span></button>
+                    <button class="dnfl-modal-tab-btn ${activeTab === 'history' ? 'is-active' : ''}" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'history')"><i class="fa-solid fa-trophy"></i> <span class="dnfl-tab-label">Awards & History</span></button>
                 </div>
 
                 <div id="dnfl-franchise-tab-body">
-                    ${renderFranchiseTabContent(targetFran, franStandings, rosterData, playerMap, activeTab, recordStr, winPctStr, pfMainStr, pfTotalStr, paMainStr, paTotalStr, seedMainStr, prVal, prSubStr)}
+                    ${renderFranchiseTabContent(targetFran, franStandings, rosterData, playerMap, ytdScoresData, activeTab, recordStr, winPctStr, pfMainStr, pfTotalStr, paMainStr, paTotalStr, seedVal, prVal, prSubStr, completedWeeks)}
                 </div>
             `;
 
@@ -448,29 +743,77 @@
     /**
      * Render Franchise Tab Content
      */
-    function renderFranchiseTabContent(targetFran, franStandings, rosterData, playerMap, tabName, recordStr, winPctStr, pfMainStr, pfTotalStr, paMainStr, paTotalStr, seedMainStr, prVal, prSubStr) {
+    function renderFranchiseTabContent(targetFran, franStandings, rosterData, playerMap, ytdScoresData, tabName, recordStr, winPctStr, pfMainStr, pfTotalStr, paMainStr, paTotalStr, seedVal, prVal, prSubStr, completedWeeks) {
         if (tabName === 'overview') {
-            // Find Top Performers (Top QB + Top 3 Performers)
             const playerList = toArray(playerMap?.players?.player);
-            const franRosterObj = toArray(rosterData?.rosters?.franchise).find(r => String(r.id).replace(/^0+/, '') === String(targetFran.id).replace(/^0+/, ''));
-            const rosterPlayerIds = toArray(franRosterObj?.player).map(p => String(p.id).replace(/^0+/, ''));
+            const ytdList = toArray(ytdScoresData?.playerScores?.playerScore);
+            
+            // Build YTD Scores Map with Multi-Key Resolution
+            const ytdScoreMap = {};
+            ytdList.forEach(item => {
+                if (item && item.id) {
+                    const score = parseFloat(item.score || item.points || item.ytd || 0);
+                    const rawId = String(item.id).trim();
+                    const unpaddedId = rawId.replace(/^0+/, '');
+                    const paddedId = unpaddedId.padStart(4, '0');
 
-            const rosterPlayers = playerList.filter(p => rosterPlayerIds.includes(String(p.id).replace(/^0+/, ''))).map(p => {
-                const pts = parseFloat(p.score || p.fpts || p.points || 150 + Math.random() * 100);
-                const g = parseFloat(p.g || p.games || 10);
-                const ppg = g > 0 ? (pts / g).toFixed(1) : '15.0';
-                return { ...p, pts: pts.toFixed(2), ppg: ppg };
+                    ytdScoreMap[rawId] = score;
+                    ytdScoreMap[unpaddedId] = score;
+                    ytdScoreMap[paddedId] = score;
+                }
             });
 
-            // Top QB
-            const qbs = rosterPlayers.filter(p => String(p.position).toUpperCase() === 'QB').sort((a,b) => b.pts - a.pts);
-            const topQb = qbs[0];
+            // Build League-Wide Position Rank Maps
+            const posPlayersMap = {};
+            playerList.forEach(p => {
+                const pos = String(p.position || 'N/A').toUpperCase();
+                const pidNorm = norm(p.id);
+                const score = ytdScoreMap[pidNorm] || 0;
+                if (!posPlayersMap[pos]) posPlayersMap[pos] = [];
+                posPlayersMap[pos].push({ id: pidNorm, score: score });
+            });
 
-            // Top 3 Skill/Performers (excluding top QB to avoid duplicates)
-            const remainingPlayers = rosterPlayers.filter(p => !topQb || String(p.id) !== String(topQb.id)).sort((a,b) => b.pts - a.pts);
-            const top3Flex = remainingPlayers.slice(0, 3);
+            const posRankMap = {};
+            Object.keys(posPlayersMap).forEach(pos => {
+                posPlayersMap[pos].sort((a, b) => b.score - a.score);
+                posPlayersMap[pos].forEach((item, idx) => {
+                    posRankMap[item.id] = { pos: pos, rank: idx + 1 };
+                });
+            });
 
-            const topPerformers = [topQb, ...top3Flex].filter(Boolean);
+            // Roster Players for Target Franchise
+            const franRosterObj = toArray(rosterData?.rosters?.franchise).find(r => norm(r.id) === norm(targetFran.id));
+            const rosterPlayerIds = toArray(franRosterObj?.player).map(p => norm(p.id));
+
+            const rosterPlayers = playerList.filter(p => rosterPlayerIds.includes(norm(p.id))).map(p => {
+                const pidNorm = norm(p.id);
+                const score = ytdScoreMap[pidNorm] || 0;
+                const ppg = completedWeeks > 0 ? (score / completedWeeks).toFixed(1) : '0.0';
+                const posMeta = posRankMap[pidNorm] || { pos: String(p.position || 'N/A').toUpperCase(), rank: '--' };
+                return {
+                    ...p,
+                    ytdScore: score,
+                    ppg: ppg,
+                    posRank: posMeta.rank
+                };
+            });
+
+            rosterPlayers.sort((a, b) => b.ytdScore - a.ytdScore);
+
+            // Select Top QB + Top 3 Skill Performers
+            const topQb = rosterPlayers.find(p => String(p.position).toUpperCase() === 'QB');
+            const topSkill = rosterPlayers.filter(p => p !== topQb).slice(0, 3);
+
+            const topPerformers = [];
+            if (topQb) topPerformers.push(topQb);
+            topSkill.forEach(p => topPerformers.push(p));
+
+            if (topPerformers.length < 4) {
+                const remaining = rosterPlayers.filter(p => !topPerformers.includes(p));
+                for (let i = 0; i < remaining.length && topPerformers.length < 4; i++) {
+                    topPerformers.push(remaining[i]);
+                }
+            }
 
             let starsHtml = '';
             if (topPerformers.length > 0) {
@@ -478,23 +821,22 @@
                     <div class="dnfl-stars-wrapper">
                         <h4 class="dnfl-section-title"><i class="fa-solid fa-star"></i> Top Performers</h4>
                         <div class="dnfl-stars-grid">
-                            ${topPerformers.map((p, idx) => {
+                            ${topPerformers.map(p => {
+                                const pos = String(p.position || 'N/A').toUpperCase();
                                 const espnId = p.espn_id || p.espn_id_full;
                                 const headshot = espnId 
                                     ? `https://a.espncdn.com/i/headshots/nfl/players/full/${espnId}.png`
                                     : `https://www.mflscripts.com/playerImages_96x96/mfl_${p.id}.png`;
-                                const pos = (p.position || 'N/A').toUpperCase();
-                                const posRank = `${pos}#${idx + 1}`;
                                 return `
                                     <div class="dnfl-star-card" onclick="DNFL.Popups.openPlayerPopup('${p.id}')">
                                         <div class="dnfl-star-avatar-wrapper">
                                             <img src="${headshot}" alt="${p.name}" class="dnfl-star-avatar" onerror="this.src='https://www.mflscripts.com/playerImages_96x96/free_agent.png'" />
-                                            <span class="dnfl-position-badge pos-${pos.toLowerCase()}">${posRank}</span>
+                                            <span class="dnfl-position-badge pos-${pos.toLowerCase()}">${pos}</span>
                                         </div>
                                         <div class="dnfl-star-info">
                                             <div class="dnfl-star-name">${p.name}</div>
                                             <div class="dnfl-star-main-metric">${p.ppg} PPG</div>
-                                            <div class="dnfl-star-sub-metric">${p.pts} Total</div>
+                                            <div class="dnfl-star-sub-metric">${p.ytdScore.toFixed(2)} Total (${pos} #${p.posRank})</div>
                                         </div>
                                     </div>
                                 `;
@@ -523,7 +865,7 @@
                     </div>
                     <div class="dnfl-stat-card">
                         <div class="dnfl-stat-lbl">Playoff Seed</div>
-                        <div class="dnfl-stat-val-main">${seedMainStr}</div>
+                        <div class="dnfl-stat-val-main">#${seedVal}</div>
                         <div class="dnfl-stat-val-sub">Seed</div>
                     </div>
                     <div class="dnfl-stat-card">
@@ -611,7 +953,7 @@
      * Open Notification Drawer Modal
      */
     function openNotificationsModal() {
-        showModal("League Notifications & Messages", "fa-bell");
+        showModal("League Notifications & Messages", "<i class="fa-solid fa-bell"></i> Notifications & Messages");
         const content = document.getElementById('dnfl-modal-content-wrapper');
 
         let html = '';
@@ -652,7 +994,7 @@
     }
 
     /**
-     * Check Menu Bar Notifications
+     * Check Menu Bar Notifications & Update Icon/Color States
      */
     async function checkNotifications() {
         ensureMenuBellInjected();
@@ -670,7 +1012,7 @@
             const fiveMinTtl = getTtl(client, 'FIVE_MIN', 300000);
             const userFid = getLoggedInFranchiseId(client);
             
-            if (userFid && userFid !== '0000') {
+            if (userFid) {
                 const transData = await client.fetchData('transactions', { TRANS_TYPE: 'TRADE', W: '0' }, { ttl: fiveMinTtl }).catch(() => null);
                 const pendingTrades = toArray(transData?.transactions?.transaction).length;
                 totalCount += pendingTrades;
@@ -697,26 +1039,11 @@
      * Helper Controls
      */
     function swapWatermark(logoUrl) {
-        if (!logoUrl) return;
-        const img = document.getElementById('dnfl-hero-watermark-img');
-        if (img) {
-            img.src = logoUrl;
-            img.style.display = 'block';
-        }
+        setCardWatermark(logoUrl);
     }
 
     function toggleWatchlist(playerId) {
         alert("Player #" + playerId + " toggled in Watchlist.");
-    }
-
-    function showModal(title, iconClass) {
-        const overlay = document.getElementById('dnfl-modal-overlay');
-        const titleEl = document.getElementById('dnfl-modal-title-text');
-        const iconEl = document.getElementById('dnfl-modal-icon');
-
-        if (titleEl) titleEl.textContent = title;
-        if (iconEl) iconEl.className = `fa-solid ${iconClass}`;
-        if (overlay) overlay.classList.remove('dnfl-is-hidden');
     }
 
     function closeModal() {

@@ -1139,7 +1139,7 @@ a.dnfl-btn-secondary:hover,
   }
 }
 /* ==========================================================================
-   DNFL Popups & Modal Subsystem Partial (_popups-v4_05.scss)
+   DNFL Popups & Modal Subsystem Partial (_popups-v4_08.scss)
    Duke Networking Fantasy League (DNFL) Architecture
    ========================================================================== */
 /* 0. Design Tokens */
@@ -1174,6 +1174,7 @@ a.dnfl-btn-secondary:hover,
 }
 
 .dnfl-modal-card {
+  position: relative !important;
   width: 100% !important;
   max-width: 48rem !important;
   max-height: 90vh !important;
@@ -1188,6 +1189,8 @@ a.dnfl-btn-secondary:hover,
   font-family: var(--dnfl-font-main, Arial, Helvetica, sans-serif) !important;
 }
 .dnfl-modal-card .dnfl-modal-header {
+  position: relative !important;
+  z-index: 10 !important;
   padding: 1rem 1.25rem !important;
   background: #0f172a !important;
   color: #ffffff !important;
@@ -1219,11 +1222,40 @@ a.dnfl-btn-secondary:hover,
   color: #ffffff !important;
 }
 .dnfl-modal-card .dnfl-modal-body {
+  position: relative !important;
+  z-index: 10 !important;
   padding: 1.25rem !important;
   overflow-y: auto !important;
   max-height: calc(90vh - 4.5rem) !important;
+  background-color: #ffffff !important;
 }
 
+/* Persistent Left-Side Background Watermark */
+.dnfl-persistent-watermark {
+  position: absolute !important;
+  left: 2rem !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  max-height: 25rem !important;
+  height: auto !important;
+  width: auto !important;
+  max-width: none !important;
+  opacity: 0.12 !important;
+  -o-object-fit: contain !important;
+     object-fit: contain !important;
+  pointer-events: none !important;
+  z-index: 1 !important;
+}
+
+@media (max-width: 580px) {
+  .dnfl-persistent-watermark {
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    max-height: 18rem !important;
+    max-width: 90vw !important;
+  }
+}
 /* 2. Notification Bell & Menu Items */
 .dnfl-menu-bell-item {
   display: inline-flex !important;
@@ -1269,27 +1301,14 @@ a.dnfl-btn-secondary:hover,
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  padding: 0.75rem 0.5rem 1.25rem 0.5rem !important;
+  padding: 0.5rem 0.25rem 1.25rem 0.25rem !important;
   margin-bottom: 0.5rem !important;
   background: transparent !important;
   border: none !important;
 }
-.dnfl-franchise-hero-header .dnfl-hero-watermark {
-  position: absolute !important;
-  right: 5% !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  height: 180% !important;
-  max-width: 22rem !important;
-  opacity: 0.12 !important;
-  -o-object-fit: contain !important;
-     object-fit: contain !important;
-  pointer-events: none !important;
-  z-index: 1 !important;
-}
 .dnfl-franchise-hero-header .dnfl-hero-large-logo {
-  width: 14rem !important;
-  max-height: 8rem !important;
+  width: 13rem !important;
+  max-height: 8.5rem !important;
   -o-object-fit: contain !important;
      object-fit: contain !important;
   filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.25)) !important;
@@ -1299,6 +1318,7 @@ a.dnfl-btn-secondary:hover,
 .dnfl-franchise-hero-header .dnfl-hero-left-meta {
   position: relative !important;
   z-index: 2 !important;
+  flex: 1 1 65% !important;
 }
 .dnfl-franchise-hero-header .dnfl-hero-left-meta .dnfl-franchise-title-text {
   font-size: 1.65rem !important;
@@ -1319,10 +1339,19 @@ a.dnfl-btn-secondary:hover,
     gap: 1rem !important;
   }
   .dnfl-franchise-hero-header .dnfl-hero-large-logo {
-    width: 10rem !important;
+    width: 9rem !important;
+    order: -1 !important;
   }
   .dnfl-franchise-hero-header .dnfl-hero-tags {
-    justify-content: center !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+  }
+  .dnfl-franchise-hero-header .dnfl-hero-tags .dnfl-pill-blue,
+  .dnfl-franchise-hero-header .dnfl-hero-tags .dnfl-pill-gray {
+    width: 100% !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
   }
 }
 
@@ -1338,19 +1367,6 @@ a.dnfl-btn-secondary:hover,
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%) !important;
   color: #ffffff !important;
   overflow: hidden !important;
-}
-.dnfl-player-hero-card .dnfl-hero-watermark {
-  position: absolute !important;
-  right: 5% !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  height: 180% !important;
-  max-width: 18rem !important;
-  opacity: 0.14 !important;
-  -o-object-fit: contain !important;
-     object-fit: contain !important;
-  pointer-events: none !important;
-  z-index: 1 !important;
 }
 .dnfl-player-hero-card .dnfl-hero-avatar-wrapper {
   position: relative !important;
@@ -1384,20 +1400,21 @@ a.dnfl-btn-secondary:hover,
   flex-wrap: wrap !important;
 }
 
-/* 5. Navigation Tabs */
+/* 5. Navigation Tabs & Compact Mobile Labels */
 .dnfl-modal-tabs {
   display: flex !important;
-  gap: 0.5rem !important;
+  gap: 0.4rem !important;
   margin-bottom: 1rem !important;
   border-bottom: 2px solid #e2e8f0 !important;
   padding-bottom: 0.5rem !important;
-  overflow-x: auto !important;
 }
 .dnfl-modal-tabs .dnfl-modal-tab-btn {
+  flex: 1 1 auto !important;
+  text-align: center !important;
   background: #f1f5f9 !important;
   color: #475569 !important;
   border: 1px solid #cbd5e1 !important;
-  padding: 0.45rem 0.9rem !important;
+  padding: 0.45rem 0.75rem !important;
   border-radius: 6px !important;
   font-weight: 700 !important;
   font-size: 0.85rem !important;
@@ -1413,6 +1430,21 @@ a.dnfl-btn-secondary:hover,
   background: #0577B1 !important;
   color: #ffffff !important;
   border-color: #0577B1 !important;
+}
+@media (max-width: 640px) {
+  .dnfl-modal-tabs {
+    gap: 0.25rem !important;
+  }
+  .dnfl-modal-tabs .dnfl-modal-tab-btn {
+    padding: 0.4rem 0.5rem !important;
+  }
+  .dnfl-modal-tabs .dnfl-modal-tab-btn .dnfl-tab-label {
+    display: none !important;
+  }
+  .dnfl-modal-tabs .dnfl-modal-tab-btn.is-active .dnfl-tab-label {
+    display: inline !important;
+    margin-left: 0.25rem !important;
+  }
 }
 
 /* 6. High-Density Scorecard Grid (3-Row Badges) */
@@ -1430,13 +1462,14 @@ a.dnfl-btn-secondary:hover,
 @media (max-width: 480px) {
   .dnfl-scorecard-grid {
     grid-template-columns: repeat(2, 1fr) !important;
+    /* Mobile Row 1: Record spans full width */
   }
   .dnfl-scorecard-grid .dnfl-stat-card:first-child {
     grid-column: span 2 !important;
   }
 }
 .dnfl-scorecard-grid .dnfl-stat-card {
-  background: #f8fafc !important;
+  background: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
   border-top: 3px solid #0577B1 !important;
   border-radius: 8px !important;
@@ -1467,7 +1500,7 @@ a.dnfl-btn-secondary:hover,
   color: #64748b !important;
 }
 
-/* 7. Top Performers Section */
+/* 7. Top Performers Section (2x2 Desktop Grid) */
 .dnfl-stars-wrapper {
   margin-top: 1.25rem !important;
 }
@@ -1482,21 +1515,16 @@ a.dnfl-btn-secondary:hover,
 }
 .dnfl-stars-wrapper .dnfl-stars-grid {
   display: grid !important;
-  grid-template-columns: repeat(4, 1fr) !important;
+  grid-template-columns: repeat(2, 1fr) !important;
   gap: 0.75rem !important;
 }
-@media (max-width: 768px) {
-  .dnfl-stars-wrapper .dnfl-stars-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-  }
-}
-@media (max-width: 480px) {
+@media (max-width: 540px) {
   .dnfl-stars-wrapper .dnfl-stars-grid {
     grid-template-columns: 1fr !important;
   }
 }
 .dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card {
-  background: #f8fafc !important;
+  background: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
   border-radius: 8px !important;
   padding: 0.75rem !important;
@@ -1585,12 +1613,17 @@ a.dnfl-btn-secondary:hover,
   vertical-align: middle !important;
 }
 
+.dnfl-ficon-rounded {
+  border-radius: 6px !important;
+}
+
 .franchise-icon-lg {
   width: var(--dnfl-ficon-lg, 3.5rem) !important;
   height: var(--dnfl-ficon-lg, 3.5rem) !important;
   -o-object-fit: contain !important;
      object-fit: contain !important;
   vertical-align: middle !important;
+  border-radius: 6px !important;
 }
 
 .dnfl-pill-gray {
@@ -1693,7 +1726,7 @@ a.dnfl-btn-secondary:hover,
 }
 
 .dnfl-hpm-card {
-  background: #f8fafc !important;
+  background: #ffffff !important;
   border-left: 4px solid #0577B1 !important;
   padding: 0.85rem 1rem !important;
   margin-bottom: 0.85rem !important;
