@@ -1,46 +1,47 @@
 /* ==========================================================================
-   DNFL Popups Subsystem v4.18
+   DNFL Popups & Modal Subsystem Engine (dnfl-popups-v4_19.js)
    Duke Networking Fantasy League (DNFL) Architecture
    ========================================================================== */
 
 (function () {
-    'use strict';
+    'use me strict';
+    if (window.DNFL && window.DNFL.Popups && window.DNFL.Popups.version === '4.19') {
+        console.log("DNFL Popups Subsystem v4.19 already loaded.");
+        return;
+    }
 
     window.DNFL = window.DNFL || {};
 
-    let isInitialized = false; // will be JS boolean below
-    let capturedLeagueReminders = [];
+    let isInitialized = false;
     let capturedHomepageMessages = [];
+    let capturedLeagueReminders = [];
 
     function getApiClient() {
-        if (window.DNFLClient) return window.DNFLClient;
-        if (window.DNFL && window.DNFL.Client) return window.DNFL.Client;
+        if (window.DNFLClient && typeof window.DNFLClient.fetchData === 'function') {
+            return window.DNFLClient;
+        }
+        if (window.DNFL && window.DNFL.Client && typeof window.DNFL.Client.fetchData === 'function') {
+            return window.DNFL.Client;
+        }
         return {
-            fetchData: async function (type, params, opts) {
-                const year = window.DNFL_YEAR || new Date().getFullYear();
-                const leagueId = window.DNFL_LEAGUE_ID || (window.mflEnv ? window.mflEnv.league_id : '');
-                let url = `https://${window.location.hostname}/${year}/export?TYPE=${type}&L=${leagueId}&JSON=1`;
-                if (params) {
-                    Object.keys(params).forEach(k => {
-                        url += `&${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`;
-                    });
-                }
-                const res = await fetch(url, { credentials: 'include' });
+            fetchData: async function (endpoint, params) {
+                const year = window.MFL_YEAR || new Date().getFullYear();
+                const leagueId = window.MFL_LEAGUE_ID || '';
+                const query = new URLSearchParams({ TYPE: endpoint, L: leagueId, JSON: '1', ...params }).toString();
+                const res = await fetch(`https://api.myfantasyleague.com/${year}/export?${query}`);
                 return await res.json();
             },
             fetchRawText: async function (url) {
-                const res = await fetch(url, { credentials: 'include' });
+                const res = await fetch(url);
                 return await res.text();
             },
             clearCache: function () {}
         };
     }
 
-    function getTtl(client, presetName, defaultMs) {
-        if (client && client.TTLS && client.TTLS[presetName]) {
-            return client.TTLS[presetName];
-        }
-        return defaultMs;
+    function getTtl(client, preset, fallbackMs) {
+        if (client.TTLS && client.TTLS[preset]) return client.TTLS[preset];
+        return fallbackMs;
     }
 
     function norm(id) {
@@ -64,110 +65,133 @@
     }
 
     function getLoggedInFranchiseId(client) {
-        if (client && typeof client.getUserFranchise === 'function') {
-            const fid = client.getUserFranchise();
-            if (fid) return norm(fid);
+        try {
+            if (client && typeof client.getUserFranchise === 'function') {
+                const fid = client.getUserFranchise();
+                if (fid) return norm(fid);
+            }
+        } catch (e) {}
+
+        if (window.franchise_id) return norm(window.franchise_id);
+        if (window.MFL_FRANCHISE_ID) return norm(window.MFL_FRANCHISE_ID);
+        if (window.mfl_franchise_id) return norm(window.mfl_franchise_id);
+
+        const match = document.cookie.match(/MFL_USER_ID=([^;]+)/);
+        if (match && match[1]) {
+            const parts = unescape(match[1]).split(':');
+            if (parts.length >= 2 && parts[1]) {
+                return norm(parts[1]);
+            }
         }
-        if (window.mflEnv && window.mflEnv.franchise_id) {
-            return norm(window.mflEnv.franchise_id);
-        }
-        if (window.mflUserFranchiseId) {
-            return norm(window.mflUserFranchiseId);
-        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('fid')) return norm(urlParams.get('fid'));
+        if (urlParams.has('FRANCHISE')) return norm(urlParams.get('FRANCHISE'));
+
         return '';
     }
 
-    function isCommissioner(loggedInFid) {
-        if (loggedInFid === '0000') return true;
-        if (window.mflEnv && (window.mflEnv.is_commissioner || window.mflEnv.is_commish)) return true;
-        if (window.isMFLCommissioner) return true;
+    function isUserCommish(client) {
+        try {
+            if (client && typeof client.isCommissioner === 'function') {
+                return client.isCommissioner();
+            }
+        } catch (e) {}
+        if (window.is_commissioner === true || window.is_commissioner === '1' || window.IS_COMMISSIONER === true) {
+            return true;
+        }
         return false;
     }
 
     async function fetchPowerRankingsCsv(client) {
-        const year = window.DNFL_YEAR || new Date().getFullYear();
-        const manifestUrl = `https://dnfl.live/dnfl_rankings/${year}/weeks.json`;
-        
+        const year = window.MFL_YEAR || new Date().getFullYear();
+        const dailyTtl = getTtl(client, 'DAILY', 86400000);
+
+        let latestWeekFile = 'data_02.csv';
         try {
-            const manifestText = await client.fetchRawText(manifestUrl);
-            const manifestData = JSON.parse(manifestText);
-            const weeksArr = toArray(manifestData?.weeks || manifestData);
-            
-            let targetFile = 'data_02.csv';
-            if (weeksArr.length > 0) {
-                const lastItem = weeksArr[weeksArr.length - 1];
-                if (typeof lastItem === 'string') {
-                    targetFile = lastItem;
-                } else if (lastItem && lastItem.file) {
-                    targetFile = lastItem.file;
-                } else if (lastItem && lastItem.filename) {
-                    targetFile = lastItem.filename;
+            const manifestUrl = `https://dnfl.live/dnfl_rankings/${year}/weeks.json`;
+            const manifestRaw = await client.fetchRawText(manifestUrl, { ttl: dailyTtl });
+            if (manifestRaw && !manifestRaw.trim().startsWith('<')) {
+                const manifestData = JSON.parse(manifestRaw);
+                const weeksList = toArray(manifestData?.weeks);
+                if (weeksList.length > 0) {
+                    const lastEntry = weeksList[weeksList.length - 1];
+                    if (lastEntry && (lastEntry.file || lastEntry.filename)) {
+                        latestWeekFile = lastEntry.file || lastEntry.filename;
+                    } else if (typeof lastEntry === 'string') {
+                        latestWeekFile = lastEntry;
+                    }
                 }
             }
-
-            const csvUrl = `https://dnfl.live/dnfl_rankings/${year}/${targetFile}`;
-            const csvText = await client.fetchRawText(csvUrl);
-            return parseRankingsCsv(csvText);
         } catch (e) {
-            console.warn("[DNFL Popups] Primary power rankings manifest fetch failed, attempting fallback loop:", e);
-            
-            for (let w = 18; w >= 0; w--) {
-                const padW = String(w).padStart(2, '0');
-                const fileCandidate = w === 0 ? 'data_00_pre-season.csv' : `data_${padW}.csv`;
+            console.warn("[DNFL Popups] Could not parse weeks.json manifest, attempting fallback search:", e);
+        }
+
+        const csvUrl = `https://dnfl.live/dnfl_rankings/${year}/${latestWeekFile}`;
+        let csvText = '';
+        try {
+            csvText = await client.fetchRawText(csvUrl, { ttl: dailyTtl });
+        } catch (e) {}
+
+        if (!csvText || csvText.trim().startsWith('<')) {
+            for (let wk = 18; wk >= 0; wk--) {
+                const padWk = String(wk).padStart(2, '0');
+                const testFile = wk === 0 ? 'data_00_pre-season.csv' : `data_${padWk}.csv`;
                 try {
-                    const fallbackUrl = `https://dnfl.live/dnfl_rankings/${year}/${fileCandidate}`;
-                    const text = await client.fetchRawText(fallbackUrl);
-                    if (text && text.includes('Franchise') && !text.includes('<!DOCTYPE')) {
-                        return parseRankingsCsv(text);
+                    const testUrl = `https://dnfl.live/dnfl_rankings/${year}/${testFile}`;
+                    const res = await client.fetchRawText(testUrl, { ttl: dailyTtl });
+                    if (res && !res.trim().startsWith('<') && res.includes('Franchise')) {
+                        csvText = res;
+                        break;
                     }
                 } catch (err) {}
             }
-            return {};
         }
-    }
 
-    function parseRankingsCsv(csvText) {
-        if (!csvText) return {};
-        const lines = csvText.split(/\r?\n/);
-        if (lines.length < 2) return {};
+        const rankingsMap = {};
+        if (!csvText) return rankingsMap;
 
-        const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
-        const fidIdx = headers.findIndex(h => h.includes('id') || h.includes('franchise'));
-        const prIdx = headers.findIndex(h => h.includes('power') || h.includes('index') || h.includes('score'));
+        const lines = csvText.split(/\r?\n/).filter(l => l.trim().length > 0);
+        if (lines.length < 2) return rankingsMap;
+
+        const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
+        const fidIdx = headers.findIndex(h => h.includes('fid') || h.includes('id') || h.includes('franchise'));
+        const prIdx = headers.findIndex(h => h.includes('power') || h.includes('index') || h.includes('score') || h.includes('pr'));
         const rankIdx = headers.findIndex(h => h.includes('rank') || h.includes('pos'));
 
-        const map = {};
         for (let i = 1; i < lines.length; i++) {
-            const row = lines[i].split(',').map(c => c.trim());
-            if (row.length <= 1) continue;
+            const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+            if (cols.length <= fidIdx) continue;
 
-            let fid = fidIdx >= 0 ? norm(row[fidIdx]) : norm(row[0]);
-            let pr = prIdx >= 0 ? row[prIdx] : (row[2] || '85.00');
-            let rank = rankIdx >= 0 ? row[rankIdx] : String(i);
+            const fid = norm(cols[fidIdx]);
+            if (!fid) continue;
 
-            map[fid] = {
-                powerIndex: pr,
-                rank: rank
+            const rawPr = prIdx >= 0 ? cols[prIdx] : '';
+            const rawRank = rankIdx >= 0 ? cols[rankIdx] : String(i);
+
+            rankingsMap[fid] = {
+                powerIndex: rawPr ? parseFloat(rawPr).toFixed(2) : 'N/A',
+                rank: rawRank || String(i)
             };
         }
-        return map;
+
+        return rankingsMap;
     }
 
     function captureHomepageMessages() {
-        const reminderEls = document.querySelectorAll('#league_reminders .tdalert, #league_reminders .alert, #warning');
-        reminderEls.forEach(el => {
-            if (el.innerText.trim()) {
-                capturedLeagueReminders.push(el.innerHTML.trim());
+        const hpMsgs = document.querySelectorAll('#body_home .homepagemessage, .homepagemessage');
+        hpMsgs.forEach((el, idx) => {
+            const html = el.innerHTML.trim();
+            if (html) {
+                capturedHomepageMessages.push({ id: idx + 1, html: html });
             }
         });
 
-        const hpMsgs = document.querySelectorAll('#body_home .homepagemessage');
-        hpMsgs.forEach((el, idx) => {
-            if (el.innerText.trim()) {
-                capturedHomepageMessages.push({
-                    id: idx + 1,
-                    html: el.innerHTML.trim()
-                });
+        const reminders = document.querySelectorAll('#league_reminders, .tdalert, .alert, #warning');
+        reminders.forEach((el) => {
+            const txt = el.innerText.trim();
+            if (txt && !capturedLeagueReminders.includes(txt)) {
+                capturedLeagueReminders.push(txt);
             }
         });
     }
@@ -178,41 +202,40 @@
             if (!link) return;
 
             const href = link.getAttribute('href') || '';
-            
-            // Intercept Player Popup Links
-            if (href.includes('DISPLAY_TYPE=projections') || href.includes('P=') && href.includes('player')) {
-                const match = href.match(/P=(\d+)/);
-                if (match) {
+            if (href.includes('O=01') || href.includes('O=02') || href.includes('O=03') || href.includes('options?L=') && href.includes('FRANCHISE=')) {
+                const match = href.match(/FRANCHISE=(\d{4})/i) || href.match(/F=(\d{4})/i);
+                if (match && match[1]) {
                     e.preventDefault();
-                    openPlayerPopup(match[1]);
+                    if (href.includes('O=01')) {
+                        openFranchisePopup(match[1], 'setup');
+                    } else {
+                        openFranchisePopup(match[1], 'overview');
+                    }
                     return;
                 }
             }
 
-            // Intercept Franchise Popup Links
-            if (href.includes('options?L=') && href.includes('O=01') || href.includes('F=') && href.includes('franchise')) {
-                const match = href.match(/F=(\d+)/) || href.match(/FRANCHISE=(\d+)/);
-                if (match) {
-                    e.preventDefault();
-                    openFranchisePopup(match[1]);
-                    return;
-                }
-            }
-
-            // Intercept Franchise Setup Links
-            if (href.includes('options?L=') && href.includes('O=01')) {
+            if (href.includes('options?L=') && href.includes('O=00')) {
                 const client = getApiClient();
-                const myFid = getLoggedInFranchiseId(client);
-                if (myFid) {
+                const loggedFid = getLoggedInFranchiseId(client);
+                if (loggedFid) {
                     e.preventDefault();
-                    openFranchisePopup(myFid, 'setup');
+                    openFranchisePopup(loggedFid, 'overview');
                     return;
+                }
+            }
+
+            if (href.includes('options?L=') && (href.includes('O=101') || href.includes('O=102') || href.includes('P='))) {
+                const match = href.match(/P=(\d+)/i);
+                if (match && match[1]) {
+                    e.preventDefault();
+                    openPlayerPopup(match[1], 'overview');
                 }
             }
         });
     }
 
-    function showModal(titleText, headerHtml, gearAction) {
+    function showModal(titleText, headerHtml) {
         let overlay = document.getElementById('dnfl-modal-overlay');
         if (!overlay) {
             overlay = document.createElement('div');
@@ -222,14 +245,9 @@
                 <div id="dnfl-modal-container" class="dnfl-card dnfl-modal-card">
                     <div class="dnfl-card-header dnfl-modal-header">
                         <h3 id="dnfl-modal-title" class="dnfl-card-title"></h3>
-                        <div class="dnfl-modal-header-actions">
-                            <button id="dnfl-modal-gear-btn" class="dnfl-modal-gear dnfl-is-hidden" title="Franchise Settings">
-                                <i class="fa-solid fa-gear"></i>
-                            </button>
-                            <button id="dnfl-modal-close-btn" class="dnfl-modal-close" aria-label="Close Modal">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
+                        <button id="dnfl-modal-close-btn" class="dnfl-modal-close" aria-label="Close Modal" type="button">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
                     <div id="dnfl-modal-content-wrapper" class="dnfl-card-body dnfl-modal-body"></div>
                 </div>
@@ -240,22 +258,17 @@
         const titleEl = document.getElementById('dnfl-modal-title');
         titleEl.innerHTML = headerHtml || titleText;
 
-        const gearBtn = document.getElementById('dnfl-modal-gear-btn');
-        if (gearBtn) {
-            if (gearAction) {
-                gearBtn.classList.remove('dnfl-is-hidden');
-                gearBtn.onclick = gearAction;
-            } else {
-                gearBtn.classList.add('dnfl-is-hidden');
-                gearBtn.onclick = null;
-            }
-        }
-
         overlay.classList.remove('dnfl-is-hidden');
     }
 
-    // Document-level event delegation for closing modal
-    document.addEventListener('click', function(e) {
+    function closeModal() {
+        const overlay = document.getElementById('dnfl-modal-overlay');
+        if (overlay) {
+            overlay.classList.add('dnfl-is-hidden');
+        }
+    }
+
+    document.addEventListener('click', function (e) {
         if (e.target.closest('#dnfl-modal-close-btn') || e.target.closest('.dnfl-modal-close')) {
             closeModal();
             return;
@@ -268,6 +281,7 @@
 
     async function openPlayerPopup(playerId, activeTab) {
         activeTab = activeTab || 'overview';
+        showModal(`Player #${playerId}`, `<i class="fa-solid fa-user"></i> <span>Loading Player...</span>`);
         const content = document.getElementById('dnfl-modal-content-wrapper');
 
         content.innerHTML = `
@@ -302,10 +316,7 @@
                 }
             });
 
-            const headerHtml = `
-                <i class="fa-solid fa-user"></i>
-                <span>${p.name}</span>
-            `;
+            const headerHtml = `<i class="fa-solid fa-user"></i> <span>${p.name}</span>`;
             showModal(p.name, headerHtml);
 
             const ownerHtml = owningFranchises.length > 0 
@@ -390,6 +401,7 @@
 
     async function openFranchisePopup(franchiseId, activeTab) {
         activeTab = activeTab || 'overview';
+        showModal(`Franchise #${franchiseId}`, `<i class="fa-solid fa-shield-halved"></i> <span>Loading Franchise...</span>`);
         const content = document.getElementById('dnfl-modal-content-wrapper');
 
         content.innerHTML = `
@@ -404,6 +416,10 @@
             const dailyTtl = getTtl(client, 'DAILY', 86400000);
             const fiveMinTtl = getTtl(client, 'FIVE_MIN', 300000);
 
+            const loggedInFid = getLoggedInFranchiseId(client);
+            const commishStatus = isUserCommish(client);
+            const isOwnerOrCommish = commishStatus || (loggedInFid && norm(loggedInFid) === norm(franchiseId));
+
             const [leagueData, standingsData, rosterData, playerMap, ytdScoresData, powerRankingsMap] = await Promise.all([
                 client.fetchData('league', {}, { ttl: hourlyTtl }).catch(() => null),
                 client.fetchData('leagueStandings', { COLUMN_NAMES: 1, ALL: 1 }, { ttl: hourlyTtl }).catch(() => null),
@@ -414,10 +430,6 @@
             ]);
 
             const targetFidNorm = norm(franchiseId);
-            const myFidNorm = getLoggedInFranchiseId(client);
-            const isCommishUser = isCommissioner(myFidNorm);
-            const canEdit = (myFidNorm && myFidNorm === targetFidNorm) || isCommishUser;
-
             const franchises = toArray(leagueData?.league?.franchises?.franchise);
             const conferences = toArray(leagueData?.league?.conferences?.conference);
             const divisions = toArray(leagueData?.league?.divisions?.division);
@@ -429,20 +441,38 @@
             const logo = targetFran.logo;
             const icon = targetFran.icon;
 
-            const confObj = conferences.find(c => norm(c.id) === norm(targetFran.conference_id));
-            const divObj = divisions.find(d => norm(d.id) === norm(targetFran.division));
-            
+            const divId = targetFran.division || targetFran.division_id;
+            const divObj = divisions.find(d => norm(d.id) === norm(divId));
+
+            const confId = targetFran.conference_id || targetFran.conference || (divObj ? (divObj.conference_id || divObj.conference) : '');
+            const confObj = conferences.find(c => norm(c.id) === norm(confId));
+
             const confName = confObj ? confObj.name : '';
             const divName = divObj ? divObj.name : '';
-            const fullLoc = [confName, divName].filter(Boolean).join(' ');
+            
+            let fullLoc = '';
+            if (confName && divName) {
+                fullLoc = `${confName} • ${divName}`;
+            } else if (confName) {
+                fullLoc = confName;
+            } else if (divName) {
+                fullLoc = divName;
+            } else {
+                fullLoc = 'DNFL League';
+            }
 
             const headerHtml = `
-                ${icon ? `<img src="${icon}" alt="Icon" class="franchise-icon-md dnfl-ficon-rounded" onerror="this.style.display='none'" />` : ''}
-                <span>${name}</span>
+                <div class="dnfl-modal-header-left">
+                    ${icon ? `<img src="${icon}" alt="Icon" class="franchise-icon-md dnfl-ficon-rounded" onerror="this.style.display='none'" />` : ''}
+                    <span>${name}</span>
+                </div>
+                ${isOwnerOrCommish ? `
+                    <button class="dnfl-gear-btn ${activeTab === 'setup' ? 'is-active' : ''}" title="Franchise Setup" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'setup')" type="button">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                ` : ''}
             `;
-
-            const gearAction = canEdit ? function() { openFranchisePopup(franchiseId, 'setup'); } : null;
-            showModal(name, headerHtml, gearAction);
+            showModal(name, headerHtml);
 
             const standingsList = toArray(standingsData?.leagueStandings?.franchise);
             const franStandings = standingsList.find(s => norm(s.id) === targetFidNorm) || {};
@@ -465,15 +495,22 @@
             const pfPpgVal = (pfVal / completedWeeks).toFixed(2);
             const paPpgVal = (paVal / completedWeeks).toFixed(2);
 
-            const pfMainStr = `${pfPpgVal} <span class="dnfl-ppg-label">${pfPpgVal ? 'PPG' : ''}</span>`;
+            const pfMainStr = `${pfPpgVal} <span class="dnfl-ppg-label">PPG</span>`;
             const pfTotalStr = `${pfVal.toFixed(2)} Total`;
 
-            const paMainStr = `${paPpgVal} <span class="dnfl-ppg-label">${paPpgVal ? 'PPG' : ''}</span>`;
+            const paMainStr = `${paPpgVal} <span class="dnfl-ppg-label">PPG</span>`;
             const paTotalStr = `${paVal.toFixed(2)} Total`;
 
-            const bbidVal = franStandings.bbidAvailable || franStandings.bbid_available || franStandings.bbidbalance || '100.00';
-            const bbidMainStr = `$${parseFloat(bbidVal).toFixed(2)}`;
-            const bbidSubStr = `Budget Available`;
+            let bbidRaw = targetFran.bbidAvailable || targetFran.bbid_balance || targetFran.bbidSpent || targetFran.bbid || franStandings.bbidAvailable || franStandings.bbid_balance || franStandings.bbidbalance || franStandings.bbid;
+            let bbidMainStr = '$100.00';
+            if (bbidRaw !== undefined && bbidRaw !== null && bbidRaw !== '' && bbidRaw !== 'N/A') {
+                const bbidNum = parseFloat(String(bbidRaw).replace(/[^0-9.]/g, ''));
+                if (!isNaN(bbidNum)) {
+                    bbidMainStr = `$${bbidNum.toFixed(2)}`;
+                } else {
+                    bbidMainStr = String(bbidRaw);
+                }
+            }
 
             let seedVal = franStandings.seed || franStandings.playoff_seed || franStandings.pseed;
             let seedTypeLabel = "Conference Seed";
@@ -487,11 +524,11 @@
             }
 
             if (!seedVal && standingsList.length > 0) {
-                const confIdNorm = norm(targetFran.conference_id);
+                const confIdNorm = norm(targetFran.conference_id || targetFran.conference);
                 if (confIdNorm && conferences.length > 0) {
                     const confTeams = standingsList.filter(s => {
                         const fObj = franchises.find(f => norm(f.id) === norm(s.id));
-                        return fObj && norm(fObj.conference_id) === confIdNorm;
+                        return fObj && norm(fObj.conference_id || fObj.conference) === confIdNorm;
                     });
                     const confIdx = confTeams.findIndex(s => norm(s.id) === targetFidNorm);
                     seedVal = confIdx >= 0 ? confIdx + 1 : '1';
@@ -510,69 +547,26 @@
             const prRankNum = prMeta.rank || franStandings.rank || '1';
             const prSubStr = `#${prRankNum} Overall Rank`;
 
-            let topBarTabsHtml = `
+            let navTabsHtml = `
                 <div class="dnfl-modal-tabs dnfl-tabs-fullwidth">
                     <button class="dnfl-modal-tab-btn ${activeTab === 'overview' ? 'is-active' : ''}" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'overview')"><i class="fa-solid fa-chart-line"></i> <span class="dnfl-tab-label">Overview</span></button>
                     <button class="dnfl-modal-tab-btn ${activeTab === 'roster' ? 'is-active' : ''}" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'roster')"><i class="fa-solid fa-users"></i> <span class="dnfl-tab-label">Roster</span></button>
                     <button class="dnfl-modal-tab-btn ${activeTab === 'schedule' ? 'is-active' : ''}" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'schedule')"><i class="fa-solid fa-calendar-days"></i> <span class="dnfl-tab-label">Schedule</span></button>
                     <button class="dnfl-modal-tab-btn ${activeTab === 'history' ? 'is-active' : ''}" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'history')"><i class="fa-solid fa-trophy"></i> <span class="dnfl-tab-label">History</span></button>
-                    ${canEdit ? `<button class="dnfl-modal-tab-btn ${activeTab === 'setup' ? 'is-active' : ''}" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'setup')"><i class="fa-solid fa-gear"></i> <span class="dnfl-tab-label">Setup</span></button>` : ''}
+                    ${isOwnerOrCommish ? `
+                        <button class="dnfl-modal-tab-btn ${activeTab === 'setup' ? 'is-active' : ''}" onclick="DNFL.Popups.switchFranchiseTab('${franchiseId}', 'setup')"><i class="fa-solid fa-gear"></i> <span class="dnfl-tab-label">Setup</span></button>
+                    ` : ''}
                 </div>
             `;
 
-            let heroHtml = '';
-            if (activeTab === 'overview') {
-                heroHtml = `
-                    <div class="dnfl-franchise-hero-header">
-                        <div class="dnfl-hero-left-meta">
-                            <div class="dnfl-owner-details-card">
-                                <div class="dnfl-owner-detail-row"><strong>OWNER:</strong> ${targetFran.owner_name || 'N/A'}</div>
-                                <div class="dnfl-owner-detail-row"><strong>DIVISION:</strong> ${fullLoc || 'N/A'}</div>
-                                <div class="dnfl-owner-detail-row"><strong>CONTACT:</strong> ${targetFran.email || 'N/A'}</div>
-                            </div>
-                            <div class="dnfl-scorecard-grid dnfl-grid-3x2">
-                                <div class="dnfl-stat-card">
-                                    <div class="dnfl-stat-lbl">Record</div>
-                                    <div class="dnfl-stat-val-main">${recordStr}</div>
-                                    <div class="dnfl-stat-val-sub">${winPctStr}</div>
-                                </div>
-                                <div class="dnfl-stat-card">
-                                    <div class="dnfl-stat-lbl">Points For</div>
-                                    <div class="dnfl-stat-val-main">${pfMainStr}</div>
-                                    <div class="dnfl-stat-val-sub">${pfTotalStr}</div>
-                                </div>
-                                <div class="dnfl-stat-card">
-                                    <div class="dnfl-stat-lbl">Points Against</div>
-                                    <div class="dnfl-stat-val-main">${paMainStr}</div>
-                                    <div class="dnfl-stat-val-sub">${paTotalStr}</div>
-                                </div>
-                                <div class="dnfl-stat-card">
-                                    <div class="dnfl-stat-lbl">BBID Budget</div>
-                                    <div class="dnfl-stat-val-main">${bbidMainStr}</div>
-                                    <div class="dnfl-stat-val-sub">${bbidSubStr}</div>
-                                </div>
-                                <div class="dnfl-stat-card">
-                                    <div class="dnfl-stat-lbl">Playoff Seed</div>
-                                    <div class="dnfl-stat-val-main">#${seedVal}</div>
-                                    <div class="dnfl-stat-val-sub">${seedTypeLabel}</div>
-                                </div>
-                                <div class="dnfl-stat-card">
-                                    <div class="dnfl-stat-lbl">Power Rank</div>
-                                    <div class="dnfl-stat-val-main">${prVal}</div>
-                                    <div class="dnfl-stat-val-sub">${prSubStr}</div>
-                                </div>
-                            </div>
-                        </div>
-                        ${logo ? `
-                            <div class="dnfl-hero-logo-wrapper">
-                                <img src="${logo}" alt="${name}" class="dnfl-hero-large-logo" onerror="this.style.display='none'" />
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            }
+            let bodyHtml = navTabsHtml + renderFranchiseTabContent(
+                targetFran, franStandings, rosterData, playerMap, ytdScoresData, 
+                activeTab, recordStr, winPctStr, pfMainStr, pfTotalStr, paMainStr, paTotalStr, 
+                bbidMainStr, seedVal, seedTypeLabel, prVal, prSubStr, completedWeeks, 
+                fullLoc, isOwnerOrCommish, commishStatus
+            );
 
-            content.innerHTML = topBarTabsHtml + heroHtml + renderFranchiseTabContent(targetFran, franStandings, rosterData, playerMap, ytdScoresData, activeTab, completedWeeks, isCommishUser, canEdit);
+            content.innerHTML = bodyHtml;
 
         } catch (e) {
             console.error("[DNFL Popups] Error opening franchise popup:", e);
@@ -584,7 +578,16 @@
         }
     }
 
-    function renderFranchiseTabContent(targetFran, franStandings, rosterData, playerMap, ytdScoresData, tabName, completedWeeks, isCommishUser, canEdit) {
+    function renderFranchiseTabContent(
+        targetFran, franStandings, rosterData, playerMap, ytdScoresData, 
+        tabName, recordStr, winPctStr, pfMainStr, pfTotalStr, paMainStr, paTotalStr, 
+        bbidMainStr, seedVal, seedTypeLabel, prVal, prSubStr, completedWeeks, 
+        fullLoc, isOwnerOrCommish, commishStatus
+    ) {
+        const name = targetFran.name || `Franchise #${targetFran.id}`;
+        const logo = targetFran.logo;
+        const ownerName = targetFran.owner_name || 'Owner';
+
         if (tabName === 'overview') {
             const playerList = toArray(playerMap?.players?.player);
             const ytdList = toArray(ytdScoresData?.playerScores?.playerScore);
@@ -635,23 +638,22 @@
                 };
             });
 
-            // Sort all roster players strictly by YTD Score descending
             rosterPlayers.sort((a, b) => b.ytdScore - a.ytdScore);
 
-            // Select 1 QB max + Top 3 Skill (RB, WR, TE only)
-            const topQb = rosterPlayers.find(p => String(p.position).toUpperCase() === 'QB');
-            const skillPlayers = rosterPlayers.filter(p => ['RB', 'WR', 'TE'].includes(String(p.position).toUpperCase()));
+            const qbList = rosterPlayers.filter(p => String(p.position).toUpperCase() === 'QB');
+            const topQb = qbList.length > 0 ? qbList[0] : null;
+
+            const flexList = rosterPlayers.filter(p => {
+                const pos = String(p.position).toUpperCase();
+                return pos === 'RB' || pos === 'WR' || pos === 'TE';
+            });
+
+            const topSkill = flexList.filter(p => p !== topQb).slice(0, 3);
 
             const topPerformers = [];
             if (topQb) topPerformers.push(topQb);
-            
-            skillPlayers.forEach(p => {
-                if (topPerformers.length < 4 && !topPerformers.includes(p)) {
-                    topPerformers.push(p);
-                }
-            });
+            topSkill.forEach(p => topPerformers.push(p));
 
-            // Sort final 4 by YTD score descending
             topPerformers.sort((a, b) => b.ytdScore - a.ytdScore);
 
             let starsHtml = '';
@@ -674,7 +676,7 @@
                                         </div>
                                         <div class="dnfl-star-info">
                                             <div class="dnfl-star-name">${p.name}</div>
-                                            <div class="dnfl-star-main-metric">${p.ppg} <span class="dnfl-ppg-label-blue">PPG</span></div>
+                                            <div class="dnfl-star-main-metric">${p.ppg} <span class="dnfl-ppg-label">PPG</span></div>
                                             <div class="dnfl-star-sub-metric">${p.ytdScore.toFixed(2)} Total (${pos} #${p.posRank})</div>
                                         </div>
                                     </div>
@@ -685,116 +687,62 @@
                 `;
             }
 
-            return starsHtml;
-
-        } else if (tabName === 'setup') {
-            const leagueId = window.DNFL_LEAGUE_ID || (window.mflEnv ? window.mflEnv.league_id : '');
-            const fid = targetFran.id;
-
-            const emailEventsList = [
-                { id: 'DRAFT_STATUS', label: 'Draft Status Update' },
-                { id: 'DRAFT_CLOCK', label: "When I'm On The Clock For My Draft" },
-                { id: 'LINEUP_SUBMISSION', label: "Opponent's/Own Lineup Submission" },
-                { id: 'LINEUP_REMINDER', label: "Reminder at 6am ET Thursdays if you haven't submitted a lineup" },
-                { id: 'TRADE_PROPOSAL', label: 'Trade Proposals/Results' },
-                { id: 'TRADE_BAIT', label: 'Trade Bait Updates' },
-                { id: 'WAIVER_RESULTS', label: 'Waivers/Free Agent Moves' },
-                { id: 'WEEKLY_RESULTS', label: 'Weekly Results' },
-                { id: 'INJURY_REPORT', label: 'Injury Status Report' },
-                { id: 'PLAYER_NEWS', label: 'My Player News' },
-                { id: 'SITE_NEWS', label: 'MyFantasyLeague.com Site News' }
-            ];
-
-            const smsEventsList = [
-                { id: 'SMS_DRAFT_CLOCK', label: "When I'm on the clock in the draft (email drafts only)" },
-                { id: 'SMS_TRADE_PROPOSAL', label: 'Trade proposals and responses' },
-                { id: 'SMS_TRADE_COMPLETED', label: 'Completed Trades' },
-                { id: 'SMS_LINEUP_REMINDER', label: "Reminder at 6am ET Thursdays if you haven't submitted a lineup for the current week yet" },
-                { id: 'SMS_GAME_INACTIVES', label: 'Game-day inactives on my starting lineup at 12:30pm and 3:30pm ET on Sundays' },
-                { id: 'SMS_TRADE_APPROVAL', label: 'Trades pending approval - commissioners only' }
-            ];
-
             return `
-                <div class="dnfl-setup-tab-container">
-                    ${isCommishUser ? `
-                        <div class="dnfl-admin-shortcut-card">
-                            <i class="fa-solid fa-user-gear"></i> Commissioner Access Mode
-                            <a href="options?L=${leagueId}&O=01&FRANCHISE=${fid}" target="_blank" class="dnfl-btn-admin">
-                                Open Full MFL Admin Setup Page <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                            </a>
+                <div class="dnfl-franchise-hero-header">
+                    <div class="dnfl-hero-left-meta">
+                        <div class="dnfl-owner-details-box">
+                            <div class="dnfl-owner-detail-row">
+                                <span class="dnfl-owner-label">OWNER:</span>
+                                <span class="dnfl-owner-val"><strong>${ownerName}</strong></span>
+                            </div>
+                            <div class="dnfl-owner-detail-row">
+                                <span class="dnfl-owner-label">DIVISION:</span>
+                                <span class="dnfl-owner-val">${fullLoc}</span>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-scorecard-grid">
+                            <div class="dnfl-stat-card">
+                                <div class="dnfl-stat-lbl">Record</div>
+                                <div class="dnfl-stat-val-main">${recordStr}</div>
+                                <div class="dnfl-stat-val-sub">${winPctStr}</div>
+                            </div>
+                            <div class="dnfl-stat-card">
+                                <div class="dnfl-stat-lbl">PF</div>
+                                <div class="dnfl-stat-val-main">${pfMainStr}</div>
+                                <div class="dnfl-stat-val-sub">${pfTotalStr}</div>
+                            </div>
+                            <div class="dnfl-stat-card">
+                                <div class="dnfl-stat-lbl">PA</div>
+                                <div class="dnfl-stat-val-main">${paMainStr}</div>
+                                <div class="dnfl-stat-val-sub">${paTotalStr}</div>
+                            </div>
+                            <div class="dnfl-stat-card">
+                                <div class="dnfl-stat-lbl">BBID</div>
+                                <div class="dnfl-stat-val-main">${bbidMainStr}</div>
+                                <div class="dnfl-stat-val-sub">Budget Available</div>
+                            </div>
+                            <div class="dnfl-stat-card">
+                                <div class="dnfl-stat-lbl">Seed</div>
+                                <div class="dnfl-stat-val-main">#${seedVal}</div>
+                                <div class="dnfl-stat-val-sub">${seedTypeLabel}</div>
+                            </div>
+                            <div class="dnfl-stat-card">
+                                <div class="dnfl-stat-lbl">Rank</div>
+                                <div class="dnfl-stat-val-main">${prVal}</div>
+                                <div class="dnfl-stat-val-sub">${prSubStr}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${logo ? `
+                        <div class="dnfl-hero-logo-wrapper">
+                            <img src="${logo}" alt="${name}" class="dnfl-hero-large-logo" onerror="this.style.display='none'" />
                         </div>
                     ` : ''}
-
-                    <div id="dnfl-setup-feedback" class="dnfl-feedback-banner dnfl-is-hidden"></div>
-
-                    <form id="dnfl-franchise-setup-form" onsubmit="DNFL.Popups.saveFranchiseSetup(event, '${fid}')">
-                        <div class="dnfl-form-section">
-                            <h4 class="dnfl-form-section-title"><i class="fa-solid fa-id-card"></i> Franchise Profile</h4>
-                            <div class="dnfl-form-grid">
-                                <div class="dnfl-form-group">
-                                    <label>Franchise Name</label>
-                                    <input type="text" name="name" value="${escapeXml(targetFran.name || '')}" class="dnfl-input" required />
-                                </div>
-                                <div class="dnfl-form-group">
-                                    <label>Owner Name</label>
-                                    <input type="text" name="owner_name" value="${escapeXml(targetFran.owner_name || '')}" class="dnfl-input" required />
-                                </div>
-                                <div class="dnfl-form-group">
-                                    <label>Contact Email</label>
-                                    <input type="email" name="email" value="${escapeXml(targetFran.email || '')}" class="dnfl-input" required />
-                                </div>
-                                <div class="dnfl-form-group">
-                                    <label>Cellular / Mobile SMS Phone</label>
-                                    <input type="tel" name="cell_phone" value="${escapeXml(targetFran.cell_phone || targetFran.cellnumber || '')}" class="dnfl-input" placeholder="e.g. 5551234567" />
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="dnfl-form-section">
-                            <div class="dnfl-section-header-row">
-                                <h4 class="dnfl-form-section-title"><i class="fa-solid fa-envelope"></i> Email Notifications</h4>
-                                <div class="dnfl-toggle-actions">
-                                    <button type="button" class="dnfl-link-btn" onclick="DNFL.Popups.toggleCheckboxes('email-group', true)">Select All</button>
-                                    <span class="dnfl-divider">•</span>
-                                    <button type="button" class="dnfl-link-btn" onclick="DNFL.Popups.toggleCheckboxes('email-group', false)">Clear All</button>
-                                </div>
-                            </div>
-                            <div class="dnfl-checkbox-grid email-group">
-                                ${emailEventsList.map(item => `
-                                    <label class="dnfl-checkbox-label">
-                                        <input type="checkbox" name="mail_event" value="${item.id}" checked />
-                                        <span>${item.label}</span>
-                                    </label>
-                                `).join('')}
-                            </div>
-                        </div>
-
-                        <div class="dnfl-form-section">
-                            <div class="dnfl-section-header-row">
-                                <h4 class="dnfl-form-section-title"><i class="fa-solid fa-mobile-screen-button"></i> Mobile Text Notifications</h4>
-                                <div class="dnfl-toggle-actions">
-                                    <button type="button" class="dnfl-link-btn" onclick="DNFL.Popups.toggleCheckboxes('sms-group', true)">Select All</button>
-                                    <span class="dnfl-divider">•</span>
-                                    <button type="button" class="dnfl-link-btn" onclick="DNFL.Popups.toggleCheckboxes('sms-group', false)">Clear All</button>
-                                </div>
-                            </div>
-                            <div class="dnfl-checkbox-grid sms-group">
-                                ${smsEventsList.map(item => `
-                                    <label class="dnfl-checkbox-label">
-                                        <input type="checkbox" name="sms_event" value="${item.id}" checked />
-                                        <span>${item.label}</span>
-                                    </label>
-                                `).join('')}
-                            </div>
-                        </div>
-
-                        <div class="dnfl-form-actions">
-                            <button type="submit" class="dnfl-btn-submit">
-                                <i class="fa-solid fa-floppy-disk"></i> Save Settings
-                            </button>
-                        </div>
-                    </form>
                 </div>
+
+                ${starsHtml}
             `;
         } else if (tabName === 'roster') {
             return `
@@ -836,94 +784,170 @@
                     </tbody>
                 </table>
             `;
+        } else if (tabName === 'setup') {
+            if (!isOwnerOrCommish) {
+                return `
+                    <div class="dnfl-status-error">
+                        <i class="fa-solid fa-lock"></i> Access Restricted: You can only edit settings for your own franchise.
+                    </div>
+                `;
+            }
+
+            const emailVal = targetFran.email || '';
+            const cellVal = targetFran.cell_phone || targetFran.cell || targetFran.cellnumber || '';
+
+            return `
+                <div class="dnfl-setup-container">
+                    <div id="dnfl-setup-feedback" class="dnfl-is-hidden"></div>
+
+                    ${commishStatus ? `
+                        <div class="dnfl-commish-admin-card">
+                            <i class="fa-solid fa-shield-halved"></i> <strong>Commissioner Mode Active</strong>
+                            <a href="https://${window.location.host}/${window.MFL_YEAR || new Date().getFullYear()}/options?L=${window.MFL_LEAGUE_ID || ''}&O=01&FRANCHISE=${targetFran.id}" target="_blank" class="dnfl-btn-secondary dnfl-btn-sm">
+                                Open Full MFL Admin Setup Page <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                            </a>
+                        </div>
+                    ` : ''}
+
+                    <form id="dnfl-franchise-setup-form" onsubmit="DNFL.Popups.handleSetupSubmit(event, '${targetFran.id}')">
+                        <div class="dnfl-form-section">
+                            <h4 class="dnfl-form-section-title"><i class="fa-solid fa-id-card"></i> Profile & Contact Details</h4>
+                            <div class="dnfl-form-grid">
+                                <div class="dnfl-form-group">
+                                    <label class="dnfl-form-label" for="setup_fran_name">Franchise Name</label>
+                                    <input type="text" id="setup_fran_name" name="name" class="dnfl-form-input" value="${escapeXml(targetFran.name || '')}" required />
+                                </div>
+                                <div class="dnfl-form-group">
+                                    <label class="dnfl-form-label" for="setup_owner_name">Owner Name</label>
+                                    <input type="text" id="setup_owner_name" name="owner_name" class="dnfl-form-input" value="${escapeXml(targetFran.owner_name || '')}" required />
+                                </div>
+                                <div class="dnfl-form-group">
+                                    <label class="dnfl-form-label" for="setup_email">Contact Email</label>
+                                    <input type="email" id="setup_email" name="email" class="dnfl-form-input" value="${escapeXml(emailVal)}" required />
+                                </div>
+                                <div class="dnfl-form-group">
+                                    <label class="dnfl-form-label" for="setup_cell_phone">Mobile SMS Phone Number</label>
+                                    <input type="tel" id="setup_cell_phone" name="cell_phone" class="dnfl-form-input" value="${escapeXml(cellVal)}" placeholder="10-digit mobile number" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-form-section">
+                            <div class="dnfl-form-section-header">
+                                <h4 class="dnfl-form-section-title"><i class="fa-solid fa-envelope"></i> Email Notification Preferences</h4>
+                                <div class="dnfl-toggle-actions">
+                                    <button type="button" class="dnfl-link-action" onclick="DNFL.Popups.toggleCheckboxes('mail_events', true)">Select All</button>
+                                    <span class="dnfl-action-divider">•</span>
+                                    <button type="button" class="dnfl-link-action" onclick="DNFL.Popups.toggleCheckboxes('mail_events', false)">Clear All</button>
+                                </div>
+                            </div>
+                            <div class="dnfl-checkbox-grid">
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="mail_events" value="DRAFT_UPDATE" checked /> Draft Status Update</label>
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="mail_events" value="DRAFT_CLOCK" checked /> When I'm On The Clock For My Draft</label>
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="mail_events" value="LINEUP_SUBMIT" checked /> Opponent's/Own Lineup Submission</label>
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="mail_events" value="LINEUP_REMINDER" checked /> Reminder at 6am ET Thursdays if you haven't submitted a lineup</label>
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="mail_events" value="TRADE_PROPOSAL" checked /> Trade Proposals/Results</label>
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="mail_events" value="TRADE_BAIT" checked /> Trade Bait Updates</label>
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="mail_events" value="WAIVER_RESULTS" checked /> Waivers/Free Agent Moves</label>
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="mail_events" value="WEEKLY_RESULTS" checked /> Weekly Results</label>
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="mail_events" value="INJURY_REPORT" checked /> Injury Status Report</label>
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="mail_events" value="PLAYER_NEWS" checked /> My Player News</label>
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="mail_events" value="SITE_NEWS" checked /> MyFantasyLeague.com Site News</label>
+                            </div>
+                        </div>
+
+                        <div class="dnfl-form-section">
+                            <div class="dnfl-form-section-header">
+                                <h4 class="dnfl-form-section-title"><i class="fa-solid fa-mobile-screen-button"></i> Mobile Text Notification Preferences</h4>
+                                <div class="dnfl-toggle-actions">
+                                    <button type="button" class="dnfl-link-action" onclick="DNFL.Popups.toggleCheckboxes('sms_events', true)">Select All</button>
+                                    <span class="dnfl-action-divider">•</span>
+                                    <button type="button" class="dnfl-link-action" onclick="DNFL.Popups.toggleCheckboxes('sms_events', false)">Clear All</button>
+                                </div>
+                            </div>
+                            <div class="dnfl-checkbox-grid">
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="sms_events" value="SMS_DRAFT_CLOCK" checked /> When I'm on the clock in the draft (email drafts only)</label>
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="sms_events" value="SMS_TRADE_PROPOSAL" checked /> Trade proposals and responses</label>
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="sms_events" value="SMS_TRADE_COMPLETED" checked /> Completed Trades</label>
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="sms_events" value="SMS_LINEUP_REMINDER" checked /> Reminder at 6am ET Thursdays if you haven't submitted a lineup for the current week yet</label>
+                                <label class="dnfl-checkbox-label"><input type="checkbox" name="sms_events" value="SMS_INACTIVES" checked /> Game-day inactives on my starting lineup at 12:30pm and 3:30pm ET on Sundays</label>
+                                ${commishStatus ? `
+                                    <label class="dnfl-checkbox-label"><input type="checkbox" name="sms_events" value="SMS_TRADE_APPROVAL" /> Trades pending approval (commissioners only)</label>
+                                ` : ''}
+                            </div>
+                        </div>
+
+                        <div class="dnfl-form-actions">
+                            <button type="submit" class="dnfl-btn-primary">
+                                <i class="fa-solid fa-floppy-disk"></i> Save Franchise Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            `;
         }
     }
 
-    function toggleCheckboxes(groupClass, checkAll) {
-        const container = document.querySelector(`.${groupClass}`);
-        if (!container) return;
-        const checkboxes = container.querySelectorAll('input[type="checkbox"]');
-        checkboxes.forEach(cb => cb.checked = checkAll);
+    function toggleCheckboxes(groupName, isChecked) {
+        const checkboxes = document.querySelectorAll(`input[name="${groupName}"]`);
+        checkboxes.forEach(cb => { cb.checked = isChecked; });
     }
 
-    async function saveFranchiseSetup(e, franchiseId) {
+    async function handleSetupSubmit(e, targetFid) {
         e.preventDefault();
-        const form = e.target;
         const feedback = document.getElementById('dnfl-setup-feedback');
+        feedback.className = 'dnfl-status-loading';
+        feedback.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting updates to MyFantasyLeague...';
 
-        if (feedback) {
-            feedback.className = 'dnfl-feedback-banner dnfl-status-loading';
-            feedback.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving changes to MyFantasyLeague...';
-            feedback.classList.remove('dnfl-is-hidden');
-        }
+        const form = e.target;
+        const nameVal = form.querySelector('[name="name"]').value.trim();
+        const ownerNameVal = form.querySelector('[name="owner_name"]').value.trim();
+        const emailVal = form.querySelector('[name="email"]').value.trim();
+        const cellVal = form.querySelector('[name="cell_phone"]').value.trim();
+
+        const mailEvents = Array.from(form.querySelectorAll('[name="mail_events"]:checked')).map(cb => cb.value).join(',');
+        const smsEvents = Array.from(form.querySelectorAll('[name="sms_events"]:checked')).map(cb => cb.value).join(',');
+
+        const year = window.MFL_YEAR || new Date().getFullYear();
+        const leagueId = window.MFL_LEAGUE_ID || '';
+        const host = window.location.host || 'www.myfantasyleague.com';
+
+        const xmlPayload = `<?xml version="1.0" encoding="UTF-8"?>
+<franchises>
+  <franchise id="${norm(targetFid)}" name="${escapeXml(nameVal)}" owner_name="${escapeXml(ownerNameVal)}" email="${escapeXml(emailVal)}" cell_phone="${escapeXml(cellVal)}" mail_event="${escapeXml(mailEvents)}" sms_event="${escapeXml(smsEvents)}" />
+</franchises>`;
 
         try {
-            const formData = new FormData(form);
-            const name = formData.get('name') || '';
-            const owner_name = formData.get('owner_name') || '';
-            const email = formData.get('email') || '';
-            const cell_phone = formData.get('cell_phone') || '';
+            const importUrl = `https://${host}/${year}/import?TYPE=franchiseSetup&L=${leagueId}&JSON=1`;
+            const bodyParams = new URLSearchParams();
+            bodyParams.append('DATA', xmlPayload);
 
-            const mailEvents = formData.getAll('mail_event').join(',');
-            const smsEvents = formData.getAll('sms_event').join(',');
-
-            const xmlData = `
-                <franchises>
-                    <franchise 
-                        id="${franchiseId}" 
-                        name="${escapeXml(name)}" 
-                        owner_name="${escapeXml(owner_name)}" 
-                        email="${escapeXml(email)}" 
-                        cell_phone="${escapeXml(cell_phone)}" 
-                        mail_event="${escapeXml(mailEvents)}" 
-                        sms_event="${escapeXml(smsEvents)}" 
-                    />
-                </franchises>
-            `.trim();
-
-            const year = window.DNFL_YEAR || new Date().getFullYear();
-            const leagueId = window.DNFL_LEAGUE_ID || (window.mflEnv ? window.mflEnv.league_id : '');
-            const postUrl = `https://${window.location.hostname}/${year}/import?TYPE=franchiseSetup&L=${leagueId}&JSON=1`;
-
-            const params = new URLSearchParams();
-            params.append('DATA', xmlData);
-
-            const response = await fetch(postUrl, {
+            const res = await fetch(importUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: params.toString(),
+                body: bodyParams.toString(),
                 credentials: 'include'
             });
 
-            const result = await response.json();
-
-            if (result && (result.status === 'OK' || result.status === '0' || !result.error)) {
-                if (feedback) {
-                    feedback.className = 'dnfl-feedback-banner dnfl-status-success';
-                    feedback.innerHTML = '<i class="fa-solid fa-circle-check"></i> Franchise settings saved successfully!';
-                }
+            const data = await res.json();
+            if (data && (data.status === 'OK' || data.response?.status === 'OK' || !data.error)) {
+                feedback.className = 'dnfl-status-success';
+                feedback.innerHTML = '<i class="fa-solid fa-circle-check"></i> Franchise settings saved successfully!';
 
                 const client = getApiClient();
-                if (client && typeof client.clearCache === 'function') {
-                    client.clearCache('league');
-                    client.clearCache('leagueStandings');
-                }
+                client.clearCache('league');
 
                 setTimeout(() => {
-                    openFranchisePopup(franchiseId, 'overview');
+                    openFranchisePopup(targetFid, 'overview');
                 }, 1200);
-
             } else {
-                const errText = result?.error?.$t || result?.error || 'Server rejected franchise import payload.';
-                throw new Error(errText);
+                const errMsg = data?.error?.$t || data?.error || 'MFL API returned an error.';
+                throw new Error(errMsg);
             }
-
         } catch (err) {
             console.error("[DNFL Popups] Error saving franchise setup:", err);
-            if (feedback) {
-                feedback.className = 'dnfl-feedback-banner dnfl-status-error';
-                feedback.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Error saving settings: ${err.message}`;
-            }
+            feedback.className = 'dnfl-status-error';
+            feedback.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Could not save settings: ${err.message}`;
         }
     }
 
@@ -993,9 +1017,6 @@
 
     async function checkNotifications() {
         try {
-            const client = getApiClient();
-            const fid = getLoggedInFranchiseId(client);
-
             ensureMenuBellInjected();
 
             let unreadCount = 0;
@@ -1020,13 +1041,6 @@
         }
     }
 
-    function closeModal() {
-        const overlay = document.getElementById('dnfl-modal-overlay');
-        if (overlay) {
-            overlay.classList.add('dnfl-is-hidden');
-        }
-    }
-
     function init() {
         if (isInitialized) return;
         isInitialized = true;
@@ -1036,17 +1050,18 @@
         ensureMenuBellInjected();
         checkNotifications();
 
-        console.log("DNFL Popups Subsystem v4.18 ready.");
+        console.log("DNFL Popups Subsystem v4.19 ready.");
     }
 
     window.DNFL.Popups = {
+        version: '4.19',
         init: init,
         openPlayerPopup: openPlayerPopup,
         openFranchisePopup: openFranchisePopup,
         switchPlayerTab: switchPlayerTab,
         switchFranchiseTab: switchFranchiseTab,
         toggleCheckboxes: toggleCheckboxes,
-        saveFranchiseSetup: saveFranchiseSetup,
+        handleSetupSubmit: handleSetupSubmit,
         openNotificationsModal: openNotificationsModal,
         closeModal: closeModal
     };
