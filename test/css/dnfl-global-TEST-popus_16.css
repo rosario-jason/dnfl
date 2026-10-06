@@ -1139,7 +1139,7 @@ a.dnfl-btn-secondary:hover,
   }
 }
 /* ==========================================================================
-   DNFL Popups & Modal Subsystem Partial (_popups-v4_14.scss)
+   DNFL Popups & Modal Subsystem Partial (_popups-v4_16.scss)
    Duke Networking Fantasy League (DNFL) Architecture
    ========================================================================== */
 /* 0. Design Tokens */
@@ -1163,7 +1163,7 @@ a.dnfl-btn-secondary:hover,
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  padding: 0.75rem !important;
+  padding: 1rem !important;
   opacity: 1;
   transition: opacity 0.25s ease !important;
 }
@@ -1175,7 +1175,7 @@ a.dnfl-btn-secondary:hover,
 
 .dnfl-modal-card {
   width: 100% !important;
-  max-width: 46rem !important;
+  max-width: 48rem !important;
   max-height: 90vh !important;
   background: #ffffff !important;
   border-radius: 12px !important;
@@ -1189,7 +1189,7 @@ a.dnfl-btn-secondary:hover,
   position: relative !important;
 }
 .dnfl-modal-card .dnfl-modal-header {
-  padding: 0.85rem 1.15rem !important;
+  padding: 0.85rem 1.25rem !important;
   background: #0f172a !important;
   color: #ffffff !important;
   display: flex !important;
@@ -1199,12 +1199,12 @@ a.dnfl-btn-secondary:hover,
 }
 .dnfl-modal-card .dnfl-modal-header h3 {
   margin: 0 !important;
-  font-size: 1.1rem !important;
+  font-size: 1.15rem !important;
   font-weight: 700 !important;
   color: #ffffff !important;
   display: flex !important;
   align-items: center !important;
-  gap: 0.5rem !important;
+  gap: 0.6rem !important;
 }
 .dnfl-modal-card .dnfl-modal-header h3 span {
   color: #ffffff !important;
@@ -1217,15 +1217,23 @@ a.dnfl-btn-secondary:hover,
 .dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn {
   background: transparent !important;
   border: none !important;
+  box-shadow: none !important;
   color: #94a3b8 !important;
   font-size: 1.25rem !important;
   cursor: pointer !important;
-  padding: 0.2rem 0.4rem !important;
+  padding: 0.25rem 0.4rem !important;
   border-radius: 4px !important;
-  transition: color 0.2s ease !important;
+  transition: color 0.2s ease, transform 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 .dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn:hover {
   color: #ffffff !important;
+}
+.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn.is-active {
+  color: #f59e0b !important;
+  transform: scale(1.1) !important;
 }
 .dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn.dnfl-is-hidden {
   display: none !important;
@@ -1258,7 +1266,7 @@ a.dnfl-btn-secondary:hover,
   color: #94a3b8 !important;
   text-decoration: none !important;
   font-size: 1.1rem !important;
-  transition: color 0.2s ease !important;
+  transition: color 0.2s ease, transform 0.2s ease !important;
 }
 
 .dnfl-notification-badge {
@@ -1278,48 +1286,7 @@ a.dnfl-btn-secondary:hover,
   display: none !important;
 }
 
-/* 3. Full-Width Top Navigation Bar */
-.dnfl-modal-tabs.dnfl-full-width-tabs {
-  display: flex !important;
-  width: 100% !important;
-  gap: 0.4rem !important;
-  margin-bottom: 0.75rem !important;
-}
-.dnfl-modal-tabs.dnfl-full-width-tabs .dnfl-modal-tab-btn {
-  flex: 1 !important;
-  background: #f1f5f9 !important;
-  color: #475569 !important;
-  border: 1px solid #cbd5e1 !important;
-  padding: 0.45rem 0.5rem !important;
-  border-radius: 6px !important;
-  font-weight: 700 !important;
-  font-size: 0.85rem !important;
-  cursor: pointer !important;
-  text-align: center !important;
-  justify-content: center !important;
-  transition: all 0.2s ease !important;
-  white-space: nowrap !important;
-}
-.dnfl-modal-tabs.dnfl-full-width-tabs .dnfl-modal-tab-btn:hover {
-  background: #e2e8f0 !important;
-  color: #0f172a !important;
-}
-.dnfl-modal-tabs.dnfl-full-width-tabs .dnfl-modal-tab-btn.is-active {
-  background: #0577B1 !important;
-  color: #ffffff !important;
-  border-color: #0577B1 !important;
-}
-@media (max-width: 580px) {
-  .dnfl-modal-tabs.dnfl-full-width-tabs .dnfl-modal-tab-btn {
-    padding: 0.4rem 0.25rem !important;
-    font-size: 0.8rem !important;
-  }
-  .dnfl-modal-tabs.dnfl-full-width-tabs .dnfl-modal-tab-btn .dnfl-tab-label {
-    display: inline !important;
-  }
-}
-
-/* 4. Franchise Hero Header (2/3 vs 1/3 Split) */
+/* 3. Franchise Hero Header (2/3 vs 1/3 Split) */
 .dnfl-franchise-hero-header {
   position: relative !important;
   display: flex !important;
@@ -1375,31 +1342,31 @@ a.dnfl-btn-secondary:hover,
   }
 }
 
-/* 5. Stylized Owner Details Box */
+/* 4. Owner Details Card */
 .dnfl-owner-details-card {
   background: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
   border-top: 3px solid #0577B1 !important;
   border-radius: 8px !important;
-  padding: 0.65rem 0.85rem !important;
-  text-align: left !important;
+  padding: 0.6rem 0.85rem !important;
+  font-size: 0.85rem !important;
+  color: #0f172a !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 0.25rem !important;
-  font-size: 0.85rem !important;
-  color: #334155 !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  line-height: 1.35 !important;
 }
 .dnfl-owner-details-card strong {
+  font-weight: 700 !important;
   color: #0f172a !important;
 }
 
-/* 6. Player Hero Card */
+/* 5. Player Hero Card */
 .dnfl-player-hero-card {
   position: relative !important;
   display: flex !important;
   align-items: center !important;
-  gap: 1rem !important;
+  gap: 1.25rem !important;
   padding: 1rem 1.25rem !important;
   margin-bottom: 0.75rem !important;
   border-radius: 8px !important;
@@ -1408,6 +1375,8 @@ a.dnfl-btn-secondary:hover,
   overflow: hidden !important;
 }
 .dnfl-player-hero-card .dnfl-hero-avatar-wrapper {
+  position: relative !important;
+  z-index: 2 !important;
   flex-shrink: 0 !important;
 }
 .dnfl-player-hero-card .dnfl-hero-avatar-wrapper .dnfl-hero-headshot {
@@ -1418,6 +1387,11 @@ a.dnfl-btn-secondary:hover,
      object-fit: cover !important;
   border: 3px solid #0577B1 !important;
   background-color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+.dnfl-player-hero-card .dnfl-hero-meta {
+  position: relative !important;
+  z-index: 2 !important;
 }
 .dnfl-player-hero-card .dnfl-hero-meta .dnfl-hero-name {
   font-size: 1.5rem !important;
@@ -1428,62 +1402,93 @@ a.dnfl-btn-secondary:hover,
 }
 .dnfl-player-hero-card .dnfl-hero-meta .dnfl-hero-tags {
   display: flex !important;
-  gap: 0.4rem !important;
+  gap: 0.5rem !important;
   flex-wrap: wrap !important;
 }
 
-/* 7. Reordered High-Density Scorecard Grid (Desktop 3x2, Mobile 2x3) */
+/* 6. Navigation Tabs */
+.dnfl-modal-tabs {
+  display: flex !important;
+  gap: 0.5rem !important;
+  margin-bottom: 0.75rem !important;
+}
+.dnfl-modal-tabs.dnfl-full-width-tabs {
+  width: 100% !important;
+}
+.dnfl-modal-tabs.dnfl-full-width-tabs .dnfl-modal-tab-btn {
+  flex: 1 1 0 !important;
+  text-align: center !important;
+  justify-content: center !important;
+}
+.dnfl-modal-tabs .dnfl-modal-tab-btn {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border: 1px solid #cbd5e1 !important;
+  padding: 0.45rem 0.75rem !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  white-space: nowrap !important;
+}
+.dnfl-modal-tabs .dnfl-modal-tab-btn:hover {
+  background: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+.dnfl-modal-tabs .dnfl-modal-tab-btn.is-active {
+  background: #0577B1 !important;
+  color: #ffffff !important;
+  border-color: #0577B1 !important;
+}
+
+/* 7. Scorecard Grid */
 .dnfl-scorecard-grid {
   display: grid !important;
-  gap: 0.5rem !important;
-  margin-bottom: 1rem !important;
-  /* Desktop Default: 3 columns x 2 rows */
   grid-template-columns: repeat(3, 1fr) !important;
-  grid-template-areas: "record pf seed" "bbid   pa rank" !important;
-}
-.dnfl-scorecard-grid .card-record {
-  grid-area: record !important;
-}
-.dnfl-scorecard-grid .card-bbid {
-  grid-area: bbid !important;
-}
-.dnfl-scorecard-grid .card-pf {
-  grid-area: pf !important;
-}
-.dnfl-scorecard-grid .card-pa {
-  grid-area: pa !important;
-}
-.dnfl-scorecard-grid .card-seed {
-  grid-area: seed !important;
-}
-.dnfl-scorecard-grid .card-rank {
-  grid-area: rank !important;
-}
-.dnfl-scorecard-grid {
-  /* Mobile: 2 columns x 3 rows */
-}
-@media (max-width: 580px) {
-  .dnfl-scorecard-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    grid-template-areas: "record bbid" "pf     pa" "seed   rank" !important;
-  }
+  gap: 0.5rem !important;
+  margin-top: 0.25rem !important;
 }
 .dnfl-scorecard-grid .dnfl-stat-card {
   background: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
   border-top: 3px solid #0577B1 !important;
-  border-radius: 8px !important;
-  padding: 0.55rem 0.4rem !important;
+  border-radius: 6px !important;
+  padding: 0.5rem 0.35rem !important;
   text-align: center !important;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: center !important;
   gap: 0.15rem !important;
 }
+.dnfl-scorecard-grid .dnfl-stat-card.card-record {
+  grid-column: 1;
+  grid-row: 1;
+}
+.dnfl-scorecard-grid .dnfl-stat-card.card-bbid {
+  grid-column: 1;
+  grid-row: 2;
+}
+.dnfl-scorecard-grid .dnfl-stat-card.card-pf {
+  grid-column: 2;
+  grid-row: 1;
+}
+.dnfl-scorecard-grid .dnfl-stat-card.card-pa {
+  grid-column: 2;
+  grid-row: 2;
+}
+.dnfl-scorecard-grid .dnfl-stat-card.card-seed {
+  grid-column: 3;
+  grid-row: 1;
+}
+.dnfl-scorecard-grid .dnfl-stat-card.card-rank {
+  grid-column: 3;
+  grid-row: 2;
+}
 .dnfl-scorecard-grid .dnfl-stat-card .dnfl-stat-lbl {
-  font-size: 0.725rem !important;
-  font-weight: 700 !important;
+  font-size: 0.7rem !important;
+  font-weight: 800 !important;
   text-transform: uppercase !important;
   color: #64748b !important;
   letter-spacing: 0.02em !important;
@@ -1495,20 +1500,49 @@ a.dnfl-btn-secondary:hover,
   line-height: 1.1 !important;
 }
 .dnfl-scorecard-grid .dnfl-stat-card .dnfl-stat-val-main .dnfl-ppg-label {
-  font-size: 0.75rem !important;
+  font-size: 0.7rem !important;
   font-weight: 800 !important;
   color: #0f172a !important;
-  margin-left: 0.15rem !important;
+  margin-left: 0.1rem !important;
 }
 .dnfl-scorecard-grid .dnfl-stat-card .dnfl-stat-val-sub {
   font-size: 0.7rem !important;
   font-weight: 600 !important;
   color: #64748b !important;
 }
+@media (max-width: 580px) {
+  .dnfl-scorecard-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .dnfl-scorecard-grid .dnfl-stat-card.card-record {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .dnfl-scorecard-grid .dnfl-stat-card.card-pf {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .dnfl-scorecard-grid .dnfl-stat-card.card-seed {
+    grid-column: 1;
+    grid-row: 3;
+  }
+  .dnfl-scorecard-grid .dnfl-stat-card.card-bbid {
+    grid-column: 2;
+    grid-row: 1;
+  }
+  .dnfl-scorecard-grid .dnfl-stat-card.card-pa {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .dnfl-scorecard-grid .dnfl-stat-card.card-rank {
+    grid-column: 2;
+    grid-row: 3;
+  }
+}
 
 /* 8. Top Performers Section (2x2 Grid) */
 .dnfl-stars-wrapper {
-  margin-top: 0.85rem !important;
+  margin-top: 0.75rem !important;
 }
 .dnfl-stars-wrapper .dnfl-section-title {
   font-size: 0.95rem !important;
@@ -1522,7 +1556,7 @@ a.dnfl-btn-secondary:hover,
 .dnfl-stars-wrapper .dnfl-stars-grid {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
-  gap: 0.65rem !important;
+  gap: 0.6rem !important;
 }
 @media (max-width: 580px) {
   .dnfl-stars-wrapper .dnfl-stars-grid {
@@ -1533,16 +1567,17 @@ a.dnfl-btn-secondary:hover,
   background: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
   border-radius: 8px !important;
-  padding: 0.65rem 0.75rem !important;
+  padding: 0.6rem !important;
   display: flex !important;
   align-items: center !important;
   gap: 0.65rem !important;
   cursor: pointer !important;
-  transition: border-color 0.2s ease, transform 0.2s ease !important;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 .dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card:hover {
   border-color: #0577B1 !important;
   transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(5, 119, 177, 0.15) !important;
 }
 .dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-avatar-wrapper {
   position: relative !important;
@@ -1576,7 +1611,7 @@ a.dnfl-btn-secondary:hover,
   color: #0577B1 !important;
 }
 .dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-info .dnfl-star-main-metric .dnfl-ppg-label {
-  font-size: 0.75rem !important;
+  font-size: 0.725rem !important;
   font-weight: 800 !important;
   color: #0577B1 !important;
 }
@@ -1586,184 +1621,195 @@ a.dnfl-btn-secondary:hover,
   font-weight: 600 !important;
 }
 
-/* 9. Setup Tab & Form Styles */
+/* 9. Setup / Settings Form Styles */
 .dnfl-setup-container {
   display: flex !important;
   flex-direction: column !important;
   gap: 0.85rem !important;
+  padding: 0.25rem 0 !important;
 }
-.dnfl-setup-container .dnfl-setup-header {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  padding-bottom: 0.5rem !important;
-  border-bottom: 1px solid #e2e8f0 !important;
-}
-.dnfl-setup-container .dnfl-setup-header .dnfl-setup-title {
-  margin: 0 !important;
-  font-size: 1rem !important;
-  font-weight: 800 !important;
-  color: #0f172a !important;
-}
-.dnfl-setup-container .dnfl-commish-admin-card {
+
+.dnfl-commish-admin-card {
   background: #f8fafc !important;
-  border: 1px solid #cbd5e1 !important;
   border-left: 4px solid #0577B1 !important;
   padding: 0.65rem 0.85rem !important;
-  border-radius: 6px !important;
+  border-radius: 0 6px 6px 0 !important;
+  border-top: 1px solid #e2e8f0 !important;
+  border-right: 1px solid #e2e8f0 !important;
+  border-bottom: 1px solid #e2e8f0 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  gap: 0.5rem !important;
 }
-.dnfl-setup-container .dnfl-form-section {
-  background: #f8fafc !important;
+.dnfl-commish-admin-card .dnfl-btn-sm {
+  padding: 0.35rem 0.65rem !important;
+  font-size: 0.8rem !important;
+  background: #0577B1 !important;
+  color: #ffffff !important;
+  border-radius: 4px !important;
+  text-decoration: none !important;
+  font-weight: 700 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+}
+.dnfl-commish-admin-card .dnfl-btn-sm:hover {
+  background: #0284c7 !important;
+}
+
+.dnfl-form-section {
+  background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 8px !important;
   padding: 0.85rem !important;
 }
-.dnfl-setup-container .dnfl-form-section .dnfl-section-header-flex {
+.dnfl-form-section .dnfl-section-header-flex {
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  margin-bottom: 0.5rem !important;
+  margin-bottom: 0.6rem !important;
 }
-.dnfl-setup-container .dnfl-form-section .dnfl-form-section-title {
-  margin: 0 !important;
+.dnfl-form-section .dnfl-form-section-title {
   font-size: 0.9rem !important;
   font-weight: 800 !important;
   color: #0577B1 !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
 }
-.dnfl-setup-container .dnfl-form-section .dnfl-toggle-actions {
+.dnfl-form-section .dnfl-toggle-actions {
   display: flex !important;
   align-items: center !important;
   gap: 0.35rem !important;
   font-size: 0.75rem !important;
 }
-.dnfl-setup-container .dnfl-form-section .dnfl-toggle-actions .dnfl-action-link {
-  background: transparent !important;
+.dnfl-form-section .dnfl-toggle-actions .dnfl-action-link {
+  background: none !important;
   border: none !important;
   color: #0577B1 !important;
   font-weight: 700 !important;
   cursor: pointer !important;
   padding: 0 !important;
 }
-.dnfl-setup-container .dnfl-form-section .dnfl-toggle-actions .dnfl-action-link:hover {
+.dnfl-form-section .dnfl-toggle-actions .dnfl-action-link:hover {
   text-decoration: underline !important;
 }
-.dnfl-setup-container .dnfl-form-section .dnfl-toggle-actions .dnfl-bullet {
+.dnfl-form-section .dnfl-toggle-actions .dnfl-bullet {
   color: #cbd5e1 !important;
 }
-.dnfl-setup-container .dnfl-form-grid {
+
+.dnfl-form-grid {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
   gap: 0.65rem !important;
 }
 @media (max-width: 580px) {
-  .dnfl-setup-container .dnfl-form-grid {
+  .dnfl-form-grid {
     grid-template-columns: 1fr !important;
   }
 }
-.dnfl-setup-container .dnfl-form-group {
+
+.dnfl-form-group {
   display: flex !important;
   flex-direction: column !important;
   gap: 0.25rem !important;
 }
-.dnfl-setup-container .dnfl-form-group label {
+.dnfl-form-group label {
   font-size: 0.75rem !important;
   font-weight: 700 !important;
   color: #475569 !important;
 }
-.dnfl-setup-container .dnfl-form-group .dnfl-input {
-  padding: 0.45rem 0.65rem !important;
+.dnfl-form-group .dnfl-input {
+  padding: 0.45rem 0.6rem !important;
   border: 1px solid #cbd5e1 !important;
   border-radius: 6px !important;
   font-size: 0.85rem !important;
   color: #0f172a !important;
-  background: #ffffff !important;
+  width: 100% !important;
 }
-.dnfl-setup-container .dnfl-form-group .dnfl-input:focus {
+.dnfl-form-group .dnfl-input:focus {
   outline: none !important;
   border-color: #0577B1 !important;
+  box-shadow: 0 0 0 2px rgba(5, 119, 177, 0.2) !important;
 }
-.dnfl-setup-container .dnfl-checkbox-grid {
+
+.dnfl-checkbox-grid {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
-  gap: 0.4rem 0.65rem !important;
+  gap: 0.4rem 0.75rem !important;
 }
 @media (max-width: 580px) {
-  .dnfl-setup-container .dnfl-checkbox-grid {
+  .dnfl-checkbox-grid {
     grid-template-columns: 1fr !important;
   }
 }
-.dnfl-setup-container .dnfl-checkbox-grid .dnfl-checkbox-label {
+.dnfl-checkbox-grid .dnfl-checkbox-label {
   display: flex !important;
   align-items: flex-start !important;
   gap: 0.4rem !important;
-  font-size: 0.78rem !important;
+  font-size: 0.775rem !important;
   color: #334155 !important;
   cursor: pointer !important;
+  line-height: 1.25 !important;
 }
-.dnfl-setup-container .dnfl-checkbox-grid .dnfl-checkbox-label input[type=checkbox] {
+.dnfl-checkbox-grid .dnfl-checkbox-label input[type=checkbox] {
   margin-top: 0.15rem !important;
   accent-color: #0577B1 !important;
 }
-.dnfl-setup-container .dnfl-form-actions {
+
+.dnfl-form-actions {
   display: flex !important;
   justify-content: flex-end !important;
   margin-top: 0.5rem !important;
 }
-
-/* 10. Buttons & Pills */
-.dnfl-btn-primary {
+.dnfl-form-actions .dnfl-btn-primary {
   background: #0577B1 !important;
   color: #ffffff !important;
   border: none !important;
-  padding: 0.5rem 1rem !important;
+  padding: 0.55rem 1.25rem !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  font-size: 0.875rem !important;
+  cursor: pointer !important;
+  transition: background 0.2s ease !important;
+}
+.dnfl-form-actions .dnfl-btn-primary:hover {
+  background: #0284c7 !important;
+}
+.dnfl-form-actions .dnfl-btn-primary:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+.dnfl-status-success {
+  padding: 0.65rem 0.85rem !important;
+  background: #f0fdf4 !important;
+  border: 1px solid #86efac !important;
+  color: #166534 !important;
   border-radius: 6px !important;
   font-weight: 700 !important;
   font-size: 0.85rem !important;
-  cursor: pointer !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.4rem !important;
-}
-.dnfl-btn-primary:hover {
-  background: #045e8c !important;
 }
 
-.dnfl-btn-secondary {
-  background: #e2e8f0 !important;
-  color: #0f172a !important;
-  border: 1px solid #cbd5e1 !important;
-  padding: 0.35rem 0.65rem !important;
+.dnfl-status-error {
+  padding: 0.65rem 0.85rem !important;
+  background: #fef2f2 !important;
+  border: 1px solid #fca5a5 !important;
+  color: #991b1b !important;
   border-radius: 6px !important;
   font-weight: 700 !important;
-  font-size: 0.78rem !important;
-  text-decoration: none !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.35rem !important;
-}
-.dnfl-btn-secondary:hover {
-  background: #cbd5e1 !important;
+  font-size: 0.85rem !important;
 }
 
-.dnfl-btn-subtle {
-  background: transparent !important;
-  border: 1px solid #cbd5e1 !important;
-  color: #475569 !important;
-  padding: 0.3rem 0.6rem !important;
-  border-radius: 6px !important;
-  font-weight: 700 !important;
-  font-size: 0.78rem !important;
-  cursor: pointer !important;
-}
-.dnfl-btn-subtle:hover {
-  background: #f1f5f9 !important;
-  color: #0f172a !important;
+.dnfl-status-loading {
+  padding: 1.25rem !important;
+  text-align: center !important;
+  color: #64748b !important;
+  font-weight: 600 !important;
 }
 
+/* 10. Utility Pills & Badges */
 .dnfl-position-badge {
   position: absolute !important;
   bottom: -2px !important;
@@ -1811,6 +1857,8 @@ a.dnfl-btn-secondary:hover,
   font-weight: 700 !important;
   padding: 0.2rem 0.5rem !important;
   border-radius: 4px !important;
+  width: -moz-fit-content !important;
+  width: fit-content !important;
 }
 
 .dnfl-pill-blue {
@@ -1838,66 +1886,31 @@ a.dnfl-btn-secondary:hover,
   color: #64748b !important;
 }
 
-/* 11. Status & Notification Drawer Styles */
-.dnfl-status-error {
-  padding: 0.85rem !important;
-  background: #fef2f2 !important;
-  border: 1px solid #fca5a5 !important;
-  color: #991b1b !important;
-  border-radius: 6px !important;
+.dnfl-table {
+  width: 100% !important;
+  border-collapse: collapse !important;
   font-size: 0.85rem !important;
+  margin-bottom: 0.5rem !important;
 }
-
-.dnfl-status-success {
-  padding: 0.85rem !important;
-  background: #f0fdf4 !important;
-  border: 1px solid #86efac !important;
-  color: #166534 !important;
-  border-radius: 6px !important;
-  font-size: 0.85rem !important;
-}
-
-.dnfl-status-loading {
-  padding: 1.25rem !important;
-  text-align: center !important;
-  color: #64748b !important;
-  font-size: 0.85rem !important;
-}
-
-.dnfl-hpm-section {
-  margin-bottom: 1rem !important;
-}
-.dnfl-hpm-section .dnfl-hpm-section-title {
-  font-size: 0.95rem !important;
+.dnfl-table th {
+  background: #0f172a !important;
+  color: #ffffff !important;
+  padding: 0.5rem 0.75rem !important;
+  text-align: left !important;
   font-weight: 700 !important;
-  color: #0577B1 !important;
-  margin: 0 0 0.4rem 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.4rem !important;
 }
-
-.dnfl-hpm-card {
-  background: #f8fafc !important;
-  border-left: 4px solid #0577B1 !important;
-  padding: 0.75rem 0.85rem !important;
-  margin-bottom: 0.65rem !important;
-  border-radius: 0 6px 6px 0 !important;
-  border-top: 1px solid #e2e8f0 !important;
-  border-right: 1px solid #e2e8f0 !important;
+.dnfl-table td {
+  padding: 0.5rem 0.75rem !important;
   border-bottom: 1px solid #e2e8f0 !important;
 }
-.dnfl-hpm-card .dnfl-hpm-title {
-  font-size: 0.9rem !important;
-  font-weight: 700 !important;
-  color: #0f172a !important;
-  margin: 0 0 0.35rem 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.4rem !important;
+.dnfl-table tr.dnfl-row-odd {
+  background: #ffffff !important;
+}
+.dnfl-table tr.dnfl-row-even {
+  background: #f8fafc !important;
 }
 
-/* 12. Auto-hide Native Page Body Containers */
+/* 11. Auto-hide Native Page Body Containers */
 #body_home .homepagemessage,
 #league_reminders,
 .tdalert,
