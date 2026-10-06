@@ -1,5 +1,5 @@
 /* ==========================================================================
-   DNFL Popups & Modal Subsystem Engine v4.13
+   DNFL Popups & Modal Subsystem Engine v4.14
    Duke Networking Fantasy League (DNFL) Architecture
    ========================================================================== */
 (function (window, document) {
@@ -24,23 +24,23 @@
     }
 
     /**
-     * Resolve Logged In Franchise ID
+     * Safe Logged-In User Franchise ID Resolver
      */
     function getLoggedInFranchiseId(client) {
-        if (client && typeof client.getLoggedInFranchiseId === 'function') {
-            try {
-                const fid = client.getLoggedInFranchiseId();
-                if (fid) return fid;
-            } catch (e) {}
-        }
         if (client && typeof client.getUserFranchise === 'function') {
-            try {
-                const uFran = client.getUserFranchise();
-                if (uFran && uFran.id) return uFran.id;
-            } catch (e) {}
+            const userFran = client.getUserFranchise();
+            if (userFran && userFran.id) return String(userFran.id);
         }
-        if (typeof window.franchise_id !== 'undefined' && window.franchise_id) return window.franchise_id;
-        if (typeof globalThis.franchise_id !== 'undefined' && globalThis.franchise_id) return globalThis.franchise_id;
+        if (client && typeof client.getLoggedInFranchiseId === 'function') {
+            const fid = client.getLoggedInFranchiseId();
+            if (fid) return String(fid);
+        }
+        if (typeof window.franchise_id !== 'undefined' && window.franchise_id) {
+            return String(window.franchise_id);
+        }
+        if (typeof globalThis.franchise_id !== 'undefined' && globalThis.franchise_id) {
+            return String(globalThis.franchise_id);
+        }
         return '';
     }
 
@@ -63,7 +63,7 @@
     }
 
     /**
-     * Normalize ID String
+     * Normalize ID string (strips leading zeros for numeric comparison)
      */
     function norm(id) {
         if (!id && id !== 0) return '';
@@ -71,21 +71,22 @@
     }
 
     /**
-     * CSV Line Parser
+     * Parse CSV Row Handling Quotes
      */
     function parseCsvLine(text) {
         const result = [];
         let cur = '';
         let inQuotes = false;
+
         for (let i = 0; i < text.length; i++) {
-            const c = text[i];
-            if (c === '"') {
+            const char = text[i];
+            if (char === '"') {
                 inQuotes = !inQuotes;
-            } else if (c === ',' && !inQuotes) {
+            } else if (char === ',' && !inQuotes) {
                 result.push(cur.trim());
                 cur = '';
             } else {
-                cur += c;
+                cur += char;
             }
         }
         result.push(cur.trim());
@@ -93,15 +94,14 @@
     }
 
     /**
-     * Fetch Power Rankings CSV dynamically using weeks.json manifest
+     * Fetch Power Rankings CSV based on weeks.json manifest
      */
     async function fetchPowerRankingsCsv(client) {
         const dailyTtl = getTtl(client, 'DAILY', 86400000);
-        const year = (client && typeof client.getYear === 'function') ? client.getYear() : (window.year || '2026');
+        const year = (client && typeof client.getContext === 'function' && client.getContext().year) || window.year || '2026';
         
-        let activeCsvFile = 'data_02.csv';
+        let targetCsvFile = 'data_02.csv';
 
-        // 1. Fetch weeks.json manifest to resolve latest published CSV
         const manifestUrls = [
             `https://dnfl.live/dnfl_rankings/${year}/weeks.json`,
             `https://dnfl.live/dnfl_rankings/weeks.json`,
@@ -113,25 +113,33 @@
             try {
                 const manifestText = await client.fetchRawText(mUrl, { ttl: dailyTtl });
                 if (manifestText) {
-                    const manifest = JSON.parse(manifestText);
-                    const weekFiles = manifest.weeks || manifest.published_weeks || manifest.files;
-                    if (Array.isArray(weekFiles) && weekFiles.length > 0) {
-                        const lastEntry = weekFiles[weekFiles.length - 1];
-                        activeCsvFile = lastEntry.file || lastEntry.filename || lastEntry.csv || (typeof lastEntry === 'string' ? lastEntry : activeCsvFile);
-                    } else if (manifest.active_week_file) {
-                        activeCsvFile = manifest.active_week_file;
+                    const manifestData = JSON.parse(manifestText);
+                    const activeWk = manifestData.active_week || manifestData.activeWeek;
+                    const weeksArr = toArray(manifestData.weeks);
+                    
+                    if (activeWk) {
+                        const targetWkObj = weeksArr.find(w => String(w.week) === String(activeWk));
+                        if (targetWkObj && targetWkObj.file) {
+                            targetCsvFile = targetWkObj.file;
+                        }
+                    } else if (weeksArr.length > 0) {
+                        const lastWk = weeksArr[weeksArr.length - 1];
+                        if (lastWk && lastWk.file) {
+                            targetCsvFile = lastWk.file;
+                        }
                     }
                     break;
                 }
-            } catch (e) {}
+            } catch (e) {
+                // Try next manifest URL
+            }
         }
 
-        // 2. Fetch active week CSV
         const csvUrls = [
-            `https://dnfl.live/dnfl_rankings/${year}/${activeCsvFile}`,
-            `https://dnfl.live/dnfl_rankings/${activeCsvFile}`,
-            `/dnfl_rankings/${year}/${activeCsvFile}`,
-            `/dnfl_rankings/${activeCsvFile}`
+            `https://dnfl.live/dnfl_rankings/${year}/${targetCsvFile}`,
+            `https://dnfl.live/dnfl_rankings/${targetCsvFile}`,
+            `/dnfl_rankings/${year}/${targetCsvFile}`,
+            `/dnfl_rankings/${targetCsvFile}`
         ];
 
         for (const url of csvUrls) {
@@ -140,7 +148,9 @@
                 if (text && text.includes('Power Index')) {
                     return parsePowerRankingsCsv(text);
                 }
-            } catch (e) {}
+            } catch (e) {
+                // Try next URL
+            }
         }
         return {};
     }
@@ -164,9 +174,9 @@
             if (!lines[i].trim()) continue;
             const cols = parseCsvLine(lines[i]);
             if (cols.length > idIdx && idIdx !== -1) {
-                const fid = norm(cols[idIdx]);
-                if (fid) {
-                    map[fid] = {
+                const fidNorm = norm(cols[idIdx]);
+                if (fidNorm) {
+                    map[fidNorm] = {
                         rank: cols[rankIdx] || 'N/A',
                         powerIndex: cols[piIdx] || 'N/A'
                     };
@@ -177,38 +187,53 @@
     }
 
     /**
-     * Execute Official DNFL Standings Module Seeding Algorithm
+     * Calculate Official DNFL Playoff Seeds (Matching dnfl-standings-LIVE.js)
      */
-    async function calculateDnflStandingsSeeds(client, standingsList, leagueData) {
-        // 1. Check if DNFL.Standings module is active in memory
+    async function calculateCustomSeeds(client, standingsList, leagueData) {
+        // 1. Check if Standings module is already in memory
         if (window.DNFL && window.DNFL.Standings) {
-            if (typeof window.DNFL.Standings.getTeamSeed === 'function') {
-                const seedsMap = {};
-                standingsList.forEach(s => {
-                    const fidNorm = norm(s.id);
-                    seedsMap[fidNorm] = window.DNFL.Standings.getTeamSeed(fidNorm);
-                });
-                if (Object.keys(seedsMap).length > 0) return seedsMap;
-            } else if (window.DNFL.Standings.cachedTeamSeeds) {
+            if (window.DNFL.Standings.cachedTeamSeeds) {
                 return window.DNFL.Standings.cachedTeamSeeds;
+            }
+            if (typeof window.DNFL.Standings.getTeamSeed === 'function') {
+                const seeds = {};
+                standingsList.forEach(s => {
+                    const fid = norm(s.id);
+                    seeds[fid] = window.DNFL.Standings.getTeamSeed(fid);
+                });
+                return seeds;
             }
         }
 
-        // 2. Fetch standings_rules.json to evaluate official seeding
-        let rules = { seedingScope: 'conference', seedingModel: 'tiered_div_finish_pf' };
-        try {
-            const year = (client && typeof client.getYear === 'function') ? client.getYear() : (window.year || '2026');
-            const rulesText = await client.fetchRawText(`https://dnfl.live/dnfl_standings/standings_rules.json`, { ttl: getTtl(client, 'DAILY', 86400000) });
-            if (rulesText) {
-                const parsedRules = JSON.parse(rulesText);
-                const yearRules = parsedRules[year] || parsedRules['default'] || parsedRules;
-                rules = { ...rules, ...yearRules };
-            }
-        } catch (e) {}
-
         const teamSeeds = {};
-        const divLeaders = {};
-        const divRunnerUps = {};
+        if (!standingsList || standingsList.length === 0) return teamSeeds;
+
+        // 2. Fetch Standings Rules JSON
+        let standingsRules = null;
+        try {
+            const rulesText = await client.fetchRawText('https://dnfl.live/dnfl_standings/standings_rules.json', { ttl: getTtl(client, 'DAILY', 86400000) });
+            if (rulesText) standingsRules = JSON.parse(rulesText);
+        } catch (e) {
+            // Rule fallback
+        }
+
+        const year = (client && typeof client.getContext === 'function' && client.getContext().year) || window.year || '2026';
+        const baseRules = (standingsRules && standingsRules.rulesByYear && standingsRules.rulesByYear[year]) || 
+                          (standingsRules && standingsRules.rulesByYear && standingsRules.rulesByYear['default']) || 
+                          { seedingScope: 'conference', seedingModel: 'tiered_div_finish_pf' };
+
+        const hasSeasonStarted = standingsList.some(s => {
+            const games = parseInt(s.h2hw || 0, 10) + parseInt(s.h2hl || 0, 10) + parseInt(s.h2ht || 0, 10);
+            const pf = parseFloat(s.pf || s.h2hpf || 0);
+            return games > 0 || pf > 0;
+        });
+
+        if (!hasSeasonStarted) {
+            standingsList.forEach((s, idx) => {
+                teamSeeds[norm(s.id)] = idx + 1;
+            });
+            return teamSeeds;
+        }
 
         const divisions = toArray(leagueData?.league?.divisions?.division);
         const conferences = toArray(leagueData?.league?.conferences?.conference);
@@ -229,6 +254,9 @@
             return getMflIndex(a) - getMflIndex(b);
         };
 
+        const divLeaders = {};
+        const divRunnerUps = {};
+
         divisions.forEach(div => {
             const divIdNorm = norm(div.id);
             const teamsInDiv = leagueFranchises.filter(f => norm(f.division || f.div) === divIdNorm).map(f => norm(f.id));
@@ -240,7 +268,7 @@
 
         let scopesToProcess = [];
 
-        if (rules.seedingScope === 'league') {
+        if (baseRules.seedingScope === 'league') {
             scopesToProcess.push({
                 scopeId: 'league',
                 teams: leagueFranchises.map(f => norm(f.id)),
@@ -270,7 +298,11 @@
         }
 
         scopesToProcess.forEach(scope => {
-            if (rules.seedingModel === 'tiered_div_finish_pf') {
+            const confRules = scope.scopeId !== 'league' && baseRules.conferenceOverrides && baseRules.conferenceOverrides[scope.scopeId]
+                ? { ...baseRules, ...baseRules.conferenceOverrides[scope.scopeId] }
+                : baseRules;
+
+            if (confRules.seedingModel === 'tiered_div_finish_pf') {
                 const winners = scope.leaders.slice();
                 winners.sort(sortByPfThenMfl);
                 winners.forEach((id, idx) => teamSeeds[id] = idx + 1);
@@ -283,7 +315,8 @@
                 const remaining = scope.teams.filter(id => !assigned.has(id));
                 remaining.sort(sortByPfThenMfl);
                 remaining.forEach((id, idx) => teamSeeds[id] = idx + 1 + winners.length + runners.length);
-            } else if (rules.seedingModel === 'standard_div_winners_first') {
+
+            } else if (confRules.seedingModel === 'standard_div_winners_first') {
                 const winners = scope.leaders.slice();
                 winners.sort((a, b) => getMflIndex(a) - getMflIndex(b));
                 winners.forEach((id, idx) => teamSeeds[id] = idx + 1);
@@ -291,6 +324,7 @@
                 const remaining = scope.teams.filter(id => !winners.includes(id));
                 remaining.sort((a, b) => getMflIndex(a) - getMflIndex(b));
                 remaining.forEach((id, idx) => teamSeeds[id] = idx + 1 + winners.length);
+
             } else {
                 const allTeams = scope.teams.slice();
                 allTeams.sort((a, b) => getMflIndex(a) - getMflIndex(b));
@@ -302,18 +336,22 @@
     }
 
     /**
-     * Capture Homepage Messages & League Reminders from DOM
+     * Capture Homepage Messages & League Reminders from the Page DOM
      */
     function captureHomepageMessages() {
         capturedHomepageMessages = [];
         capturedLeagueReminders = [];
 
+        // 1. Capture #league_reminders
         const remindersEl = document.getElementById('league_reminders');
         if (remindersEl) {
             const html = remindersEl.innerHTML.trim();
-            if (html) capturedLeagueReminders.push(html);
+            if (html) {
+                capturedLeagueReminders.push(html);
+            }
         }
 
+        // 2. Capture .homepagemessage elements
         const messageNodes = document.querySelectorAll('.homepagemessage:not(#league_reminders)');
         messageNodes.forEach((node, idx) => {
             const html = node.innerHTML.trim();
@@ -359,40 +397,42 @@
     }
 
     /**
-     * Show Modal Shell
+     * Show Modal Shell with Title & Header
      */
-    function showModal(titleText, headerInnerHtml) {
+    function showModal(titleText, headerHtml) {
         const overlay = document.getElementById('dnfl-modal-overlay');
+        const titleTextEl = document.getElementById('dnfl-modal-title-text');
         const titleEl = document.getElementById('dnfl-modal-title');
 
-        if (titleEl) {
-            titleEl.innerHTML = headerInnerHtml;
+        if (titleTextEl) titleTextEl.textContent = titleText;
+        if (titleEl && headerHtml) {
+            titleEl.innerHTML = headerHtml;
         }
+
         if (overlay) overlay.classList.remove('dnfl-is-hidden');
     }
 
     /**
-     * Set Persistent Left-Side Card Watermark
+     * Set Persistent Card Background Watermark
      */
     function setCardWatermark(logoUrl) {
-        const container = document.getElementById('dnfl-modal-container');
-        if (!container) return;
+        const cardBody = document.getElementById('dnfl-modal-content-wrapper');
+        if (!cardBody) return;
 
-        let wm = document.getElementById('dnfl-persistent-card-watermark');
-        if (!wm) {
-            wm = document.createElement('img');
-            wm.id = 'dnfl-persistent-card-watermark';
-            wm.className = 'dnfl-persistent-watermark';
-            wm.alt = 'Watermark';
-            wm.onerror = function() { this.style.display = 'none'; };
-            container.appendChild(wm);
-        }
-
+        let watermark = document.getElementById('dnfl-persistent-watermark');
         if (logoUrl) {
-            wm.src = logoUrl;
-            wm.style.display = 'block';
-        } else {
-            wm.style.display = 'none';
+            if (!watermark) {
+                watermark = document.createElement('img');
+                watermark.id = 'dnfl-persistent-watermark';
+                watermark.className = 'dnfl-persistent-watermark';
+                watermark.alt = 'Watermark';
+                watermark.onerror = function() { this.style.display = 'none'; };
+                cardBody.parentNode.insertBefore(watermark, cardBody);
+            }
+            watermark.src = logoUrl;
+            watermark.style.display = 'block';
+        } else if (watermark) {
+            watermark.style.display = 'none';
         }
     }
 
@@ -401,8 +441,10 @@
      */
     async function openPlayerPopup(playerId, activeTab) {
         activeTab = activeTab || 'overview';
-
+        showModal(playerId, `<i class="fa-solid fa-user"></i> Loading Player #${playerId}...`);
+        setCardWatermark('');
         const content = document.getElementById('dnfl-modal-content-wrapper');
+
         content.innerHTML = `
             <div class="dnfl-status-loading">
                 <i class="fa-solid fa-spinner fa-spin"></i> Loading player profile #${playerId}...
@@ -423,8 +465,16 @@
 
             const playerList = toArray(playerMap?.players?.player);
             let pData = playerList.find(p => norm(p.id) === norm(playerId));
+            
+            // Fail-safe dummy player object if missing from database chunk
             if (!pData) {
-                pData = { id: playerId, name: `Player #${playerId}`, position: 'N/A', team: 'FA' };
+                pData = {
+                    id: String(playerId),
+                    name: `Player #${playerId}`,
+                    position: 'N/A',
+                    team: 'FA',
+                    status: 'Active'
+                };
             }
 
             const name = pData.name || `Player #${playerId}`;
@@ -432,13 +482,8 @@
             const nflTeam = pData.team || 'FA';
             const espnId = pData.espn_id || pData.espn_id_full;
 
-            const headerHtml = `<i class="fa-solid fa-user"></i> <span>${name}</span>`;
-            showModal(name, headerHtml);
-
             const userFid = getLoggedInFranchiseId(client);
             const isCommish = !userFid || userFid === '0000';
-            const userFranchise = (client.getUserFranchise && client.getUserFranchise()) || {};
-            const userConfId = userFranchise.conference_id;
 
             const franchises = toArray(leagueData?.league?.franchises?.franchise);
             const conferences = toArray(leagueData?.league?.conferences?.conference);
@@ -461,28 +506,20 @@
                 };
             });
 
-            let activeWatermark = `https://www.mflscripts.com/ImageDirectory/script-images/nflTeamsvg_2/${nflTeam}.svg`;
-
-            if (!isCommish && owningFranchises.length > 0) {
-                const userOwned = owningFranchises.find(f => norm(f.id) === norm(userFid));
-                const confOwned = owningFranchises.find(f => norm(f.confId) === norm(userConfId));
-
-                if (userOwned && userOwned.logo) {
-                    activeWatermark = userOwned.logo;
-                } else if (confOwned && confOwned.logo) {
-                    activeWatermark = confOwned.logo;
-                } else if (owningFranchises[0] && owningFranchises[0].logo) {
-                    activeWatermark = owningFranchises[0].logo;
-                }
+            if (owningFranchises.length > 0 && owningFranchises[0].logo) {
+                setCardWatermark(owningFranchises[0].logo);
+            } else {
+                setCardWatermark(`https://www.mflscripts.com/ImageDirectory/script-images/nflTeamsvg_2/${nflTeam}.svg`);
             }
-
-            setCardWatermark(activeWatermark);
 
             const espnHeadshotUrl = espnId 
                 ? `https://a.espncdn.com/i/headshots/nfl/players/full/${espnId}.png`
                 : `https://www.mflscripts.com/playerImages_96x96/mfl_${playerId}.png`;
             const mflBackupUrl = `https://www.mflscripts.com/playerImages_96x96/mfl_${playerId}.png`;
             const silhouetteUrl = `https://www.mflscripts.com/playerImages_96x96/free_agent.png`;
+
+            // Modal Header Title (No extra prefix, fa-user icon)
+            showModal(name, `<i class="fa-solid fa-user"></i> <span>${name}</span>`);
 
             content.innerHTML = `
                 <div class="dnfl-player-hero-card">
@@ -622,8 +659,9 @@
      */
     async function openFranchisePopup(franchiseId, activeTab) {
         activeTab = activeTab || 'overview';
-
+        showModal(franchiseId, `Loading Franchise #${franchiseId}...`);
         const content = document.getElementById('dnfl-modal-content-wrapper');
+
         content.innerHTML = `
             <div class="dnfl-status-loading">
                 <i class="fa-solid fa-spinner fa-spin"></i> Loading franchise #${franchiseId}...
@@ -664,14 +702,17 @@
             const divName = divObj ? divObj.name : '';
             const fullLoc = [confName, divName].filter(Boolean).join(' ');
 
+            // Set Persistent Card Background Watermark
+            setCardWatermark(logo);
+
+            // Modal Header Title (Rounded icon + Team Name only, NO shield icon)
             const headerHtml = `
                 ${icon ? `<img src="${icon}" alt="Icon" class="franchise-icon-md dnfl-ficon-rounded" onerror="this.style.display='none'" />` : ''}
                 <span>${name}</span>
             `;
             showModal(name, headerHtml);
-            setCardWatermark(logo);
 
-            // Standings Parsing & Record
+            // Standings Parsing & Seed Calculation
             const standingsList = toArray(standingsData?.leagueStandings?.franchise);
             const franStandings = standingsList.find(s => norm(s.id) === targetFidNorm) || {};
 
@@ -699,9 +740,10 @@
             const paMainStr = `${paPpgVal} PPG`;
             const paTotalStr = `${paVal.toFixed(2)} Total`;
 
-            // Calculate Official DNFL Playoff Seeds
-            const dnflSeedsMap = await calculateDnflStandingsSeeds(client, standingsList, leagueData);
-            const seedVal = dnflSeedsMap[targetFidNorm] || '1';
+            // Calculate Playoff Seed using Custom DNFL Standings Rules
+            const seedsMap = await calculateCustomSeeds(client, standingsList, leagueData);
+            let seedVal = seedsMap[targetFidNorm] || franStandings.seed || franStandings.playoff_seed || franStandings.pseed;
+            if (!seedVal) seedVal = '1';
 
             // Power Rank & Power Index Resolution
             const prMeta = powerRankingsMap[targetFidNorm] || {};
@@ -715,7 +757,7 @@
                         <h3 class="dnfl-franchise-title-text">${name}</h3>
                         <div class="dnfl-hero-tags">
                             <span class="dnfl-pill-blue">${targetFran.owner_name || 'N/A'}</span>
-                            <span class="dnfl-pill-gray">${fullLoc}</span>
+                            ${fullLoc ? `<span class="dnfl-pill-gray">${fullLoc}</span>` : ''}
                         </div>
                     </div>
                     ${logo ? `<img src="${logo}" alt="${name}" class="dnfl-hero-large-logo" onerror="this.style.display='none'" />` : ''}
@@ -748,14 +790,14 @@
             const playerList = toArray(playerMap?.players?.player);
             const ytdList = toArray(ytdScoresData?.playerScores?.playerScore);
             
-            // Build YTD Scores Map with Multi-Key Resolution
+            // Build YTD Scores Map with multi-key normalization
             const ytdScoreMap = {};
             ytdList.forEach(item => {
                 if (item && item.id) {
-                    const score = parseFloat(item.score || item.points || item.ytd || 0);
                     const rawId = String(item.id).trim();
                     const unpaddedId = rawId.replace(/^0+/, '');
                     const paddedId = unpaddedId.padStart(4, '0');
+                    const score = parseFloat(item.score || item.points || item.ytd || 0);
 
                     ytdScoreMap[rawId] = score;
                     ytdScoreMap[unpaddedId] = score;
@@ -763,14 +805,14 @@
                 }
             });
 
-            // Build League-Wide Position Rank Maps
+            // Build Position Rank Maps across ALL league players
             const posPlayersMap = {};
             playerList.forEach(p => {
                 const pos = String(p.position || 'N/A').toUpperCase();
                 const pidNorm = norm(p.id);
-                const score = ytdScoreMap[pidNorm] || 0;
+                const score = ytdScoreMap[pidNorm] || ytdScoreMap[p.id] || 0;
                 if (!posPlayersMap[pos]) posPlayersMap[pos] = [];
-                posPlayersMap[pos].push({ id: pidNorm, score: score });
+                posPlayersMap[pos].push({ id: pidNorm, rawId: p.id, score: score });
             });
 
             const posRankMap = {};
@@ -778,16 +820,17 @@
                 posPlayersMap[pos].sort((a, b) => b.score - a.score);
                 posPlayersMap[pos].forEach((item, idx) => {
                     posRankMap[item.id] = { pos: pos, rank: idx + 1 };
+                    posRankMap[item.rawId] = { pos: pos, rank: idx + 1 };
                 });
             });
 
-            // Roster Players for Target Franchise
+            // Roster Players for target franchise
             const franRosterObj = toArray(rosterData?.rosters?.franchise).find(r => norm(r.id) === norm(targetFran.id));
             const rosterPlayerIds = toArray(franRosterObj?.player).map(p => norm(p.id));
 
             const rosterPlayers = playerList.filter(p => rosterPlayerIds.includes(norm(p.id))).map(p => {
                 const pidNorm = norm(p.id);
-                const score = ytdScoreMap[pidNorm] || 0;
+                const score = ytdScoreMap[pidNorm] || ytdScoreMap[p.id] || 0;
                 const ppg = completedWeeks > 0 ? (score / completedWeeks).toFixed(1) : '0.0';
                 const posMeta = posRankMap[pidNorm] || { pos: String(p.position || 'N/A').toUpperCase(), rank: '--' };
                 return {
@@ -953,7 +996,8 @@
      * Open Notification Drawer Modal
      */
     function openNotificationsModal() {
-        showModal("League Notifications & Messages", "<i class="fa-solid fa-bell"></i> Notifications & Messages");
+        showModal("League Notifications & Messages", `<i class="fa-solid fa-bell"></i> <span>League Notifications & Messages</span>`);
+        setCardWatermark('');
         const content = document.getElementById('dnfl-modal-content-wrapper');
 
         let html = '';
@@ -1039,6 +1083,7 @@
      * Helper Controls
      */
     function swapWatermark(logoUrl) {
+        if (!logoUrl) return;
         setCardWatermark(logoUrl);
     }
 
