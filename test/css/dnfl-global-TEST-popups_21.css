@@ -1139,61 +1139,9 @@ a.dnfl-btn-secondary:hover,
   }
 }
 /* ==========================================================================
-   DNFL Popups & Modal Subsystem Partial (_popups-v4_20.scss)
+   DNFL Popups & Modal Subsystem Partial (_popups-v4_21.scss)
    Duke Networking Fantasy League (DNFL) Architecture
    ========================================================================== */
-/* 0. Top-Level High Specificity Button Overrides for Native MFL Isolation */
-#dnfl-modal-close-btn,
-#dnfl-modal-gear-btn,
-button#dnfl-modal-close-btn,
-button#dnfl-modal-gear-btn {
-  -moz-appearance: none !important;
-       appearance: none !important;
-  -webkit-appearance: none !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  background-image: none !important;
-  border: 0 !important;
-  border-style: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-  color: #94a3b8 !important;
-  font-size: 1.25rem !important;
-  cursor: pointer !important;
-  padding: 0.25rem 0.4rem !important;
-  border-radius: 0 !important;
-  line-height: 1 !important;
-  min-width: auto !important;
-  height: auto !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-#dnfl-modal-close-btn:hover,
-#dnfl-modal-gear-btn:hover,
-button#dnfl-modal-close-btn:hover,
-button#dnfl-modal-gear-btn:hover {
-  color: #ffffff !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  box-shadow: none !important;
-}
-#dnfl-modal-close-btn.is-active,
-#dnfl-modal-gear-btn.is-active,
-button#dnfl-modal-close-btn.is-active,
-button#dnfl-modal-gear-btn.is-active {
-  color: #f59e0b !important;
-  transform: scale(1.1) !important;
-  background: transparent !important;
-  background-color: transparent !important;
-}
-#dnfl-modal-close-btn.dnfl-is-hidden,
-#dnfl-modal-gear-btn.dnfl-is-hidden,
-button#dnfl-modal-close-btn.dnfl-is-hidden,
-button#dnfl-modal-gear-btn.dnfl-is-hidden {
-  display: none !important;
-}
-
 /* 0. Design Tokens */
 :root {
   --dnfl-ficon-xs: 1.25rem; /* 20px */
@@ -1223,6 +1171,48 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden {
   display: none !important;
   opacity: 0 !important;
   pointer-events: none !important;
+}
+
+/* High Specificity Resets for Modal Action Buttons */
+button#dnfl-modal-close-btn,
+button#dnfl-modal-gear-btn,
+.dnfl-modal-header-btn {
+  -moz-appearance: none !important;
+       appearance: none !important;
+  -webkit-appearance: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-style: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  color: #94a3b8 !important;
+  font-size: 1.25rem !important;
+  cursor: pointer !important;
+  padding: 0.25rem 0.4rem !important;
+  border-radius: 0 !important;
+  transition: color 0.2s ease, transform 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+button#dnfl-modal-close-btn:hover,
+button#dnfl-modal-gear-btn:hover,
+.dnfl-modal-header-btn:hover {
+  color: #ffffff !important;
+  background: transparent !important;
+  background-color: transparent !important;
+}
+button#dnfl-modal-close-btn.is-active,
+button#dnfl-modal-gear-btn.is-active,
+.dnfl-modal-header-btn.is-active {
+  color: #f59e0b !important;
+  transform: scale(1.1) !important;
+}
+button#dnfl-modal-close-btn.dnfl-is-hidden,
+button#dnfl-modal-gear-btn.dnfl-is-hidden,
+.dnfl-modal-header-btn.dnfl-is-hidden {
+  display: none !important;
 }
 
 .dnfl-modal-card {
@@ -1265,43 +1255,6 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden {
   display: flex !important;
   align-items: center !important;
   gap: 0.5rem !important;
-}
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-gear-btn,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-close-btn {
-  -moz-appearance: none !important;
-       appearance: none !important;
-  -webkit-appearance: none !important;
-  background: transparent !important;
-  border: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-  color: #94a3b8 !important;
-  font-size: 1.25rem !important;
-  cursor: pointer !important;
-  padding: 0.25rem 0.4rem !important;
-  border-radius: 0 !important;
-  transition: color 0.2s ease, transform 0.2s ease !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn:hover,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-gear-btn:hover,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-close-btn:hover {
-  color: #ffffff !important;
-  background: transparent !important;
-}
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn.is-active,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-gear-btn.is-active,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-close-btn.is-active {
-  color: #f59e0b !important;
-  transform: scale(1.1) !important;
-}
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn.dnfl-is-hidden,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-gear-btn.dnfl-is-hidden,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-close-btn.dnfl-is-hidden {
-  display: none !important;
 }
 .dnfl-modal-card .dnfl-modal-body {
   padding: 1rem !important;
@@ -1473,19 +1426,17 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden {
   }
 }
 
-/* 5. Owner Details Card */
+/* 5. Owner Details Card - Unified with Stat Card */
 .dnfl-owner-details-card {
   background: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
   border-top: 3px solid var(--dnfl-primary, #0577B1) !important;
   border-radius: 6px !important;
   padding: 0.55rem 0.75rem !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 0.2rem !important;
-  font-size: 0.85rem !important;
-  color: #334155 !important;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
 }
 .dnfl-owner-details-card .dnfl-owner-val {
   font-size: 1.15rem !important;
@@ -1696,35 +1647,6 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden {
   border: 2px solid #e2e8f0 !important;
   background: #f8fafc !important;
 }
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge {
-  position: absolute !important;
-  bottom: -0.25rem !important;
-  right: -0.25rem !important;
-  font-size: 0.6rem !important;
-  font-weight: 800 !important;
-  padding: 0.1rem 0.3rem !important;
-  border-radius: 4px !important;
-  color: #ffffff !important;
-  line-height: 1 !important;
-}
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-qb {
-  background: var(--dnfl-chart-5, #dc2626) !important;
-}
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-rb {
-  background: var(--dnfl-green-text, #15803d) !important;
-}
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-wr {
-  background: var(--dnfl-chart-4, #d97706) !important;
-}
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-te {
-  background: var(--dnfl-chart-6, #4f46e5) !important;
-}
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-pk, .dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-k {
-  background: var(--dnfl-text-heading, #334155) !important;
-}
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-def, .dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-dst {
-  background: var(--dnfl-gray-text, #64748b) !important;
-}
 .dnfl-stars-wrapper .dnfl-star-card .dnfl-star-info {
   display: flex !important;
   flex-direction: column !important;
@@ -1736,167 +1658,204 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden {
   color: #0f172a !important;
 }
 .dnfl-stars-wrapper .dnfl-star-card .dnfl-star-info .dnfl-star-main-metric {
-  font-size: 0.95rem !important;
+  font-size: 1rem !important;
   font-weight: 800 !important;
-  color: #0f172a !important;
+  color: var(--dnfl-primary, #0577B1) !important;
 }
 .dnfl-stars-wrapper .dnfl-star-card .dnfl-star-info .dnfl-star-main-metric .dnfl-ppg-label {
-  font-size: 0.75rem !important;
-  color: var(--dnfl-primary, #0577B1) !important;
-  font-weight: 800 !important;
+  font-size: 0.7rem !important;
+  font-weight: 700 !important;
 }
 .dnfl-stars-wrapper .dnfl-star-card .dnfl-star-info .dnfl-star-sub-metric {
   font-size: 0.7rem !important;
-  color: #64748b !important;
   font-weight: 600 !important;
+  color: #64748b !important;
 }
 
-/* 9. Setup & Form Elements */
+/* 9. Position Badges - Direct High Contrast Palette */
+.dnfl-position-badge {
+  position: absolute !important;
+  bottom: -0.25rem !important;
+  right: -0.25rem !important;
+  font-size: 0.65rem !important;
+  font-weight: 800 !important;
+  padding: 0.15rem 0.4rem !important;
+  border-radius: 4px !important;
+  color: #ffffff !important;
+  line-height: 1 !important;
+  text-transform: uppercase !important;
+}
+.dnfl-position-badge.pos-qb {
+  background-color: #dc2626 !important;
+  color: #ffffff !important;
+}
+.dnfl-position-badge.pos-rb {
+  background-color: #15803d !important;
+  color: #ffffff !important;
+}
+.dnfl-position-badge.pos-wr {
+  background-color: #d97706 !important;
+  color: #ffffff !important;
+}
+.dnfl-position-badge.pos-te {
+  background-color: #4f46e5 !important;
+  color: #ffffff !important;
+}
+.dnfl-position-badge.pos-pk, .dnfl-position-badge.pos-k {
+  background-color: #334155 !important;
+  color: #ffffff !important;
+}
+.dnfl-position-badge.pos-def, .dnfl-position-badge.pos-dst {
+  background-color: #64748b !important;
+  color: #ffffff !important;
+}
+
+/* 10. Setup Form Styling */
 .dnfl-setup-container {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 1rem !important;
+  padding: 0.5rem 0.25rem !important;
 }
-
-.dnfl-commish-admin-card {
-  background: #f0f9ff !important;
-  border: 1px solid #b6e2ff !important;
+.dnfl-setup-container .dnfl-commish-admin-card {
+  background: #f8fafc !important;
+  border: 1px solid #cbd5e1 !important;
   border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
   border-radius: 6px !important;
   padding: 0.75rem 1rem !important;
+  margin-bottom: 1rem !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
+  gap: 1rem !important;
+  flex-wrap: wrap !important;
 }
-.dnfl-commish-admin-card a {
-  text-decoration: none !important;
-}
-
-.dnfl-form-section {
+.dnfl-setup-container .dnfl-form-section {
   background: #ffffff !important;
   border: 1px solid #e2e8f0 !important;
   border-radius: 8px !important;
-  padding: 1rem !important;
+  padding: 0.85rem 1rem !important;
+  margin-bottom: 1rem !important;
 }
-.dnfl-form-section .dnfl-form-section-title {
-  margin: 0 0 0.75rem 0 !important;
+.dnfl-setup-container .dnfl-form-section .dnfl-form-section-title {
+  margin: 0 0 0.65rem 0 !important;
   font-size: 0.95rem !important;
   font-weight: 700 !important;
-  color: #0f172a !important;
+  color: var(--dnfl-primary, #0577B1) !important;
   display: flex !important;
   align-items: center !important;
   gap: 0.4rem !important;
 }
-
-.dnfl-form-grid {
+.dnfl-setup-container .dnfl-form-section .dnfl-section-header-flex {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 0.65rem !important;
+  flex-wrap: wrap !important;
+  gap: 0.5rem !important;
+}
+.dnfl-setup-container .dnfl-form-section .dnfl-section-header-flex .dnfl-form-section-title {
+  margin: 0 !important;
+}
+.dnfl-setup-container .dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions {
+  font-size: 0.75rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
+}
+.dnfl-setup-container .dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions .dnfl-action-link {
+  background: none !important;
+  border: none !important;
+  color: var(--dnfl-primary, #0577B1) !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  padding: 0 !important;
+  text-decoration: underline !important;
+}
+.dnfl-setup-container .dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions .dnfl-action-link:hover {
+  color: #045e8c !important;
+}
+.dnfl-setup-container .dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions .dnfl-bullet {
+  color: #94a3b8 !important;
+}
+.dnfl-setup-container .dnfl-form-section .dnfl-form-grid {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
-  gap: 0.85rem !important;
+  gap: 0.75rem !important;
 }
 @media (max-width: 580px) {
-  .dnfl-form-grid {
+  .dnfl-setup-container .dnfl-form-section .dnfl-form-grid {
     grid-template-columns: 1fr !important;
   }
 }
-
-.dnfl-form-group {
+.dnfl-setup-container .dnfl-form-section .dnfl-form-group {
   display: flex !important;
   flex-direction: column !important;
   gap: 0.25rem !important;
 }
-.dnfl-form-group label {
-  font-size: 0.8rem !important;
+.dnfl-setup-container .dnfl-form-section .dnfl-form-group label {
+  font-size: 0.75rem !important;
   font-weight: 700 !important;
   color: #475569 !important;
+  text-transform: uppercase !important;
 }
-.dnfl-form-group .dnfl-input {
+.dnfl-setup-container .dnfl-form-section .dnfl-form-group .dnfl-input {
   width: 100% !important;
-  box-sizing: border-box !important;
   padding: 0.45rem 0.65rem !important;
   border: 1px solid #cbd5e1 !important;
   border-radius: 6px !important;
   font-size: 0.85rem !important;
   color: #0f172a !important;
-  background-color: #ffffff !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
 }
-.dnfl-form-group .dnfl-input:focus {
-  outline: none !important;
+.dnfl-setup-container .dnfl-form-section .dnfl-form-group .dnfl-input:focus {
   border-color: var(--dnfl-primary, #0577B1) !important;
-  box-shadow: 0 0 0 3px rgba(5, 119, 177, 0.15) !important;
+  outline: none !important;
 }
-
-.dnfl-section-header-flex {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  margin-bottom: 0.75rem !important;
-}
-.dnfl-section-header-flex .dnfl-form-section-title {
-  margin: 0 !important;
-}
-.dnfl-section-header-flex .dnfl-toggle-actions {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.35rem !important;
-  font-size: 0.75rem !important;
-}
-.dnfl-section-header-flex .dnfl-toggle-actions .dnfl-action-link {
-  background: none !important;
-  border: none !important;
-  color: var(--dnfl-primary, #0577B1) !important;
-  cursor: pointer !important;
-  padding: 0 !important;
-  font-weight: 700 !important;
-}
-.dnfl-section-header-flex .dnfl-toggle-actions .dnfl-action-link:hover {
-  text-decoration: underline !important;
-}
-.dnfl-section-header-flex .dnfl-toggle-actions .dnfl-bullet {
-  color: #94a3b8 !important;
-}
-
-.dnfl-checkbox-grid {
+.dnfl-setup-container .dnfl-form-section .dnfl-checkbox-grid {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
   gap: 0.5rem !important;
 }
 @media (max-width: 580px) {
-  .dnfl-checkbox-grid {
+  .dnfl-setup-container .dnfl-form-section .dnfl-checkbox-grid {
     grid-template-columns: 1fr !important;
   }
 }
-.dnfl-checkbox-grid .dnfl-checkbox-label {
+.dnfl-setup-container .dnfl-form-section .dnfl-checkbox-grid .dnfl-checkbox-label {
   display: flex !important;
-  align-items: flex-start !important;
+  align-items: center !important;
   gap: 0.4rem !important;
   font-size: 0.8rem !important;
   color: #334155 !important;
   cursor: pointer !important;
 }
-.dnfl-checkbox-grid .dnfl-checkbox-label input[type=checkbox] {
-  margin-top: 0.15rem !important;
+.dnfl-setup-container .dnfl-form-section .dnfl-checkbox-grid .dnfl-checkbox-label input[type=checkbox] {
+  accent-color: var(--dnfl-primary, #0577B1) !important;
+  width: 1rem !important;
+  height: 1rem !important;
 }
-
-.dnfl-form-actions {
+.dnfl-setup-container .dnfl-form-actions {
   display: flex !important;
   justify-content: flex-end !important;
   margin-top: 1rem !important;
 }
 
-/* 10. Status Badges & Buttons */
+/* 11. Buttons & Utility Elements */
 .dnfl-btn-primary {
   background: var(--dnfl-primary, #0577B1) !important;
   color: #ffffff !important;
   border: none !important;
-  padding: 0.55rem 1.1rem !important;
+  padding: 0.55rem 1.25rem !important;
   border-radius: 6px !important;
-  font-weight: 700 !important;
   font-size: 0.85rem !important;
+  font-weight: 700 !important;
   cursor: pointer !important;
   transition: background 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
 }
 .dnfl-btn-primary:hover {
-  background: var(--dnfl-primary-hover, #045e8c) !important;
+  background: #045e8c !important;
 }
 .dnfl-btn-primary:disabled {
   opacity: 0.6 !important;
@@ -1904,18 +1863,21 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden {
 }
 
 .dnfl-btn-secondary {
-  background: #ffffff !important;
+  background: #f1f5f9 !important;
   color: #334155 !important;
   border: 1px solid #cbd5e1 !important;
   padding: 0.45rem 0.85rem !important;
   border-radius: 6px !important;
-  font-weight: 700 !important;
   font-size: 0.8rem !important;
+  font-weight: 700 !important;
   cursor: pointer !important;
-  transition: all 0.2s ease !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.35rem !important;
 }
 .dnfl-btn-secondary:hover {
-  background: #f1f5f9 !important;
+  background: #e2e8f0 !important;
   color: #0f172a !important;
 }
 .dnfl-btn-secondary.dnfl-btn-sm {
@@ -1923,50 +1885,7 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden {
   font-size: 0.75rem !important;
 }
 
-.dnfl-btn-subtle {
-  background: transparent !important;
-  border: none !important;
-  color: #64748b !important;
-  font-size: 0.8rem !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  padding: 0.2rem 0.4rem !important;
-}
-.dnfl-btn-subtle:hover {
-  color: #0f172a !important;
-}
-
-.dnfl-status-loading {
-  text-align: center !important;
-  padding: 2rem !important;
-  color: #64748b !important;
-  font-size: 0.9rem !important;
-  font-style: italic !important;
-}
-
-.dnfl-status-error {
-  background: #fef2f2 !important;
-  border: 1px solid #fecaca !important;
-  color: #dc2626 !important;
-  padding: 0.75rem 1rem !important;
-  border-radius: 6px !important;
-  font-size: 0.85rem !important;
-  font-weight: 600 !important;
-  margin-bottom: 1rem !important;
-}
-
-.dnfl-status-success {
-  background: #f0fdf4 !important;
-  border: 1px solid #bbf7d0 !important;
-  color: #16a34a !important;
-  padding: 0.75rem 1rem !important;
-  border-radius: 6px !important;
-  font-size: 0.85rem !important;
-  font-weight: 600 !important;
-  margin-bottom: 1rem !important;
-}
-
-/* 11. Notifications Modal Content */
+/* 12. Notification Modal Sections & Cards */
 .dnfl-hpm-section {
   margin-bottom: 1.25rem !important;
 }
@@ -1981,13 +1900,11 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden {
 }
 .dnfl-hpm-section .dnfl-hpm-card {
   background: #f8fafc !important;
-  border: 1px solid #cbd5e1 !important;
+  border: 1px solid #e2e8f0 !important;
   border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
   border-radius: 6px !important;
   padding: 0.75rem 1rem !important;
   margin-bottom: 0.5rem !important;
-  font-size: 0.85rem !important;
-  color: #334155 !important;
 }
 .dnfl-hpm-section .dnfl-hpm-card .dnfl-hpm-title {
   font-weight: 700 !important;
@@ -1998,62 +1915,85 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden {
   gap: 0.35rem !important;
 }
 
-/* 12. Base Table Styles */
-.dnfl-tab-pane {
-  width: 100% !important;
+/* 13. General Status & Table Elements */
+.dnfl-status-loading {
+  padding: 2rem !important;
+  text-align: center !important;
+  color: #64748b !important;
+  font-size: 0.9rem !important;
+  font-style: italic !important;
+}
+
+.dnfl-status-error {
+  padding: 1rem !important;
+  background: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
+  color: #991b1b !important;
+  border-radius: 6px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 1rem !important;
+}
+
+.dnfl-status-success {
+  padding: 1rem !important;
+  background: #f0fdf4 !important;
+  border: 1px solid #bbf7d0 !important;
+  color: #166534 !important;
+  border-radius: 6px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 1rem !important;
 }
 
 .dnfl-table {
   width: 100% !important;
   border-collapse: collapse !important;
-  font-size: 0.85rem !important;
+  margin-top: 0.5rem !important;
 }
 .dnfl-table th {
   background: #f1f5f9 !important;
-  color: #475569 !important;
-  font-weight: 700 !important;
+  color: #334155 !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
   padding: 0.5rem 0.75rem !important;
-  text-align: left !important;
   border-bottom: 2px solid #cbd5e1 !important;
+  text-align: left !important;
 }
 .dnfl-table td {
   padding: 0.5rem 0.75rem !important;
-  border-bottom: 1px solid #e2e8f0 !important;
+  font-size: 0.85rem !important;
   color: #0f172a !important;
+  border-bottom: 1px solid #e2e8f0 !important;
 }
 .dnfl-table tr.dnfl-row-odd {
-  background-color: #ffffff !important;
+  background: #ffffff !important;
 }
 .dnfl-table tr.dnfl-row-even {
-  background-color: #fafafa !important;
+  background: #f8fafc !important;
 }
 
-/* 13. Pills & Badges */
-.dnfl-pill-gold {
-  background: #fef3c7 !important;
-  color: #b45309 !important;
-  font-weight: 800 !important;
+.dnfl-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.25rem !important;
+  padding: 0.2rem 0.5rem !important;
+  border-radius: 9999px !important;
   font-size: 0.7rem !important;
-  padding: 0.15rem 0.4rem !important;
-  border-radius: 4px !important;
+  font-weight: 700 !important;
 }
-
-.dnfl-pill-blue {
+.dnfl-pill.dnfl-pill-blue {
   background: #dbeafe !important;
-  color: #1d4ed8 !important;
-  font-weight: 800 !important;
-  font-size: 0.7rem !important;
-  padding: 0.15rem 0.4rem !important;
-  border-radius: 4px !important;
+  color: #1e40af !important;
 }
-
-.dnfl-pill-gray {
+.dnfl-pill.dnfl-pill-gray {
   background: #f1f5f9 !important;
-  color: #64748b !important;
-  font-weight: 800 !important;
-  font-size: 0.7rem !important;
-  padding: 0.15rem 0.4rem !important;
-  border-radius: 4px !important;
+  color: #475569 !important;
+}
+.dnfl-pill.dnfl-pill-gold {
+  background: #fef3c7 !important;
+  color: #92400e !important;
 }
 
 /* ==========================================================================
