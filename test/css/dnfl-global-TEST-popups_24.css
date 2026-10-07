@@ -1139,79 +1139,37 @@ a.dnfl-btn-secondary:hover,
   }
 }
 /* ==========================================================================
-   DNFL Popups & Modal Subsystem Partial (_popups-v4_21.scss)
-   Duke Networking Fantasy League (DNFL) Architecture
+   Duke Networking Fantasy League (DNFL) - Popups Engine Stylesheet
+   File: _popups-v4_24.scss
+   Version: 4.24
+   Description: Component SCSS for Modal Overlay, Franchise Scorecard, Player Profile & Notifications.
    ========================================================================== */
-/* 0. Design Tokens */
-:root {
-  --dnfl-ficon-xs: 1.25rem; /* 20px */
-  --dnfl-ficon-sm: 1.5rem; /* 24px */
-  --dnfl-ficon-md: 2.25rem; /* 36px */
-  --dnfl-ficon-lg: 3.5rem; /* 56px */
-  --dnfl-ficon-xl: 4.0rem; /* 64px */
-  --dnfl-flogo-max-h: 25rem;
+/* 0. Design Tokens & Position Variables */
+:root, .dnfl {
+  --dnfl-pos-qb: var(--dnfl-chart-5, #dc2626); /* Crimson Red (Primary QB Accent) */
+  --dnfl-pos-rb: var(--dnfl-green-text, #15803d); /* Emerald Green (Backfield Playmakers) */
+  --dnfl-pos-wr: var(--dnfl-chart-4, #d97706); /* Amber Gold (Pass Catchers) */
+  --dnfl-pos-te: var(--dnfl-chart-6, #4f46e5); /* Indigo Purple (Tight Ends) */
+  --dnfl-pos-k: var(--dnfl-text-heading, #334155); /* Dark Charcoal Slate (Muted Kicker) */
+  --dnfl-pos-def: var(--dnfl-gray-text, #64748b); /* Medium Slate Gray (Muted Defense) */
 }
 
-/* 1. Modal Base Overlay & Card */
+/* 1. Modal Overlay & Container */
 .dnfl-modal-overlay {
   position: fixed !important;
-  inset: 0 !important;
-  background-color: rgba(15, 23, 42, 0.8) !important;
-  backdrop-filter: blur(5px) !important;
-  -webkit-backdrop-filter: blur(5px) !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  background-color: rgba(15, 23, 42, 0.75) !important;
+  backdrop-filter: blur(4px) !important;
   z-index: 999999 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   padding: 1rem !important;
-  opacity: 1;
-  transition: opacity 0.25s ease !important;
 }
 .dnfl-modal-overlay.dnfl-is-hidden {
-  display: none !important;
-  opacity: 0 !important;
-  pointer-events: none !important;
-}
-
-/* High Specificity Resets for Modal Action Buttons */
-button#dnfl-modal-close-btn,
-button#dnfl-modal-gear-btn,
-.dnfl-modal-header-btn {
-  -moz-appearance: none !important;
-       appearance: none !important;
-  -webkit-appearance: none !important;
-  background: transparent !important;
-  background-color: transparent !important;
-  border: none !important;
-  border-style: none !important;
-  box-shadow: none !important;
-  outline: none !important;
-  color: #94a3b8 !important;
-  font-size: 1.25rem !important;
-  cursor: pointer !important;
-  padding: 0.25rem 0.4rem !important;
-  border-radius: 0 !important;
-  transition: color 0.2s ease, transform 0.2s ease !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-button#dnfl-modal-close-btn:hover,
-button#dnfl-modal-gear-btn:hover,
-.dnfl-modal-header-btn:hover {
-  color: #ffffff !important;
-  background: transparent !important;
-  background-color: transparent !important;
-}
-button#dnfl-modal-close-btn.is-active,
-button#dnfl-modal-gear-btn.is-active,
-.dnfl-modal-header-btn.is-active {
-  color: #f59e0b !important;
-  transform: scale(1.1) !important;
-}
-button#dnfl-modal-close-btn.dnfl-is-hidden,
-button#dnfl-modal-gear-btn.dnfl-is-hidden,
-.dnfl-modal-header-btn.dnfl-is-hidden {
   display: none !important;
 }
 
@@ -1256,6 +1214,45 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden,
   align-items: center !important;
   gap: 0.5rem !important;
 }
+.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn,
+.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-gear-btn,
+.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-close-btn {
+  -moz-appearance: none !important;
+       appearance: none !important;
+  -webkit-appearance: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-style: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  color: #94a3b8 !important;
+  font-size: 1.25rem !important;
+  cursor: pointer !important;
+  padding: 0.25rem 0.4rem !important;
+  border-radius: 0 !important;
+  transition: color 0.2s ease, transform 0.2s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn:hover,
+.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-gear-btn:hover,
+.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-close-btn:hover {
+  color: #ffffff !important;
+  background: transparent !important;
+}
+.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn.is-active,
+.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-gear-btn.is-active,
+.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-close-btn.is-active {
+  color: var(--dnfl-chart-4, #f59e0b) !important;
+  transform: scale(1.1) !important;
+}
+.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn.dnfl-is-hidden,
+.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-gear-btn.dnfl-is-hidden,
+.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-close-btn.dnfl-is-hidden {
+  display: none !important;
+}
 .dnfl-modal-card .dnfl-modal-body {
   padding: 1rem !important;
   overflow-y: auto !important;
@@ -1278,6 +1275,11 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden,
 .dnfl-ficon-rounded {
   border-radius: 6px !important;
   overflow: hidden !important;
+}
+
+/* 1.2 Icon Utility Colors */
+.dnfl-icon-amber {
+  color: var(--dnfl-chart-4, #f59e0b) !important;
 }
 
 /* 2. Notification Bell & Menu Items */
@@ -1304,7 +1306,7 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden,
   color: #ffffff !important;
 }
 .dnfl-menu-bell-item .dnfl-notification-holder.has-unread .dnfl-notification-link {
-  color: #f59e0b !important;
+  color: var(--dnfl-chart-4, #f59e0b) !important;
 }
 .dnfl-menu-bell-item .dnfl-notification-holder .dnfl-notification-badge {
   position: absolute !important;
@@ -1426,7 +1428,7 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden,
   }
 }
 
-/* 5. Owner Details Card - Unified with Stat Card */
+/* 5. Owner Details Card */
 .dnfl-owner-details-card {
   background: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
@@ -1549,7 +1551,7 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden,
 .dnfl-scorecard-grid .dnfl-stat-card .dnfl-stat-val-main {
   font-size: 1.15rem !important;
   font-weight: 800 !important;
-  color: #0f172a !important;
+  color: var(--dnfl-primary, #0577B1) !important;
   line-height: 1.1 !important;
 }
 .dnfl-scorecard-grid .dnfl-stat-card .dnfl-stat-val-main .dnfl-ppg-label {
@@ -1647,245 +1649,103 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden,
   border: 2px solid #e2e8f0 !important;
   background: #f8fafc !important;
 }
+.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge {
+  position: absolute !important;
+  bottom: -0.25rem !important;
+  right: -0.25rem !important;
+  font-size: 0.6rem !important;
+  font-weight: 800 !important;
+  padding: 0.1rem 0.3rem !important;
+  border-radius: 4px !important;
+  color: #ffffff !important;
+  line-height: 1 !important;
+}
+.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-qb {
+  background-color: var(--dnfl-pos-qb, var(--dnfl-chart-5, #dc2626)) !important;
+  color: #ffffff !important;
+}
+.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-rb {
+  background-color: var(--dnfl-pos-rb, var(--dnfl-green-text, #15803d)) !important;
+  color: #ffffff !important;
+}
+.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-wr {
+  background-color: var(--dnfl-pos-wr, var(--dnfl-chart-4, #d97706)) !important;
+  color: #ffffff !important;
+}
+.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-te {
+  background-color: var(--dnfl-pos-te, var(--dnfl-chart-6, #4f46e5)) !important;
+  color: #ffffff !important;
+}
+.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-pk, .dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-k {
+  background-color: var(--dnfl-pos-k, var(--dnfl-text-heading, #334155)) !important;
+  color: #ffffff !important;
+}
+.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-def, .dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-dst {
+  background-color: var(--dnfl-pos-def, var(--dnfl-gray-text, #64748b)) !important;
+  color: #ffffff !important;
+}
 .dnfl-stars-wrapper .dnfl-star-card .dnfl-star-info {
   display: flex !important;
   flex-direction: column !important;
   gap: 0.15rem !important;
 }
 .dnfl-stars-wrapper .dnfl-star-card .dnfl-star-info .dnfl-star-name {
-  font-size: 0.9rem !important;
+  font-size: 0.95rem !important;
   font-weight: 800 !important;
   color: #0f172a !important;
+  line-height: 1.15 !important;
 }
 .dnfl-stars-wrapper .dnfl-star-card .dnfl-star-info .dnfl-star-main-metric {
-  font-size: 1rem !important;
+  font-size: 0.85rem !important;
   font-weight: 800 !important;
   color: var(--dnfl-primary, #0577B1) !important;
-}
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-info .dnfl-star-main-metric .dnfl-ppg-label {
-  font-size: 0.7rem !important;
-  font-weight: 700 !important;
 }
 .dnfl-stars-wrapper .dnfl-star-card .dnfl-star-info .dnfl-star-sub-metric {
   font-size: 0.7rem !important;
-  font-weight: 600 !important;
   color: #64748b !important;
 }
 
-/* 9. Position Badges - Direct High Contrast Palette */
-.dnfl-position-badge {
-  position: absolute !important;
-  bottom: -0.25rem !important;
-  right: -0.25rem !important;
-  font-size: 0.65rem !important;
-  font-weight: 800 !important;
-  padding: 0.15rem 0.4rem !important;
-  border-radius: 4px !important;
-  color: #ffffff !important;
-  line-height: 1 !important;
-  text-transform: uppercase !important;
-}
-.dnfl-position-badge.pos-qb {
-  background-color: #dc2626 !important;
-  color: #ffffff !important;
-}
-.dnfl-position-badge.pos-rb {
-  background-color: #15803d !important;
-  color: #ffffff !important;
-}
-.dnfl-position-badge.pos-wr {
-  background-color: #d97706 !important;
-  color: #ffffff !important;
-}
-.dnfl-position-badge.pos-te {
-  background-color: #4f46e5 !important;
-  color: #ffffff !important;
-}
-.dnfl-position-badge.pos-pk, .dnfl-position-badge.pos-k {
-  background-color: #334155 !important;
-  color: #ffffff !important;
-}
-.dnfl-position-badge.pos-def, .dnfl-position-badge.pos-dst {
-  background-color: #64748b !important;
-  color: #ffffff !important;
+/* 9. Setup Form & Admin Section Styles */
+.dnfl-setup-container {
+  padding: 0.5rem 0 !important;
 }
 
-/* 10. Setup Form Styling */
-.dnfl-setup-container {
-  padding: 0.5rem 0.25rem !important;
+.dnfl-commish-admin-card {
+  margin-bottom: 1rem !important;
+  padding: 0.75rem 1rem !important;
+  background: #f1f5f9 !important;
+  border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
 }
-.dnfl-setup-container .dnfl-commish-admin-card {
+
+.dnfl-news-body {
+  margin: 0.25rem 0 0 0 !important;
+  font-size: 0.85rem !important;
+  color: #475569 !important;
+}
+
+.dnfl-empty-notifications {
+  text-align: center !important;
+  padding: 2rem 1rem !important;
+}
+
+.dnfl-hpm-card {
+  margin-bottom: 0.75rem !important;
   background: #f8fafc !important;
-  border: 1px solid #cbd5e1 !important;
+  border: 1px solid #e2e8f0 !important;
   border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
   border-radius: 6px !important;
   padding: 0.75rem 1rem !important;
-  margin-bottom: 1rem !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 1rem !important;
-  flex-wrap: wrap !important;
 }
-.dnfl-setup-container .dnfl-form-section {
-  background: #ffffff !important;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 8px !important;
-  padding: 0.85rem 1rem !important;
-  margin-bottom: 1rem !important;
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-form-section-title {
-  margin: 0 0 0.65rem 0 !important;
+.dnfl-hpm-card .dnfl-hpm-title {
+  font-weight: 700 !important;
+  color: #0f172a !important;
   font-size: 0.95rem !important;
-  font-weight: 700 !important;
-  color: var(--dnfl-primary, #0577B1) !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.4rem !important;
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-section-header-flex {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  margin-bottom: 0.65rem !important;
-  flex-wrap: wrap !important;
-  gap: 0.5rem !important;
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-section-header-flex .dnfl-form-section-title {
-  margin: 0 !important;
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions {
-  font-size: 0.75rem !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.35rem !important;
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions .dnfl-action-link {
-  background: none !important;
-  border: none !important;
-  color: var(--dnfl-primary, #0577B1) !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  padding: 0 !important;
-  text-decoration: underline !important;
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions .dnfl-action-link:hover {
-  color: #045e8c !important;
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions .dnfl-bullet {
-  color: #94a3b8 !important;
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-form-grid {
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 0.75rem !important;
-}
-@media (max-width: 580px) {
-  .dnfl-setup-container .dnfl-form-section .dnfl-form-grid {
-    grid-template-columns: 1fr !important;
-  }
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-form-group {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 0.25rem !important;
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-form-group label {
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  color: #475569 !important;
-  text-transform: uppercase !important;
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-form-group .dnfl-input {
-  width: 100% !important;
-  padding: 0.45rem 0.65rem !important;
-  border: 1px solid #cbd5e1 !important;
-  border-radius: 6px !important;
-  font-size: 0.85rem !important;
-  color: #0f172a !important;
-  background: #ffffff !important;
-  box-shadow: none !important;
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-form-group .dnfl-input:focus {
-  border-color: var(--dnfl-primary, #0577B1) !important;
-  outline: none !important;
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-checkbox-grid {
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 0.5rem !important;
-}
-@media (max-width: 580px) {
-  .dnfl-setup-container .dnfl-form-section .dnfl-checkbox-grid {
-    grid-template-columns: 1fr !important;
-  }
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-checkbox-grid .dnfl-checkbox-label {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.4rem !important;
-  font-size: 0.8rem !important;
-  color: #334155 !important;
-  cursor: pointer !important;
-}
-.dnfl-setup-container .dnfl-form-section .dnfl-checkbox-grid .dnfl-checkbox-label input[type=checkbox] {
-  accent-color: var(--dnfl-primary, #0577B1) !important;
-  width: 1rem !important;
-  height: 1rem !important;
-}
-.dnfl-setup-container .dnfl-form-actions {
-  display: flex !important;
-  justify-content: flex-end !important;
-  margin-top: 1rem !important;
 }
 
-/* 11. Buttons & Utility Elements */
-.dnfl-btn-primary {
-  background: var(--dnfl-primary, #0577B1) !important;
-  color: #ffffff !important;
-  border: none !important;
-  padding: 0.55rem 1.25rem !important;
-  border-radius: 6px !important;
-  font-size: 0.85rem !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  transition: background 0.2s ease !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.4rem !important;
-}
-.dnfl-btn-primary:hover {
-  background: #045e8c !important;
-}
-.dnfl-btn-primary:disabled {
-  opacity: 0.6 !important;
-  cursor: not-allowed !important;
-}
-
-.dnfl-btn-secondary {
-  background: #f1f5f9 !important;
-  color: #334155 !important;
-  border: 1px solid #cbd5e1 !important;
-  padding: 0.45rem 0.85rem !important;
-  border-radius: 6px !important;
-  font-size: 0.8rem !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  text-decoration: none !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.35rem !important;
-}
-.dnfl-btn-secondary:hover {
-  background: #e2e8f0 !important;
-  color: #0f172a !important;
-}
-.dnfl-btn-secondary.dnfl-btn-sm {
-  padding: 0.25rem 0.6rem !important;
-  font-size: 0.75rem !important;
-}
-
-/* 12. Notification Modal Sections & Cards */
 .dnfl-hpm-section {
   margin-bottom: 1.25rem !important;
 }
@@ -1898,102 +1758,149 @@ button#dnfl-modal-gear-btn.dnfl-is-hidden,
   align-items: center !important;
   gap: 0.4rem !important;
 }
-.dnfl-hpm-section .dnfl-hpm-card {
+
+.dnfl-form-section {
   background: #f8fafc !important;
   border: 1px solid #e2e8f0 !important;
-  border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
-  border-radius: 6px !important;
-  padding: 0.75rem 1rem !important;
-  margin-bottom: 0.5rem !important;
+  border-radius: 8px !important;
+  padding: 1rem !important;
+  margin-bottom: 1rem !important;
 }
-.dnfl-hpm-section .dnfl-hpm-card .dnfl-hpm-title {
+.dnfl-form-section .dnfl-form-section-title {
+  font-size: 0.95rem !important;
   font-weight: 700 !important;
-  color: #0f172a !important;
-  margin-bottom: 0.25rem !important;
+  color: var(--dnfl-primary, #0577B1) !important;
+  margin: 0 0 0.75rem 0 !important;
   display: flex !important;
   align-items: center !important;
-  gap: 0.35rem !important;
+  gap: 0.4rem !important;
 }
-
-/* 13. General Status & Table Elements */
-.dnfl-status-loading {
-  padding: 2rem !important;
-  text-align: center !important;
-  color: #64748b !important;
-  font-size: 0.9rem !important;
-  font-style: italic !important;
-}
-
-.dnfl-status-error {
-  padding: 1rem !important;
-  background: #fef2f2 !important;
-  border: 1px solid #fecaca !important;
-  color: #991b1b !important;
-  border-radius: 6px !important;
-  font-size: 0.85rem !important;
-  font-weight: 600 !important;
-  margin-bottom: 1rem !important;
-}
-
-.dnfl-status-success {
-  padding: 1rem !important;
-  background: #f0fdf4 !important;
-  border: 1px solid #bbf7d0 !important;
-  color: #166534 !important;
-  border-radius: 6px !important;
-  font-size: 0.85rem !important;
-  font-weight: 600 !important;
-  margin-bottom: 1rem !important;
-}
-
-.dnfl-table {
-  width: 100% !important;
-  border-collapse: collapse !important;
-  margin-top: 0.5rem !important;
-}
-.dnfl-table th {
-  background: #f1f5f9 !important;
-  color: #334155 !important;
-  font-size: 0.75rem !important;
-  font-weight: 800 !important;
-  text-transform: uppercase !important;
-  padding: 0.5rem 0.75rem !important;
-  border-bottom: 2px solid #cbd5e1 !important;
-  text-align: left !important;
-}
-.dnfl-table td {
-  padding: 0.5rem 0.75rem !important;
-  font-size: 0.85rem !important;
-  color: #0f172a !important;
-  border-bottom: 1px solid #e2e8f0 !important;
-}
-.dnfl-table tr.dnfl-row-odd {
-  background: #ffffff !important;
-}
-.dnfl-table tr.dnfl-row-even {
-  background: #f8fafc !important;
-}
-
-.dnfl-pill {
-  display: inline-flex !important;
+.dnfl-form-section .dnfl-section-header-flex {
+  display: flex !important;
   align-items: center !important;
-  gap: 0.25rem !important;
-  padding: 0.2rem 0.5rem !important;
-  border-radius: 9999px !important;
-  font-size: 0.7rem !important;
+  justify-content: space-between !important;
+  margin-bottom: 0.75rem !important;
+}
+.dnfl-form-section .dnfl-section-header-flex .dnfl-form-section-title {
+  margin: 0 !important;
+}
+.dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+}
+.dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions .dnfl-action-link {
+  background: transparent !important;
+  border: none !important;
+  color: var(--dnfl-primary, #0577B1) !important;
+  font-size: 0.75rem !important;
   font-weight: 700 !important;
+  cursor: pointer !important;
+  padding: 0 !important;
 }
-.dnfl-pill.dnfl-pill-blue {
-  background: #dbeafe !important;
-  color: #1e40af !important;
+.dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions .dnfl-action-link:hover {
+  text-decoration: underline !important;
 }
-.dnfl-pill.dnfl-pill-gray {
-  background: #f1f5f9 !important;
+.dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions .dnfl-bullet {
+  color: #94a3b8 !important;
+  font-size: 0.75rem !important;
+}
+
+.dnfl-form-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 0.85rem !important;
+  margin-bottom: 0.5rem !important;
+}
+@media (max-width: 580px) {
+  .dnfl-form-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+.dnfl-form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.25rem !important;
+}
+.dnfl-form-group label {
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
   color: #475569 !important;
 }
-.dnfl-pill.dnfl-pill-gold {
-  background: #fef3c7 !important;
-  color: #92400e !important;
+.dnfl-form-group .dnfl-input {
+  width: 100% !important;
+  padding: 0.45rem 0.65rem !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 6px !important;
+  font-size: 0.85rem !important;
+  color: #0f172a !important;
+  background: #ffffff !important;
+  box-sizing: border-box !important;
+}
+.dnfl-form-group .dnfl-input:focus {
+  outline: none !important;
+  border-color: var(--dnfl-primary, #0577B1) !important;
+  box-shadow: 0 0 0 2px rgba(5, 119, 177, 0.2) !important;
+}
+
+.dnfl-checkbox-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 0.5rem !important;
+}
+@media (max-width: 580px) {
+  .dnfl-checkbox-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+.dnfl-checkbox-grid .dnfl-checkbox-label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  font-size: 0.8rem !important;
+  color: #334155 !important;
+  cursor: pointer !important;
+}
+.dnfl-checkbox-grid .dnfl-checkbox-label input[type=checkbox] {
+  accent-color: var(--dnfl-primary, #0577B1) !important;
+  width: 1rem !important;
+  height: 1rem !important;
+}
+
+.dnfl-form-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.75rem !important;
+  margin-top: 1rem !important;
+}
+.dnfl-form-actions .dnfl-btn-primary {
+  background: var(--dnfl-primary, #0577B1) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 0.55rem 1.25rem !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  cursor: pointer !important;
+  transition: background 0.2s ease !important;
+}
+.dnfl-form-actions .dnfl-btn-primary:hover {
+  background: #045e8c !important;
+}
+.dnfl-form-actions .dnfl-btn-secondary {
+  background: #e2e8f0 !important;
+  color: #334155 !important;
+  border: none !important;
+  padding: 0.55rem 1.25rem !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  cursor: pointer !important;
+  transition: background 0.2s ease !important;
+}
+.dnfl-form-actions .dnfl-btn-secondary:hover {
+  background: #cbd5e1 !important;
 }
 
 /* ==========================================================================
