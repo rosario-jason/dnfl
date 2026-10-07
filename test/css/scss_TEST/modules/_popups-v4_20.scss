@@ -1,7 +1,52 @@
 /* ==========================================================================
-   DNFL Popups & Modal Subsystem Partial (_popups-v4_19.scss)
+   DNFL Popups & Modal Subsystem Partial (_popups-v4_20.scss)
    Duke Networking Fantasy League (DNFL) Architecture
    ========================================================================== */
+
+/* 0. Top-Level High Specificity Button Overrides for Native MFL Isolation */
+#dnfl-modal-close-btn,
+#dnfl-modal-gear-btn,
+button#dnfl-modal-close-btn,
+button#dnfl-modal-gear-btn {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-style: none !important;
+  box-shadow: none !important;
+  outline: none !important;
+  color: #94a3b8 !important;
+  font-size: 1.25rem !important;
+  cursor: pointer !important;
+  padding: 0.25rem 0.4rem !important;
+  border-radius: 0 !important;
+  line-height: 1 !important;
+  min-width: auto !important;
+  height: auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+
+  &:hover {
+    color: #ffffff !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+  }
+
+  &.is-active {
+    color: #f59e0b !important;
+    transform: scale(1.1) !important;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+
+  &.dnfl-is-hidden {
+    display: none !important;
+  }
+}
 
 /* 0. Design Tokens */
 :root {
@@ -187,36 +232,6 @@
   }
 }
 
-/* 2.1 Notification Modal Items */
-.dnfl-hpm-section {
-  margin-bottom: 1.25rem !important;
-
-  .dnfl-hpm-section-title {
-    font-size: 0.95rem !important;
-    font-weight: 700 !important;
-    color: var(--dnfl-primary, #0577B1) !important;
-    margin: 0 0 0.5rem 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.4rem !important;
-  }
-}
-
-.dnfl-hpm-card {
-  background: #f8fafc !important;
-  border: 1px solid #e2e8f0 !important;
-  border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
-  border-radius: 6px !important;
-  padding: 0.75rem 1rem !important;
-  margin-bottom: 0.5rem !important;
-
-  .dnfl-hpm-title {
-    font-weight: 700 !important;
-    color: #0f172a !important;
-    margin-bottom: 0.25rem !important;
-  }
-}
-
 /* 3. Navigation Tabs Bar */
 .dnfl-modal-tabs {
   display: flex !important;
@@ -273,11 +288,6 @@
       }
     }
   }
-}
-
-.dnfl-tab-pane {
-  display: block !important;
-  width: 100% !important;
 }
 
 /* 4. Franchise Hero Card & Layout */
@@ -339,7 +349,7 @@
   }
 }
 
-/* 5. Owner Details Card (Unified with Stat Cards) */
+/* 5. Owner Details Card */
 .dnfl-owner-details-card {
   background: #ffffff !important;
   border: 1px solid #cbd5e1 !important;
@@ -349,6 +359,8 @@
   display: flex !important;
   flex-direction: column !important;
   gap: 0.2rem !important;
+  font-size: 0.85rem !important;
+  color: #334155 !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
 
   .dnfl-owner-val {
@@ -496,10 +508,6 @@
     display: flex !important;
     align-items: center !important;
     gap: 0.4rem !important;
-
-    i {
-      color: #f59e0b !important;
-    }
   }
 
   .dnfl-stars-grid {
@@ -570,26 +578,27 @@
       gap: 0.15rem !important;
 
       .dnfl-star-name {
+        font-size: 0.9rem !important;
         font-weight: 800 !important;
-        font-size: 0.95rem !important;
         color: #0f172a !important;
       }
 
       .dnfl-star-main-metric {
-        font-size: 0.9rem !important;
+        font-size: 0.95rem !important;
         font-weight: 800 !important;
         color: #0f172a !important;
 
         .dnfl-ppg-label {
-          font-size: 0.65rem !important;
-          font-weight: 800 !important;
+          font-size: 0.75rem !important;
           color: var(--dnfl-primary, #0577B1) !important;
+          font-weight: 800 !important;
         }
       }
 
       .dnfl-star-sub-metric {
         font-size: 0.7rem !important;
         color: #64748b !important;
+        font-weight: 600 !important;
       }
     }
   }
@@ -599,19 +608,22 @@
 .dnfl-setup-container {
   display: flex !important;
   flex-direction: column !important;
-  gap: 1.25rem !important;
+  gap: 1rem !important;
 }
 
 .dnfl-commish-admin-card {
-  background: #f8fafc !important;
-  border: 1px solid #cbd5e1 !important;
+  background: #f0f9ff !important;
+  border: 1px solid #b6e2ff !important;
   border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
   border-radius: 6px !important;
   padding: 0.75rem 1rem !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  gap: 1rem !important;
+
+  a {
+    text-decoration: none !important;
+  }
 }
 
 .dnfl-form-section {
@@ -621,20 +633,20 @@
   padding: 1rem !important;
 
   .dnfl-form-section-title {
-    margin: 0 0 0.85rem 0 !important;
+    margin: 0 0 0.75rem 0 !important;
     font-size: 0.95rem !important;
     font-weight: 700 !important;
-    color: var(--dnfl-primary, #0577B1) !important;
+    color: #0f172a !important;
     display: flex !important;
     align-items: center !important;
-    gap: 0.5rem !important;
+    gap: 0.4rem !important;
   }
 }
 
 .dnfl-form-grid {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
-  gap: 1rem !important;
+  gap: 0.85rem !important;
 
   @media (max-width: 580px) {
     grid-template-columns: 1fr !important;
@@ -644,7 +656,7 @@
 .dnfl-form-group {
   display: flex !important;
   flex-direction: column !important;
-  gap: 0.35rem !important;
+  gap: 0.25rem !important;
 
   label {
     font-size: 0.8rem !important;
@@ -653,14 +665,17 @@
   }
 
   .dnfl-input {
-    padding: 0.55rem 0.75rem !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0.45rem 0.65rem !important;
     border: 1px solid #cbd5e1 !important;
     border-radius: 6px !important;
-    font-size: 0.9rem !important;
-    outline: none !important;
-    transition: border-color 0.2s ease !important;
+    font-size: 0.85rem !important;
+    color: #0f172a !important;
+    background-color: #ffffff !important;
 
     &:focus {
+      outline: none !important;
       border-color: var(--dnfl-primary, #0577B1) !important;
       box-shadow: 0 0 0 3px rgba(5, 119, 177, 0.15) !important;
     }
@@ -671,16 +686,16 @@
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  margin-bottom: 0.85rem !important;
+  margin-bottom: 0.75rem !important;
 
   .dnfl-form-section-title {
-    margin-bottom: 0 !important;
+    margin: 0 !important;
   }
 
   .dnfl-toggle-actions {
     display: flex !important;
     align-items: center !important;
-    gap: 0.4rem !important;
+    gap: 0.35rem !important;
     font-size: 0.75rem !important;
 
     .dnfl-action-link {
@@ -697,7 +712,7 @@
     }
 
     .dnfl-bullet {
-      color: #cbd5e1 !important;
+      color: #94a3b8 !important;
     }
   }
 }
@@ -705,7 +720,7 @@
 .dnfl-checkbox-grid {
   display: grid !important;
   grid-template-columns: repeat(2, 1fr) !important;
-  gap: 0.65rem !important;
+  gap: 0.5rem !important;
 
   @media (max-width: 580px) {
     grid-template-columns: 1fr !important;
@@ -714,14 +729,13 @@
   .dnfl-checkbox-label {
     display: flex !important;
     align-items: flex-start !important;
-    gap: 0.5rem !important;
-    font-size: 0.825rem !important;
+    gap: 0.4rem !important;
+    font-size: 0.8rem !important;
     color: #334155 !important;
     cursor: pointer !important;
 
     input[type="checkbox"] {
       margin-top: 0.15rem !important;
-      accent-color: var(--dnfl-primary, #0577B1) !important;
     }
   }
 }
@@ -729,109 +743,137 @@
 .dnfl-form-actions {
   display: flex !important;
   justify-content: flex-end !important;
-  margin-top: 0.5rem !important;
+  margin-top: 1rem !important;
+}
 
-  .dnfl-btn-primary {
-    background: var(--dnfl-primary, #0577B1) !important;
-    color: #ffffff !important;
-    border: none !important;
-    padding: 0.6rem 1.25rem !important;
-    border-radius: 6px !important;
-    font-weight: 700 !important;
-    font-size: 0.9rem !important;
-    cursor: pointer !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-    transition: background 0.2s ease !important;
+/* 10. Status Badges & Buttons */
+.dnfl-btn-primary {
+  background: var(--dnfl-primary, #0577B1) !important;
+  color: #ffffff !important;
+  border: none !important;
+  padding: 0.55rem 1.1rem !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  font-size: 0.85rem !important;
+  cursor: pointer !important;
+  transition: background 0.2s ease !important;
 
-    &:hover {
-      background: var(--dnfl-primary-hover, #045e8c) !important;
-    }
-
-    &:disabled {
-      opacity: 0.6 !important;
-      cursor: not-allowed !important;
-    }
+  &:hover {
+    background: var(--dnfl-primary-hover, #045e8c) !important;
   }
 
-  .dnfl-btn-secondary {
+  &:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+  }
+}
+
+.dnfl-btn-secondary {
+  background: #ffffff !important;
+  color: #334155 !important;
+  border: 1px solid #cbd5e1 !important;
+  padding: 0.45rem 0.85rem !important;
+  border-radius: 6px !important;
+  font-weight: 700 !important;
+  font-size: 0.8rem !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+
+  &:hover {
     background: #f1f5f9 !important;
-    color: #334155 !important;
-    border: 1px solid #cbd5e1 !important;
-    padding: 0.4rem 0.75rem !important;
-    border-radius: 6px !important;
-    font-weight: 700 !important;
-    font-size: 0.8rem !important;
-    text-decoration: none !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 0.4rem !important;
-
-    &:hover {
-      background: #e2e8f0 !important;
-      color: #0f172a !important;
-    }
-
-    &.dnfl-btn-sm {
-      padding: 0.25rem 0.6rem !important;
-      font-size: 0.75rem !important;
-    }
+    color: #0f172a !important;
   }
-}
 
-/* 10. Status Utilities */
-.dnfl-status-loading {
-  padding: 1.5rem !important;
-  text-align: center !important;
-  color: #64748b !important;
-  font-size: 0.9rem !important;
-}
-
-.dnfl-status-success {
-  padding: 0.75rem 1rem !important;
-  background: #dcfce7 !important;
-  border: 1px solid #bbf7d0 !important;
-  color: #15803d !important;
-  border-radius: 6px !important;
-  font-size: 0.85rem !important;
-  font-weight: 700 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.5rem !important;
-}
-
-.dnfl-status-error {
-  padding: 0.75rem 1rem !important;
-  background: #fee2e2 !important;
-  border: 1px solid #fecaca !important;
-  color: #b91c1c !important;
-  border-radius: 6px !important;
-  font-size: 0.85rem !important;
-  font-weight: 700 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.5rem !important;
+  &.dnfl-btn-sm {
+    padding: 0.25rem 0.6rem !important;
+    font-size: 0.75rem !important;
+  }
 }
 
 .dnfl-btn-subtle {
   background: transparent !important;
   border: none !important;
-  color: var(--dnfl-primary, #0577B1) !important;
+  color: #64748b !important;
+  font-size: 0.8rem !important;
   font-weight: 700 !important;
-  font-size: 0.85rem !important;
   cursor: pointer !important;
-  padding: 0 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.35rem !important;
+  padding: 0.2rem 0.4rem !important;
 
   &:hover {
-    text-decoration: underline !important;
+    color: #0f172a !important;
   }
 }
 
-/* 11. Tables System */
+.dnfl-status-loading {
+  text-align: center !important;
+  padding: 2rem !important;
+  color: #64748b !important;
+  font-size: 0.9rem !important;
+  font-style: italic !important;
+}
+
+.dnfl-status-error {
+  background: #fef2f2 !important;
+  border: 1px solid #fecaca !important;
+  color: #dc2626 !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 6px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 1rem !important;
+}
+
+.dnfl-status-success {
+  background: #f0fdf4 !important;
+  border: 1px solid #bbf7d0 !important;
+  color: #16a34a !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 6px !important;
+  font-size: 0.85rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 1rem !important;
+}
+
+/* 11. Notifications Modal Content */
+.dnfl-hpm-section {
+  margin-bottom: 1.25rem !important;
+
+  .dnfl-hpm-section-title {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    color: var(--dnfl-primary, #0577B1) !important;
+    margin: 0 0 0.5rem 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+  }
+
+  .dnfl-hpm-card {
+    background: #f8fafc !important;
+    border: 1px solid #cbd5e1 !important;
+    border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
+    border-radius: 6px !important;
+    padding: 0.75rem 1rem !important;
+    margin-bottom: 0.5rem !important;
+    font-size: 0.85rem !important;
+    color: #334155 !important;
+
+    .dnfl-hpm-title {
+      font-weight: 700 !important;
+      color: #0f172a !important;
+      margin-bottom: 0.25rem !important;
+      display: flex !important;
+      align-items: center !important;
+      gap: 0.35rem !important;
+    }
+  }
+}
+
+/* 12. Base Table Styles */
+.dnfl-tab-pane {
+  width: 100% !important;
+}
+
 .dnfl-table {
   width: 100% !important;
   border-collapse: collapse !important;
@@ -841,48 +883,50 @@
     background: #f1f5f9 !important;
     color: #475569 !important;
     font-weight: 700 !important;
+    padding: 0.5rem 0.75rem !important;
     text-align: left !important;
-    padding: 0.6rem 0.75rem !important;
     border-bottom: 2px solid #cbd5e1 !important;
   }
 
   td {
-    padding: 0.55rem 0.75rem !important;
+    padding: 0.5rem 0.75rem !important;
     border-bottom: 1px solid #e2e8f0 !important;
-    color: #334155 !important;
+    color: #0f172a !important;
   }
 
-  .dnfl-row-even {
-    background: #fafafa !important;
+  tr.dnfl-row-odd {
+    background-color: #ffffff !important;
   }
 
-  .dnfl-row-odd {
-    background: #ffffff !important;
+  tr.dnfl-row-even {
+    background-color: #fafafa !important;
   }
 }
 
-.dnfl-pill-blue,
-.dnfl-pill-gold,
-.dnfl-pill-gray {
-  display: inline-block !important;
-  padding: 0.15rem 0.45rem !important;
-  border-radius: 4px !important;
-  font-size: 0.7rem !important;
+/* 13. Pills & Badges */
+.dnfl-pill-gold {
+  background: #fef3c7 !important;
+  color: #b45309 !important;
   font-weight: 800 !important;
-  line-height: 1.2 !important;
+  font-size: 0.7rem !important;
+  padding: 0.15rem 0.4rem !important;
+  border-radius: 4px !important;
 }
 
 .dnfl-pill-blue {
   background: #dbeafe !important;
   color: #1d4ed8 !important;
-}
-
-.dnfl-pill-gold {
-  background: #fef3c7 !important;
-  color: #b45309 !important;
+  font-weight: 800 !important;
+  font-size: 0.7rem !important;
+  padding: 0.15rem 0.4rem !important;
+  border-radius: 4px !important;
 }
 
 .dnfl-pill-gray {
   background: #f1f5f9 !important;
   color: #64748b !important;
+  font-weight: 800 !important;
+  font-size: 0.7rem !important;
+  padding: 0.15rem 0.4rem !important;
+  border-radius: 4px !important;
 }
