@@ -1139,19 +1139,28 @@ a.dnfl-btn-secondary:hover,
   }
 }
 /* ==========================================================================
-   Duke Networking Fantasy League (DNFL) - Popups Engine Stylesheet
-   File: _popups-v4_24.scss
-   Version: 4.24
-   Description: Component SCSS for Modal Overlay, Franchise Scorecard, Player Profile & Notifications.
+   DNFL Popups Module SCSS Partial
+   Duke Networking Fantasy League (DNFL) - v4.26
    ========================================================================== */
-/* 0. Design Tokens & Position Variables */
+/* 0. Module & Position Color Tokens (Defined for future migration to _variables.scss) */
 :root, .dnfl {
-  --dnfl-pos-qb: var(--dnfl-chart-5, #dc2626); /* Crimson Red (Primary QB Accent) */
-  --dnfl-pos-rb: var(--dnfl-green-text, #15803d); /* Emerald Green (Backfield Playmakers) */
-  --dnfl-pos-wr: var(--dnfl-chart-4, #d97706); /* Amber Gold (Pass Catchers) */
-  --dnfl-pos-te: var(--dnfl-chart-6, #4f46e5); /* Indigo Purple (Tight Ends) */
-  --dnfl-pos-k: var(--dnfl-text-heading, #334155); /* Dark Charcoal Slate (Muted Kicker) */
-  --dnfl-pos-def: var(--dnfl-gray-text, #64748b); /* Medium Slate Gray (Muted Defense) */
+  /* Position Badge Specific Variables */
+  --dnfl-pos-red: #dc2626; /* Crimson Red (Primary QB Accent) */
+  --dnfl-pos-green: #15803d; /* Emerald Green (RB Backfield Playmakers) */
+  --dnfl-pos-gold: #d97706; /* Amber Gold (WR Pass Catchers) */
+  --dnfl-pos-purple: #4f46e5; /* Indigo Purple (TE Tight Ends) */
+  --dnfl-pos-charcoal: #334155; /* Dark Charcoal Slate (Kicker) */
+  --dnfl-pos-slate: #64748b; /* Medium Slate Gray (Defense) */
+  /* Modal Surface & Layout Tokens */
+  --dnfl-modal-overlay-bg: rgba(15, 23, 42, 0.75);
+  --dnfl-modal-card-bg: #ffffff;
+  --dnfl-modal-header-bg: #0f172a;
+  --dnfl-modal-border: #cbd5e1;
+  --dnfl-modal-text-dark: #0f172a;
+  --dnfl-modal-text-muted: #64748b;
+  --dnfl-modal-text-light: #94a3b8;
+  --dnfl-modal-accent: #0577B1;
+  --dnfl-modal-gold: #f59e0b;
 }
 
 /* 1. Modal Overlay & Container */
@@ -1159,9 +1168,9 @@ a.dnfl-btn-secondary:hover,
   position: fixed !important;
   top: 0 !important;
   left: 0 !important;
-  width: 100vw !important;
-  height: 100vh !important;
-  background-color: rgba(15, 23, 42, 0.75) !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background-color: var(--dnfl-modal-overlay-bg, rgba(15, 23, 42, 0.75)) !important;
   backdrop-filter: blur(4px) !important;
   z-index: 999999 !important;
   display: flex !important;
@@ -1177,25 +1186,25 @@ a.dnfl-btn-secondary:hover,
   width: 100% !important;
   max-width: 48rem !important;
   max-height: 90vh !important;
-  background: #ffffff !important;
+  background: var(--dnfl-modal-card-bg, #ffffff) !important;
   border-radius: 12px !important;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.35) !important;
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
-  border: 1px solid #cbd5e1 !important;
-  color: #0f172a !important;
+  border: 1px solid var(--dnfl-modal-border, #cbd5e1) !important;
+  color: var(--dnfl-modal-text-dark, #0f172a) !important;
   font-family: var(--dnfl-font-main, Arial, Helvetica, sans-serif) !important;
   position: relative !important;
 }
 .dnfl-modal-card .dnfl-modal-header {
   padding: 0.85rem 1.25rem !important;
-  background: #0f172a !important;
+  background: var(--dnfl-modal-header-bg, #0f172a) !important;
   color: #ffffff !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
-  border-bottom: 3px solid var(--dnfl-primary, #0577B1) !important;
+  border-bottom: 3px solid var(--dnfl-modal-accent, #0577B1) !important;
 }
 .dnfl-modal-card .dnfl-modal-header h3 {
   margin: 0 !important;
@@ -1214,9 +1223,18 @@ a.dnfl-btn-secondary:hover,
   align-items: center !important;
   gap: 0.5rem !important;
 }
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-gear-btn,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-close-btn {
+.dnfl-modal-card .dnfl-modal-body {
+  padding: 1rem !important;
+  overflow-y: auto !important;
+  max-height: calc(90vh - 4.25rem) !important;
+  background-color: var(--dnfl-modal-card-bg, #ffffff) !important;
+  position: relative !important;
+  z-index: 2 !important;
+}
+
+/* 1.1 Root-Level Header Button Resets */
+button#dnfl-modal-close-btn,
+button#dnfl-modal-gear-btn {
   -moz-appearance: none !important;
        appearance: none !important;
   -webkit-appearance: none !important;
@@ -1226,7 +1244,7 @@ a.dnfl-btn-secondary:hover,
   border-style: none !important;
   box-shadow: none !important;
   outline: none !important;
-  color: #94a3b8 !important;
+  color: var(--dnfl-modal-text-light, #94a3b8) !important;
   font-size: 1.25rem !important;
   cursor: pointer !important;
   padding: 0.25rem 0.4rem !important;
@@ -1236,203 +1254,111 @@ a.dnfl-btn-secondary:hover,
   align-items: center !important;
   justify-content: center !important;
 }
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn:hover,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-gear-btn:hover,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-close-btn:hover {
+button#dnfl-modal-close-btn:hover,
+button#dnfl-modal-gear-btn:hover {
   color: #ffffff !important;
   background: transparent !important;
 }
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn.is-active,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-gear-btn.is-active,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-close-btn.is-active {
-  color: var(--dnfl-chart-4, #f59e0b) !important;
+button#dnfl-modal-close-btn.is-active,
+button#dnfl-modal-gear-btn.is-active {
+  color: var(--dnfl-modal-gold, #f59e0b) !important;
   transform: scale(1.1) !important;
 }
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions .dnfl-modal-header-btn.dnfl-is-hidden,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-gear-btn.dnfl-is-hidden,
-.dnfl-modal-card .dnfl-modal-header .dnfl-modal-header-actions #dnfl-modal-close-btn.dnfl-is-hidden {
+button#dnfl-modal-close-btn.dnfl-is-hidden,
+button#dnfl-modal-gear-btn.dnfl-is-hidden {
   display: none !important;
 }
-.dnfl-modal-card .dnfl-modal-body {
-  padding: 1rem !important;
-  overflow-y: auto !important;
-  max-height: calc(90vh - 4.25rem) !important;
-  background-color: #ffffff !important;
-  position: relative !important;
-  z-index: 2 !important;
-}
 
-/* 1.1 Franchise Icon Utility Styles */
+/* 1.2 Franchise Icon Utilities */
 .franchise-icon-md,
 .dnfl-ficon-md {
-  width: var(--dnfl-ficon-md, 2.25rem) !important;
-  height: var(--dnfl-ficon-md, 2.25rem) !important;
+  width: 2.25rem !important;
+  height: 2.25rem !important;
   -o-object-fit: cover !important;
      object-fit: cover !important;
-  flex-shrink: 0 !important;
 }
 
 .dnfl-ficon-rounded {
   border-radius: 6px !important;
-  overflow: hidden !important;
 }
 
-/* 1.2 Icon Utility Colors */
-.dnfl-icon-amber {
-  color: var(--dnfl-chart-4, #f59e0b) !important;
-}
-
-/* 2. Notification Bell & Menu Items */
-.dnfl-menu-bell-item {
-  display: inline-flex !important;
-  align-items: center !important;
-}
-.dnfl-menu-bell-item .dnfl-notification-holder {
-  position: relative !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-.dnfl-menu-bell-item .dnfl-notification-holder .dnfl-notification-link {
-  color: #cbd5e1 !important;
-  font-size: 1.15rem !important;
-  padding: 0.4rem 0.6rem !important;
-  position: relative !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  transition: color 0.2s ease !important;
-}
-.dnfl-menu-bell-item .dnfl-notification-holder .dnfl-notification-link:hover {
-  color: #ffffff !important;
-}
-.dnfl-menu-bell-item .dnfl-notification-holder.has-unread .dnfl-notification-link {
-  color: var(--dnfl-chart-4, #f59e0b) !important;
-}
-.dnfl-menu-bell-item .dnfl-notification-holder .dnfl-notification-badge {
-  position: absolute !important;
-  top: 0.15rem !important;
-  right: 0.15rem !important;
-  background-color: #ef4444 !important;
-  color: #ffffff !important;
-  font-size: 0.65rem !important;
-  font-weight: 800 !important;
-  padding: 0.1rem 0.3rem !important;
-  border-radius: 9999px !important;
-  line-height: 1 !important;
-  box-shadow: 0 0 0 2px #0f172a !important;
-}
-.dnfl-menu-bell-item .dnfl-notification-holder .dnfl-notification-badge.dnfl-is-hidden {
-  display: none !important;
-}
-
-/* 3. Navigation Tabs Bar */
+/* 2. Navigation Tab Bar */
 .dnfl-modal-tabs {
   display: flex !important;
-  gap: 0.5rem !important;
-  margin-bottom: 0.75rem !important;
-}
-.dnfl-modal-tabs.dnfl-full-width-tabs {
-  width: 100% !important;
-}
-.dnfl-modal-tabs.dnfl-full-width-tabs .dnfl-modal-tab-btn {
-  flex: 1 1 0 !important;
-  text-align: center !important;
-  justify-content: center !important;
+  gap: 0.25rem !important;
+  border-bottom: 2px solid var(--dnfl-modal-border, #cbd5e1) !important;
+  margin-bottom: 1rem !important;
+  background: #f8fafc !important;
+  padding: 0.25rem 0.5rem 0 0.5rem !important;
+  border-radius: 6px 6px 0 0 !important;
 }
 .dnfl-modal-tabs .dnfl-modal-tab-btn {
-  background: #f1f5f9 !important;
-  color: #475569 !important;
-  border: 1px solid #cbd5e1 !important;
-  padding: 0.45rem 0.75rem !important;
-  border-radius: 6px !important;
-  font-weight: 700 !important;
+  -webkit-appearance: none !important;
+     -moz-appearance: none !important;
+          appearance: none !important;
+  background: transparent !important;
+  border: none !important;
+  padding: 0.6rem 1rem !important;
   font-size: 0.85rem !important;
+  font-weight: 700 !important;
+  color: var(--dnfl-modal-text-muted, #64748b) !important;
   cursor: pointer !important;
+  border-bottom: 3px solid transparent !important;
   transition: all 0.2s ease !important;
-  white-space: nowrap !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
 }
 .dnfl-modal-tabs .dnfl-modal-tab-btn:hover {
-  background: #e2e8f0 !important;
-  color: #0f172a !important;
+  color: var(--dnfl-modal-accent, #0577B1) !important;
+  background: #f1f5f9 !important;
 }
 .dnfl-modal-tabs .dnfl-modal-tab-btn.is-active {
-  background: var(--dnfl-primary, #0577B1) !important;
-  color: #ffffff !important;
-  border-color: var(--dnfl-primary, #0577B1) !important;
-}
-@media (max-width: 580px) {
-  .dnfl-modal-tabs .dnfl-modal-tab-btn {
-    padding: 0.4rem 0.2rem !important;
-  }
-  .dnfl-modal-tabs .dnfl-modal-tab-btn .dnfl-tab-label {
-    display: none !important;
-  }
-  .dnfl-modal-tabs .dnfl-modal-tab-btn.is-active .dnfl-tab-label {
-    display: inline !important;
-    margin-left: 0.2rem !important;
-  }
+  color: var(--dnfl-modal-accent, #0577B1) !important;
+  border-bottom-color: var(--dnfl-modal-accent, #0577B1) !important;
+  background: #ffffff !important;
 }
 
-/* 4. Franchise Hero Card & Layout */
+/* 3. Hero Header Section (Overview Tab Only) */
 .dnfl-franchise-hero-header {
-  position: relative !important;
-  display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  margin-bottom: 0.75rem !important;
-  background: transparent !important;
+  display: grid !important;
+  grid-template-columns: 2fr 1fr !important;
   gap: 1rem !important;
+  margin-bottom: 1rem !important;
+  padding-bottom: 1rem !important;
+  border-bottom: 1px solid var(--dnfl-modal-border, #cbd5e1) !important;
+}
+@media (max-width: 640px) {
+  .dnfl-franchise-hero-header {
+    grid-template-columns: 1fr !important;
+  }
 }
 .dnfl-franchise-hero-header .dnfl-hero-left-meta {
-  flex: 1 1 65% !important;
   display: flex !important;
   flex-direction: column !important;
   gap: 0.5rem !important;
 }
 .dnfl-franchise-hero-header .dnfl-hero-logo-wrapper {
-  flex: 0 0 35% !important;
-  max-width: 15rem !important;
   display: flex !important;
-  justify-content: center !important;
   align-items: center !important;
+  justify-content: center !important;
+  background: #f8fafc !important;
+  border: 1px solid var(--dnfl-modal-border, #cbd5e1) !important;
+  border-radius: 8px !important;
+  padding: 0.5rem !important;
 }
 .dnfl-franchise-hero-header .dnfl-hero-logo-wrapper .dnfl-hero-large-logo {
-  max-width: 15rem !important;
-  max-height: 15rem !important;
-  width: auto !important;
-  height: auto !important;
+  max-width: 100% !important;
+  max-height: 120px !important;
   -o-object-fit: contain !important;
      object-fit: contain !important;
-  margin: 0 auto !important;
-  filter: none !important;
-}
-@media (max-width: 580px) {
-  .dnfl-franchise-hero-header {
-    flex-direction: column !important;
-    align-items: center !important;
-    text-align: center !important;
-    gap: 0.65rem !important;
-  }
-  .dnfl-franchise-hero-header .dnfl-hero-logo-wrapper {
-    order: 1 !important;
-    max-width: 10rem !important;
-    margin: 0 auto !important;
-  }
-  .dnfl-franchise-hero-header .dnfl-hero-logo-wrapper .dnfl-hero-large-logo {
-    max-width: 10rem !important;
-    max-height: 10rem !important;
-  }
-  .dnfl-franchise-hero-header .dnfl-hero-left-meta {
-    order: 2 !important;
-    width: 100% !important;
-  }
 }
 
-/* 5. Owner Details Card */
+/* 4. Owner & Division Details Card */
 .dnfl-owner-details-card {
   background: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  border-top: 3px solid var(--dnfl-primary, #0577B1) !important;
+  border: 1px solid var(--dnfl-modal-border, #cbd5e1) !important;
+  border-top: 3px solid var(--dnfl-modal-accent, #0577B1) !important;
   border-radius: 6px !important;
   padding: 0.55rem 0.75rem !important;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
@@ -1443,61 +1369,15 @@ a.dnfl-btn-secondary:hover,
 .dnfl-owner-details-card .dnfl-owner-val {
   font-size: 1.15rem !important;
   font-weight: 800 !important;
-  color: #0f172a !important;
+  color: var(--dnfl-modal-accent, #0577B1) !important;
 }
 .dnfl-owner-details-card .dnfl-div-val {
   font-size: 0.85rem !important;
   font-weight: 700 !important;
-  color: #0f172a !important;
+  color: var(--dnfl-modal-text-dark, #0f172a) !important;
 }
 
-/* 6. Player Hero Card */
-.dnfl-player-hero-card {
-  display: flex !important;
-  align-items: center !important;
-  gap: 1rem !important;
-  background: #f8fafc !important;
-  border: 1px solid #cbd5e1 !important;
-  border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
-  border-radius: 8px !important;
-  padding: 0.75rem 1rem !important;
-  margin-bottom: 0.75rem !important;
-}
-.dnfl-player-hero-card .dnfl-hero-avatar-wrapper {
-  position: relative !important;
-  width: 4rem !important;
-  height: 4rem !important;
-  flex-shrink: 0 !important;
-}
-.dnfl-player-hero-card .dnfl-hero-avatar-wrapper .dnfl-hero-headshot {
-  width: 100% !important;
-  height: 100% !important;
-  border-radius: 50% !important;
-  -o-object-fit: cover !important;
-     object-fit: cover !important;
-  border: 2px solid var(--dnfl-primary, #0577B1) !important;
-  background: #ffffff !important;
-}
-.dnfl-player-hero-card .dnfl-hero-meta {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 0.25rem !important;
-}
-.dnfl-player-hero-card .dnfl-hero-meta .dnfl-hero-name {
-  margin: 0 !important;
-  font-size: 1.25rem !important;
-  font-weight: 800 !important;
-  color: #0f172a !important;
-  line-height: 1.15 !important;
-}
-.dnfl-player-hero-card .dnfl-hero-meta .dnfl-hero-tags {
-  display: flex !important;
-  align-items: center !important;
-  flex-wrap: wrap !important;
-  gap: 0.4rem !important;
-}
-
-/* 7. Scorecard Badges Grid */
+/* 5. Scorecard Grid & Metrics */
 .dnfl-scorecard-grid {
   display: grid !important;
   grid-template-columns: repeat(3, 1fr) !important;
@@ -1506,8 +1386,8 @@ a.dnfl-btn-secondary:hover,
 }
 .dnfl-scorecard-grid .dnfl-stat-card {
   background: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
-  border-top: 3px solid var(--dnfl-primary, #0577B1) !important;
+  border: 1px solid var(--dnfl-modal-border, #cbd5e1) !important;
+  border-top: 3px solid var(--dnfl-modal-accent, #0577B1) !important;
   border-radius: 6px !important;
   padding: 0.5rem 0.35rem !important;
   text-align: center !important;
@@ -1517,390 +1397,172 @@ a.dnfl-btn-secondary:hover,
   justify-content: center !important;
   gap: 0.15rem !important;
 }
-.dnfl-scorecard-grid .dnfl-stat-card.card-record {
-  grid-column: 1;
-  grid-row: 1;
-}
-.dnfl-scorecard-grid .dnfl-stat-card.card-bbid {
-  grid-column: 1;
-  grid-row: 2;
-}
-.dnfl-scorecard-grid .dnfl-stat-card.card-pf {
-  grid-column: 2;
-  grid-row: 1;
-}
-.dnfl-scorecard-grid .dnfl-stat-card.card-pa {
-  grid-column: 2;
-  grid-row: 2;
-}
-.dnfl-scorecard-grid .dnfl-stat-card.card-seed {
-  grid-column: 3;
-  grid-row: 1;
-}
-.dnfl-scorecard-grid .dnfl-stat-card.card-rank {
-  grid-column: 3;
-  grid-row: 2;
-}
 .dnfl-scorecard-grid .dnfl-stat-card .dnfl-stat-lbl {
   font-size: 0.7rem !important;
   font-weight: 800 !important;
   text-transform: uppercase !important;
-  color: #64748b !important;
+  color: var(--dnfl-modal-text-muted, #64748b) !important;
   letter-spacing: 0.02em !important;
 }
 .dnfl-scorecard-grid .dnfl-stat-card .dnfl-stat-val-main {
   font-size: 1.15rem !important;
   font-weight: 800 !important;
-  color: var(--dnfl-primary, #0577B1) !important;
+  color: var(--dnfl-modal-accent, #0577B1) !important;
   line-height: 1.1 !important;
 }
 .dnfl-scorecard-grid .dnfl-stat-card .dnfl-stat-val-main .dnfl-ppg-label {
   font-size: 0.7rem !important;
   font-weight: 800 !important;
-  color: var(--dnfl-primary, #0577B1) !important;
+  color: var(--dnfl-modal-accent, #0577B1) !important;
   margin-left: 0.1rem !important;
 }
 .dnfl-scorecard-grid .dnfl-stat-card .dnfl-stat-val-sub {
   font-size: 0.7rem !important;
   font-weight: 600 !important;
-  color: #64748b !important;
+  color: var(--dnfl-modal-text-muted, #64748b) !important;
 }
 @media (max-width: 580px) {
   .dnfl-scorecard-grid {
     grid-template-columns: repeat(2, 1fr) !important;
   }
-  .dnfl-scorecard-grid .dnfl-stat-card.card-record {
-    grid-column: 1;
-    grid-row: 1;
-  }
-  .dnfl-scorecard-grid .dnfl-stat-card.card-pf {
-    grid-column: 1;
-    grid-row: 2;
-  }
-  .dnfl-scorecard-grid .dnfl-stat-card.card-seed {
-    grid-column: 1;
-    grid-row: 3;
-  }
-  .dnfl-scorecard-grid .dnfl-stat-card.card-bbid {
-    grid-column: 2;
-    grid-row: 1;
-  }
-  .dnfl-scorecard-grid .dnfl-stat-card.card-pa {
-    grid-column: 2;
-    grid-row: 2;
-  }
-  .dnfl-scorecard-grid .dnfl-stat-card.card-rank {
-    grid-column: 2;
-    grid-row: 3;
-  }
 }
 
-/* 8. Top Performers Section */
+/* 6. Top Performers & Position Badges */
 .dnfl-stars-wrapper {
-  margin-top: 0.75rem !important;
+  margin-top: 1rem !important;
 }
 .dnfl-stars-wrapper .dnfl-section-title {
-  font-size: 0.95rem !important;
-  font-weight: 700 !important;
-  color: var(--dnfl-primary, #0577B1) !important;
-  margin: 0 0 0.5rem 0 !important;
+  font-size: 1rem !important;
+  font-weight: 800 !important;
+  color: var(--dnfl-modal-text-dark, #0f172a) !important;
+  margin: 0 0 0.75rem 0 !important;
   display: flex !important;
   align-items: center !important;
   gap: 0.4rem !important;
 }
+.dnfl-stars-wrapper .dnfl-section-title i {
+  color: var(--dnfl-modal-gold, #f59e0b) !important;
+}
 .dnfl-stars-wrapper .dnfl-stars-grid {
   display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 0.65rem !important;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+  gap: 0.75rem !important;
 }
-@media (max-width: 580px) {
-  .dnfl-stars-wrapper .dnfl-stars-grid {
-    grid-template-columns: 1fr !important;
-  }
-}
-.dnfl-stars-wrapper .dnfl-star-card {
-  background: #ffffff !important;
-  border: 1px solid #cbd5e1 !important;
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card {
+  background: #f8fafc !important;
+  border: 1px solid var(--dnfl-modal-border, #cbd5e1) !important;
   border-radius: 8px !important;
-  padding: 0.6rem !important;
+  padding: 0.6rem 0.75rem !important;
   display: flex !important;
   align-items: center !important;
-  gap: 0.65rem !important;
+  gap: 0.6rem !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
 }
-.dnfl-stars-wrapper .dnfl-star-card:hover {
-  border-color: var(--dnfl-primary, #0577B1) !important;
-  box-shadow: 0 4px 12px rgba(5, 119, 177, 0.15) !important;
-  transform: translateY(-2px) !important;
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card:hover {
+  background: #ffffff !important;
+  border-color: var(--dnfl-modal-accent, #0577B1) !important;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
 }
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper {
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-avatar-wrapper {
   position: relative !important;
-  width: 3.25rem !important;
-  height: 3.25rem !important;
+  width: 3rem !important;
+  height: 3rem !important;
   flex-shrink: 0 !important;
 }
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-star-avatar {
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-star-avatar {
   width: 100% !important;
   height: 100% !important;
   border-radius: 50% !important;
   -o-object-fit: cover !important;
      object-fit: cover !important;
-  border: 2px solid #e2e8f0 !important;
-  background: #f8fafc !important;
+  border: 2px solid var(--dnfl-modal-border, #cbd5e1) !important;
+  background: #ffffff !important;
 }
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge {
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge {
   position: absolute !important;
-  bottom: -0.25rem !important;
-  right: -0.25rem !important;
+  bottom: -4px !important;
+  right: -4px !important;
+  padding: 0.1rem 0.35rem !important;
   font-size: 0.6rem !important;
   font-weight: 800 !important;
-  padding: 0.1rem 0.3rem !important;
   border-radius: 4px !important;
-  color: #ffffff !important;
+  text-transform: uppercase !important;
   line-height: 1 !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-qb {
-  background-color: var(--dnfl-pos-qb, var(--dnfl-chart-5, #dc2626)) !important;
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-qb {
+  background-color: var(--dnfl-pos-red, #dc2626) !important;
   color: #ffffff !important;
 }
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-rb {
-  background-color: var(--dnfl-pos-rb, var(--dnfl-green-text, #15803d)) !important;
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-rb {
+  background-color: var(--dnfl-pos-green, #15803d) !important;
   color: #ffffff !important;
 }
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-wr {
-  background-color: var(--dnfl-pos-wr, var(--dnfl-chart-4, #d97706)) !important;
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-wr {
+  background-color: var(--dnfl-pos-gold, #d97706) !important;
   color: #ffffff !important;
 }
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-te {
-  background-color: var(--dnfl-pos-te, var(--dnfl-chart-6, #4f46e5)) !important;
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-te {
+  background-color: var(--dnfl-pos-purple, #4f46e5) !important;
   color: #ffffff !important;
 }
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-pk, .dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-k {
-  background-color: var(--dnfl-pos-k, var(--dnfl-text-heading, #334155)) !important;
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-pk, .dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-k {
+  background-color: var(--dnfl-pos-charcoal, #334155) !important;
   color: #ffffff !important;
 }
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-def, .dnfl-stars-wrapper .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-dst {
-  background-color: var(--dnfl-pos-def, var(--dnfl-gray-text, #64748b)) !important;
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-def, .dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-avatar-wrapper .dnfl-position-badge.pos-dst {
+  background-color: var(--dnfl-pos-slate, #64748b) !important;
   color: #ffffff !important;
 }
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-info {
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-info {
   display: flex !important;
   flex-direction: column !important;
-  gap: 0.15rem !important;
 }
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-info .dnfl-star-name {
-  font-size: 0.95rem !important;
-  font-weight: 800 !important;
-  color: #0f172a !important;
-  line-height: 1.15 !important;
-}
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-info .dnfl-star-main-metric {
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-info .dnfl-star-name {
   font-size: 0.85rem !important;
   font-weight: 800 !important;
-  color: var(--dnfl-primary, #0577B1) !important;
+  color: var(--dnfl-modal-text-dark, #0f172a) !important;
 }
-.dnfl-stars-wrapper .dnfl-star-card .dnfl-star-info .dnfl-star-sub-metric {
-  font-size: 0.7rem !important;
-  color: #64748b !important;
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-info .dnfl-star-main-metric {
+  font-size: 0.8rem !important;
+  font-weight: 800 !important;
+  color: var(--dnfl-modal-accent, #0577B1) !important;
+}
+.dnfl-stars-wrapper .dnfl-stars-grid .dnfl-star-card .dnfl-star-info .dnfl-star-sub-metric {
+  font-size: 0.68rem !important;
+  color: var(--dnfl-modal-text-muted, #64748b) !important;
 }
 
-/* 9. Setup Form & Admin Section Styles */
-.dnfl-setup-container {
-  padding: 0.5rem 0 !important;
+/* 7. Icon Helpers & Status Callouts */
+.dnfl-icon-amber {
+  color: var(--dnfl-modal-gold, #f59e0b) !important;
 }
 
 .dnfl-commish-admin-card {
   margin-bottom: 1rem !important;
   padding: 0.75rem 1rem !important;
   background: #f1f5f9 !important;
-  border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
+  border-left: 4px solid var(--dnfl-modal-accent, #0577B1) !important;
   border-radius: 6px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: space-between !important;
 }
-
-.dnfl-news-body {
-  margin: 0.25rem 0 0 0 !important;
-  font-size: 0.85rem !important;
-  color: #475569 !important;
+.dnfl-commish-admin-card .dnfl-commish-admin-text {
+  font-size: 0.8rem !important;
+  color: var(--dnfl-modal-text-muted, #64748b) !important;
 }
 
 .dnfl-empty-notifications {
   text-align: center !important;
   padding: 2rem 1rem !important;
 }
-
-.dnfl-hpm-card {
-  margin-bottom: 0.75rem !important;
-  background: #f8fafc !important;
-  border: 1px solid #e2e8f0 !important;
-  border-left: 4px solid var(--dnfl-primary, #0577B1) !important;
-  border-radius: 6px !important;
-  padding: 0.75rem 1rem !important;
-}
-.dnfl-hpm-card .dnfl-hpm-title {
-  font-weight: 700 !important;
-  color: #0f172a !important;
-  font-size: 0.95rem !important;
-}
-
-.dnfl-hpm-section {
-  margin-bottom: 1.25rem !important;
-}
-.dnfl-hpm-section .dnfl-hpm-section-title {
-  font-size: 0.95rem !important;
-  font-weight: 700 !important;
-  color: var(--dnfl-primary, #0577B1) !important;
-  margin: 0 0 0.5rem 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.4rem !important;
-}
-
-.dnfl-form-section {
-  background: #f8fafc !important;
-  border: 1px solid #e2e8f0 !important;
-  border-radius: 8px !important;
-  padding: 1rem !important;
-  margin-bottom: 1rem !important;
-}
-.dnfl-form-section .dnfl-form-section-title {
-  font-size: 0.95rem !important;
-  font-weight: 700 !important;
-  color: var(--dnfl-primary, #0577B1) !important;
-  margin: 0 0 0.75rem 0 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.4rem !important;
-}
-.dnfl-form-section .dnfl-section-header-flex {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  margin-bottom: 0.75rem !important;
-}
-.dnfl-form-section .dnfl-section-header-flex .dnfl-form-section-title {
-  margin: 0 !important;
-}
-.dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.4rem !important;
-}
-.dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions .dnfl-action-link {
-  background: transparent !important;
-  border: none !important;
-  color: var(--dnfl-primary, #0577B1) !important;
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  cursor: pointer !important;
-  padding: 0 !important;
-}
-.dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions .dnfl-action-link:hover {
-  text-decoration: underline !important;
-}
-.dnfl-form-section .dnfl-section-header-flex .dnfl-toggle-actions .dnfl-bullet {
-  color: #94a3b8 !important;
-  font-size: 0.75rem !important;
-}
-
-.dnfl-form-grid {
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 0.85rem !important;
+.dnfl-empty-notifications i {
+  font-size: 2rem !important;
+  color: var(--dnfl-modal-border, #cbd5e1) !important;
   margin-bottom: 0.5rem !important;
-}
-@media (max-width: 580px) {
-  .dnfl-form-grid {
-    grid-template-columns: 1fr !important;
-  }
-}
-
-.dnfl-form-group {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 0.25rem !important;
-}
-.dnfl-form-group label {
-  font-size: 0.75rem !important;
-  font-weight: 700 !important;
-  color: #475569 !important;
-}
-.dnfl-form-group .dnfl-input {
-  width: 100% !important;
-  padding: 0.45rem 0.65rem !important;
-  border: 1px solid #cbd5e1 !important;
-  border-radius: 6px !important;
-  font-size: 0.85rem !important;
-  color: #0f172a !important;
-  background: #ffffff !important;
-  box-sizing: border-box !important;
-}
-.dnfl-form-group .dnfl-input:focus {
-  outline: none !important;
-  border-color: var(--dnfl-primary, #0577B1) !important;
-  box-shadow: 0 0 0 2px rgba(5, 119, 177, 0.2) !important;
-}
-
-.dnfl-checkbox-grid {
-  display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
-  gap: 0.5rem !important;
-}
-@media (max-width: 580px) {
-  .dnfl-checkbox-grid {
-    grid-template-columns: 1fr !important;
-  }
-}
-.dnfl-checkbox-grid .dnfl-checkbox-label {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.4rem !important;
-  font-size: 0.8rem !important;
-  color: #334155 !important;
-  cursor: pointer !important;
-}
-.dnfl-checkbox-grid .dnfl-checkbox-label input[type=checkbox] {
-  accent-color: var(--dnfl-primary, #0577B1) !important;
-  width: 1rem !important;
-  height: 1rem !important;
-}
-
-.dnfl-form-actions {
-  display: flex !important;
-  align-items: center !important;
-  gap: 0.75rem !important;
-  margin-top: 1rem !important;
-}
-.dnfl-form-actions .dnfl-btn-primary {
-  background: var(--dnfl-primary, #0577B1) !important;
-  color: #ffffff !important;
-  border: none !important;
-  padding: 0.55rem 1.25rem !important;
-  border-radius: 6px !important;
-  font-weight: 700 !important;
-  font-size: 0.85rem !important;
-  cursor: pointer !important;
-  transition: background 0.2s ease !important;
-}
-.dnfl-form-actions .dnfl-btn-primary:hover {
-  background: #045e8c !important;
-}
-.dnfl-form-actions .dnfl-btn-secondary {
-  background: #e2e8f0 !important;
-  color: #334155 !important;
-  border: none !important;
-  padding: 0.55rem 1.25rem !important;
-  border-radius: 6px !important;
-  font-weight: 700 !important;
-  font-size: 0.85rem !important;
-  cursor: pointer !important;
-  transition: background 0.2s ease !important;
-}
-.dnfl-form-actions .dnfl-btn-secondary:hover {
-  background: #cbd5e1 !important;
+  display: block !important;
 }
 
 /* ==========================================================================
