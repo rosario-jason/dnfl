@@ -10,11 +10,11 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "Popups JR",
+        VERSION: "Popups JR2",
         BASE_URL: "https://dnfl.live/test/scripts/",
 
         STYLESHEETS: [
-            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-TEST-popups_21.css" }
+            { id: "dnfl-global-css", url: "https://dnfl.live/test/css/dnfl-global-TEST-popups_JR.css" }
         ],
 
         INFRASTRUCTURE: [

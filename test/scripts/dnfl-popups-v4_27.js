@@ -249,7 +249,7 @@
                     <div class="dnfl-card-header dnfl-modal-header">
                         <h3 id="dnfl-modal-title" class="dnfl-card-title"></h3>
                         <div class="dnfl-modal-header-actions">
-                            <button id="dnfl-modal-gear-btn" class="dnfl-modal-header-btn title="Franchise Settings">
+                            <button id="dnfl-modal-gear-btn" class="dnfl-modal-header-btn dnfl-is-hidden" title="Franchise Settings">
                                 <i class="fa-solid fa-gear"></i>
                             </button>
                             <button id="dnfl-modal-close-btn" class="dnfl-modal-header-btn" aria-label="Close Modal" title="Close">
@@ -290,7 +290,7 @@
                     };
                 }
             } else {
-                // gearBtn.classList.add('dnfl-is-hidden');
+                gearBtn.classList.add('dnfl-is-hidden');
                 gearBtn.classList.remove('is-active');
                 gearBtn.onclick = null;
             }
@@ -660,8 +660,8 @@
                     <div class="dnfl-franchise-hero-header">
                         <div class="dnfl-hero-left-meta">
                             <div class="dnfl-owner-details-card">
-                                <div><span class="dnfl-owner-lbl">OWNER: </span><span class="dnfl-owner-val">${targetFran.owner_name || 'N/A'}</span></div>
-                                ${fullLoc ? `<div><span class="dnfl-stat-lbl">DIVISION: </span><span class="dnfl-div-val">${fullLoc}</span></div>` : ''}
+                                <div><span class="dnfl-stat-lbl">OWNER:</span> <strong class="dnfl-owner-val">${targetFran.owner_name || 'N/A'}</strong></div>
+                                ${fullLoc ? `<div><span class="dnfl-stat-lbl">DIVISION:</span> <strong class="dnfl-div-val">${fullLoc}</strong></div>` : ''}
                             </div>
                             ${scoreCardHtml}
                         </div>
