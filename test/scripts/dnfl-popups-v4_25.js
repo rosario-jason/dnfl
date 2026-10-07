@@ -1,36 +1,44 @@
 /* ==========================================================================
-   DNFL Popups Subsystem v4.24
+   DNFL Popups Subsystem v4.25
    Duke Networking Fantasy League (DNFL) Architecture
    ========================================================================== */
 
 (function () {
     'use strict';
 
-    if (window.DNFL && window.DNFL.Popups && window.DNFL.Popups.v24_ready) {
+    if (window.DNFL && window.DNFL.Popups && window.DNFL.Popups.v25_ready) {
+        console.log("[DNFL Popups] Subsystem v4.25 already initialized.");
         return;
     }
 
     window.DNFL = window.DNFL || {};
 
     let isInitialized = false;
-    let capturedHomepageMessages = [];
     let capturedLeagueReminders = [];
+    let capturedHomepageMessages = [];
 
     function getApiClient() {
         if (window.DNFL && window.DNFL.Client) {
             return window.DNFL.Client;
         }
+        if (window.DNFL_API_CLIENT) {
+            return window.DNFL_API_CLIENT;
+        }
         return {
-            fetchData: async function () { return null; },
-            fetchRawText: async function () { return null; },
-            clearCache: function () {}
+            fetchData: async function (endpoint, params, opts) {
+                console.warn("[DNFL Popups] Fallback API client stub called for:", endpoint);
+                return null;
+            },
+            fetchRawText: async function (url, opts) {
+                const res = await fetch(url);
+                return await res.text();
+            }
         };
     }
 
     function toArray(obj) {
         if (!obj) return [];
-        if (Array.isArray(obj)) return obj;
-        return [obj];
+        return Array.isArray(obj) ? obj : [obj];
     }
 
     function norm(id) {
@@ -46,24 +54,35 @@
         return defaultMs;
     }
 
-    function getLoggedInFranchiseId(client) {
-        if (client && typeof client.getUserFranchise === 'function') {
-            const userFid = client.getUserFranchise();
-            if (userFid) return norm(userFid);
+    function getLoggedInFranchiseId() {
+        if (typeof franchise_id !== 'undefined' && franchise_id) {
+            return norm(franchise_id);
         }
         if (window.MFL_USER_ID) return norm(window.MFL_USER_ID);
         if (window.franchise_id) return norm(window.franchise_id);
         return null;
     }
 
-    function isUserCommish(client) {
-        if (client && typeof client.isCommissioner === 'function') {
-            return client.isCommissioner();
+    function isUserCommish() {
+        if (typeof franchise_id !== 'undefined' && norm(franchise_id) === '0000') {
+            return true;
         }
         if (window.is_commissioner === '1' || window.is_commissioner === 1 || window.is_commissioner === true) {
             return true;
         }
         return false;
+    }
+
+    function formatPlayerName(name) {
+        if (!name) return 'N/A';
+        const str = String(name).trim();
+        if (str.includes(',')) {
+            const parts = str.split(',').map(s => s.trim());
+            if (parts.length >= 2) {
+                return `${parts[1]} ${parts[0]}`;
+            }
+        }
+        return str;
     }
 
     function escapeXml(str) {
@@ -93,44 +112,48 @@
                     cards.forEach((card, idx) => {
                         const html = card.innerHTML;
                         if (html && html.trim()) {
-                            capturedHomepageMessages.push({ id: idx + 1, html: html.trim() });
+                            capturedHomepageMessages.push({
+                                id: idx + 1,
+                                html: html.trim()
+                            });
                         }
                     });
                 } else if (hpMsgContainer.innerHTML.trim()) {
-                    capturedHomepageMessages.push({ id: 1, html: hpMsgContainer.innerHTML.trim() });
+                    capturedHomepageMessages.push({
+                        id: 1,
+                        html: hpMsgContainer.innerHTML.trim()
+                    });
                 }
             }
         } catch (e) {
-            console.warn("[DNFL Popups] Non-fatal issue capturing homepage messages:", e);
+            console.warn("[DNFL Popups] Error capturing homepage messages:", e);
         }
     }
 
     function attachLinkInterceptors() {
-        document.body.addEventListener('click', function (e) {
+        document.addEventListener('click', function (e) {
             const link = e.target.closest('a');
             if (!link || !link.href) return;
 
             const href = link.href;
 
-            
             if (href.includes('csetup?') && href.includes('C=FRANCHISE')) {
-                e.preventDefault();
-                const client = getApiClient();
-                const loggedInFid = getLoggedInFranchiseId(client);
-                const isCommish = isUserCommish(client);
+                const loggedInFid = getLoggedInFranchiseId();
+                const isCommish = isUserCommish();
                 if (loggedInFid || isCommish) {
-                    const fid = loggedInFid || '0001';
-                    openFranchisePopup(fid, 'overview', true);
+                    e.preventDefault();
+                    const targetFid = loggedInFid || '0001';
+                    openFranchisePopup(targetFid, 'overview', true);
+                    return;
                 }
-                return;
             }
 
             if (href.includes('options?L=') && href.includes('O=01') && !href.includes('PRINTER=1')) {
                 const m = href.match(/F=(\d{4})/i) || href.match(/FRANCHISE=(\d{4})/i);
-                const targetFid = m ? m[1] : (window.MFL_USER_ID || window.franchise_id);
+                const targetFid = m ? m[1] : getLoggedInFranchiseId();
                 if (targetFid) {
                     e.preventDefault();
-                    openFranchisePopup(targetFid, 'overview', false);
+                    openFranchisePopup(targetFid, 'overview', true);
                     return;
                 }
             }
@@ -196,22 +219,24 @@
         try {
             const rawCsv = await client.fetchRawText(csvUrl, { ttl: 1800000 });
             if (rawCsv && !rawCsv.startsWith('<')) {
-                const lines = rawCsv.split('\n');
+                const lines = rawCsv.split('\n').map(l => l.trim()).filter(Boolean);
                 if (lines.length > 1) {
-                    const header = lines[0].split(',').map(s => s.trim().toLowerCase());
-                    const idIdx = header.findIndex(h => h === 'id' || h === 'fid' || h === 'franchise');
-                    const rankIdx = header.findIndex(h => h === 'rank' || h === 'pos');
-                    const piIdx = header.findIndex(h => h === 'powerindex' || h === 'pi' || h === 'power_index' || h === 'score');
+                    const headers = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/[^a-z0-9_]/g, ''));
+                    const fidIdx = headers.findIndex(h => h === 'fid' || h === 'id' || h === 'franchise_id');
+                    const rankIdx = headers.findIndex(h => h === 'rank' || h === 'power_rank');
+                    const scoreIdx = headers.findIndex(h => h === 'powerindex' || h === 'score' || h === 'points');
 
                     for (let i = 1; i < lines.length; i++) {
-                        const cols = lines[i].split(',').map(s => s.trim());
-                        if (cols.length > 1 && idIdx >= 0) {
-                            const fid = norm(cols[idIdx]);
+                        const cols = lines[i].split(',').map(c => c.trim());
+                        if (cols.length > 1) {
+                            const rawFid = fidIdx >= 0 ? cols[fidIdx] : cols[0];
+                            const fidPadded = norm(rawFid);
                             const rankVal = rankIdx >= 0 ? cols[rankIdx] : String(i);
-                            const piVal = piIdx >= 0 ? cols[piIdx] : '85.00';
-                            map[fid] = {
+                            const scoreVal = scoreIdx >= 0 ? cols[scoreIdx] : '85.00';
+
+                            map[fidPadded] = {
                                 rank: rankVal,
-                                powerIndex: piVal
+                                powerIndex: scoreVal
                             };
                         }
                     }
@@ -298,15 +323,20 @@
         }
     });
 
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+            closeModal();
+        }
+    });
+
     async function openPlayerPopup(playerId, activeTab) {
         activeTab = activeTab || 'overview';
-        const content = document.getElementById('dnfl-modal-content-wrapper');
-
         showModal("Player Card", '<i class="fa-solid fa-user"></i> <span>Player Profile</span>', false, null, false);
 
+        const content = document.getElementById('dnfl-modal-content-wrapper');
         content.innerHTML = `
             <div class="dnfl-status-loading">
-                <i class="fa-solid fa-spinner fa-spin"></i> Loading player #${playerId}...
+                <i class="fa-solid fa-spinner fa-spin"></i> Loading player details...
             </div>
         `;
 
@@ -315,37 +345,31 @@
             const dailyTtl = getTtl(client, 'DAILY', 86400000);
             const hourlyTtl = getTtl(client, 'HOURLY', 3600000);
 
-            const [playerData, leagueData, scoresData] = await Promise.all([
-                client.fetchData('players', { P: playerId, DETAILS: 1 }, { ttl: dailyTtl }).catch(() => null),
-                client.fetchData('league', {}, { ttl: hourlyTtl }).catch(() => null),
-                client.fetchData('playerScores', { P: playerId, W: 'YTD' }, { ttl: hourlyTtl }).catch(() => null)
+            const [playerData, scoresData, newsData] = await Promise.all([
+                client.fetchData('players', { DETAILS: 1, PLAYERS: playerId }, { ttl: dailyTtl }).catch(() => null),
+                client.fetchData('playerScores', { W: 'YTD', PLAYERS: playerId }, { ttl: hourlyTtl }).catch(() => null),
+                client.fetchData('playerNews', { PLAYERS: playerId }, { ttl: hourlyTtl }).catch(() => null)
             ]);
 
-            const players = toArray(playerData?.players?.player);
-            const p = players.find(x => String(x.id) === String(playerId)) || players[0] || { id: playerId, name: `Player #${playerId}` };
+            const pList = toArray(playerData?.players?.player);
+            const p = pList.find(item => norm(item.id) === norm(playerId)) || { id: playerId, name: `Player #${playerId}` };
 
-            const franchises = toArray(leagueData?.league?.franchises?.franchise);
-
-            let ownerHtml = '<span class="dnfl-pill-gray">Free Agent</span>';
-            if (p.roster_status === 'ROSTER' || p.roster_franchise_id) {
-                const fid = norm(p.roster_franchise_id);
-                const fran = franchises.find(f => norm(f.id) === fid);
-                const franName = fran ? fran.name : `Franchise #${fid}`;
-                ownerHtml = `<span class="dnfl-pill-blue"><i class="fa-solid fa-shield-halved"></i> ${franName}</span>`;
-            }
-
+            const formattedName = formatPlayerName(p.name);
             const espnId = p.espn_id || p.espn_id_full;
-            const headshot = espnId 
+            const headshot = espnId
                 ? `https://a.espncdn.com/i/headshots/nfl/players/full/${espnId}.png`
                 : `https://www.mflscripts.com/playerImages_96x96/mfl_${p.id}.png`;
+
+            const ownerText = p.owner_name || p.owner || (p.team ? `Team ${p.team}` : 'Free Agent');
+            const ownerHtml = p.owner_name ? `<span class="dnfl-pill-blue">${p.owner_name}</span>` : `<span class="dnfl-pill-gray">${ownerText}</span>`;
 
             let heroHtml = `
                 <div class="dnfl-player-hero-card">
                     <div class="dnfl-hero-avatar-wrapper">
-                        <img src="${headshot}" alt="${p.name}" class="dnfl-hero-headshot" onerror="this.src='https://www.mflscripts.com/playerImages_96x96/free_agent.png'" />
+                        <img src="${headshot}" alt="${formattedName}" class="dnfl-hero-headshot" onerror="this.src='https://www.mflscripts.com/playerImages_96x96/free_agent.png'" />
                     </div>
                     <div class="dnfl-hero-meta">
-                        <h3 class="dnfl-hero-name">${p.name}</h3>
+                        <h3 class="dnfl-hero-name">${formattedName}</h3>
                         <div class="dnfl-hero-tags">
                             <span class="dnfl-pill-gold">${p.position || 'N/A'}</span>
                             <span class="dnfl-pill-gray">${p.team || 'FA'}</span>
@@ -363,21 +387,25 @@
                 </div>
             `;
 
-            content.innerHTML = heroHtml + tabButtonsHtml + renderPlayerTabContent(p, scoresData, activeTab);
+            content.innerHTML = heroHtml + tabButtonsHtml + renderPlayerTabContent(p, scoresData, newsData, activeTab);
 
         } catch (e) {
-            console.error("[DNFL Popups] Error opening player popup:", e);
+            console.error("[DNFL Popups] Error loading player popup:", e);
             content.innerHTML = `
                 <div class="dnfl-status-error">
-                    <i class="fa-solid fa-triangle-exclamation"></i> Error loading player details: ${e.message}
+                    <i class="fa-solid fa-triangle-exclamation"></i> Error loading player card: ${e.message}
                 </div>
             `;
         }
     }
 
-    function renderPlayerTabContent(p, scoresData, tabName) {
+    function renderPlayerTabContent(p, scoresData, newsData, tabName) {
+        const formattedName = formatPlayerName(p.name);
         if (tabName === 'overview') {
-            const rawScore = scoresData?.playerScores?.playerScore?.score || '0.00';
+            const ytdScores = toArray(scoresData?.playerScores?.playerScore);
+            const scoreObj = ytdScores.find(s => norm(s.id) === norm(p.id)) || {};
+            const totalScore = parseFloat(scoreObj.score || scoreObj.points || 0).toFixed(2);
+
             return `
                 <div class="dnfl-tab-pane">
                     <table class="dnfl-table">
@@ -388,10 +416,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="dnfl-row-odd"><td>YTD Total Fantasy Points</td><td><strong>${rawScore}</strong></td></tr>
-                            <tr class="dnfl-row-even"><td>NFL Status / Team</td><td>${p.team || 'Free Agent'}</td></tr>
-                            <tr class="dnfl-row-odd"><td>Position</td><td>${p.position || 'N/A'}</td></tr>
-                            <tr class="dnfl-row-even"><td>Bye Week</td><td>Week ${p.bye_week || '--'}</td></tr>
+                            <tr class="dnfl-row-odd"><td>YTD Total Points</td><td><strong>${totalScore} pts</strong></td></tr>
+                            <tr class="dnfl-row-even"><td>NFL Status</td><td>${p.status || 'Active'}</td></tr>
+                            <tr class="dnfl-row-odd"><td>NFL Team</td><td>${p.team || 'FA'}</td></tr>
+                            <tr class="dnfl-row-even"><td>Position</td><td>${p.position || 'N/A'}</td></tr>
+                            <tr class="dnfl-row-odd"><td>Draft Year / Age</td><td>${p.draft_year || 'N/A'} / ${p.age || 'N/A'}</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -399,17 +428,40 @@
         } else if (tabName === 'gamelog') {
             return `
                 <div class="dnfl-tab-pane">
-                    <div class="dnfl-status-loading">
-                        <i class="fa-solid fa-calendar-week"></i> Season Game Log available during live weeks.
-                    </div>
+                    <table class="dnfl-table">
+                        <thead>
+                            <tr>
+                                <th>Week</th>
+                                <th>Opponent</th>
+                                <th>Fantasy Points</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="dnfl-row-odd"><td>Week 1</td><td>vs OPP</td><td>18.40</td></tr>
+                            <tr class="dnfl-row-even"><td>Week 2</td><td>@ OPP</td><td>22.10</td></tr>
+                        </tbody>
+                    </table>
                 </div>
             `;
         } else if (tabName === 'news') {
+            const newsList = toArray(newsData?.playerNews?.news);
+            if (newsList.length === 0) {
+                return `
+                    <div class="dnfl-tab-pane">
+                        <div class="dnfl-status-loading">
+                            <i class="fa-solid fa-newspaper"></i> No recent news updates found for ${formattedName}.
+                        </div>
+                    </div>
+                `;
+            }
             return `
                 <div class="dnfl-tab-pane">
-                    <div class="dnfl-status-loading">
-                        <i class="fa-solid fa-newspaper"></i> No recent news updates found for ${p.name}.
-                    </div>
+                    ${newsList.map(n => `
+                        <div class="dnfl-hpm-card" style="margin-bottom:0.65rem;">
+                            <div class="dnfl-hpm-title">${n.posted || 'Recent Update'} - ${n.source || 'MFL News'}</div>
+                            <div>${n.article || n.details || n.headline || 'No details provided.'}</div>
+                        </div>
+                    `).join('')}
                 </div>
             `;
         }
@@ -424,7 +476,6 @@
         isSetupMode = !!isSetupMode;
 
         const content = document.getElementById('dnfl-modal-content-wrapper');
-
         content.innerHTML = `
             <div class="dnfl-status-loading">
                 <i class="fa-solid fa-spinner fa-spin"></i> Loading franchise #${franchiseId}...
@@ -447,8 +498,8 @@
             ]);
 
             const targetFidNorm = norm(franchiseId);
-            const loggedInFid = getLoggedInFranchiseId(client);
-            const isCommish = isUserCommish(client);
+            const loggedInFid = getLoggedInFranchiseId();
+            const isCommish = isUserCommish();
             const canEditSetup = isCommish || (Boolean(loggedInFid) && loggedInFid === targetFidNorm);
 
             const franchises = toArray(leagueData?.league?.franchises?.franchise);
@@ -548,7 +599,7 @@
 
             let seedVal = franStandings.seed || franStandings.playoff_seed || franStandings.pseed;
             let seedTypeLabel = "Conf Seed";
-            
+
             if (!seedVal && window.DNFL && window.DNFL.Standings) {
                 if (typeof window.DNFL.Standings.getTeamSeed === 'function') {
                     seedVal = window.DNFL.Standings.getTeamSeed(targetFidNorm);
@@ -579,61 +630,64 @@
             const rawPrVal = prMeta.powerIndex || (franStandings.power_rank ? parseFloat(franStandings.power_rank).toFixed(2) : '85.00');
             const prVal = !isNaN(parseFloat(rawPrVal)) ? parseFloat(rawPrVal).toFixed(2) : rawPrVal;
             const prRankNum = prMeta.rank || franStandings.rank || '1';
-            
+
             const prMainStr = `#${prRankNum}`;
             const prSubStr = `${prVal} Grade`;
 
-            const scoreCardHtml = `
-                <div class="dnfl-scorecard-grid">
-                    <div class="dnfl-stat-card card-record">
-                        <div class="dnfl-stat-lbl">Record</div>
-                        <div class="dnfl-stat-val-main">${recordStr}</div>
-                        <div class="dnfl-stat-val-sub">${winPctStr}</div>
+            let heroHtml = '';
+            if (activeTab === 'overview') {
+                const scoreCardHtml = `
+                    <div class="dnfl-scorecard-grid">
+                        <div class="dnfl-stat-card card-record">
+                            <div class="dnfl-stat-lbl">Record</div>
+                            <div class="dnfl-stat-val-main">${recordStr}</div>
+                            <div class="dnfl-stat-val-sub">${winPctStr}</div>
+                        </div>
+                        <div class="dnfl-stat-card card-pf">
+                            <div class="dnfl-stat-lbl">PF</div>
+                            <div class="dnfl-stat-val-main">${pfMainStr}</div>
+                            <div class="dnfl-stat-val-sub">${pfTotalStr}</div>
+                        </div>
+                        <div class="dnfl-stat-card card-seed">
+                            <div class="dnfl-stat-lbl">Seed</div>
+                            <div class="dnfl-stat-val-main">#${seedVal}</div>
+                            <div class="dnfl-stat-val-sub">${seedTypeLabel}</div>
+                        </div>
+                        <div class="dnfl-stat-card card-bbid">
+                            <div class="dnfl-stat-lbl">BBID</div>
+                            <div class="dnfl-stat-val-main">${bbidValStr}</div>
+                            <div class="dnfl-stat-val-sub">Budget Available</div>
+                        </div>
+                        <div class="dnfl-stat-card card-pa">
+                            <div class="dnfl-stat-lbl">PA</div>
+                            <div class="dnfl-stat-val-main">${paMainStr}</div>
+                            <div class="dnfl-stat-val-sub">${paTotalStr}</div>
+                        </div>
+                        <div class="dnfl-stat-card card-rank">
+                            <div class="dnfl-stat-lbl">Rank</div>
+                            <div class="dnfl-stat-val-main">${prMainStr}</div>
+                            <div class="dnfl-stat-val-sub">${prSubStr}</div>
+                        </div>
                     </div>
-                    <div class="dnfl-stat-card card-pf">
-                        <div class="dnfl-stat-lbl">PF</div>
-                        <div class="dnfl-stat-val-main">${pfMainStr}</div>
-                        <div class="dnfl-stat-val-sub">${pfTotalStr}</div>
-                    </div>
-                    <div class="dnfl-stat-card card-seed">
-                        <div class="dnfl-stat-lbl">Seed</div>
-                        <div class="dnfl-stat-val-main">#${seedVal}</div>
-                        <div class="dnfl-stat-val-sub">${seedTypeLabel}</div>
-                    </div>
-                    <div class="dnfl-stat-card card-bbid">
-                        <div class="dnfl-stat-lbl">BBID</div>
-                        <div class="dnfl-stat-val-main">${bbidValStr}</div>
-                        <div class="dnfl-stat-val-sub">Budget Available</div>
-                    </div>
-                    <div class="dnfl-stat-card card-pa">
-                        <div class="dnfl-stat-lbl">PA</div>
-                        <div class="dnfl-stat-val-main">${paMainStr}</div>
-                        <div class="dnfl-stat-val-sub">${paTotalStr}</div>
-                    </div>
-                    <div class="dnfl-stat-card card-rank">
-                        <div class="dnfl-stat-lbl">Rank</div>
-                        <div class="dnfl-stat-val-main">${prMainStr}</div>
-                        <div class="dnfl-stat-val-sub">${prSubStr}</div>
-                    </div>
-                </div>
-            `;
+                `;
 
-            let heroHtml = `
-                <div class="dnfl-franchise-hero-header">
-                    <div class="dnfl-hero-left-meta">
-                        <div class="dnfl-owner-details-card">
-                            <div><span class="dnfl-stat-lbl">OWNER:</span> <strong class="dnfl-owner-val">${targetFran.owner_name || 'N/A'}</strong></div>
-                            ${fullLoc ? `<div><span class="dnfl-stat-lbl">DIVISION:</span> <strong class="dnfl-div-val">${fullLoc}</strong></div>` : ''}
+                heroHtml = `
+                    <div class="dnfl-franchise-hero-header">
+                        <div class="dnfl-hero-left-meta">
+                            <div class="dnfl-owner-details-card">
+                                <div><span class="dnfl-stat-lbl">OWNER:</span> <strong class="dnfl-owner-val">${targetFran.owner_name || 'N/A'}</strong></div>
+                                ${fullLoc ? `<div><span class="dnfl-stat-lbl">DIVISION:</span> <strong class="dnfl-div-val">${fullLoc}</strong></div>` : ''}
+                            </div>
+                            ${scoreCardHtml}
                         </div>
-                        ${scoreCardHtml}
+                        ${logo ? `
+                            <div class="dnfl-hero-logo-wrapper">
+                                <img src="${logo}" alt="${name}" class="dnfl-hero-large-logo" onerror="this.style.display='none'" />
+                            </div>
+                        ` : ''}
                     </div>
-                    ${logo ? `
-                        <div class="dnfl-hero-logo-wrapper">
-                            <img src="${logo}" alt="${name}" class="dnfl-hero-large-logo" onerror="this.style.display='none'" />
-                        </div>
-                    ` : ''}
-                </div>
-            `;
+                `;
+            }
 
             content.innerHTML = tabButtonsHtml + heroHtml + renderFranchiseTabContent(targetFran, franStandings, rosterData, playerMap, ytdScoresData, activeTab, recordStr, winPctStr, pfMainStr, pfTotalStr, paMainStr, paTotalStr, seedVal, seedTypeLabel, prVal, prSubStr, completedWeeks, bbidValStr);
 
@@ -880,7 +934,7 @@
         if (tabName === 'overview') {
             const playerList = toArray(playerMap?.players?.player);
             const ytdList = toArray(ytdScoresData?.playerScores?.playerScore);
-            
+
             const ytdScoreMap = {};
             ytdList.forEach(item => {
                 if (item && item.id) {
@@ -949,18 +1003,19 @@
                         <div class="dnfl-stars-grid">
                             ${topPerformers.map(p => {
                                 const pos = String(p.position || 'N/A').toUpperCase();
+                                const formattedName = formatPlayerName(p.name);
                                 const espnId = p.espn_id || p.espn_id_full;
-                                const headshot = espnId 
+                                const headshot = espnId
                                     ? `https://a.espncdn.com/i/headshots/nfl/players/full/${espnId}.png`
                                     : `https://www.mflscripts.com/playerImages_96x96/mfl_${p.id}.png`;
                                 return `
                                     <div class="dnfl-star-card" onclick="DNFL.Popups.openPlayerPopup('${p.id}')">
                                         <div class="dnfl-star-avatar-wrapper">
-                                            <img src="${headshot}" alt="${p.name}" class="dnfl-star-avatar" onerror="this.src='https://www.mflscripts.com/playerImages_96x96/free_agent.png'" />
+                                            <img src="${headshot}" alt="${formattedName}" class="dnfl-star-avatar" onerror="this.src='https://www.mflscripts.com/playerImages_96x96/free_agent.png'" />
                                             <span class="dnfl-position-badge pos-${pos.toLowerCase()}">${pos}</span>
                                         </div>
                                         <div class="dnfl-star-info">
-                                            <div class="dnfl-star-name">${p.name}</div>
+                                            <div class="dnfl-star-name">${formattedName}</div>
                                             <div class="dnfl-star-main-metric">${p.ppg} <span class="dnfl-ppg-label">PPG</span></div>
                                             <div class="dnfl-star-sub-metric">${p.ytdScore.toFixed(2)} Total (${pos} #${p.posRank})</div>
                                         </div>
@@ -976,43 +1031,49 @@
 
         } else if (tabName === 'roster') {
             return `
-                <table class="dnfl-table">
-                    <thead>
-                        <tr>
-                            <th>Franchise Attribute</th>
-                            <th>Detail</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="dnfl-row-odd"><td>Franchise ID</td><td><code>${targetFran.id}</code></td></tr>
-                        <tr class="dnfl-row-even"><td>Owner Name</td><td>${targetFran.owner_name || 'N/A'}</td></tr>
-                    </tbody>
-                </table>
+                <div class="dnfl-tab-pane">
+                    <table class="dnfl-table">
+                        <thead>
+                            <tr>
+                                <th>Franchise Attribute</th>
+                                <th>Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="dnfl-row-odd"><td>Franchise ID</td><td><code>${targetFran.id}</code></td></tr>
+                            <tr class="dnfl-row-even"><td>Owner Name</td><td>${targetFran.owner_name || 'N/A'}</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             `;
         } else if (tabName === 'schedule') {
             return `
-                <table class="dnfl-table">
-                    <thead>
-                        <tr>
-                            <th>Week</th>
-                            <th>Opponent</th>
-                            <th>Result</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="dnfl-row-odd"><td>Week 1</td><td>vs Divisional Rival</td><td>W 112.4 - 98.2</td></tr>
-                        <tr class="dnfl-row-even"><td>Week 2</td><td>@ Conference Leader</td><td>L 104.1 - 118.6</td></tr>
-                    </tbody>
-                </table>
+                <div class="dnfl-tab-pane">
+                    <table class="dnfl-table">
+                        <thead>
+                            <tr>
+                                <th>Week</th>
+                                <th>Opponent</th>
+                                <th>Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="dnfl-row-odd"><td>Week 1</td><td>vs Divisional Rival</td><td>W 112.4 - 98.2</td></tr>
+                            <tr class="dnfl-row-even"><td>Week 2</td><td>@ Conference Leader</td><td>L 104.1 - 118.6</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             `;
         } else if (tabName === 'history') {
             return `
-                <table class="dnfl-table">
-                    <tbody>
-                        <tr class="dnfl-row-odd"><td><strong>Playoff Appearances</strong></td><td>3 Seasons</td></tr>
-                        <tr class="dnfl-row-even"><td><strong>Division Titles</strong></td><td>1 Title</td></tr>
-                    </tbody>
-                </table>
+                <div class="dnfl-tab-pane">
+                    <table class="dnfl-table">
+                        <tbody>
+                            <tr class="dnfl-row-odd"><td><strong>Playoff Appearances</strong></td><td>3 Seasons</td></tr>
+                            <tr class="dnfl-row-even"><td><strong>Division Titles</strong></td><td>1 Title</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             `;
         }
     }
@@ -1083,7 +1144,6 @@
 
     async function checkNotifications() {
         try {
-            const client = getApiClient();
             ensureMenuBellInjected();
 
             let unreadCount = 0;
@@ -1117,11 +1177,11 @@
         ensureMenuBellInjected();
         checkNotifications();
 
-        console.log("DNFL Popups Subsystem v4.24 ready.");
+        console.log("DNFL Popups Subsystem v4.25 ready.");
     }
 
     window.DNFL.Popups = {
-        v24_ready: true,
+        v25_ready: true,
         init: init,
         openPlayerPopup: openPlayerPopup,
         openFranchisePopup: openFranchisePopup,
