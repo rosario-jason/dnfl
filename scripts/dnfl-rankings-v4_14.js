@@ -1,7 +1,5 @@
 /* ==========================================================================
-   DNFL Power Rankings Engine v4.13
-   Duke Networking Fantasy League (DNFL)
-   Fully aligned with DNFL API Client middleware & Master SCSS design tokens.
+   DNFL Power Rankings Engine v4.14
    ========================================================================== */
 
 (function() {
@@ -40,7 +38,7 @@
     }
 
     function getLeagueId() {
-        return window.league_id || window.mfl_league_id || '22972';
+        return window.league_id || window.mfl_league_id || '22883';
     }
 
     /**
@@ -307,17 +305,26 @@
             const prevWeekFile = (!isPreseasonWeek && currentIndex > 0) ? publishedWeeks[currentIndex - 1].id : null;
 
             const weekNumMatch = selectedWeekFile.match(/(\d+)/);
-            const weekNum = weekNumMatch ? parseInt(weekNumMatch[1], 10) : 1;
+            const weekNum = weekNumMatch ? parseInt(weekNumMatch[1], 10) : 0;
 
-            const [rawCsv, prevCsvText, standingsDataRaw] = await Promise.all([
+            // Multi-week aggregation loop: Fetch weeklyResults from week 1 up to selected weekNum
+            const pastWeeklyPromises = [];
+            if (!isPreseasonWeek && weekNum > 0 && apiClient && typeof apiClient.fetchData === 'function') {
+                const hourlyTtl = apiClient.TTL ? apiClient.TTL.HOURLY : 3600000;
+                for (let w = 1; w <= weekNum; w++) {
+                    pastWeeklyPromises.push(
+                        apiClient.fetchData('weeklyResults', { W: String(w) }, { ttl: hourlyTtl }).catch(() => null)
+                    );
+                }
+            }
+
+            const [rawCsv, prevCsvText, pastResults] = await Promise.all([
                 fetchCsvData(selectedWeekFile),
                 prevWeekFile ? fetchCsvData(prevWeekFile).catch(() => null) : Promise.resolve(null),
-                (!isPreseasonWeek && apiClient && typeof apiClient.fetchData === 'function') 
-                    ? apiClient.fetchData('leagueStandings', { W: String(weekNum), COLUMN_NAMES: 1, ALL: 1 }, { ttl: apiClient.TTL ? apiClient.TTL.HOURLY : 3600000 }).catch(() => null) 
-                    : Promise.resolve(null)
+                pastWeeklyPromises.length > 0 ? Promise.all(pastWeeklyPromises) : Promise.resolve([])
             ]);
 
-            // Process Previous Week CSV
+            // Process Previous Week CSV for rank change calculations
             prevWeekRankMap = {};
             if (prevCsvText && window.Papa) {
                 try {
@@ -347,42 +354,80 @@
                 }
             }
 
-            // Process Standings Data via API
+            // Process Standings Data via Multi-Week weeklyResults Aggregation Loop
             mflStandingsMap = {};
-            if (!isPreseasonWeek && standingsDataRaw) {
-                const extractFranchises = (data) => {
-                    if (!data || !data.leagueStandings) return null;
-                    const ls = data.leagueStandings;
-                    const raw = ls.franchise || (ls.franchises ? ls.franchises.franchise : null);
-                    if (!raw) return null;
-                    return Array.isArray(raw) ? raw : [raw];
-                };
+            if (!isPreseasonWeek && pastResults && pastResults.length > 0) {
+                const standingsAcc = {};
 
-                let stList = extractFranchises(standingsDataRaw);
-                if (stList && stList.length > 0) {
-                    stList.forEach(s => {
-                        const fId = normId(s.id);
-                        let wins = 0, losses = 0, ties = 0;
-                        if (s.h2hwlt) {
-                            const parts = String(s.h2hwlt).split('-');
-                            if (parts.length >= 2) {
-                                wins = parseInt(parts[0], 10) || 0;
-                                losses = parseInt(parts[1], 10) || 0;
-                                ties = parseInt(parts[2], 10) || 0;
+                // Pre-populate accumulators for all known league franchises
+                Object.keys(mflFranchiseMap).forEach(fId => {
+                    standingsAcc[fId] = { wins: 0, losses: 0, ties: 0, pf: 0 };
+                });
+
+                pastResults.forEach(wData => {
+                    if (!wData || !wData.weeklyResults) return;
+                    const rawMatchups = wData.weeklyResults.matchup || wData.weeklyResults.matchUp || wData.weeklyResults.schedule?.matchup;
+                    let matchups = Array.isArray(rawMatchups) ? rawMatchups : (rawMatchups ? [rawMatchups] : []);
+
+                    if (matchups.length === 0 && wData.weeklyResults.franchise) {
+                        const fList = Array.isArray(wData.weeklyResults.franchise) ? wData.weeklyResults.franchise : [wData.weeklyResults.franchise];
+                        const processedFids = new Set();
+                        fList.forEach(f => {
+                            const fid = normId(f.id);
+                            const oppId = normId(f.opponent || f.opp || f.vs);
+                            if (!processedFids.has(fid)) {
+                                processedFids.add(fid);
+                                if (oppId) processedFids.add(oppId);
+                                const oppObj = fList.find(o => normId(o.id) === oppId) || {};
+                                matchups.push({ franchise: [f, oppObj] });
                             }
-                        } else {
-                            wins = parseInt(s.h2hw !== undefined && s.h2hw !== null ? s.h2hw : (s.wins || s.w || 0), 10) || 0;
-                            losses = parseInt(s.h2hl !== undefined && s.h2hl !== null ? s.h2hl : (s.losses || s.l || 0), 10) || 0;
-                            ties = parseInt(s.h2ht !== undefined && s.h2ht !== null ? s.h2ht : (s.ties || s.t || 0), 10) || 0;
-                        }
+                        });
+                    }
 
-                        const rawPf = parseFloat(s.pf !== undefined && s.pf !== null ? s.pf : (s.h2hpf || s.points || s.pts || 0));
-                        mflStandingsMap[fId] = {
-                            record: `${wins}-${losses}-${ties}`,
-                            pf: isNaN(rawPf) ? '0.00' : rawPf.toFixed(2)
-                        };
+                    matchups.forEach(m => {
+                        if (!m || !m.franchise) return;
+                        const franchises = Array.isArray(m.franchise) ? m.franchise : [m.franchise];
+                        if (franchises.length >= 2) {
+                            const f1 = franchises[0];
+                            const f2 = franchises[1];
+                            const f1Id = normId(f1.id);
+                            const f2Id = normId(f2.id);
+                            const f1Score = parseFloat(f1.score !== undefined ? f1.score : (f1.points || f1.pts || 0));
+                            const f2Score = parseFloat(f2.score !== undefined ? f2.score : (f2.points || f2.pts || 0));
+
+                            if (!standingsAcc[f1Id]) standingsAcc[f1Id] = { wins: 0, losses: 0, ties: 0, pf: 0 };
+                            if (!standingsAcc[f2Id]) standingsAcc[f2Id] = { wins: 0, losses: 0, ties: 0, pf: 0 };
+
+                            standingsAcc[f1Id].pf += f1Score;
+                            standingsAcc[f2Id].pf += f2Score;
+
+                            if (f1Score > f2Score) {
+                                standingsAcc[f1Id].wins++;
+                                standingsAcc[f2Id].losses++;
+                            } else if (f2Score > f1Score) {
+                                standingsAcc[f2Id].wins++;
+                                standingsAcc[f1Id].losses++;
+                            } else if (f1Score > 0 || f2Score > 0) {
+                                standingsAcc[f1Id].ties++;
+                                standingsAcc[f2Id].ties++;
+                            }
+                        } else if (franchises.length === 1) {
+                            const f1 = franchises[0];
+                            const f1Id = normId(f1.id);
+                            const f1Score = parseFloat(f1.score !== undefined ? f1.score : (f1.points || f1.pts || 0));
+                            if (!standingsAcc[f1Id]) standingsAcc[f1Id] = { wins: 0, losses: 0, ties: 0, pf: 0 };
+                            standingsAcc[f1Id].pf += f1Score;
+                        }
                     });
-                }
+                });
+
+                Object.keys(standingsAcc).forEach(fId => {
+                    const s = standingsAcc[fId];
+                    mflStandingsMap[fId] = {
+                        record: `${s.wins}-${s.losses}-${s.ties}`,
+                        pf: s.pf.toFixed(2)
+                    };
+                });
             }
 
             // Process Current Week CSV
