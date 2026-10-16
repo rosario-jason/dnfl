@@ -31,7 +31,7 @@
             { name: "rankings",  url: "dnfl-rankings-v4_14.js" },
             { name: "podcast",   url: "dnfl-podcast.js" },
             { name: "rules",     url: "dnfl-rules.js" },
-            { name: "exporter",  url: "dnfl-exporter-v4_12.js" },
+            { name: "exporter",  url: "dnfl-exporter.js" },
             { name: "lts",       url: "dnfl-lts.js" }
         ],
 
