@@ -1363,6 +1363,13 @@ ort((a, b) => parseFloat(b.finalIndex) - parseFloat(a.finalIndex));
         document.body.removeChild(a);
     }
     function updateControlVisibility() {
+        const reportSelect = document.getElementById('dnfl-export-report-select');
+        const weekGroup = document.getElementById('dnfl-export-week-group');
+        if (reportSelect && weekGroup) {
+            const val = reportSelect.value;
+            const requiresWeek = (val === 'rosters' || val === 'matchups' || val === 'weeklyDetails' || val === 'publishedPowerRankings' || val === 'powerRankings' || val === 'standings' || val === 'transactions');
+            weekGroup.classList.toggle('dnfl-is-hidden', !requiresWeek);
+        }
         populateWeekDropdown();
     }
     let userHasSelectedWeek = false;
