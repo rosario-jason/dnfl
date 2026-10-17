@@ -212,8 +212,7 @@
         for (const key in STANDINGS_RULES) {
             if (key.startsWith('_')) continue;
             if (key.includes('-')) {
-                const [start, end] = key.s
-plit('-').map(s => parseInt(s.trim(), 10));
+                const [start, end] = key.split('-').map(s => parseInt(s.trim(), 10));
                 if (yr >= start && yr <= end) return STANDINGS_RULES[key];
             }
             if (key.includes(',')) {
@@ -354,92 +353,14 @@ plit('-').map(s => parseInt(s.trim(), 10));
         return teamSeeds;
     }
 
-    async function generateStandingsReport(targetWeek) {
+    async function generateStandingsReport() {
         const client = getApiClient();
         await getLeagueInfo();
 
         const currentWk = parseInt(cachedLeague?.currentWk || 1, 10);
         const lastRegWk = parseInt(cachedLeague?.lastRegularSeasonWeek || 12, 10);
-        const weekNum = (targetWeek !== undefined && targetWeek !== null && targetWeek !== '') ? parseInt(targetWeek, 10) : 0;
+        const maxCompletedWk = Math.min(currentWk, lastRegWk);
 
-        // If weekNum === 0 (Current / Live Standings)
-        if (weekNum === 0) {
-            const standingsData = await client.fetchData('leagueStandings', { COLUMN_NAMES: 1, ALL: 1 });
-            const franchiseStandings = toArray(standingsData?.leagueStandings?.franchise);
-            const teamSeedsMap = await calculateTeamSeeds(franchiseStandings);
-            const divisions = toArray(cachedLeague?.divisions?.division);
-            const conferences = toArray(cachedLeague?.conferences?.conference);
-
-            const divMap = {};
-            divisions.forEach(d => divMap[norm(d.id)] = d.name);
-
-            const confMap = {};
-            conferences.forEach(c => confMap[norm(c.id)] = c.name);
-
-            const divToConfMap = {};
-            divisions.forEach(d => divToConfMap[norm(d.id)] = norm(d.conference));
-
-            const franchiseConfDivMap = {};
-            cachedFranchises.forEach(f => {
-                const fid = normFranchiseId(f.id);
-                const divIdNorm = norm(f.division || f.div);
-                const confIdNorm = norm(f.conference || f.conf || divToConfMap[divIdNorm]);
-                franchiseConfDivMap[fid] = { confId: confIdNorm, divId: divIdNorm };
-            });
-
-            const rows = [];
-            franchiseStandings.forEach((s, idx) => {
-                const fid = normFranchiseId(s.id);
-                const teamName = getFranchiseName(fid);
-                const ownerName = getFranchiseOwner(fid);
-
-                const structInfo = franchiseConfDivMap[fid] || {};
-                const confId = norm(s.conference || s.conf || structInfo.confId);
-                const divId = norm(s.division || s.div || structInfo.divId);
-
-                const wins = parseInt(s.h2hw || s.w || 0, 10);
-                const losses = parseInt(s.h2hl || s.l || 0, 10);
-                const ties = parseInt(s.h2ht || s.t || 0, 10);
-                const totalGames = wins + losses + ties;
-                const pct = totalGames > 0 ? ((wins + 0.5 * ties) / totalGames).toFixed(3) : '.000';
-
-                const pf = parseFloat(s.pf || s.h2hpf || s.points_for || 0).toFixed(2);
-                let rawPa = s.pa !== undefined && s.pa !== '0' && s.pa !== 0 ? s.pa : (s.h2hpa || s.points_against || s.opp_pf || s.opp_points || s.pa_pts || s.opp_pts || 0);
-                let pa = parseFloat(rawPa).toFixed(2);
-
-                let streak = 'N/A';
-                if (s.strk) streak = String(s.strk).toUpperCase();
-                else if (s.streak) streak = String(s.streak).toUpperCase();
-                else if (s.h2hstrk) streak = String(s.h2hstrk).toUpperCase();
-
-                rows.push({
-                    'Seed': teamSeedsMap[fid] !== undefined ? teamSeedsMap[fid] : (idx + 1),
-                    'Franchise ID': fid,
-                    'Team Name': teamName,
-                    'Owner': ownerName,
-                    'Conference': confMap[confId] || (confId ? `Conference ${confId}` : 'N/A'),
-                    'Division': divMap[divId] || (divId ? `Division ${divId}` : 'N/A'),
-                    'Wins': wins,
-                    'Losses': losses,
-                    'Ties': ties,
-                    'Win Pct': pct,
-                    'Points For (PF)': pf,
-                    'Points Against (PA)': pa,
-                    'Streak': streak
-                });
-            });
-
-            rows.sort((a, b) => (parseInt(a['Seed'], 10) || 999) - (parseInt(b['Seed'], 10) || 999));
-            return {
-                title: `DNFL Standings (Current Live, ${targetYear})`,
-                description: `Official live season standings snapshot via MFL leagueStandings.`,
-                columns: ['Seed', 'Franchise ID', 'Team Name', 'Owner', 'Conference', 'Division', 'Wins', 'Losses', 'Ties', 'Win Pct', 'Points For (PF)', 'Points Against (PA)', 'Streak'],
-                rows: rows
-            };
-        }
-
-        // Otherwise calculated Standings for Week 1..N
-        const maxCompletedWk = Math.max(1, Math.min(weekNum, lastRegWk));
         const weeklyPromises = [];
         for (let w = 1; w <= maxCompletedWk; w++) {
             weeklyPromises.push(client.fetchData('weeklyResults', { W: w }).catch(() => null));
@@ -450,14 +371,12 @@ plit('-').map(s => parseInt(s.trim(), 10));
             ...weeklyPromises
         ]);
 
-        const teamStats = {};
-        cachedFranchises.forEach(f => {
-            const fid = normFranchiseId(f.id);
-            teamStats[fid] = { wins: 0, losses: 0, ties: 0, pf: 0, pa: 0, history: [] };
-        });
+        const weeklyPaMap = {};
+        const weeklyGameHistory = {};
 
         allWeeklyResults.forEach((weeklyData, wIdx) => {
             if (!weeklyData?.weeklyResults) return;
+            const weekNum = wIdx + 1;
             const rawMatchups = weeklyData.weeklyResults.matchup || weeklyData.weeklyResults.matchUp || weeklyData.weeklyResults.schedule?.matchup;
             let matchups = toArray(rawMatchups);
 
@@ -470,7 +389,8 @@ plit('-').map(s => parseInt(s.trim(), 10));
                     if (!processedFids.has(fid)) {
                         processedFids.add(fid);
                         if (oppId) processedFids.add(oppId);
-                        const oppObj = fList.find(o => normFranchiseId(o.id) === oppId) || {};
+                        const oppObj = fList.find(o => normFranchiseId(o.id
+) === oppId) || {};
                         matchups.push({ franchise: [f, oppObj] });
                     }
                 });
@@ -486,19 +406,21 @@ plit('-').map(s => parseInt(s.trim(), 10));
                     const f1Score = parseFloat(f1.score || 0);
                     const f2Score = parseFloat(f2.score || 0);
 
-                    if (teamStats[f1Id]) {
-                        teamStats[f1Id].pf += f1Score;
-                        teamStats[f1Id].pa += f2Score;
-                        if (f1Score > f2Score) { teamStats[f1Id].wins++; teamStats[f1Id].history.push('W'); }
-                        else if (f2Score > f1Score) { teamStats[f1Id].losses++; teamStats[f1Id].history.push('L'); }
-                        else if (f1Score > 0 || f2Score > 0) { teamStats[f1Id].ties++; teamStats[f1Id].history.push('T'); }
-                    }
-                    if (teamStats[f2Id]) {
-                        teamStats[f2Id].pf += f2Score;
-                        teamStats[f2Id].pa += f1Score;
-                        if (f2Score > f1Score) { teamStats[f2Id].wins++; teamStats[f2Id].history.push('W'); }
-                        else if (f1Score > f2Score) { teamStats[f2Id].losses++; teamStats[f2Id].history.push('L'); }
-                        else if (f1Score > 0 || f2Score > 0) { teamStats[f2Id].ties++; teamStats[f2Id].history.push('T'); }
+                    weeklyPaMap[f1Id] = (weeklyPaMap[f1Id] || 0) + f2Score;
+                    weeklyPaMap[f2Id] = (weeklyPaMap[f2Id] || 0) + f1Score;
+
+                    if (!weeklyGameHistory[f1Id]) weeklyGameHistory[f1Id] = [];
+                    if (!weeklyGameHistory[f2Id]) weeklyGameHistory[f2Id] = [];
+
+                    if (f1Score > f2Score) {
+                        weeklyGameHistory[f1Id].push({ week: weekNum, res: 'W' });
+                        weeklyGameHistory[f2Id].push({ week: weekNum, res: 'L' });
+                    } else if (f2Score > f1Score) {
+                        weeklyGameHistory[f1Id].push({ week: weekNum, res: 'L' });
+                        weeklyGameHistory[f2Id].push({ week: weekNum, res: 'W' });
+                    } else if (f1Score > 0 || f2Score > 0) {
+                        weeklyGameHistory[f1Id].push({ week: weekNum, res: 'T' });
+                        weeklyGameHistory[f2Id].push({ week: weekNum, res: 'T' });
                     }
                 }
             });
@@ -527,6 +449,7 @@ plit('-').map(s => parseInt(s.trim(), 10));
         });
 
         const rows = [];
+
         franchiseStandings.forEach((s, idx) => {
             const fid = normFranchiseId(s.id);
             const teamName = getFranchiseName(fid);
@@ -536,49 +459,61 @@ plit('-').map(s => parseInt(s.trim(), 10));
             const confId = norm(s.conference || s.conf || structInfo.confId);
             const divId = norm(s.division || s.div || structInfo.divId);
 
-            const st = teamStats[fid] || { wins: 0, losses: 0, ties: 0, pf: 0, pa: 0, history: [] };
-            const wins = st.wins;
-            const losses = st.losses;
-            const ties = st.ties;
+            const wins = parseInt(s.h2hw || s.w || 0, 10);
+            const losses = parseInt(s.h2hl || s.l || 0, 10);
+            const ties = parseInt(s.h2ht || s.t || 0, 10);
             const totalGames = wins + losses + ties;
             const pct = totalGames > 0 ? ((wins + 0.5 * ties) / totalGames).toFixed(3) : '.000';
 
-            const pf = st.pf.toFixed(2);
-            const pa = st.pa.toFixed(2);
+            const pf = parseFloat(s.pf || s.h2hpf || s.points_for || 0).toFixed(2);
+            let rawPa = s.pa !== undefined && s.pa !== "0" && s.pa !== 0 ? s.pa : (s.h2hpa || s.points_against || s.opp_pf || s.opp_points || s.pa_pts || s.opp_pts || 0);
+            let pa = parseFloat(rawPa).toFixed(2);
 
             let streak = 'N/A';
-            if (st.history.length > 0) {
-                const lastRes = st.history[st.history.length - 1];
+            if (s.strk) streak = String(s.strk).toUpperCase();
+            else if (s.streak) streak = String(s.streak).toUpperCase();
+            else if (s.h2hstrk) streak = String(s.h2hstrk).toUpperCase();
+            else if (s.h2h_streak) streak = String(s.
+h2h_streak).toUpperCase();
+
+            if (parseFloat(pa) === 0 && totalGames > 0 && weeklyPaMap[fid] !== undefined) {
+                pa = parseFloat(weeklyPaMap[fid]).toFixed(2);
+            }
+
+            if ((streak === 'N/A' || streak === '') && totalGames > 0 && weeklyGameHistory[fid] && weeklyGameHistory[fid].length > 0) {
+                const history = weeklyGameHistory[fid];
+                const lastRes = history[history.length - 1].res;
                 let count = 0;
-                for (let i = st.history.length - 1; i >= 0; i--) {
-                    if (st.history[i] === lastRes) count++;
+                for (let i = history.length - 1; i >= 0; i--) {
+                    if (history[i].res === lastRes) count++;
                     else break;
                 }
                 streak = `${lastRes}${count}`;
             }
 
             rows.push({
-                'Seed': teamSeedsMap[fid] !== undefined ? teamSeedsMap[fid] : (idx + 1),
-                'Franchise ID': fid,
-                'Team Name': teamName,
-                'Owner': ownerName,
-                'Conference': confMap[confId] || (confId ? `Conference ${confId}` : 'N/A'),
-                'Division': divMap[divId] || (divId ? `Division ${divId}` : 'N/A'),
-                'Wins': wins,
-                'Losses': losses,
-                'Ties': ties,
-                'Win Pct': pct,
-                'Points For (PF)': pf,
-                'Points Against (PA)': pa,
-                'Streak': streak
+                "Seed": teamSeedsMap[fid] !== undefined ? teamSeedsMap[fid] : (idx + 1),
+                "Franchise ID": fid,
+                "Franchise Name": teamName,
+                "Owner": ownerName,
+                "Conference": confMap[confId] || (confId ? `Conference ${confId}` : 'N/A'),
+                "Division": divMap[divId] || (divId ? `Division ${divId}` : 'N/A'),
+                "Wins": wins,
+                "Losses": losses,
+                "Ties": ties,
+                "Win Pct": pct,
+                "Points For (PF)": pf,
+                "Points Against (PA)": pa,
+                "Streak": streak
             });
         });
 
-        rows.sort((a, b) => (parseInt(a['Seed'], 10) || 999) - (parseInt(b['Seed'], 10) || 999));
+        rows.sort((a, b) => (parseInt(a["Seed"], 10) || 999) - (parseInt(b["Seed"], 10) || 999));
+
         return {
-            title: `DNFL Standings (Week ${weekNum} Calculated, ${targetYear})`,
-            description: `Calculated standings, win-loss records, and points for/against aggregated through Week ${weekNum}.`,
-            columns: ['Seed', 'Franchise ID', 'Team Name', 'Owner', 'Conference', 'Division', 'Wins', 'Losses', 'Ties', 'Win Pct', 'Points For (PF)', 'Points Against (PA)', 'Streak'],
+            title: `DNFL Standings (${targetYear})`,
+            description: `Official season standings, win-loss records, and points for/against.`,
+            columns: ["Seed", "Franchise ID", "Franchise Name", "Owner", "Conference", "Division", "Wins", "Losses", "Ties", "Win Pct", "Points For (PF)", "Points Against (PA)", "Streak"],
             rows: rows
         };
     }
@@ -807,7 +742,8 @@ rows
        ========================================================================== */
 
     async function fetchFantasyCalcMap(weekNum) {
-        if (FANTASYCALC_MAP && FANTASYCALC_MAP[weekNum]) return FANTASYCALC_MAP[weekNum];
+        FANTASYCALC_MAP = FANTASYCALC_MAP || {};
+        if (FANTASYCALC_MAP[weekNum]) return FANTASYCALC_MAP[weekNum];
 
         const yr = targetYear || '2026';
         const weekStr = String(weekNum !== undefined && weekNum !== null ? weekNum : 0).padStart(2, '0');
@@ -834,6 +770,7 @@ rows
         const fcMap = {};
         const data = JSON.parse(rawJson);
         const playerArray = Array.isArray(data) ? data : (data.players || []);
+
         playerArray.forEach(p => {
             const pObj = p.player || p;
             const mflId = pObj.mflId || pObj.mfl_id || p.mflId || p.mfl_id;
@@ -849,7 +786,7 @@ rows
             }
         });
 
-        FANTASYCALC_MAP = FANTASYCALC_MAP || {};
+        console.log(`[DNFL Exporter] Ingested FantasyCalc values for ${Object.keys(fcMap).length / 3 | 0} players for Week ${weekNum}.`);
         FANTASYCALC_MAP[weekNum] = fcMap;
         return fcMap;
     }
@@ -886,10 +823,10 @@ rows
         const client = getApiClient();
         await getLeagueInfo();
         await getPlayersMap();
-        
-        const fcMap = await fetchFantasyCalcMap(weekNum);
 
         const weekNum = (targetWeek !== undefined && targetWeek !== null && targetWeek !== "") ? parseInt(targetWeek, 10) : 0;
+        const fcMap = await fetchFantasyCalcMap(weekNum);
+
         const totalRegWeeks = parseInt(cachedLeague?.lastRegularSeasonWeek || 12, 10);
 
         // Check for manual overrides for current year/week
@@ -1154,8 +1091,7 @@ f1Score) stats[f1Id].losses++;
         });
 
         // Sort by Power Index descending
-        statList.s
-ort((a, b) => parseFloat(b.finalIndex) - parseFloat(a.finalIndex));
+        statList.sort((a, b) => parseFloat(b.finalIndex) - parseFloat(a.finalIndex));
 
         // Format Output Rows
         const rows = statList.map((s, idx) => {
@@ -1328,69 +1264,29 @@ ort((a, b) => parseFloat(b.finalIndex) - parseFloat(a.finalIndex));
         selItem = weeksList[selIndex] || weeksList[weeksList.length - 1];
         const weekNum = selItem ? selItem.weekNum : 0;
         const isPreseason = weekNum === 0 || (selItem && selItem.id.includes('pre-season'));
+
         const prevItem = (!isPreseason && selIndex > 0) ? weeksList[selIndex - 1] : null;
 
-        const pastWeeklyPromises = [];
-        if (!isPreseason && weekNum > 0) {
-            for (let w = 1; w <= weekNum; w++) {
-                pastWeeklyPromises.push(client.fetchData('weeklyResults', { W: w }).catch(() => null));
-            }
-        }
-
-        const [currCsvText, prevCsvText, ...pastResults] = await Promise.all([
+        const [currCsvText, prevCsvText, standingsData] = await Promise.all([
             fetchRankingCsv(selItem.file || selItem.id, weekNum),
             prevItem ? fetchRankingCsv(prevItem.file || prevItem.id, prevItem.weekNum) : Promise.resolve(null),
-            ...pastWeeklyPromises
+            (!isPreseason && client) ? client.fetchData('leagueStandings', { W: weekNum, COLUMN_NAMES: 1, ALL: 1 }).catch(() => null) : Promise.resolve(null)
         ]);
 
-        const calcStandingsMap = {};
-        cachedFranchises.forEach(f => {
-            calcStandingsMap[normFranchiseId(f.id)] = { wins: 0, losses: 0, ties: 0 };
-        });
-
-        if (!isPreseason && pastResults.length > 0) {
-            pastResults.forEach(wData => {
-                if (!wData?.weeklyResults) return;
-                const rawMatchups = wData.weeklyResults.matchup || wData.weeklyResults.matchUp || wData.weeklyResults.schedule?.matchup;
-                let matchups = toArray(rawMatchups);
-
-                if (matchups.length === 0 && wData.weeklyResults.franchise) {
-                    const fList = toArray(wData.weeklyResults.franchise);
-                    const processedFids = new Set();
-                    fList.forEach(f => {
-                        const fid = normFranchiseId(f.id);
-                        const oppId = normFranchiseId(f.opponent || f.opp || f.vs);
-                        if (!processedFids.has(fid)) {
-                            processedFids.add(fid);
-                            if (oppId) processedFids.add(oppId);
-                            const oppObj = fList.find(o => normFranchiseId(o.id) === oppId) || {};
-                            matchups.push({ franchise: [f, oppObj] });
-                        }
-                    });
-                }
-
-                matchups.forEach(m => {
-                    const franchises = toArray(m.franchise);
-                    if (franchises.length >= 2) {
-                        const f1 = franchises[0];
-                        const f2 = franchises[1];
-                        const f1Id = normFranchiseId(f1.id);
-                        const f2Id = normFranchiseId(f2.id);
-                        const f1Score = parseFloat(f1.score || 0);
-                        const f2Score = parseFloat(f2.score || 0);
-
-                        if (calcStandingsMap[f1Id]) {
-                            if (f1Score > f2Score) calcStandingsMap[f1Id].wins++;
-                            else if (f2Score > f1Score) calcStandingsMap[f1Id].losses++;
-                            else if (f1Score > 0 || f2Score > 0) calcStandingsMap[f1Id].ties++;
-                        }
-                        if (calcStandingsMap[f2Id]) {
-                            if (f2Score > f1Score) calcStandingsMap[f2Id].wins++;
-                            else if (f1Score > f2Score) calcStandingsMap[f2Id].losses++;
-                            else if (f1Score > 0 || f2Score > 0) calcStandingsMap[f2Id].ties++;
-                        }
-                    }
-                });
+        const standingsMap = {};
+        if (standingsData?.leagueStandings) {
+            const ls = standingsData.leagueStandings;
+            const raw = ls.franchise || (ls.franchises ? ls.franchises.franchise : null);
+            const fList = toArray(raw);
+            fList.forEach(f => {
+                const fid = normFranchiseId(f.id);
+                const wins = parseInt(f.h2hw !== undefined ? f.h2hw : (f.wins || f.w || 0), 10);
+                const losses = parseInt(f.h2hl !== undefined ? f.h2hl : (f.losses || f.l || 0), 10);
+                const ties = parseInt(f.h2ht !== undefined ? f.h2ht : (f.ties || f.t || 0), 10);
+                const rec = ties > 0 ? `${wins}-${losses}-${ties}` : `${wins}-${losses}`;
+                const rawPf = parseFloat(f.pf !== undefined ? f.pf : (f.points || f.pts || 0));
+                const pfStr = isNaN(rawPf) ? '0.00' : rawPf.toFixed(2);
+                standingsMap[fid] = { record: rec, pf: pfStr };
             });
         }
 
@@ -1410,8 +1306,8 @@ ort((a, b) => parseFloat(b.finalIndex) - parseFloat(a.finalIndex));
             throw new Error(`Published power rankings dataset for ${selItem ? selItem.display : 'Week ' + targetWeek} is not available.`);
         }
 
-        if (!window.Papa && typeof Papa === 'undefined') {
-            throw new Error('PapaParse library is required to parse power rankings CSV.');
+        if (!window.Papa && typeof Papa === "undefined") {
+            throw new Error("PapaParse library is required to parse power rankings CSV.");
         }
 
         const parsed = (window.Papa || Papa).parse(currCsvText, { header: true, dynamicTyping: true, skipEmptyLines: true });
@@ -1436,29 +1332,356 @@ ort((a, b) => parseFloat(b.finalIndex) - parseFloat(a.finalIndex));
             }
 
             let recordStr = '0-0';
+            let pfStr = '0.00';
+
             if (isPreseason) {
                 recordStr = String(row['Projected W-L'] || row['Projected Record'] || '0-0').trim();
+                pfStr = '0.00';
             } else {
-                const st = calcStandingsMap[fid] || { wins: 0, losses: 0, ties: 0 };
-                recordStr = st.ties > 0 ? `${st.wins}-${st.losses}-${st.ties}` : `${st.wins}-${st.losses}`;
+                const mflSt = standingsMap[fid] || {};
+                recordStr = mflSt.record || '0-0';
+                pfStr = mflSt.pf || '0.00';
             }
 
             const commentsStr = String(row['Rank Comments'] || row['Comments'] || row['Commentary'] || '').trim();
 
-            rows.push({
-                'Rank': currentRank,
-                'Change': changeStr,
-                'Franchise': franchiseName,
-                'Power Index': powerIndexStr,
-                'Record': recordStr,
-                'Comments': commentsStr
+         
+   rows.push({
+                "Rank": currentRank,
+                "Change": changeStr,
+                "Franchise": franchiseName,
+                "Power Index": powerIndexStr,
+                "Record": recordStr,
+                "Points For": pfStr,
+                "Comments": commentsStr
             });
         });
 
+        rows.sort((a, b) => a["Rank"] - b["Rank"]);
+
+        const titleWeekStr = selItem ? selItem.display : (isPreseason ? 'Pre-Season' : `Week ${weekNum}`);
+
         return {
-            title: `DNFL Published Power Rankings (${selItem ? selItem.display : 'Week ' + targetWeek}, ${targetYear})`,
-            description: `Official published Power Rankings report showing standings record and commissioner commentary.`,
-            columns: ['Rank', 'Change', 'Franchise', 'Power Index', 'Record', 'Comments'],
+            title: `DNFL Published Power Rankings (${titleWeekStr}, ${targetYear})`,
+            description: `Official published power rankings with live API team names, standings, and points for ${titleWeekStr}.`,
+            columns: ["Rank", "Change", "Franchise", "Power Index", "Record", "Points For", "Comments"],
+            rows: rows
+        };
+    }
+
+
+    /* ==========================================================================
+       REPORT GENERATOR 5: AUTOMATED POWER RANKINGS ENGINE v4.12
+       ========================================================================== */
+
+    
+
+    async function generatePowerRankingsReport(targetWeek) {
+        const client = getApiClient();
+        await getLeagueInfo();
+        await getPlayersMap();
+
+        const weekNum = (targetWeek !== undefined && targetWeek !== null && targetWeek !== "") ? parseInt(targetWeek, 10) : 0;
+        const fcMap = await fetchFantasyCalcMap(weekNum);
+
+        const totalRegWeeks = parseInt(cachedLeague?.lastRegularSeasonWeek || 12, 10);
+
+        // Check for manual overrides for current year/week
+        
+        const leagueFranchises = toArray(cachedLeague?.franchises?.franchise);
+        const divisions = toArray(cachedLeague?.divisions?.division);
+        const conferences = toArray(cachedLeague?.conferences?.conference);
+
+        const confMap = {};
+        conferences.forEach(c => confMap[norm(c.id)] = c.name);
+
+        const divMap = {};
+        divisions.forEach(d => divMap[norm(d.id)] = d.name);
+
+        const divToConfMap = {};
+        divisions.forEach(d => divToConfMap[norm(d.id)] = norm(d.conference));
+
+        // 1. Fetch completed weeklyResults up to weekNum in parallel (if weekNum > 0)
+        const pastWeeklyPromises = [];
+        for (let w = 1; w <= weekNum; w++) {
+            pastWeeklyPromises.push(client.fetchData('weeklyResults', { W: w }).catch(() => null));
+        }
+
+        // 2. Fetch rosters for the selected week (or current week)
+        const rosterWeek = weekNum > 0 ? weekNum : 1;
+        const [pastResults, rostersData] = await Promise.all([
+            Promise.all(pastWeeklyPromises),
+            client.fetchData('rosters', { W: rosterWeek }).catch(() => null)
+        ]);
+
+        // Initialize Franchise Accumulators
+        const stats = {};
+        leagueFranchises.forEach(f => {
+            const fid = normFranchiseId(f.id);
+            const divIdNorm = norm(f.division || f.div);
+            const confIdNorm = norm(f.conference || f.conf || divToConfMap[divIdNorm]);
+
+            const confRaw = confMap[confIdNorm] || '';
+            const divRaw = divMap[divIdNorm] || '';
+            let confDivStr = 'DNFL';
+            if (confRaw && divRaw) {
+                confDivStr = `${confRaw} ${divRaw}`;
+            } else if (confRaw) {
+                confDivStr = confRaw;
+            } else if (divRaw) {
+                confDivStr = divRaw;
+            }
+
+            stats[fid] = {
+                fid: fid,
+                name: f.name || `Franchise ${fid}`,
+                owner: f.owner_name || 'N/A',
+                confName: confDivStr,
+                wins: 0,
+                losses: 0,
+                ties: 0,
+                pf: 0,
+                pa: 0,
+                allPlayWins: 0,
+                allPlayLosses: 0,
+                allPlayTies: 0,
+                avgStarterVal: 0,
+                avgBenchVal: 0,
+                rawRosterVal: 0
+            };
+        });
+
+        // Process Head-to-Head & All-Play Record up to weekNum
+        if (weekNum > 0 && pastResults) {
+            pastResults.forEach(wData => {
+                if (!wData?.weeklyResults) return;
+                const rawMatchups = wData.weeklyResults.matchup || wData.weeklyResults.matchUp || wData.weeklyResults.schedule?.matchup;
+                const matchups = toArray(rawMatchups);
+                const weekScoresThisWeek = [];
+
+                matchups.forEach(m => {
+                    const franchises = toArray(m.franchise);
+                    if (franchises.length >= 2) {
+                        const f1 = franchises[0];
+                        const f2 = franchises[1];
+                        const f1Id = normFranchiseId(f1.id);
+                        const f2Id = normFranchiseId(f2.id);
+                        const f1Score = parseFloat(f1.score || 0);
+                        const f2Score = parseFloat(f2.score || 0);
+
+                        if (stats[f1Id]) {
+                            stats[f1Id].pf += f1Score;
+                            stats[f1Id].pa += f2Score;
+                            if (f1Score > f2Score) stats[f1Id].wins++;
+                            else if (f2Score > f1Score) stats[f1Id].losses++;
+                            else if (f1Score > 0) stats[f1Id].ties++;
+                            weekScoresThisWeek.push({ fid: f1Id, score: f1Score });
+                        }
+
+                        if (stats[f2Id]) {
+                            stats[f2Id].pf += f2Score;
+                            stats[f2Id].pa += f1Score;
+                            if (f2Score > f1Score) stats[f2Id].wins++;
+                            else if (f1Score > f2Score) stats[f2Id].losses++;
+                            else if (f2Score > 0) stats[f2Id].ties++;
+                            weekScoresThisWeek.push({ fid: f2Id, score: f2Score });
+                        }
+                    }
+                });
+
+                weekScoresThisWeek.forEach(itemA => {
+                    weekScoresThisWeek.forEach(itemB => {
+                        if (itemA.fid !== itemB.fid) {
+                            if (itemA.score > itemB.score) stats[itemA.fid].allPlayWins++;
+                            else if (itemB.score > itemA.score) stats[itemA.fid].allPlayLosses++;
+                            else if (itemA.score > 0) stats[itemA.fid].allPlayTies++;
+                        }
+                    });
+                });
+            });
+        }
+
+        // Process Rosters & Calculate 7 Optimal Starters + Top 7 Bench Trade Values (Ignoring K and DEF)
+        const rosterList = toArray(rostersData?.rosters?.franchise);
+        rosterList.forEach(f => {
+            const fid = normFranchiseId(f.id);
+            if (!stats[fid]) return;
+
+            const players = toArray(f.player);
+            const eligiblePlayers = [];
+
+            players.forEach(p => {
+                const pid = String(p.id).trim();
+                const unpaddedPid = pid.replace(/^0+/, '');
+                const paddedPid = unpaddedPid.padStart(4, '0');
+                const pInfo = cachedPlayersMap[pid] || cachedPlayersMap[unpaddedPid] || cachedPlayersMap[paddedPid] || {};
+                const pos = (pInfo.position || p.position || p.pos || '').toUpperCase();
+
+                // 1. Filter OUT Kickers and Defenses completely
+                if (pos !== 'K' && pos !== 'PK' && pos !== 'DEF' && pos !== 'ST' && pos !== 'DT' && pos !== 'DE') {
+                    const tradeVal = fcMap[pid] || fcMap[unpaddedPid] || fcMap[paddedPid] || 0;
+                    eligiblePlayers.push({
+                        id: pid,
+                        pos: pos,
+                        tradeVal: tradeVal
+                    });
+                }
+            });
+
+            // 2. Greedily select top 7 starters: 1 QB, 2 RB, 2 WR, 1 TE, 1 FLEX
+            const qbs = eligiblePlayers.filter(p => p.pos === 'QB').sort((a, b) => b.tradeVal - a.tradeVal);
+            const rbs = eligiblePlayers.filter(p => p.pos === 'RB').sort((a, b) => b.tradeVal - a.tradeVal);
+            const wrs = eligiblePlayers.filter(p => p.pos === 'WR').sort((a, b) => b.tradeVal - a.tradeVal);
+            const tes = eligiblePlayers.filter(p => p.pos === 'TE').sort((a, b) => b.tradeVal - a.tradeVal);
+
+            const selectedStarters = [];
+            const remainingPool = [];
+
+            if (qbs.length > 0) selectedStarters.push(qbs[0]);
+            remainingPool.push(...qbs.slice(1));
+
+            if (rbs.length > 0) selectedStarters.push(rbs[0]);
+            if (rbs.length > 1) selectedStarters.push(rbs[1]);
+            remainingPool.push(...rbs.slice(2));
+
+            if (wrs.length > 0) selectedStarters.push(wrs[0]);
+            if (wrs.length > 1) selectedStarters.push(wrs[1]);
+            remainingPool.push(...wrs.slice(2));
+
+            if (tes.length > 0) selectedStarters.push(tes[0]);
+            remainingPool.push(...tes.slice(1));
+
+            // FLEX Slot (highest remaining RB, WR, or TE)
+            remainingPool.sort((a, b) => b.tradeVal - a.tradeVal);
+            if (remainingPool.length > 0) {
+                selectedStarters.push(remainingPool[0]);
+            }
+
+            const starterIds = new Set(selectedStarters.map(s => s.id));
+            const benchPool = eligiblePlayers.filter(p => !starterIds.has(p.id)).sort((a, b) => b.tradeVal - a.tradeVal);
+
+            // Select top 7 bench players (or pad with 0 if fewer than 7 remain)
+            const top7Bench = benchPool.slice(0, 7);
+
+            const starterValSum = selectedStarters.reduce((acc, p) => acc + p.tradeVal, 0);
+            const benchValSum = top7Bench.reduce((acc, p) => acc + p.tradeVal, 0);
+
+            // Always divide by 7 to preserve depth denominator
+            const avgStarterVal = starterValSum / 7.0;
+            const avgBenchVal = benchValSum / 7.0;
+            const rawRosterVal = (avgStarterVal * 0.70) + (avgBenchVal * 0.30);
+
+            stats[fid].avgStarterVal = avgStarterVal;
+            stats[fid].avgBenchVal = avgBenchVal;
+            stats[fid].rawRosterVal = rawRosterVal;
+        });
+
+        const statList = Object.values(stats);
+
+        // Step 1: Compute Sub-Indices using True Min-Max 60-100 Scaling
+        const starterVals = statList.map(s => s.avgStarterVal);
+        const minStarterVal = Math.min(...starterVals);
+        const maxStarterVal = Math.max(...starterVals);
+
+        const benchVals = statList.map(s => s.avgBenchVal);
+        const minBenchVal = Math.min(...benchVals);
+        const maxBenchVal = Math.max(...benchVals);
+
+        const pfVals = statList.map(s => s.pf);
+        const minPf = Math.min(...pfVals);
+        const maxPf = Math.max(...pfVals);
+
+        statList.forEach(s => {
+            // Starter & Bench Sub-Indices (60-100)
+            s.starterIndex = scale60To100(s.avgStarterVal, minStarterVal, maxStarterVal);
+            s.benchIndex = scale60To100(s.avgBenchVal, minBenchVal, maxBenchVal);
+
+            // Roster Value Index (70% Starters / 30% Bench)
+            s.rosterIndex = (s.starterIndex * 0.70) + (s.benchIndex * 0.30);
+
+            // Performance Metrics
+            const totalGames = s.wins + s.losses + s.ties;
+            s.h2hPctVal = totalGames > 0 ? (s.wins + 0.5 * s.ties) / totalGames : 0.0;
+
+            const totalAllPlay = s.allPlayWins + s.allPlayLosses + s.allPlayTies;
+            s.allPlayPctVal = totalAllPlay > 0 ? (s.allPlayWins + 0.5 * s.allPlayTies) / totalAllPlay : 0.0;
+        });
+
+        // Performance Sub-Indices across league (60-100)
+        const h2hVals = statList.map(s => s.h2hPctVal);
+        const minH2h = Math.min(...h2hVals);
+        const maxH2h = Math.max(...h2hVals);
+
+        const allPlayVals = statList.map(s => s.allPlayPctVal);
+        const minAllPlay = Math.min(...allPlayVals);
+        const maxAllPlay = Math.max(...allPlayVals);
+
+        statList.forEach(s => {
+            s.pfScore = scale60To100(s.pf, minPf, maxPf);
+            s.h2hScore = scale60To100(s.h2hPctVal, minH2h, 
+maxH2h);
+            s.allPlayScore = scale60To100(s.allPlayPctVal, minAllPlay, maxAllPlay);
+
+            // Composite Performance Index (40% PF, 20% H2H, 40% All-Play)
+            const totalGames = s.wins + s.losses + s.ties;
+            if (weekNum === 0 || totalGames === 0) {
+                s.perfIndex = 60.0;
+            } else {
+                s.perfIndex = (s.pfScore * 0.40) + (s.h2hScore * 0.20) + (s.allPlayScore * 0.40);
+            }
+        });
+
+        // Step 2: Dynamic Season Weighting
+        const perfWeight = Math.min(1.0, Math.max(0.0, weekNum / totalRegWeeks));
+        const rosterWeight = 1.0 - perfWeight;
+
+        // Step 3: Compute Final Power Rating Index
+        statList.forEach(s => {
+            if (weekNum === 0) {
+                s.calculatedIndex = parseFloat(s.rosterIndex.toFixed(1));
+            } else {
+                const blended = (s.perfIndex * perfWeight) + (s.rosterIndex * rosterWeight);
+                s.calculatedIndex = parseFloat(blended.toFixed(1));
+            }
+            s.finalIndex = s.calculatedIndex.toFixed(1);
+            s.comment = '';
+        });
+
+        // Sort by Power Index descending
+        statList.sort((a, b) => parseFloat(b.finalIndex) - parseFloat(a.finalIndex));
+
+        // Format Output Rows
+        const rows = statList.map((s, idx) => {
+            const rank = idx + 1;
+            const allPlayStr = `${s.allPlayWins}-${s.allPlayLosses}${s.allPlayTies > 0 ? '-' + s.allPlayTies : ''}`;
+            const h2hStr = `${s.wins}-${s.losses}${s.ties > 0 ? '-' + s.ties : ''}`;
+
+            return {
+                "Rank": rank,
+                "Franchise ID": s.fid,
+                "Franchise Name": s.name,
+                "Owner": s.owner,
+                "Conference": s.confName,
+                "Points For": s.pf.toFixed(2),
+                "H2H Record": h2hStr,
+                "H2H %": (s.h2hPctVal * 100).toFixed(1) + '%',
+                "All-Play Record": allPlayStr,
+                "All-Play %": (s.allPlayPctVal * 100).toFixed(1) + '%',
+                "Performance Index": s.perfIndex.toFixed(1),
+                "Starter Value": s.avgStarterVal.toFixed(1),
+                "Starter Index": s.starterIndex.toFixed(1),
+                "Bench Value": s.avgBenchVal.toFixed(1),
+                "Bench Index": s.benchIndex.toFixed(1),
+                "Roster Value Index": s.rosterIndex.toFixed(1),
+                "Power Index": s.finalIndex,
+                "Rank Comments": s.comment || ''
+            };
+        });
+
+        return {
+            title: `DNFL Power Rankings Data (${weekNum === 0 ? "Pre-Season" : "Week " + weekNum}, ${targetYear})`,
+            description: `FantasyCalc Trade Value (7 Starters / Top 7 Bench) + MFL Realized Performance (${(perfWeight * 100).toFixed(1)}% Perf / ${(rosterWeight * 100).toFixed(1)}% Roster Value at Week ${weekNum} of ${totalRegWeeks}).`,
+            columns: ["Rank", "Franchise ID", "Franchise Name", "Owner", "Conference", "Points For", "H2H Record", "H2H %", "All-Play Record", "All-Play %", "Performance Index", "Starter Value", "Starter Index", "Bench Value", "Bench Index", "Roster Value Index", "Power Index", "Rank Comments"],
             rows: rows
         };
     }
@@ -1991,8 +2214,6 @@ typeStr !== 'Dropped') {
         }
     }
 
-    
-
     function init() {
         ensureViewportMeta();
 
@@ -2063,3 +2284,4 @@ typeStr !== 'Dropped') {
         init();
     }
 })();
+
