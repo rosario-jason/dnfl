@@ -539,6 +539,18 @@
             };
         });
 
+        synthStandings.sort((a, b) => {
+            const gA = a.h2hw + a.h2hl + a.h2ht;
+            const gB = b.h2hw + b.h2hl + b.h2ht;
+            const pctA = gA > 0 ? (a.h2hw + 0.5 * a.h2ht) / gA : 0;
+            const pctB = gB > 0 ? (b.h2hw + 0.5 * b.h2ht) / gB : 0;
+
+            if (pctB !== pctA) return pctB - pctA;
+            if (b.pf !== a.pf) return b.pf - a.pf;
+            if (b.pa !== a.pa) return b.pa - a.pa;
+            return a.id.localeCompare(b.id);
+        });
+
         const teamSeedsMap = await calculateTeamSeeds(synthStandings);
 
         const rows = [];
