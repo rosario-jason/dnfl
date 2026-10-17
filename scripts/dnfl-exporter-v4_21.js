@@ -353,81 +353,13 @@
         return teamSeeds;
     }
 
-    async function generateStandingsReport() {
+        async function generateStandingsReport(targetWeek) {
         const client = getApiClient();
         await getLeagueInfo();
 
-        const currentWk = parseInt(cachedLeague?.currentWk || 1, 10);
-        const lastRegWk = parseInt(cachedLeague?.lastRegularSeasonWeek || 12, 10);
-        const maxCompletedWk = Math.min(currentWk, lastRegWk);
+        const rawWkNum = (targetWeek !== undefined && targetWeek !== null && targetWeek !== '') ? parseInt(targetWeek, 10) : 0;
+        const isCurrent = isNaN(rawWkNum) || rawWkNum === 0 || targetWeek === 'current' || targetWeek === 'CURRENT';
 
-        const weeklyPromises = [];
-        for (let w = 1; w <= maxCompletedWk; w++) {
-            weeklyPromises.push(client.fetchData('weeklyResults', { W: w }).catch(() => null));
-        }
-
-        const [standingsData, ...allWeeklyResults] = await Promise.all([
-            client.fetchData('leagueStandings', { COLUMN_NAMES: 1, ALL: 1 }),
-            ...weeklyPromises
-        ]);
-
-        const weeklyPaMap = {};
-        const weeklyGameHistory = {};
-
-        allWeeklyResults.forEach((weeklyData, wIdx) => {
-            if (!weeklyData?.weeklyResults) return;
-            const weekNum = wIdx + 1;
-            const rawMatchups = weeklyData.weeklyResults.matchup || weeklyData.weeklyResults.matchUp || weeklyData.weeklyResults.schedule?.matchup;
-            let matchups = toArray(rawMatchups);
-
-            if (matchups.length === 0 && weeklyData.weeklyResults.franchise) {
-                const fList = toArray(weeklyData.weeklyResults.franchise);
-                const processedFids = new Set();
-                fList.forEach(f => {
-                    const fid = normFranchiseId(f.id);
-                    const oppId = normFranchiseId(f.opponent || f.opp || f.vs);
-                    if (!processedFids.has(fid)) {
-                        processedFids.add(fid);
-                        if (oppId) processedFids.add(oppId);
-                        const oppObj = fList.find(o => normFranchiseId(o.id
-) === oppId) || {};
-                        matchups.push({ franchise: [f, oppObj] });
-                    }
-                });
-            }
-
-            matchups.forEach(m => {
-                const franchises = toArray(m.franchise);
-                if (franchises.length >= 2) {
-                    const f1 = franchises[0];
-                    const f2 = franchises[1];
-                    const f1Id = normFranchiseId(f1.id);
-                    const f2Id = normFranchiseId(f2.id);
-                    const f1Score = parseFloat(f1.score || 0);
-                    const f2Score = parseFloat(f2.score || 0);
-
-                    weeklyPaMap[f1Id] = (weeklyPaMap[f1Id] || 0) + f2Score;
-                    weeklyPaMap[f2Id] = (weeklyPaMap[f2Id] || 0) + f1Score;
-
-                    if (!weeklyGameHistory[f1Id]) weeklyGameHistory[f1Id] = [];
-                    if (!weeklyGameHistory[f2Id]) weeklyGameHistory[f2Id] = [];
-
-                    if (f1Score > f2Score) {
-                        weeklyGameHistory[f1Id].push({ week: weekNum, res: 'W' });
-                        weeklyGameHistory[f2Id].push({ week: weekNum, res: 'L' });
-                    } else if (f2Score > f1Score) {
-                        weeklyGameHistory[f1Id].push({ week: weekNum, res: 'L' });
-                        weeklyGameHistory[f2Id].push({ week: weekNum, res: 'W' });
-                    } else if (f1Score > 0 || f2Score > 0) {
-                        weeklyGameHistory[f1Id].push({ week: weekNum, res: 'T' });
-                        weeklyGameHistory[f2Id].push({ week: weekNum, res: 'T' });
-                    }
-                }
-            });
-        });
-
-        const franchiseStandings = toArray(standingsData?.leagueStandings?.franchise);
-        const teamSeedsMap = await calculateTeamSeeds(franchiseStandings);
         const divisions = toArray(cachedLeague?.divisions?.division);
         const conferences = toArray(cachedLeague?.conferences?.conference);
 
@@ -448,62 +380,201 @@
             franchiseConfDivMap[fid] = { confId: confIdNorm, divId: divIdNorm };
         });
 
-        const rows = [];
+        if (isCurrent) {
+            const standingsData = await client.fetchData('leagueStandings', { COLUMN_NAMES: 1, ALL: 1 });
+            const franchiseStandings = toArray(standingsData?.leagueStandings?.franchise);
+            const teamSeedsMap = await calculateTeamSeeds(franchiseStandings);
 
-        franchiseStandings.forEach((s, idx) => {
-            const fid = normFranchiseId(s.id);
+            const rows = [];
+            franchiseStandings.forEach((s, idx) => {
+                const fid = normFranchiseId(s.id);
+                const teamName = getFranchiseName(fid);
+                const ownerName = getFranchiseOwner(fid);
+
+                const structInfo = franchiseConfDivMap[fid] || {};
+                const confId = norm(s.conference || s.conf || structInfo.confId);
+                const divId = norm(s.division || s.div || structInfo.divId);
+
+                const wins = parseInt(s.h2hw || s.w || 0, 10);
+                const losses = parseInt(s.h2hl || s.l || 0, 10);
+                const ties = parseInt(s.h2ht || s.t || 0, 10);
+                const totalGames = wins + losses + ties;
+                const pct = totalGames > 0 ? ((wins + 0.5 * ties) / totalGames).toFixed(3) : '.000';
+
+                const pf = parseFloat(s.pf || s.h2hpf || s.points_for || 0).toFixed(2);
+                let rawPa = s.pa !== undefined && s.pa !== "0" && s.pa !== 0 ? s.pa : (s.h2hpa || s.points_against || s.opp_pf || s.opp_points || s.pa_pts || s.opp_pts || 0);
+                let pa = parseFloat(rawPa).toFixed(2);
+
+                let streak = 'N/A';
+                if (s.strk) streak = String(s.strk).toUpperCase();
+
+                rows.push({
+                    "Seed": teamSeedsMap[fid] || (idx + 1),
+                    "Franchise ID": fid,
+                    "Team Name": teamName,
+                    "Owner": ownerName,
+                    "Conference": confMap[confId] || 'DNFL',
+                    "Division": divMap[divId] || 'Division',
+                    "W": wins,
+                    "L": losses,
+                    "T": ties,
+                    "Pct": pct,
+                    "PF": pf,
+                    "PA": pa,
+                    "Streak": streak
+                });
+            });
+
+            rows.sort((a, b) => (parseInt(a["Seed"], 10) || 999) - (parseInt(b["Seed"], 10) || 999));
+
+            return {
+                title: `DNFL Standings (Current Live, ${targetYear})`,
+                description: `Official current live MFL standings including tiebreakers, PF, PA, and seeds.`,
+                columns: ["Seed", "Franchise ID", "Team Name", "Owner", "Conference", "Division", "W", "L", "T", "Pct", "PF", "PA", "Streak"],
+                rows: rows
+            };
+        }
+
+        const weekNum = rawWkNum;
+        const pastWeeklyPromises = [];
+        for (let w = 1; w <= weekNum; w++) {
+            pastWeeklyPromises.push(client.fetchData('weeklyResults', { W: w }).catch(() => null));
+        }
+
+        const allWeeklyResults = await Promise.all(pastWeeklyPromises);
+
+        const teamStats = {};
+        cachedFranchises.forEach(f => {
+            const fid = normFranchiseId(f.id);
+            teamStats[fid] = { wins: 0, losses: 0, ties: 0, pf: 0, pa: 0, history: [] };
+        });
+
+        allWeeklyResults.forEach((weeklyData) => {
+            if (!weeklyData?.weeklyResults) return;
+            const rawMatchups = weeklyData.weeklyResults.matchup || weeklyData.weeklyResults.matchUp || weeklyData.weeklyResults.schedule?.matchup;
+            let matchups = toArray(rawMatchups);
+
+            if (matchups.length === 0 && weeklyData.weeklyResults.franchise) {
+                const fList = toArray(weeklyData.weeklyResults.franchise);
+                const processedFids = new Set();
+                fList.forEach(f => {
+                    const fid = normFranchiseId(f.id);
+                    const oppId = normFranchiseId(f.opponent || f.opp || f.vs);
+                    if (!processedFids.has(fid)) {
+                        processedFids.add(fid);
+                        if (oppId) processedFids.add(oppId);
+                        const oppObj = fList.find(o => normFranchiseId(o.id) === oppId) || {};
+                        matchups.push({ franchise: [f, oppObj] });
+                    }
+                });
+            }
+
+            matchups.forEach(m => {
+                const franchises = toArray(m.franchise);
+                if (franchises.length >= 2) {
+                    const f1 = franchises[0];
+                    const f2 = franchises[1];
+                    const f1Id = normFranchiseId(f1.id);
+                    const f2Id = normFranchiseId(f2.id);
+                    const f1Score = parseFloat(f1.score || 0);
+                    const f2Score = parseFloat(f2.score || 0);
+
+                    if (teamStats[f1Id]) {
+                        teamStats[f1Id].pf += f1Score;
+                        teamStats[f1Id].pa += f2Score;
+                        if (f1Score > f2Score) {
+                            teamStats[f1Id].wins++;
+                            teamStats[f1Id].history.push('W');
+                        } else if (f2Score > f1Score) {
+                            teamStats[f1Id].losses++;
+                            teamStats[f1Id].history.push('L');
+                        } else if (f1Score > 0) {
+                            teamStats[f1Id].ties++;
+                            teamStats[f1Id].history.push('T');
+                        }
+                    }
+
+                    if (teamStats[f2Id]) {
+                        teamStats[f2Id].pf += f2Score;
+                        teamStats[f2Id].pa += f1Score;
+                        if (f2Score > f1Score) {
+                            teamStats[f2Id].wins++;
+                            teamStats[f2Id].history.push('W');
+                        } else if (f1Score > f2Score) {
+                            teamStats[f2Id].losses++;
+                            teamStats[f2Id].history.push('L');
+                        } else if (f2Score > 0) {
+                            teamStats[f2Id].ties++;
+                            teamStats[f2Id].history.push('T');
+                        }
+                    }
+                }
+            });
+        });
+
+        const computeStreak = (history) => {
+            if (!history || history.length === 0) return 'N/A';
+            const last = history[history.length - 1];
+            let count = 0;
+            for (let i = history.length - 1; i >= 0; i--) {
+                if (history[i] === last) count++;
+                else break;
+            }
+            return `${last}${count}`;
+        };
+
+        const synthStandings = cachedFranchises.map(f => {
+            const fid = normFranchiseId(f.id);
+            const st = teamStats[fid] || { wins: 0, losses: 0, ties: 0, pf: 0, pa: 0 };
+            const structInfo = franchiseConfDivMap[fid] || {};
+            return {
+                id: fid,
+                h2hw: st.wins,
+                h2hl: st.losses,
+                h2ht: st.ties,
+                pf: st.pf,
+                pa: st.pa,
+                division: structInfo.divId,
+                conference: structInfo.confId
+            };
+        });
+
+        const teamSeedsMap = await calculateTeamSeeds(synthStandings);
+
+        const rows = [];
+        cachedFranchises.forEach((f) => {
+            const fid = normFranchiseId(f.id);
+            const st = teamStats[fid] || { wins: 0, losses: 0, ties: 0, pf: 0, pa: 0, history: [] };
             const teamName = getFranchiseName(fid);
             const ownerName = getFranchiseOwner(fid);
 
             const structInfo = franchiseConfDivMap[fid] || {};
-            const confId = norm(s.conference || s.conf || structInfo.confId);
-            const divId = norm(s.division || s.div || structInfo.divId);
+            const confId = structInfo.confId;
+            const divId = structInfo.divId;
 
-            const wins = parseInt(s.h2hw || s.w || 0, 10);
-            const losses = parseInt(s.h2hl || s.l || 0, 10);
-            const ties = parseInt(s.h2ht || s.t || 0, 10);
+            const wins = st.wins;
+            const losses = st.losses;
+            const ties = st.ties;
             const totalGames = wins + losses + ties;
             const pct = totalGames > 0 ? ((wins + 0.5 * ties) / totalGames).toFixed(3) : '.000';
 
-            const pf = parseFloat(s.pf || s.h2hpf || s.points_for || 0).toFixed(2);
-            let rawPa = s.pa !== undefined && s.pa !== "0" && s.pa !== 0 ? s.pa : (s.h2hpa || s.points_against || s.opp_pf || s.opp_points || s.pa_pts || s.opp_pts || 0);
-            let pa = parseFloat(rawPa).toFixed(2);
-
-            let streak = 'N/A';
-            if (s.strk) streak = String(s.strk).toUpperCase();
-            else if (s.streak) streak = String(s.streak).toUpperCase();
-            else if (s.h2hstrk) streak = String(s.h2hstrk).toUpperCase();
-            else if (s.h2h_streak) streak = String(s.
-h2h_streak).toUpperCase();
-
-            if (parseFloat(pa) === 0 && totalGames > 0 && weeklyPaMap[fid] !== undefined) {
-                pa = parseFloat(weeklyPaMap[fid]).toFixed(2);
-            }
-
-            if ((streak === 'N/A' || streak === '') && totalGames > 0 && weeklyGameHistory[fid] && weeklyGameHistory[fid].length > 0) {
-                const history = weeklyGameHistory[fid];
-                const lastRes = history[history.length - 1].res;
-                let count = 0;
-                for (let i = history.length - 1; i >= 0; i--) {
-                    if (history[i].res === lastRes) count++;
-                    else break;
-                }
-                streak = `${lastRes}${count}`;
-            }
+            const pf = st.pf.toFixed(2);
+            const pa = st.pa.toFixed(2);
+            const streak = computeStreak(st.history);
 
             rows.push({
-                "Seed": teamSeedsMap[fid] !== undefined ? teamSeedsMap[fid] : (idx + 1),
+                "Seed": teamSeedsMap[fid] || 99,
                 "Franchise ID": fid,
-                "Franchise Name": teamName,
+                "Team Name": teamName,
                 "Owner": ownerName,
-                "Conference": confMap[confId] || (confId ? `Conference ${confId}` : 'N/A'),
-                "Division": divMap[divId] || (divId ? `Division ${divId}` : 'N/A'),
-                "Wins": wins,
-                "Losses": losses,
-                "Ties": ties,
-                "Win Pct": pct,
-                "Points For (PF)": pf,
-                "Points Against (PA)": pa,
+                "Conference": confMap[confId] || 'DNFL',
+                "Division": divMap[divId] || 'Division',
+                "W": wins,
+                "L": losses,
+                "T": ties,
+                "Pct": pct,
+                "PF": pf,
+                "PA": pa,
                 "Streak": streak
             });
         });
@@ -511,21 +582,24 @@ h2h_streak).toUpperCase();
         rows.sort((a, b) => (parseInt(a["Seed"], 10) || 999) - (parseInt(b["Seed"], 10) || 999));
 
         return {
-            title: `DNFL Standings (${targetYear})`,
-            description: `Official season standings, win-loss records, and points for/against.`,
-            columns: ["Seed", "Franchise ID", "Franchise Name", "Owner", "Conference", "Division", "Wins", "Losses", "Ties", "Win Pct", "Points For (PF)", "Points Against (PA)", "Streak"],
+            title: `DNFL Standings (Week ${weekNum} Calculated, ${targetYear})`,
+            description: `Calculated historical standings for Week ${weekNum} including head-to-head records, PF, PA, and seeding.`,
+            columns: ["Seed", "Franchise ID", "Team Name", "Owner", "Conference", "Division", "W", "L", "T", "Pct", "PF", "PA", "Streak"],
             rows: rows
         };
     }
 
-    async function generateRostersReport(week) {
+        async function generateRostersReport(week) {
         const client = getApiClient();
         await getLeagueInfo();
         const playersMap = await getPlayersMap();
-        const weekNum = week || 1;
+
+        const isCurrent = (week === undefined || week === null || week === 0 || week === '0' || week === 'current');
+        const rosterParams = isCurrent ? {} : { W: week };
+        const displayWeek = isCurrent ? 'Current' : `Week ${week}`;
 
         const [rostersData, ytdMap] = await Promise.all([
-            client.fetchData('rosters', { W: weekNum }),
+            client.fetchData('rosters', rosterParams),
             getYtdScoresMap()
         ]);
 
@@ -547,7 +621,7 @@ h2h_streak).toUpperCase();
                 };
 
                 rows.push({
-                    "Week": weekNum,
+                    "Week": displayWeek,
                     "Franchise ID": fid,
                     "Franchise Name": teamName,
                     "Player ID": pid,
@@ -560,14 +634,13 @@ h2h_streak).toUpperCase();
             });
         });
 
-        rows.sort((a, b) => a["Franchise Name"].localeCompare(b["Team Name"]) || a["Position"].localeCompare(b["Position"]));
+        rows.sort((a, b) => a["Franchise Name"].localeCompare(b["Franchise Name"]) || a["Position"].localeCompare(b["Position"]));
 
         return {
-            title: `DNFL Rosters (Week ${weekNum}, ${targetYear})`,
-            description: `Complete roster listing across all franchises including native player YTD fantasy points for Week ${weekNum}.`,
+            title: `DNFL Rosters (${displayWeek}, ${targetYear})`,
+            description: `Complete roster listing across all franchises including native player YTD fantasy points for ${displayWeek}.`,
             columns: ["Week", "Franchise ID", "Franchise Name", "Player ID", "Player Name", "Position", "NFL Team", "Roster Status", "YTD Points"],
-            rows: 
-rows
+            rows: rows
         };
     }
 
@@ -1241,7 +1314,7 @@ f1Score) stats[f1Id].losses++;
         return null;
     }
 
-    async function generatePublishedPowerRankingsReport(targetWeek) {
+        async function generatePublishedPowerRankingsReport(targetWeek) {
         const client = getApiClient();
         await getLeagueInfo();
         await getPlayersMap();
@@ -1267,26 +1340,68 @@ f1Score) stats[f1Id].losses++;
 
         const prevItem = (!isPreseason && selIndex > 0) ? weeksList[selIndex - 1] : null;
 
-        const [currCsvText, prevCsvText, standingsData] = await Promise.all([
+        const pastWeeklyPromises = [];
+        if (!isPreseason && weekNum > 0) {
+            for (let w = 1; w <= weekNum; w++) {
+                pastWeeklyPromises.push(client.fetchData('weeklyResults', { W: w }).catch(() => null));
+            }
+        }
+
+        const [currCsvText, prevCsvText, ...allWeeklyResults] = await Promise.all([
             fetchRankingCsv(selItem.file || selItem.id, weekNum),
             prevItem ? fetchRankingCsv(prevItem.file || prevItem.id, prevItem.weekNum) : Promise.resolve(null),
-            (!isPreseason && client) ? client.fetchData('leagueStandings', { W: weekNum, COLUMN_NAMES: 1, ALL: 1 }).catch(() => null) : Promise.resolve(null)
+            ...pastWeeklyPromises
         ]);
 
         const standingsMap = {};
-        if (standingsData?.leagueStandings) {
-            const ls = standingsData.leagueStandings;
-            const raw = ls.franchise || (ls.franchises ? ls.franchises.franchise : null);
-            const fList = toArray(raw);
-            fList.forEach(f => {
-                const fid = normFranchiseId(f.id);
-                const wins = parseInt(f.h2hw !== undefined ? f.h2hw : (f.wins || f.w || 0), 10);
-                const losses = parseInt(f.h2hl !== undefined ? f.h2hl : (f.losses || f.l || 0), 10);
-                const ties = parseInt(f.h2ht !== undefined ? f.h2ht : (f.ties || f.t || 0), 10);
-                const rec = ties > 0 ? `${wins}-${losses}-${ties}` : `${wins}-${losses}`;
-                const rawPf = parseFloat(f.pf !== undefined ? f.pf : (f.points || f.pts || 0));
-                const pfStr = isNaN(rawPf) ? '0.00' : rawPf.toFixed(2);
-                standingsMap[fid] = { record: rec, pf: pfStr };
+        cachedFranchises.forEach(f => {
+            standingsMap[normFranchiseId(f.id)] = { wins: 0, losses: 0, ties: 0 };
+        });
+
+        if (!isPreseason && allWeeklyResults.length > 0) {
+            allWeeklyResults.forEach((weeklyData) => {
+                if (!weeklyData?.weeklyResults) return;
+                const rawMatchups = weeklyData.weeklyResults.matchup || weeklyData.weeklyResults.matchUp || weeklyData.weeklyResults.schedule?.matchup;
+                let matchups = toArray(rawMatchups);
+
+                if (matchups.length === 0 && weeklyData.weeklyResults.franchise) {
+                    const fList = toArray(weeklyData.weeklyResults.franchise);
+                    const processedFids = new Set();
+                    fList.forEach(f => {
+                        const fid = normFranchiseId(f.id);
+                        const oppId = normFranchiseId(f.opponent || f.opp || f.vs);
+                        if (!processedFids.has(fid)) {
+                            processedFids.add(fid);
+                            if (oppId) processedFids.add(oppId);
+                            const oppObj = fList.find(o => normFranchiseId(o.id) === oppId) || {};
+                            matchups.push({ franchise: [f, oppObj] });
+                        }
+                    });
+                }
+
+                matchups.forEach(m => {
+                    const franchises = toArray(m.franchise);
+                    if (franchises.length >= 2) {
+                        const f1 = franchises[0];
+                        const f2 = franchises[1];
+                        const f1Id = normFranchiseId(f1.id);
+                        const f2Id = normFranchiseId(f2.id);
+                        const f1Score = parseFloat(f1.score || 0);
+                        const f2Score = parseFloat(f2.score || 0);
+
+                        if (standingsMap[f1Id]) {
+                            if (f1Score > f2Score) standingsMap[f1Id].wins++;
+                            else if (f2Score > f1Score) standingsMap[f1Id].losses++;
+                            else if (f1Score > 0) standingsMap[f1Id].ties++;
+                        }
+
+                        if (standingsMap[f2Id]) {
+                            if (f2Score > f1Score) standingsMap[f2Id].wins++;
+                            else if (f1Score > f2Score) standingsMap[f2Id].losses++;
+                            else if (f2Score > 0) standingsMap[f2Id].ties++;
+                        }
+                    }
+                });
             });
         }
 
@@ -1332,39 +1447,32 @@ f1Score) stats[f1Id].losses++;
             }
 
             let recordStr = '0-0';
-            let pfStr = '0.00';
 
             if (isPreseason) {
                 recordStr = String(row['Projected W-L'] || row['Projected Record'] || '0-0').trim();
-                pfStr = '0.00';
             } else {
-                const mflSt = standingsMap[fid] || {};
-                recordStr = mflSt.record || '0-0';
-                pfStr = mflSt.pf || '0.00';
+                const st = standingsMap[fid] || { wins: 0, losses: 0, ties: 0 };
+                recordStr = st.ties > 0 ? `${st.wins}-${st.losses}-${st.ties}` : `${st.wins}-${st.losses}`;
             }
 
             const commentsStr = String(row['Rank Comments'] || row['Comments'] || row['Commentary'] || '').trim();
 
-         
-   rows.push({
+            rows.push({
                 "Rank": currentRank,
                 "Change": changeStr,
                 "Franchise": franchiseName,
                 "Power Index": powerIndexStr,
                 "Record": recordStr,
-                "Points For": pfStr,
                 "Comments": commentsStr
             });
         });
 
-        rows.sort((a, b) => a["Rank"] - b["Rank"]);
-
-        const titleWeekStr = selItem ? selItem.display : (isPreseason ? 'Pre-Season' : `Week ${weekNum}`);
+        rows.sort((a, b) => (parseInt(a["Rank"], 10) || 99) - (parseInt(b["Rank"], 10) || 99));
 
         return {
-            title: `DNFL Published Power Rankings (${titleWeekStr}, ${targetYear})`,
-            description: `Official published power rankings with live API team names, standings, and points for ${titleWeekStr}.`,
-            columns: ["Rank", "Change", "Franchise", "Power Index", "Record", "Points For", "Comments"],
+            title: `DNFL Published Power Rankings (${selItem ? selItem.display : 'Week ' + weekNum}, ${targetYear})`,
+            description: `Official published Power Rankings including calculated historical record up to ${selItem ? selItem.display : 'Week ' + weekNum}.`,
+            columns: ["Rank", "Change", "Franchise", "Power Index", "Record", "Comments"],
             rows: rows
         };
     }
@@ -1994,7 +2102,7 @@ typeStr !== 'Dropped') {
             } else if (currentReportType === 'weeklyDetails') {
                 currentReportData = await generateWeeklyDetailsReport(currentSelectedWeek);
             } else if (currentReportType === 'standings') {
-                currentReportData = await generateStandingsReport();
+                currentReportData = await generateStandingsReport(currentSelectedWeek);
             } else if (currentReportType === 'transactions') {
                 currentReportData = await generateTransactionsReport(currentSelectedWeek);
             }
