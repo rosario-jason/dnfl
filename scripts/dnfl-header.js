@@ -10,7 +10,7 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "4.22 Exporter",
+        VERSION: "4.12 Wk 5 Rankings",
         BASE_URL: "https://dnfl.live/scripts/",
 
         STYLESHEETS: [
