@@ -8,7 +8,7 @@
 
 **[Sanford]**: And for this deep dive, well, the mission is pretty intense. We're taking a huge stack of week five data, waiver wire reports, and actual manager notes to decode exactly how to survive a season where, frankly, one mistake could cost you your entire franchise.
 
-**[K-Z]**: It is a highly critical mission because when you analyze the raw data from week five, the sheer variance you ers are fighting right now is quite frankly staggering.
+**[K-Z]**: It is a highly critical mission because when you analyze the raw data from week five, the sheer variance you managers are fighting right now is quite frankly staggering.
 
 **[Sanford]**: It really is. 
 
