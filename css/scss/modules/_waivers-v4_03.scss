@@ -1,10 +1,9 @@
 /* ==========================================================================
-   Duke Networking Fantasy League (DNFL) - Waiver Module Stylesheet Partial
+   Duke Networking Fantasy League (DNFL) - Waiver Module Stylesheet Partial v4.02
    File: css/scss/_waivers.scss
    ========================================================================== */
 
 #dnfl-waivers-container {
-  /* 1. Summary Banner Cards & Pills */
   .dnfl-banner-card {
     background-color: var(--dnfl-bg-subhead, #f1f5f9);
     border-left: 4px solid var(--dnfl-primary, #0577B1);
@@ -71,7 +70,6 @@
     }
   }
 
-  /* 2. Dual Sticky Left Columns */
   .dnfl-waivers-table {
     position: relative;
     border-collapse: separate;
@@ -111,9 +109,8 @@
     }
   }
 
-  /* 3. Row Highlighting & Badges */
   .dnfl-row-my-team {
-    background-color: #fef9c3 !important; /* Canary Yellow */
+    background-color: #fef9c3 !important;
     &:hover {
       background-color: #fef08a !important;
     }
@@ -124,7 +121,6 @@
     }
   }
 
-  /* Replaceability Badges */
   .dnfl-badge-replace-red {
     display: inline-block;
     background-color: #fee2e2;
@@ -171,7 +167,6 @@
     padding: 2px 6px;
   }
 
-  /* Position Colors */
   .dnfl-pos-badge {
     display: inline-block;
     padding: 2px 6px;
@@ -188,7 +183,6 @@
     &.dnfl-pos-def { background-color: #f1f5f9; color: #475569; }
   }
 
-  /* Table Cell Alignments */
   .dnfl-td-index, .dnfl-th-index { text-align: center; }
   .dnfl-td-player, .dnfl-th-player { text-align: left; }
   .dnfl-td-pos, .dnfl-th-pos { text-align: center; }
@@ -197,6 +191,7 @@
   .dnfl-td-delta, .dnfl-th-delta { text-align: right; }
   .dnfl-td-pts, .dnfl-th-pts { text-align: right; }
   .dnfl-td-ppg, .dnfl-th-ppg { text-align: right; }
+  .dnfl-td-wk, .dnfl-th-wk { text-align: right; }
   .dnfl-td-bye, .dnfl-th-bye { text-align: center; }
   .dnfl-td-acq, .dnfl-th-acq { text-align: left; }
   .dnfl-td-status, .dnfl-th-status { text-align: left; }

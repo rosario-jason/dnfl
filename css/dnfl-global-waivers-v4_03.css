@@ -2287,12 +2287,9 @@ a.dnfl-btn-secondary:hover,
 }
 
 /* ==========================================================================
-   Duke Networking Fantasy League (DNFL) - Waiver Module Stylesheet Partial
+   Duke Networking Fantasy League (DNFL) - Waiver Module Stylesheet Partial v4.02
    File: css/scss/_waivers.scss
    ========================================================================== */
-#dnfl-waivers-container {
-  /* 1. Summary Banner Cards & Pills */
-}
 #dnfl-waivers-container .dnfl-banner-card {
   background-color: var(--dnfl-bg-subhead, #f1f5f9);
   border-left: 4px solid var(--dnfl-primary, #0577B1);
@@ -2350,9 +2347,6 @@ a.dnfl-btn-secondary:hover,
 #dnfl-waivers-container .dnfl-floor-pill__value {
   font-weight: 600;
 }
-#dnfl-waivers-container {
-  /* 2. Dual Sticky Left Columns */
-}
 #dnfl-waivers-container .dnfl-waivers-table {
   position: relative;
   border-collapse: separate;
@@ -2387,11 +2381,8 @@ a.dnfl-btn-secondary:hover,
   z-index: 5;
   background-color: var(--dnfl-bg-subhead, #f1f5f9);
 }
-#dnfl-waivers-container {
-  /* 3. Row Highlighting & Badges */
-}
 #dnfl-waivers-container .dnfl-row-my-team {
-  background-color: #fef9c3 !important; /* Canary Yellow */
+  background-color: #fef9c3 !important;
 }
 #dnfl-waivers-container .dnfl-row-my-team:hover {
   background-color: #fef08a !important;
@@ -2399,9 +2390,6 @@ a.dnfl-btn-secondary:hover,
 #dnfl-waivers-container .dnfl-row-my-team .dnfl-sticky-col-1,
 #dnfl-waivers-container .dnfl-row-my-team .dnfl-sticky-col-2 {
   background-color: #fef9c3 !important;
-}
-#dnfl-waivers-container {
-  /* Replaceability Badges */
 }
 #dnfl-waivers-container .dnfl-badge-replace-red {
   display: inline-block;
@@ -2445,9 +2433,6 @@ a.dnfl-btn-secondary:hover,
   font-weight: 600;
   padding: 2px 6px;
 }
-#dnfl-waivers-container {
-  /* Position Colors */
-}
 #dnfl-waivers-container .dnfl-pos-badge {
   display: inline-block;
   padding: 2px 6px;
@@ -2480,9 +2465,6 @@ a.dnfl-btn-secondary:hover,
   background-color: #f1f5f9;
   color: #475569;
 }
-#dnfl-waivers-container {
-  /* Table Cell Alignments */
-}
 #dnfl-waivers-container .dnfl-td-index, #dnfl-waivers-container .dnfl-th-index {
   text-align: center;
 }
@@ -2505,6 +2487,9 @@ a.dnfl-btn-secondary:hover,
   text-align: right;
 }
 #dnfl-waivers-container .dnfl-td-ppg, #dnfl-waivers-container .dnfl-th-ppg {
+  text-align: right;
+}
+#dnfl-waivers-container .dnfl-td-wk, #dnfl-waivers-container .dnfl-th-wk {
   text-align: right;
 }
 #dnfl-waivers-container .dnfl-td-bye, #dnfl-waivers-container .dnfl-th-bye {
