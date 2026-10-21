@@ -1,6 +1,7 @@
 /*
   Duke Networking Fantasy League (DNFL) - Waiver Targets & Player Matrix SCSS
-  File: _waivers-v4_05.scss
+  File: _waivers-v4_06.scss
+  Design System Standard: README-dnfl-css.md
 */
 
 #dnfl-waivers-container {
@@ -33,9 +34,9 @@
     font-weight: 600 !important;
     background-color: var(--dnfl-bg-card, #ffffff) !important;
     border: 1px solid var(--dnfl-border-subtle, #cbd5e1) !important;
-    color: var(--dnfl-text-main, #1e293b) !important;
+    color: var(--dnfl-text-main, #121212) !important;
     cursor: pointer !important;
-    transition: all 0.15s ease-in-out !important;
+    transition: all var(--dnfl-transition-fast, 0.15s ease) !important;
 
     &:hover {
       border-color: var(--dnfl-primary, #0577b1) !important;
@@ -47,12 +48,6 @@
       background-color: var(--dnfl-primary, #0577b1) !important;
       color: #ffffff !important;
       border-color: var(--dnfl-primary, #0577b1) !important;
-    }
-
-    &--replace {
-      border-color: #f87171 !important;
-      color: #991b1b !important;
-      background-color: #fef2f2 !important;
     }
   }
 
@@ -92,7 +87,7 @@
       left: 0.75rem !important;
       top: 50% !important;
       transform: translateY(-50%) !important;
-      color: #94a3b8 !important;
+      color: var(--dnfl-text-light, #94a3b8) !important;
       pointer-events: none !important;
     }
 
@@ -102,12 +97,12 @@
       padding-right: 0.75rem !important;
       height: 38px !important;
       border: 1px solid var(--dnfl-border-subtle, #cbd5e1) !important;
-      border-radius: var(--dnfl-radius-md, 6px) !important;
+      border-radius: var(--dnfl-radius-md, 8px) !important;
       font-size: 0.875rem !important;
 
       &:focus {
         outline: none !important;
-        border-color: var(--dnfl-primary, #0577b1) !important;
+        border-color: var(--dnfl-border-focus, #0577b1) !important;
         box-shadow: 0 0 0 2px rgba(5, 119, 177, 0.2) !important;
       }
     }
@@ -117,7 +112,7 @@
   .dnfl-table-summary {
     margin-bottom: 0.5rem !important;
     font-size: 0.8125rem !important;
-    color: #64748b !important;
+    color: var(--dnfl-text-muted, #555555) !important;
   }
 
   /* Table & Sticky Columns */
@@ -136,26 +131,26 @@
     font-size: 0.875rem !important;
 
     th {
-      background-color: #f8fafc !important;
-      color: #334155 !important;
+      background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
+      color: var(--dnfl-text-heading, #0f172a) !important;
       font-weight: 700 !important;
       text-transform: uppercase !important;
       font-size: 0.75rem !important;
       letter-spacing: 0.05em !important;
       padding: 0.75rem 0.625rem !important;
-      border-bottom: 2px solid #e2e8f0 !important;
+      border-bottom: 2px solid var(--dnfl-border-subtle, #e2e8f0) !important;
       white-space: nowrap !important;
       user-select: none !important;
       cursor: pointer !important;
 
       &:hover {
-        background-color: #f1f5f9 !important;
+        background-color: #e2e8f0 !important;
       }
     }
 
     td {
       padding: 0.625rem !important;
-      border-bottom: 1px solid #f1f5f9 !important;
+      border-bottom: 1px solid var(--dnfl-border-subtle, #f1f5f9) !important;
       white-space: nowrap !important;
       vertical-align: middle !important;
     }
@@ -177,19 +172,19 @@
       left: 40px !important;
       z-index: 5 !important;
       min-width: 160px !important;
-      box-shadow: 2px 0 5px -2px rgba(0,0,0,0.1) !important;
+      box-shadow: 2px 0 5px -2px rgba(0,0,0,0.08) !important;
     }
 
     th.dnfl-sticky-col-1,
     th.dnfl-sticky-col-2 {
       z-index: 10 !important;
-      background-color: #f8fafc !important;
+      background-color: var(--dnfl-bg-subhead, #f1f5f9) !important;
     }
 
     /* Base Row Backgrounds */
     tbody tr {
-      background-color: #ffffff !important;
-      td { background-color: #ffffff !important; }
+      background-color: var(--dnfl-bg-main, #ffffff) !important;
+      td { background-color: var(--dnfl-bg-main, #ffffff) !important; }
 
       /* Standard Row Hover Sync */
       &:hover td {
@@ -199,77 +194,69 @@
 
     /* My Roster Row Highlight (Canary Yellow & Warm Gold Hover Sync) */
     tbody tr.dnfl-row-my-team {
-      background-color: #fef9c3 !important;
-      td { background-color: #fef9c3 !important; }
+      background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
+      td { background-color: var(--dnfl-highlight-yellow, #fde68a) !important; }
 
       &:hover td {
-        background-color: #fef08a !important;
+        background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
       }
     }
 
-    /* Free Agent Row Highlight in All Players View (Soft Mint Green & Mint Hover Sync) */
+    /* Free Agent Row Highlight in All Players View (Soft Emerald Mint Tint Sync) */
     tbody tr.dnfl-row-fa {
-      background-color: #f0fdf4 !important;
-      td { background-color: #f0fdf4 !important; }
+      background-color: var(--dnfl-green-bg, #dcfce7) !important;
+      td { background-color: var(--dnfl-green-bg, #dcfce7) !important; }
 
       &:hover td {
-        background-color: #dcfce7 !important;
+        background-color: var(--dnfl-green-border, #bbf7d0) !important;
       }
     }
 
-    /* Badges in Delta Column */
-    .dnfl-badge-green {
+    /* Framework Standard Badges (_badges.scss Compliance) */
+    .dnfl-badge {
       display: inline-flex !important;
       align-items: center !important;
       gap: 0.25rem !important;
       padding: 0.2rem 0.5rem !important;
-      border-radius: 9999px !important;
+      border-radius: var(--dnfl-radius-sm, 4px) !important;
       font-size: 0.75rem !important;
       font-weight: 700 !important;
-      background-color: #dcfce7 !important;
-      color: #15803d !important;
+
+      &-green {
+        background-color: var(--dnfl-green-bg, #dcfce7) !important;
+        color: var(--dnfl-green-text, #15803d) !important;
+        border: 1px solid var(--dnfl-green-border, #bbf7d0) !important;
+      }
+
+      &-red {
+        background-color: var(--dnfl-red-bg, #fee2e2) !important;
+        color: var(--dnfl-red-text, #b91c1c) !important;
+        border: 1px solid var(--dnfl-red-border, #fecaca) !important;
+      }
+
+      &-amber {
+        background-color: var(--dnfl-amber-bg, #fef3c7) !important;
+        color: var(--dnfl-amber-text, #b45309) !important;
+        border: 1px solid var(--dnfl-amber-border, #fde68a) !important;
+      }
     }
 
-    .dnfl-badge-replace-red {
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 0.25rem !important;
-      padding: 0.2rem 0.5rem !important;
-      border-radius: 9999px !important;
-      font-size: 0.75rem !important;
-      font-weight: 700 !important;
-      background-color: #fee2e2 !important;
-      color: #b91c1c !important;
-    }
-
-    .dnfl-badge-replace-amber {
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 0.25rem !important;
-      padding: 0.2rem 0.5rem !important;
-      border-radius: 9999px !important;
-      font-size: 0.75rem !important;
-      font-weight: 700 !important;
-      background-color: #fef3c7 !important;
-      color: #b45309 !important;
-    }
-
-    /* Position Chips */
+    /* Position Chips with Official Design Tokens */
     .dnfl-pos-chip {
       display: inline-block !important;
       padding: 0.15rem 0.4rem !important;
-      border-radius: 4px !important;
+      border-radius: var(--dnfl-radius-sm, 4px) !important;
       font-size: 0.7rem !important;
       font-weight: 700 !important;
       text-align: center !important;
       min-width: 32px !important;
 
-      &--qb { background-color: #dbeafe !important; color: #1e40af !important; }
-      &--rb { background-color: #dcfce7 !important; color: #166534 !important; }
-      &--wr { background-color: #fef3c7 !important; color: #92400e !important; }
+      &--qb { background-color: var(--dnfl-blue-bg, #dbeafe) !important; color: var(--dnfl-blue-text, #1d4ed8) !important; }
+      &--rb { background-color: var(--dnfl-green-bg, #dcfce7) !important; color: var(--dnfl-green-text, #15803d) !important; }
+      &--wr { background-color: var(--dnfl-amber-bg, #fef3c7) !important; color: var(--dnfl-amber-text, #b45309) !important; }
       &--te { background-color: #f3e8ff !important; color: #6b21a8 !important; }
       &--pk { background-color: #e0e7ff !important; color: #3730a3 !important; }
-      &--def { background-color: #f1f5f9 !important; color: #334155 !important; }
+      &--def { background-color: var(--dnfl-gray-bg, #f1f5f9) !important; color: var(--dnfl-gray-text, #64748b) !important; }
     }
   }
 }
