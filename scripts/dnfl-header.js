@@ -10,11 +10,11 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "4.12 Wk 5 Rankings",
+        VERSION: "4.12 Waivers Module",
         BASE_URL: "https://dnfl.live/scripts/",
 
         STYLESHEETS: [
-            { id: "dnfl-global-css", url: "https://dnfl.live/css/dnfl-global.css" }
+            { id: "dnfl-global-css", url: "https://dnfl.live/css/dnfl-global-waivers.css" }
         ],
 
         INFRASTRUCTURE: [
@@ -32,7 +32,8 @@
             { name: "podcast",   url: "dnfl-podcast.js" },
             { name: "rules",     url: "dnfl-rules.js" },
             { name: "exporter",  url: "dnfl-exporter-v4_22.js" },
-            { name: "lts",       url: "dnfl-lts.js" }
+            { name: "lts",       url: "dnfl-lts.js" },
+            { name: "waivers",       url: "dnfl-waivers.js" }
         ],
 
         CONDITIONAL_LIBRARIES: {
