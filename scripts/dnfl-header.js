@@ -10,7 +10,7 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "4.12 Waivers v4.06",
+        VERSION: "4.12 Waivers v4.06b",
         BASE_URL: "https://dnfl.live/scripts/",
 
         STYLESHEETS: [
