@@ -1,22 +1,22 @@
 /**
- * Duke Networking Fantasy League (DNFL) - Waiver Target & Player Matrix Module v4.03
- * File: scripts/dnfl-waivers-v4_03.js
+ * Duke Networking Fantasy League (DNFL) - Waiver Target & Player Matrix Module v4.04
+ * File: scripts/dnfl-waivers-v4_04.js
  * 
- * Features:
- * 1. Single Parent Card Structure: Standardized .dnfl-card / .dnfl-card-header / .dnfl-card-body layout.
- * 2. Multi-Conference Pool Isolation: Scopes rosters, Free Agents, and floors to activeConfId via divToConfMap.
- * 3. Commissioner Support (FID 0000): Dropdown selector allows Commish to toggle between conference pools.
- * 4. Native MFL AVG PPG: Concurrently fetches MFL AVG points (W: 'AVG') and YTD points (W: 'YTD').
- * 5. Weekly Score Matrix: Parallel-fetches weeklyResults and renders sortable W1..WN columns.
- * 6. Inline Controls: Inline Position dropdown selector (#dnfl-waivers-pos-filter) and search bar.
- * 7. Punctuation-Agnostic Search: Normalizes search terms across first name, last name, team, and status.
+ * Key Capabilities v4.04:
+ * 1. Unified View Selector: Waiver Targets (Targets + My Roster), All Players, Free Agents, Rostered.
+ * 2. Embedded Dollar Badges with Icons: Red ($Val ⚠️) and Amber ($Val 📈) badges for drop candidates.
+ * 3. Selective Free Agent Row Tinting: Mint green row highlighting (.dnfl-row-fa) in All Players view.
+ * 4. Tailored Column Visibility: Hides Delta in All Players & Rostered; hides Status in Free Agents.
+ * 5. Full Decimal Precision (2 Decimals): Pts, PPG (from native W:AVG), and weekly scores (W1..WN).
+ * 6. Sticky Column Hover Synchronization: Sticky columns (# & Player) highlight in sync with row hover.
+ * 7. Punctuation-Agnostic Search: Matches first names, last names, teams, positions, and status strings.
  */
 
 (function () {
     'use strict';
 
-    if (window.DNFLWaiversLoaded_v4_03) return;
-    window.DNFLWaiversLoaded_v4_03 = true;
+    if (window.DNFLWaiversLoaded_v4_04) return;
+    window.DNFLWaiversLoaded_v4_04 = true;
 
     // Namespace initialization
     window.DNFL = window.DNFL || {};
@@ -24,20 +24,16 @@
     let cachedLeagueInfo = null;
     let cachedPlayersMap = null;
     let cachedRosters = null;
-    let cachedYtdScores = null;
-    let cachedAvgScores = null;
+    let cachedYtdScoresMap = {};
+    let cachedAvgScoresMap = {};
     let cachedWeeklyScoresMap = {};
     let cachedFcMap = null;
     let cachedTransactionsMap = {};
-    let cachedDivToConfMap = {};
-    let cachedConfMap = {};
+    let activeUserFid = '0000';
+    let activeConfId = '1';
 
-    let activeUserFid = null;
-    let activeConfId = null;
-
-    let currentViewMode = 'waiverTargets'; // 'waiverTargets' | 'myRoster' | 'allPlayers'
+    let currentViewMode = 'waiverTargets'; // 'waiverTargets' | 'allPlayers' | 'freeAgents' | 'rostered'
     let currentPosFilter = 'ALL';          // 'ALL' | 'QB' | 'RB' | 'WR' | 'TE' | 'FLEX' | 'PK' | 'DEF'
-    let currentStatusFilter = 'ALL';       // 'ALL' | 'FA' | 'MY_ROSTER' | 'RIVAL_ROSTER'
     let currentSearchTerm = '';
     let currentSortColumn = 'valDelta';    // Default sort column
     let currentSortDir = 'desc';           // 'asc' | 'desc'
@@ -60,7 +56,7 @@
         return String(val || '').trim().toLowerCase();
     }
 
-    function cleanSearchStr(val) {
+    function normClean(val) {
         return String(val || '').toLowerCase().replace(/[^a-z0-9]/g, '');
     }
 
@@ -74,34 +70,49 @@
         if (!nameStr) return 'Unknown Player';
         let clean = String(nameStr).trim();
         if (clean.includes(',')) {
-            const parts = clean.split(',').map(s => s.trim());
-            if (parts.length >= 2) {
-                return `${parts[1]} ${parts[0]}`;
-            }
+            const parts = clean.split(',');
+            const last = parts[0].trim();
+            const first = parts.slice(1).join(',').trim();
+            return `${first} ${last}`;
         }
         return clean;
     }
 
     function resolveActiveUser() {
-        // Check URL query parameters
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const queryFid = urlParams.get('FRANCHISE') || urlParams.get('F') || urlParams.get('franchise');
-            if (queryFid) return normFranchiseId(queryFid);
-        } catch (e) {}
-
-        // Check global MFL franchise variables
-        if (typeof window.franchise_id !== 'undefined' && window.franchise_id) return normFranchiseId(window.franchise_id);
-        if (typeof window.mfl_franchise_id !== 'undefined' && window.mfl_franchise_id) return normFranchiseId(window.mfl_franchise_id);
-        if (typeof window.mflFranchiseId !== 'undefined' && window.mflFranchiseId) return normFranchiseId(window.mflFranchiseId);
         if (window.DNFL?.currentFranchiseId) return normFranchiseId(window.DNFL.currentFranchiseId);
-
-        // Check cookies
+        if (window.franchise_id || window.mflFranchiseId || window.mfl_franchise_id) {
+            return normFranchiseId(window.franchise_id || window.mflFranchiseId || window.mfl_franchise_id);
+        }
         if (typeof window.mflCookie !== 'undefined' && window.mflCookie.franchise_id) {
             return normFranchiseId(window.mflCookie.franchise_id);
         }
+        try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const f = urlParams.get('FRANCHISE') || urlParams.get('F');
+            if (f) return normFranchiseId(f);
+        } catch (e) {}
+        return '0000'; // Default to 0000 (Commissioner / Unassigned)
+    }
 
-        return '0001'; // Default fallback
+    function buildConferenceMap(leagueInfo) {
+        const divToConfMap = {};
+        const divisions = toArray(leagueInfo?.divisions?.division);
+        divisions.forEach(d => {
+            if (d.id && d.conference) {
+                divToConfMap[normFranchiseId(d.id)] = String(d.conference).trim();
+            }
+        });
+
+        const franchiseConfMap = {};
+        const franchises = toArray(leagueInfo?.franchises?.franchise);
+        franchises.forEach(f => {
+            const fid = normFranchiseId(f.id);
+            const div = normFranchiseId(f.division);
+            const conf = f.conference ? String(f.conference).trim() : (divToConfMap[div] || '1');
+            franchiseConfMap[fid] = conf;
+        });
+
+        return { divToConfMap, franchiseConfMap };
     }
 
     function getFranchiseName(fid) {
@@ -109,23 +120,6 @@
         const fList = toArray(cachedLeagueInfo?.franchises?.franchise);
         const fObj = fList.find(f => normFranchiseId(f.id) === normFid);
         return fObj ? (fObj.name || `Franchise ${normFid}`) : (normFid === '0000' ? 'Free Agent' : `Franchise ${normFid}`);
-    }
-
-    function getFranchiseConference(fid) {
-        const normFid = normFranchiseId(fid);
-        const fList = toArray(cachedLeagueInfo?.franchises?.franchise);
-        const fObj = fList.find(f => normFranchiseId(f.id) === normFid);
-        if (!fObj) return null;
-
-        const directConf = fObj.conference || fObj.conf;
-        if (directConf) return String(directConf).trim();
-
-        const divId = fObj.division || fObj.div;
-        if (divId && cachedDivToConfMap[norm(divId)]) {
-            return cachedDivToConfMap[norm(divId)];
-        }
-
-        return null;
     }
 
     // Load FantasyCalc market values for current week
@@ -151,24 +145,25 @@
         const fcMap = {};
         if (rawJson) {
             try {
-                const data = JSON.parse(rawJson);
-                const arr = Array.isArray(data) ? data : (data.players || []);
-                arr.forEach(item => {
-                    const pObj = item.player || item;
-                    const mflId = pObj.mflId || pObj.mfl_id || item.mflId || item.mfl_id;
-                    if (mflId !== undefined && mflId !== null && mflId !== '') {
-                        const rawId = String(mflId).trim();
-                        const unpadded = rawId.replace(/^0+/, '') || '0';
-                        const padded = unpadded.padStart(4, '0');
-                        const val = parseFloat(pObj.value || pObj.tradeValue || item.value || item.tradeValue || 0);
+                const arr = JSON.parse(rawJson);
+                if (Array.isArray(arr)) {
+                    arr.forEach(item => {
+                        const pObj = item.player || item;
+                        const mflId = item.mflId || item.mfl_id || pObj.mflId || pObj.mfl_id || item.id || pObj.id;
+                        if (mflId !== undefined && mflId !== null && mflId !== '') {
+                            const val = parseFloat(item.value || item.tradeValue || pObj.value || pObj.tradeValue || 0);
+                            const rawId = String(mflId).trim();
+                            const unpaddedId = rawId.replace(/^0+/, '') || '0';
+                            const paddedId = unpaddedId.padStart(4, '0');
 
-                        fcMap[rawId] = val;
-                        fcMap[unpadded] = val;
-                        fcMap[padded] = val;
-                    }
-                });
+                            fcMap[rawId] = val;
+                            fcMap[unpaddedId] = val;
+                            fcMap[paddedId] = val;
+                        }
+                    });
+                }
             } catch (err) {
-                console.warn('[DNFL Waivers v4.03] Failed to parse FantasyCalc JSON:', err);
+                console.warn('[DNFL Waivers] Failed to parse FantasyCalc JSON:', err);
             }
         }
         return fcMap;
@@ -186,35 +181,16 @@
             client.fetchData('players', { DETAILS: 1 }),
             client.fetchData('rosters', {}),
             client.fetchData('playerScores', { W: 'YTD' }),
-            client.fetchData('playerScores', { W: 'AVG' }).catch(() => null),
+            client.fetchData('playerScores', { W: 'AVG' }),
             client.fetchData('transactions', { TRANS_TYPE: 'DEFAULT' }).catch(() => null)
         ]);
 
         cachedLeagueInfo = leagueRes?.league || {};
         const currentWk = parseInt(cachedLeagueInfo.currentWk || 1, 10);
 
-        // Build Conference & Division Lookup Maps
-        cachedDivToConfMap = {};
-        cachedConfMap = {};
-        const confList = toArray(cachedLeagueInfo?.conferences?.conference);
-        confList.forEach(c => {
-            const cid = String(c.id).trim();
-            cachedConfMap[norm(cid)] = c.name || `Conference ${cid}`;
-        });
-
-        const divList = toArray(cachedLeagueInfo?.divisions?.division);
-        divList.forEach(d => {
-            const did = String(d.id).trim();
-            const cid = String(d.conference).trim();
-            if (did && cid) cachedDivToConfMap[norm(did)] = cid;
-        });
-
-        // Resolve Active Conference ID
-        if (activeUserFid === '0000') { // Commissioner
-            activeConfId = confList.length > 0 ? String(confList[0].id).trim() : '1';
-        } else {
-            activeConfId = getFranchiseConference(activeUserFid) || (confList.length > 0 ? String(confList[0].id).trim() : '1');
-        }
+        // Map Conference IDs
+        const { franchiseConfMap } = buildConferenceMap(cachedLeagueInfo);
+        activeConfId = (activeUserFid !== '0000' && franchiseConfMap[activeUserFid]) ? franchiseConfMap[activeUserFid] : '1';
 
         // Map players
         cachedPlayersMap = {};
@@ -225,7 +201,6 @@
             const padded = unpadded.padStart(4, '0');
             const rawName = String(p.name || `Player ${pid}`).trim();
             const formattedName = formatPlayerName(rawName);
-
             const pObj = {
                 id: pid,
                 rawName: rawName,
@@ -241,29 +216,53 @@
 
         cachedRosters = rostersRes?.rosters || {};
 
-        // YTD Scores Map
-        cachedYtdScores = {};
-        const ytdList = toArray(ytdRes?.playerScores?.playerScore);
-        ytdList.forEach(ps => {
+        // YTD & AVG Scores Map
+        cachedYtdScoresMap = {};
+        const ytdScoreList = toArray(ytdRes?.playerScores?.playerScore);
+        ytdScoreList.forEach(ps => {
             const pid = String(ps.id).trim();
             const unpadded = pid.replace(/^0+/, '');
             const pts = parseFloat(ps.score || 0);
-            cachedYtdScores[pid] = pts;
-            cachedYtdScores[unpadded] = pts;
+            cachedYtdScoresMap[pid] = pts;
+            cachedYtdScoresMap[unpadded] = pts;
         });
 
-        // Native AVG PPG Scores Map
-        cachedAvgScores = {};
-        if (avgRes?.playerScores?.playerScore) {
-            const avgList = toArray(avgRes.playerScores.playerScore);
-            avgList.forEach(ps => {
-                const pid = String(ps.id).trim();
-                const unpadded = pid.replace(/^0+/, '');
-                const avgPts = parseFloat(ps.score || 0);
-                cachedAvgScores[pid] = avgPts;
-                cachedAvgScores[unpadded] = avgPts;
-            });
+        cachedAvgScoresMap = {};
+        const avgScoreList = toArray(avgRes?.playerScores?.playerScore);
+        avgScoreList.forEach(ps => {
+            const pid = String(ps.id).trim();
+            const unpadded = pid.replace(/^0+/, '');
+            const ppg = parseFloat(ps.score || 0);
+            cachedAvgScoresMap[pid] = ppg;
+            cachedAvgScoresMap[unpadded] = ppg;
+        });
+
+        // Parallel Fetch Weekly Results (W1 .. W_currentWk)
+        cachedWeeklyScoresMap = {};
+        const weeklyPromises = [];
+        for (let w = 1; w <= currentWk; w++) {
+            weeklyPromises.push(client.fetchData('weeklyResults', { W: w }).catch(() => null));
         }
+        const weeklyResultsArr = await Promise.all(weeklyPromises);
+        weeklyResultsArr.forEach((wRes, idx) => {
+            const weekNum = idx + 1;
+            const matchArr = toArray(wRes?.weeklyResults?.matchup || wRes?.weeklyResults?.schedule?.matchup);
+            matchArr.forEach(m => {
+                const franchiseArr = toArray(m.franchise);
+                franchiseArr.forEach(f => {
+                    const playerArr = toArray(f.player);
+                    playerArr.forEach(p => {
+                        const pid = String(p.id || p).trim();
+                        const unpadded = pid.replace(/^0+/, '');
+                        const pts = parseFloat(p.score || 0);
+                        if (!cachedWeeklyScoresMap[pid]) cachedWeeklyScoresMap[pid] = {};
+                        if (!cachedWeeklyScoresMap[unpadded]) cachedWeeklyScoresMap[unpadded] = {};
+                        cachedWeeklyScoresMap[pid][weekNum] = pts;
+                        cachedWeeklyScoresMap[unpadded][weekNum] = pts;
+                    });
+                });
+            });
+        });
 
         // Transactions Map (for Acquisition origin)
         cachedTransactionsMap = {};
@@ -277,13 +276,15 @@
                 pids.forEach(pid => {
                     const cleanPid = String(pid).trim().replace(/^0+/, '');
                     if (!cachedTransactionsMap[cleanPid]) {
-                        let acqText = 'Free Agent';
+                        let acqText = 'Free Agent Add';
                         if (type.includes('BBID') || t.bid) {
                             acqText = `Waiver ($${parseFloat(t.bid || 0).toFixed(0)})`;
                         } else if (type.includes('TRADE')) {
                             acqText = 'Trade';
                         } else if (type.includes('DRAFT')) {
-                            acqText = 'Draft';
+                            acqText = 'Drafted';
+                        } else {
+                            acqText = 'Free Agent';
                         }
                         cachedTransactionsMap[cleanPid] = { fid, type: acqText };
                     }
@@ -291,63 +292,34 @@
             });
         }
 
-        // Fetch Weekly Scores
-        cachedWeeklyScoresMap = {};
-        const weekPromises = [];
-        for (let w = 1; w <= currentWk; w++) {
-            weekPromises.push(client.fetchData('weeklyResults', { W: w }).catch(() => null));
-        }
-        const weeklyResultsList = await Promise.all(weekPromises);
-        weeklyResultsList.forEach((wData, idx) => {
-            const wNum = idx + 1;
-            if (!wData?.weeklyResults) return;
-            const matchups = toArray(wData.weeklyResults.matchup || wData.weeklyResults.matchUp);
-            matchups.forEach(m => {
-                const franchises = toArray(m.franchise);
-                franchises.forEach(f => {
-                    const players = toArray(f.player);
-                    players.forEach(p => {
-                        const pid = String(p.id || p).trim();
-                        const unpadded = pid.replace(/^0+/, '');
-                        const score = parseFloat(p.score || 0);
-                        if (!cachedWeeklyScoresMap[unpadded]) cachedWeeklyScoresMap[unpadded] = {};
-                        cachedWeeklyScoresMap[unpadded][`W${wNum}`] = score;
-                    });
-                });
-            });
-        });
-
         // Load Market Values
         cachedFcMap = await fetchFantasyCalcMap(currentWk);
     }
 
-    // Build Master Player List Scoped to Active Conference
+    // Build Master Dataset (Scoped to Active Conference Pool)
     function buildMasterPlayerList() {
         const masterList = [];
+        const { franchiseConfMap } = buildConferenceMap(cachedLeagueInfo);
 
-        // Build Roster Ownership Map for active conference
-        const ownershipMap = {}; // pid -> { fid, teamName, confId }
+        // 1. Build Conference Roster Ownership Map
+        const ownershipMap = {}; // pid -> { fid, ownerName, teamName, status }
         const rosterFranchises = toArray(cachedRosters?.franchise);
-
         rosterFranchises.forEach(f => {
             const fid = normFranchiseId(f.id);
-            const fConf = getFranchiseConference(fid);
-
-            // Strictly process franchises within activeConfId
-            if (String(fConf).trim() === String(activeConfId).trim()) {
+            // Scope rosters strictly to active conference
+            if (franchiseConfMap[fid] === activeConfId) {
                 const teamName = getFranchiseName(fid);
                 const players = toArray(f.player);
-
                 players.forEach(p => {
                     const pid = String(p.id || p).trim();
                     const unpadded = pid.replace(/^0+/, '');
-                    ownershipMap[pid] = { fid, teamName, confId: fConf };
+                    ownershipMap[pid] = { fid, teamName, status: p.status || 'ROSTER' };
                     ownershipMap[unpadded] = ownershipMap[pid];
                 });
             }
         });
 
-        // Iterate all players in database
+        // 2. Iterate all players in map
         const processedPids = new Set();
         Object.keys(cachedPlayersMap).forEach(key => {
             const pInfo = cachedPlayersMap[key];
@@ -356,16 +328,14 @@
 
             const pid = pInfo.id;
             const unpadded = pid.replace(/^0+/, '');
-            const owner = ownershipMap[pid] || ownershipMap[unpadded] || { fid: '0000', teamName: 'Free Agent', confId: activeConfId };
+            const owner = ownershipMap[pid] || ownershipMap[unpadded] || { fid: '0000', teamName: 'Free Agent', status: 'FA' };
             const isFA = owner.fid === '0000';
-            const isMyTeam = owner.fid === activeUserFid;
+            const isMyTeam = owner.fid === activeUserFid && activeUserFid !== '0000';
 
             const mktVal = cachedFcMap[pid] || cachedFcMap[unpadded] || 0;
-            const ytdPts = cachedYtdScores[pid] || cachedYtdScores[unpadded] || 0;
-            const ppg = cachedAvgScores[pid] || cachedAvgScores[unpadded] || (ytdPts > 0 ? ytdPts / 1 : 0);
-
-            // Weekly Scores History
-            const weeklyScores = cachedWeeklyScoresMap[unpadded] || {};
+            const ytdPts = cachedYtdScoresMap[pid] || cachedYtdScoresMap[unpadded] || 0;
+            const ppg = cachedAvgScoresMap[pid] || cachedAvgScoresMap[unpadded] || 0;
+            const weeklyScores = cachedWeeklyScoresMap[pid] || cachedWeeklyScoresMap[unpadded] || {};
 
             // Acquisition info
             let acqInfo = 'FA';
@@ -376,8 +346,8 @@
 
             masterList.push({
                 id: pid,
-                name: pInfo.name,
                 rawName: pInfo.rawName,
+                name: pInfo.name,
                 pos: pInfo.pos,
                 nflTeam: pInfo.team,
                 bye: pInfo.bye,
@@ -429,13 +399,14 @@
             }
         });
 
+        // Fix Infinity if position has no rostered players
         Object.keys(posFloors).forEach(pos => {
             if (posFloors[pos].lowestVal === Infinity) {
                 posFloors[pos].lowestVal = 0;
             }
         });
 
-        // Find top Free Agent value per position in active conference
+        // Find top Free Agent value per position
         const faPlayers = masterList.filter(p => p.isFA);
         faPlayers.forEach(p => {
             const pos = p.pos;
@@ -455,10 +426,11 @@
         return posFloors;
     }
 
-    // Apply Deltas and Badges
+    // Apply Deltas and Badges to Master Dataset
     function annotateMasterList(masterList, posFloors) {
         const faPlayers = masterList.filter(p => p.isFA);
 
+        // Annotate Free Agents with Value Delta vs lowest rostered player
         faPlayers.forEach(p => {
             const pos = p.pos;
             const floorObj = posFloors[pos] || posFloors.FLEX;
@@ -466,6 +438,7 @@
             p.valDelta = p.mktVal - myFloor;
         });
 
+        // Annotate My Roster players with Replaceability Badges
         const myPlayers = masterList.filter(p => p.isMyTeam);
         const posGroups = {};
         myPlayers.forEach(p => {
@@ -475,60 +448,34 @@
 
         Object.keys(posGroups).forEach(pos => {
             const group = posGroups[pos];
-            group.sort((a, b) => a.mktVal - b.mktVal);
+            group.sort((a, b) => a.mktVal - b.mktVal); // Lowest market value first
 
             const topFaVal = posFloors[pos] ? posFloors[pos].topFaVal : 0;
 
             group.forEach((p, idx) => {
                 const isLowestInGroup = (idx === 0);
-                if (topFaVal > p.mktVal) {
-                    p.badgeType = isLowestInGroup ? 'lowestFloor' : 'upgradeable';
+                if (topFaVal > p.mktVal) { // FA is worth $1+ more
+                    if (isLowestInGroup) {
+                        p.badgeType = 'lowestFloor'; // 🔴 Red
+                    } else {
+                        p.badgeType = 'upgradeable';  // 🟠 Amber
+                    }
                 } else {
-                    p.badgeType = null;
+                    p.badgeType = null; // Position secure
                 }
             });
         });
     }
 
-    // Render Conference Selector in Toolbar
-    function renderConferenceSelector() {
-        const wrapper = document.getElementById('dnfl-waivers-conf-wrapper');
-        if (!wrapper) return;
-
-        const confList = toArray(cachedLeagueInfo?.conferences?.conference);
-        if (confList.length <= 1) {
-            wrapper.innerHTML = '';
-            return;
-        }
-
-        let optionsHtml = '';
-        confList.forEach(c => {
-            const cid = String(c.id).trim();
-            const cName = c.name || `Conference ${cid}`;
-            const selected = String(cid) === String(activeConfId) ? 'selected' : '';
-            optionsHtml += `<option value="${cid}" ${selected}>${cName}</option>`;
-        });
-
-        wrapper.innerHTML = `
-            <label for="dnfl-waivers-conf-select" class="dnfl-label">Conf:</label>
-            <select id="dnfl-waivers-conf-select" class="dnfl-select">
-                ${optionsHtml}
-            </select>
-        `;
-
-        const selectEl = document.getElementById('dnfl-waivers-conf-select');
-        if (selectEl) {
-            selectEl.addEventListener('change', () => {
-                activeConfId = selectEl.value;
-                rebuildAndRender();
-            });
-        }
-    }
-
-    // Render Banner Floor Pills
+    // Render Banner
     function renderSummaryBanner(posFloors) {
         const bannerEl = document.getElementById('dnfl-waivers-banner-pills');
         if (!bannerEl) return;
+
+        if (activeUserFid === '0000') {
+            bannerEl.innerHTML = `<span class="dnfl-text-muted"><i class="fa-solid fa-user-shield"></i> Commissioner View: Displaying full league player database and roster assignments.</span>`;
+            return;
+        }
 
         const positions = ['QB', 'RB', 'WR', 'TE', 'FLEX', 'PK', 'DEF'];
         let html = '';
@@ -552,36 +499,24 @@
 
         bannerEl.innerHTML = html;
 
+        // Bind click events to pills
         bannerEl.querySelectorAll('.dnfl-floor-pill').forEach(btn => {
             btn.addEventListener('click', () => {
                 const pos = btn.getAttribute('data-pos');
                 currentViewMode = 'waiverTargets';
                 currentPosFilter = pos;
 
+                const viewSelect = document.getElementById('dnfl-waivers-view-filter');
                 const posSelect = document.getElementById('dnfl-waivers-pos-filter');
+                if (viewSelect) viewSelect.value = 'waiverTargets';
                 if (posSelect) posSelect.value = pos;
 
-                updateViewToggleButtons();
                 renderTable();
             });
         });
     }
 
-    // Update Toolbar Buttons State
-    function updateViewToggleButtons() {
-        document.querySelectorAll('.dnfl-toolbar-view-btn').forEach(btn => {
-            const mode = btn.getAttribute('data-mode');
-            if (mode === currentViewMode) {
-                btn.classList.add('dnfl-btn-primary');
-                btn.classList.remove('dnfl-btn-secondary');
-            } else {
-                btn.classList.add('dnfl-btn-secondary');
-                btn.classList.remove('dnfl-btn-primary');
-            }
-        });
-    }
-
-    // Render Main Table Data
+    // Render Table
     function renderTable() {
         const tableHeadEl = document.getElementById('dnfl-waivers-thead');
         const tableBodyEl = document.getElementById('dnfl-waivers-tbody');
@@ -591,15 +526,19 @@
         const masterList = window.DNFL_WAIVERS_MASTER_DATA || [];
         const currentWk = parseInt(cachedLeagueInfo?.currentWk || 1, 10);
 
-        // 1. Filter Data
+        // 1. Filter Data based on Active View & Controls
         let filtered = masterList.slice();
 
+        // View Mode filter
         if (currentViewMode === 'waiverTargets') {
-            filtered = filtered.filter(p => p.isFA && p.valDelta > 0);
-        } else if (currentViewMode === 'myRoster') {
-            filtered = filtered.filter(p => p.isMyTeam);
-        }
+            filtered = filtered.filter(p => (p.isFA && p.valDelta > 0) || p.isMyTeam);
+        } else if (currentViewMode === 'freeAgents') {
+            filtered = filtered.filter(p => p.isFA);
+        } else if (currentViewMode === 'rostered') {
+            filtered = filtered.filter(p => !p.isFA);
+        } // 'allPlayers' shows all
 
+        // Position filter
         if (currentPosFilter !== 'ALL') {
             if (currentPosFilter === 'FLEX') {
                 filtered = filtered.filter(p => ['RB', 'WR', 'TE'].includes(p.pos));
@@ -608,29 +547,25 @@
             }
         }
 
-        if (currentStatusFilter === 'FA') {
-            filtered = filtered.filter(p => p.isFA);
-        } else if (currentStatusFilter === 'MY_ROSTER') {
-            filtered = filtered.filter(p => p.isMyTeam);
-        } else if (currentStatusFilter === 'RIVAL_ROSTER') {
-            filtered = filtered.filter(p => !p.isFA && !p.isMyTeam);
-        }
-
+        // Search term filter (Punctuation-Agnostic)
         if (currentSearchTerm) {
-            const term = cleanSearchStr(currentSearchTerm);
-            filtered = filtered.filter(p => {
-                return cleanSearchStr(p.name).includes(term) ||
-                       cleanSearchStr(p.rawName).includes(term) ||
-                       cleanSearchStr(p.nflTeam).includes(term) ||
-                       cleanSearchStr(p.pos).includes(term) ||
-                       cleanSearchStr(p.statusText).includes(term);
-            });
+            const cleanTerm = normClean(currentSearchTerm);
+            filtered = filtered.filter(p => 
+                normClean(p.name).includes(cleanTerm) || 
+                normClean(p.rawName).includes(cleanTerm) || 
+                normClean(p.nflTeam).includes(cleanTerm) || 
+                normClean(p.pos).includes(cleanTerm) || 
+                normClean(p.statusText).includes(cleanTerm)
+            );
         }
 
         // 2. Sort Data
         filtered.sort((a, b) => {
             let valA = a[currentSortColumn];
             let valB = b[currentSortColumn];
+
+            if (valA === undefined || valA === null) valA = '';
+            if (valB === undefined || valB === null) valB = '';
 
             if (typeof valA === 'string') valA = valA.toLowerCase();
             if (typeof valB === 'string') valB = valB.toLowerCase();
@@ -640,7 +575,11 @@
             return 0;
         });
 
-        // 3. Render Header
+        // 3. Determine Column Visibility
+        const showDelta = (currentViewMode === 'waiverTargets' || currentViewMode === 'freeAgents');
+        const showStatus = (currentViewMode !== 'freeAgents');
+
+        // 4. Render Header
         let headHtml = `
             <tr>
                 <th class="dnfl-th-index dnfl-sticky-col-1">#</th>
@@ -650,34 +589,31 @@
                 <th class="dnfl-th-val dnfl-sortable" data-sort="mktVal">Val ${getSortIcon('mktVal')}</th>
         `;
 
-        if (currentViewMode === 'waiverTargets' || currentViewMode === 'allPlayers') {
+        if (showDelta) {
             headHtml += `<th class="dnfl-th-delta dnfl-sortable" data-sort="valDelta">Delta ${getSortIcon('valDelta')}</th>`;
         }
 
         headHtml += `
                 <th class="dnfl-th-pts dnfl-sortable" data-sort="ytdPts">Pts ${getSortIcon('ytdPts')}</th>
                 <th class="dnfl-th-ppg dnfl-sortable" data-sort="ppg">PPG ${getSortIcon('ppg')}</th>
+                <th class="dnfl-th-bye dnfl-sortable" data-sort="bye">Bye ${getSortIcon('bye')}</th>
         `;
 
-        // Weekly columns
-        for (let w = 1; w <= currentWk; w++) {
-            headHtml += `<th class="dnfl-th-wk dnfl-sortable" data-sort="W${w}">W${w}</th>`;
+        if (showStatus) {
+            headHtml += `<th class="dnfl-th-status dnfl-sortable" data-sort="statusText">Status / Acquired ${getSortIcon('statusText')}</th>`;
         }
 
-        headHtml += `<th class="dnfl-th-bye dnfl-sortable" data-sort="bye">Bye ${getSortIcon('bye')}</th>`;
-
-        if (currentViewMode === 'myRoster') {
-            headHtml += `<th class="dnfl-th-acq dnfl-sortable" data-sort="acqInfo">Acquired ${getSortIcon('acqInfo')}</th>`;
-        } else {
-            headHtml += `<th class="dnfl-th-status dnfl-sortable" data-sort="statusText">Status ${getSortIcon('statusText')}</th>`;
+        // Render Weekly Columns (W1 .. W_currentWk)
+        for (let w = 1; w <= currentWk; w++) {
+            headHtml += `<th class="dnfl-th-wk dnfl-sortable" data-sort="wk_${w}">W${w} ${getSortIcon(`wk_${w}`)}</th>`;
         }
 
         headHtml += `</tr>`;
         tableHeadEl.innerHTML = headHtml;
 
-        // 4. Render Rows
+        // 5. Render Rows
         if (filtered.length === 0) {
-            const colSpan = 8 + currentWk + (currentViewMode === 'myRoster' ? 0 : 1);
+            let colSpan = 8 + (showDelta ? 1 : 0) + (showStatus ? 1 : 0) + currentWk;
             tableBodyEl.innerHTML = `
                 <tr>
                     <td colspan="${colSpan}" class="dnfl-td-empty">
@@ -691,19 +627,29 @@
 
         let bodyHtml = '';
         filtered.forEach((p, idx) => {
-            const rankIndex = idx + 1;
-            const rowClass = p.isMyTeam ? 'dnfl-row-my-team' : (idx % 2 === 0 ? 'dnfl-row-even' : 'dnfl-row-odd');
+            const rankIndex = idx + 1; // Always dynamic 1..N
+            let rowClass = idx % 2 === 0 ? 'dnfl-row-even' : 'dnfl-row-odd';
+
+            if (p.isMyTeam) {
+                rowClass = 'dnfl-row-my-team'; // Canary Yellow
+            } else if (currentViewMode === 'allPlayers' && p.isFA) {
+                rowClass = 'dnfl-row-fa'; // Mint Green Tint
+            }
+
+            // Pos badge
             const posBadgeClass = `dnfl-pos-badge dnfl-pos-${p.pos.toLowerCase()}`;
 
+            // Val badge for My Roster (Embedded dollar value with icons)
             let valDisplay = `$${p.mktVal.toLocaleString()}`;
-            if (currentViewMode === 'myRoster' && p.badgeType) {
+            if (p.isMyTeam && p.badgeType) {
                 if (p.badgeType === 'lowestFloor') {
-                    valDisplay += ` <span class="dnfl-badge-replace-red">Lowest Floor</span>`;
+                    valDisplay = `<span class="dnfl-badge-replace-red">$${p.mktVal.toLocaleString()} <i class="fa-solid fa-triangle-exclamation"></i></span>`;
                 } else if (p.badgeType === 'upgradeable') {
-                    valDisplay += ` <span class="dnfl-badge-replace-amber">Upgradeable</span>`;
+                    valDisplay = `<span class="dnfl-badge-replace-amber">$${p.mktVal.toLocaleString()} <i class="fa-solid fa-arrow-trend-up"></i></span>`;
                 }
             }
 
+            // Delta badge
             let deltaDisplay = '--';
             if (p.valDelta > 0) {
                 deltaDisplay = `<span class="dnfl-badge-green">+$${p.valDelta.toLocaleString()}</span>`;
@@ -718,29 +664,28 @@
                     <td class="dnfl-td-val">${valDisplay}</td>
             `;
 
-            if (currentViewMode === 'waiverTargets' || currentViewMode === 'allPlayers') {
+            if (showDelta) {
                 bodyHtml += `<td class="dnfl-td-delta">${deltaDisplay}</td>`;
             }
 
             bodyHtml += `
-                    <td class="dnfl-td-pts">${p.ytdPts.toFixed(1)}</td>
-                    <td class="dnfl-td-ppg">${p.ppg.toFixed(1)}</td>
+                    <td class="dnfl-td-pts">${parseFloat(p.ytdPts || 0).toFixed(2)}</td>
+                    <td class="dnfl-td-ppg">${parseFloat(p.ppg || 0).toFixed(2)}</td>
+                    <td class="dnfl-td-bye">${p.bye}</td>
             `;
+
+            if (showStatus) {
+                let statusDisplay = p.isFA ? `<span class="dnfl-badge-fa">Free Agent</span>` : p.statusText;
+                if (p.isMyTeam && p.acqInfo) {
+                    statusDisplay = `My Team (${p.acqInfo})`;
+                }
+                bodyHtml += `<td class="dnfl-td-status">${statusDisplay}</td>`;
+            }
 
             // Render Weekly Scores
             for (let w = 1; w <= currentWk; w++) {
-                const wPts = p.weeklyScores[`W${w}`];
-                const wDisplay = (wPts !== undefined && wPts !== null) ? wPts.toFixed(1) : '--';
-                bodyHtml += `<td class="dnfl-td-wk">${wDisplay}</td>`;
-            }
-
-            bodyHtml += `<td class="dnfl-td-bye">${p.bye}</td>`;
-
-            if (currentViewMode === 'myRoster') {
-                bodyHtml += `<td class="dnfl-td-acq">${p.acqInfo}</td>`;
-            } else {
-                const statusBadge = p.isFA ? `<span class="dnfl-badge-fa">Free Agent</span>` : p.statusText;
-                bodyHtml += `<td class="dnfl-td-status">${statusBadge}</td>`;
+                const wkPts = p.weeklyScores[w] !== undefined ? parseFloat(p.weeklyScores[w]).toFixed(2) : '--';
+                bodyHtml += `<td class="dnfl-td-wk">${wkPts}</td>`;
             }
 
             bodyHtml += `</tr>`;
@@ -749,19 +694,30 @@
         tableBodyEl.innerHTML = bodyHtml;
 
         if (countSummaryEl) {
-            const confName = cachedConfMap[norm(activeConfId)] || `Conference ${activeConfId}`;
-            countSummaryEl.textContent = `Showing ${filtered.length} players (${confName})`;
+            countSummaryEl.textContent = `Showing ${filtered.length} players`;
         }
 
-        // Bind Sort Events
+        // Bind Header Sorting Click Events
         tableHeadEl.querySelectorAll('.dnfl-sortable').forEach(th => {
             th.addEventListener('click', () => {
                 const col = th.getAttribute('data-sort');
-                if (currentSortColumn === col) {
-                    currentSortDir = currentSortDir === 'asc' ? 'desc' : 'asc';
+                if (col.startsWith('wk_')) {
+                    const wkNum = parseInt(col.replace('wk_', ''), 10);
+                    if (currentSortColumn === col) {
+                        currentSortDir = currentSortDir === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSortColumn = col;
+                        currentSortDir = 'desc';
+                    }
+                    // Sort by specific weekly score
+                    masterList.forEach(p => p[col] = p.weeklyScores[wkNum] || 0);
                 } else {
-                    currentSortColumn = col;
-                    currentSortDir = 'desc';
+                    if (currentSortColumn === col) {
+                        currentSortDir = currentSortDir === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSortColumn = col;
+                        currentSortDir = 'desc';
+                    }
                 }
                 renderTable();
             });
@@ -773,27 +729,25 @@
         return currentSortDir === 'asc' ? '<i class="fa-solid fa-sort-up"></i>' : '<i class="fa-solid fa-sort-down"></i>';
     }
 
+    // Bind Control Bar Events
     function bindToolbarEvents() {
-        // Mode toggle
-        document.querySelectorAll('.dnfl-toolbar-view-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                currentViewMode = btn.getAttribute('data-mode');
+        // View Select
+        const viewSelect = document.getElementById('dnfl-waivers-view-filter');
+        if (viewSelect) {
+            viewSelect.addEventListener('change', () => {
+                currentViewMode = viewSelect.value;
                 if (currentViewMode === 'waiverTargets') {
                     currentSortColumn = 'valDelta';
                     currentSortDir = 'desc';
-                } else if (currentViewMode === 'myRoster') {
-                    currentSortColumn = 'mktVal';
-                    currentSortDir = 'asc';
                 } else {
                     currentSortColumn = 'mktVal';
                     currentSortDir = 'desc';
                 }
-                updateViewToggleButtons();
                 renderTable();
             });
-        });
+        }
 
-        // Position dropdown
+        // Position Select
         const posSelect = document.getElementById('dnfl-waivers-pos-filter');
         if (posSelect) {
             posSelect.addEventListener('change', () => {
@@ -802,16 +756,7 @@
             });
         }
 
-        // Status dropdown
-        const statusSelect = document.getElementById('dnfl-waivers-status-filter');
-        if (statusSelect) {
-            statusSelect.addEventListener('change', () => {
-                currentStatusFilter = statusSelect.value;
-                renderTable();
-            });
-        }
-
-        // Search input
+        // Search Input
         const searchInput = document.getElementById('dnfl-waivers-search-input');
         if (searchInput) {
             searchInput.addEventListener('input', () => {
@@ -821,18 +766,7 @@
         }
     }
 
-    function rebuildAndRender() {
-        const masterList = buildMasterPlayerList();
-        const posFloors = calculateActiveUserFloors(masterList);
-        annotateMasterList(masterList, posFloors);
-
-        window.DNFL_WAIVERS_MASTER_DATA = masterList;
-        window.DNFL_WAIVERS_FLOORS = posFloors;
-
-        renderSummaryBanner(posFloors);
-        renderTable();
-    }
-
+    // Main Init Flow
     async function init() {
         const container = document.getElementById('dnfl-waivers-container');
         if (!container) {
@@ -845,21 +779,28 @@
 
         try {
             await loadData();
-            renderConferenceSelector();
-            rebuildAndRender();
-            bindToolbarEvents();
-            updateViewToggleButtons();
+            const masterList = buildMasterPlayerList();
+            const posFloors = calculateActiveUserFloors(masterList);
+            annotateMasterList(masterList, posFloors);
 
-            console.log('[DNFL Waivers v4.03] Module initialized successfully.');
+            window.DNFL_WAIVERS_MASTER_DATA = masterList;
+            window.DNFL_WAIVERS_FLOORS = posFloors;
+
+            renderSummaryBanner(posFloors);
+            bindToolbarEvents();
+            renderTable();
+
+            console.log('[DNFL Waivers] Module v4.04 initialized successfully.');
         } catch (err) {
-            console.error('[DNFL Waivers v4.03 Error]:', err);
-            const summaryEl = document.getElementById('dnfl-waivers-count-summary');
-            if (summaryEl) {
-                summaryEl.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> Error loading waivers module: ${err.message}`;
+            console.error('[DNFL Waivers Error]:', err);
+            const statusEl = document.getElementById('dnfl-waivers-count-summary');
+            if (statusEl) {
+                statusEl.innerHTML = `<span class="dnfl-text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Error loading waivers module: ${err.message}</span>`;
             }
         }
     }
 
+    // Bind Lifecycle Event
     if (document.readyState === 'complete' || document.readyState === 'interactive') {
         init();
     } else {
@@ -867,6 +808,7 @@
     }
     window.addEventListener('dnfl:ready', init);
 
+    // Export Public API
     window.DNFL.Waivers = {
         init: init,
         renderTable: renderTable,
