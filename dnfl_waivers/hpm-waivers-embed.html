@@ -1,0 +1,100 @@
+<!-- DNFL WAIVERS MODULE EMBED v4.01 -->
+
+<div id="dnfl-waivers-container" class="dnfl dnfl-container">
+    
+    <!-- HEADER CARD -->
+    <div class="dnfl-card dnfl-header-card">
+        <div class="dnfl-card__header">
+            <h2 class="dnfl-card__title">
+                <i class="fa-solid fa-bolt"></i> DNFL Waiver Targets & Player Matrix
+            </h2>
+            <span class="dnfl-card__subtitle">
+                Market Value Waiver Wire Upgrades & Roster Floor Evaluation
+            </span>
+        </div>
+    </div>
+
+    <!-- SUMMARY BANNER: POSITIONAL FLOORS -->
+    <div class="dnfl-card dnfl-banner-card">
+        <div class="dnfl-banner-title">
+            <i class="fa-solid fa-shield-halved"></i> Your Roster Floor Benchmarks:
+        </div>
+        <div id="dnfl-waivers-banner-pills" class="dnfl-banner-pills-wrapper">
+            <!-- Dynamic Floor Pills rendered via JS -->
+            <div class="dnfl-floor-pill-skeleton">Loading floor benchmarks...</div>
+        </div>
+    </div>
+
+    <!-- MAIN TOOLBAR & CONTROLS CARD -->
+    <div class="dnfl-card dnfl-controls-card">
+        <div class="dnfl-toolbar">
+            
+            <!-- VIEW MODE TOGGLE -->
+            <div class="dnfl-toolbar__group">
+                <label class="dnfl-toolbar__label">View Mode:</label>
+                <div class="dnfl-btn-group">
+                    <button type="button" class="dnfl-btn dnfl-btn-primary dnfl-toolbar-view-btn" data-mode="waiverTargets">
+                        <i class="fa-solid fa-bullseye"></i> Waiver Targets
+                    </button>
+                    <button type="button" class="dnfl-btn dnfl-btn-secondary dnfl-toolbar-view-btn" data-mode="myRoster">
+                        <i class="fa-solid fa-user-shield"></i> My Roster
+                    </button>
+                    <button type="button" class="dnfl-btn dnfl-btn-secondary dnfl-toolbar-view-btn" data-mode="allPlayers">
+                        <i class="fa-solid fa-list-check"></i> All Players
+                    </button>
+                </div>
+            </div>
+
+            <!-- POSITION BUTTONS -->
+            <div class="dnfl-toolbar__group">
+                <label class="dnfl-toolbar__label">Position:</label>
+                <div class="dnfl-btn-group">
+                    <button type="button" class="dnfl-btn dnfl-btn-active dnfl-toolbar-pos-btn" data-pos="ALL">ALL</button>
+                    <button type="button" class="dnfl-btn dnfl-toolbar-pos-btn" data-pos="QB">QB</button>
+                    <button type="button" class="dnfl-btn dnfl-toolbar-pos-btn" data-pos="RB">RB</button>
+                    <button type="button" class="dnfl-btn dnfl-toolbar-pos-btn" data-pos="WR">WR</button>
+                    <button type="button" class="dnfl-btn dnfl-toolbar-pos-btn" data-pos="TE">TE</button>
+                    <button type="button" class="dnfl-btn dnfl-toolbar-pos-btn" data-pos="FLEX">FLEX</button>
+                    <button type="button" class="dnfl-btn dnfl-toolbar-pos-btn" data-pos="PK">PK</button>
+                    <button type="button" class="dnfl-btn dnfl-toolbar-pos-btn" data-pos="DEF">DEF</button>
+                </div>
+            </div>
+
+            <!-- STATUS DROPDOWN & SEARCH -->
+            <div class="dnfl-toolbar__group dnfl-toolbar__group--end">
+                <div class="dnfl-select-wrapper">
+                    <select id="dnfl-waivers-status-filter" class="dnfl-select">
+                        <option value="ALL">All Statuses</option>
+                        <option value="FA">Free Agents Only</option>
+                        <option value="MY_ROSTER">My Roster</option>
+                        <option value="RIVAL_ROSTER">Rival Rosters</option>
+                    </select>
+                </div>
+                <div class="dnfl-search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass dnfl-search-icon"></i>
+                    <input type="text" id="dnfl-waivers-search-input" class="dnfl-input-search" placeholder="Search player or team..." />
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- DATA TABLE CARD -->
+    <div class="dnfl-card dnfl-table-card">
+        <div class="dnfl-table-summary">
+            <span id="dnfl-waivers-count-summary" class="dnfl-text-muted">Loading players...</span>
+        </div>
+        
+        <div class="dnfl-table-wrapper">
+            <table class="dnfl-table dnfl-waivers-table">
+                <thead id="dnfl-waivers-thead">
+                    <!-- Dynamic Headers Rendered via JS -->
+                </thead>
+                <tbody id="dnfl-waivers-tbody">
+                    <!-- Dynamic Rows Rendered via JS -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
