@@ -10,11 +10,11 @@
     // 1. Expanded Framework Configuration
     // =========================================================================
     const CONFIG = {
-        VERSION: "4.12 Waivers v4.11",
+        VERSION: "4.12 Waivers v4.12",
         BASE_URL: "https://dnfl.live/scripts/",
 
         STYLESHEETS: [
-            { id: "dnfl-global-css", url: "https://dnfl.live/css/dnfl-global-waivers-v4_11.css" }
+            { id: "dnfl-global-css", url: "https://dnfl.live/css/dnfl-global-waivers-v4_12.css" }
         ],
 
         INFRASTRUCTURE: [
@@ -33,7 +33,7 @@
             { name: "rules",     url: "dnfl-rules.js" },
             { name: "exporter",  url: "dnfl-exporter-v4_22.js" },
             { name: "lts",       url: "dnfl-lts.js" },
-            { name: "waivers",   url: "dnfl-waivers-v4_11.js" }
+            { name: "waivers",   url: "dnfl-waivers-v4_12.js" }
         ],
 
         CONDITIONAL_LIBRARIES: {
