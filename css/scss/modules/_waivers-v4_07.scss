@@ -1,0 +1,245 @@
+/* ==========================================================================
+   Duke Networking Fantasy League (DNFL) - Waiver Module Stylesheet Partial v4.07
+   File: css/scss/_waivers-v4_07.scss
+   ========================================================================== */
+
+#dnfl-waivers-container {
+  /* 1. Summary Banner Cards & Pills */
+  .dnfl-banner-panel {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: var(--dnfl-bg-subtle, #f8fafc);
+    border: 1px solid var(--dnfl-border-subtle, #e2e8f0);
+    border-radius: var(--dnfl-radius-md, 8px);
+    padding: 0.875rem 1.25rem;
+  }
+
+  .dnfl-banner-pills-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .dnfl-floor-pill {
+    background-color: var(--dnfl-bg-card, #ffffff);
+    border: 1px solid var(--dnfl-border-subtle, #cbd5e1);
+    border-radius: 9999px;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--dnfl-text-main, #1e293b);
+    cursor: pointer;
+    transition: all var(--dnfl-transition-fast, 0.15s ease);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+
+    &:hover {
+      border-color: var(--dnfl-primary, #0577b1);
+      color: var(--dnfl-primary, #0577b1);
+      background-color: var(--dnfl-primary-ultra-light, #f0f9ff);
+      transform: translateY(-1px);
+    }
+
+    &--active {
+      border-color: var(--dnfl-green-border, #bbf7d0);
+      background-color: var(--dnfl-green-bg, #dcfce7);
+      color: var(--dnfl-green-text, #15803d);
+    }
+
+    &--secure {
+      border-color: var(--dnfl-border-subtle, #e2e8f0);
+      background-color: var(--dnfl-bg-card, #ffffff);
+      color: var(--dnfl-text-muted, #555555);
+    }
+
+    &__label {
+      font-weight: 700;
+    }
+
+    &__value {
+      font-weight: 600;
+    }
+  }
+
+  /* 2. Dual Sticky Left Columns & Hover Sync */
+  .dnfl-waivers-table {
+    position: relative;
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+    font-size: 0.875rem;
+
+    .dnfl-sticky-col-1 {
+      position: sticky;
+      left: 0;
+      z-index: 3;
+      background-color: inherit;
+      width: 40px;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .dnfl-sticky-col-2 {
+      position: sticky;
+      left: 40px;
+      z-index: 3;
+      background-color: inherit;
+      min-width: 160px;
+      font-weight: 600;
+      box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
+    }
+
+    thead {
+      position: sticky;
+      top: 0;
+      z-index: 4;
+      background-color: var(--dnfl-bg-subhead, #f1f5f9);
+
+      .dnfl-sticky-col-1,
+      .dnfl-sticky-col-2 {
+        z-index: 5;
+        background-color: var(--dnfl-bg-subhead, #f1f5f9);
+      }
+    }
+
+    /* Standard Row Hover Sync */
+    tr.dnfl-row-even:hover,
+    tr.dnfl-row-odd:hover {
+      background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+      td.dnfl-sticky-col-1,
+      td.dnfl-sticky-col-2 {
+        background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+      }
+    }
+
+    /* My Team Canary Yellow Row & Hover Sync */
+    tr.dnfl-row-my-team {
+      background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
+      td.dnfl-sticky-col-1,
+      td.dnfl-sticky-col-2 {
+        background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
+      }
+
+      &:hover {
+        background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
+        td.dnfl-sticky-col-1,
+        td.dnfl-sticky-col-2 {
+          background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
+        }
+      }
+    }
+
+    /* Free Agent Mint Green Row (Exclusive to All Players view) */
+    tr.dnfl-row-fa {
+      background-color: var(--dnfl-green-bg, #dcfce7) !important;
+      td.dnfl-sticky-col-1,
+      td.dnfl-sticky-col-2 {
+        background-color: var(--dnfl-green-bg, #dcfce7) !important;
+      }
+
+      &:hover {
+        background-color: var(--dnfl-green-border, #bbf7d0) !important;
+        td.dnfl-sticky-col-1,
+        td.dnfl-sticky-col-2 {
+          background-color: var(--dnfl-green-border, #bbf7d0) !important;
+        }
+      }
+    }
+  }
+
+  /* 3. Status Badges & Pills */
+  .dnfl-badge-replace-red {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background-color: var(--dnfl-red-bg, #fee2e2);
+    color: var(--dnfl-red-text, #b91c1c);
+    border: 1px solid var(--dnfl-red-border, #fecaca);
+    border-radius: var(--dnfl-radius-sm, 4px);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .dnfl-badge-replace-amber {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background-color: var(--dnfl-amber-bg, #fef3c7);
+    color: var(--dnfl-amber-text, #b45309);
+    border: 1px solid var(--dnfl-amber-border, #fde68a);
+    border-radius: var(--dnfl-radius-sm, 4px);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .dnfl-badge-green {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background-color: var(--dnfl-green-bg, #dcfce7);
+    color: var(--dnfl-green-text, #15803d);
+    border: 1px solid var(--dnfl-green-border, #bbf7d0);
+    border-radius: var(--dnfl-radius-sm, 4px);
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.2rem 0.5rem;
+  }
+
+  .dnfl-badge-fa {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--dnfl-gray-bg, #f1f5f9);
+    color: var(--dnfl-gray-text, #64748b);
+    border: 1px solid var(--dnfl-gray-border, #e2e8f0);
+    border-radius: var(--dnfl-radius-sm, 4px);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2rem 0.5rem;
+  }
+
+  /* 4. Position Colors mapped to DNFL Variables */
+  .dnfl-pos-badge {
+    display: inline-block;
+    padding: 0.15rem 0.4rem;
+    border-radius: var(--dnfl-radius-sm, 4px);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-align: center;
+    min-width: 32px;
+
+    &.dnfl-pos-qb { background-color: var(--dnfl-blue-bg, #dbeafe); color: var(--dnfl-blue-text, #1d4ed8); }
+    &.dnfl-pos-rb { background-color: var(--dnfl-green-bg, #dcfce7); color: var(--dnfl-green-text, #15803d); }
+    &.dnfl-pos-wr { background-color: var(--dnfl-amber-bg, #fef3c7); color: var(--dnfl-amber-text, #b45309); }
+    &.dnfl-pos-te { background-color: #f3e8ff; color: #6b21a8; }
+    &.dnfl-pos-pk { background-color: #e0e7ff; color: #3730a3; }
+    &.dnfl-pos-def { background-color: var(--dnfl-gray-bg, #f1f5f9); color: var(--dnfl-gray-text, #64748b); }
+  }
+
+  /* 5. Table Cell Alignments */
+  .dnfl-td-index, .dnfl-th-index { text-align: center; }
+  .dnfl-td-player, .dnfl-th-player { text-align: left; }
+  .dnfl-td-pos, .dnfl-th-pos { text-align: center; }
+  .dnfl-td-nfl, .dnfl-th-nfl { text-align: center; }
+  .dnfl-td-val, .dnfl-th-val { text-align: right; }
+  .dnfl-td-delta, .dnfl-th-delta { text-align: right; }
+  .dnfl-td-pts, .dnfl-th-pts { text-align: right; }
+  .dnfl-td-ppg, .dnfl-th-ppg { text-align: right; }
+  .dnfl-td-bye, .dnfl-th-bye { text-align: center; }
+  .dnfl-td-acq, .dnfl-th-acq { text-align: left; }
+  .dnfl-td-status, .dnfl-th-status { text-align: left; }
+  .dnfl-td-wk, .dnfl-th-wk { text-align: right; min-width: 55px; }
+
+  .dnfl-td-empty {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--dnfl-text-muted, #555555);
+    font-size: 0.875rem;
+  }
+}
