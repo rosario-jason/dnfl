@@ -2287,48 +2287,41 @@ a.dnfl-btn-secondary:hover,
 }
 
 /* ==========================================================================
-   Duke Networking Fantasy League (DNFL) - Waiver Module Stylesheet Partial v4.07
-   File: css/scss/_waivers-v4_07.scss
+   Duke Networking Fantasy League (DNFL) - Waiver Module Stylesheet Partial v4.09
+   File: css/scss/_waivers-v4_09.scss
    ========================================================================== */
 #dnfl-waivers-container {
   /* 1. Summary Banner Cards & Pills */
 }
 #dnfl-waivers-container .dnfl-banner-panel {
-  margin-bottom: 1rem;
+  margin-bottom: 16px;
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
-  background-color: var(--dnfl-bg-subtle, #f8fafc);
-  border: 1px solid var(--dnfl-border-subtle, #e2e8f0);
-  border-radius: var(--dnfl-radius-md, 8px);
-  padding: 0.875rem 1.25rem;
+  gap: 12px;
 }
 #dnfl-waivers-container .dnfl-banner-pills-wrapper {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
 }
 #dnfl-waivers-container .dnfl-floor-pill {
   background-color: var(--dnfl-bg-card, #ffffff);
-  border: 1px solid var(--dnfl-border-subtle, #cbd5e1);
-  border-radius: 9999px;
-  padding: 0.35rem 0.75rem;
-  font-size: 0.8125rem;
+  border: 1px solid var(--dnfl-border-subtle, #e2e8f0);
+  border-radius: var(--dnfl-radius-md, 8px);
+  padding: 4px 10px;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--dnfl-text-main, #1e293b);
   cursor: pointer;
   transition: all var(--dnfl-transition-fast, 0.15s ease);
   display: inline-flex;
   align-items: center;
-  gap: 0.375rem;
+  gap: 4px;
 }
 #dnfl-waivers-container .dnfl-floor-pill:hover {
-  border-color: var(--dnfl-primary, #0577b1);
-  color: var(--dnfl-primary, #0577b1);
+  border-color: var(--dnfl-primary, #0577B1);
   background-color: var(--dnfl-primary-ultra-light, #f0f9ff);
-  transform: translateY(-1px);
 }
 #dnfl-waivers-container .dnfl-floor-pill--active {
   border-color: var(--dnfl-green-border, #bbf7d0);
@@ -2353,26 +2346,24 @@ a.dnfl-btn-secondary:hover,
   position: relative;
   border-collapse: separate;
   border-spacing: 0;
-  width: 100%;
-  font-size: 0.875rem;
 }
 #dnfl-waivers-container .dnfl-waivers-table .dnfl-sticky-col-1 {
   position: sticky;
   left: 0;
   z-index: 3;
   background-color: inherit;
-  width: 40px;
-  min-width: 40px;
+  width: 38px;
+  min-width: 38px;
   text-align: center;
 }
 #dnfl-waivers-container .dnfl-waivers-table .dnfl-sticky-col-2 {
   position: sticky;
-  left: 40px;
+  left: 38px;
   z-index: 3;
   background-color: inherit;
-  min-width: 160px;
+  min-width: 140px;
   font-weight: 600;
-  box-shadow: 2px 0 5px -2px rgba(0, 0, 0, 0.1);
+  box-shadow: 3px 0 6px rgba(0, 0, 0, 0.08);
 }
 #dnfl-waivers-container .dnfl-waivers-table thead {
   position: sticky;
@@ -2388,138 +2379,166 @@ a.dnfl-btn-secondary:hover,
 #dnfl-waivers-container .dnfl-waivers-table {
   /* Standard Row Hover Sync */
 }
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-even,
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-odd {
+  background-color: var(--dnfl-bg-card, #ffffff);
+}
 #dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-even:hover,
 #dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-odd:hover {
-  background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+  background-color: var(--dnfl-primary-ultra-light, #f0f9ff) !important;
 }
 #dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-even:hover td.dnfl-sticky-col-1,
 #dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-even:hover td.dnfl-sticky-col-2,
 #dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-odd:hover td.dnfl-sticky-col-1,
 #dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-odd:hover td.dnfl-sticky-col-2 {
-  background-color: var(--dnfl-primary-light, #b6e2ff) !important;
+  background-color: var(--dnfl-primary-ultra-light, #f0f9ff) !important;
 }
 #dnfl-waivers-container .dnfl-waivers-table {
-  /* My Team Canary Yellow Row & Hover Sync */
+  /* My Team Canary Yellow Row (All Players / Rostered Views) */
 }
 #dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-my-team {
-  background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
+  background-color: var(--dnfl-highlight-yellow, #fef9c3) !important;
 }
 #dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-my-team td.dnfl-sticky-col-1,
 #dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-my-team td.dnfl-sticky-col-2 {
-  background-color: var(--dnfl-highlight-yellow, #fde68a) !important;
+  background-color: var(--dnfl-highlight-yellow, #fef9c3) !important;
 }
 #dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-my-team:hover {
-  background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
+  background-color: var(--dnfl-highlight-yellow-hover, #fef08a) !important;
 }
 #dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-my-team:hover td.dnfl-sticky-col-1,
 #dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-my-team:hover td.dnfl-sticky-col-2 {
-  background-color: var(--dnfl-highlight-yellow-hover, #fcd34d) !important;
+  background-color: var(--dnfl-highlight-yellow-hover, #fef08a) !important;
 }
 #dnfl-waivers-container .dnfl-waivers-table {
-  /* Free Agent Mint Green Row (Exclusive to All Players view) */
+  /* My Team Subtle Light Gray Row (Waiver Targets View so FAs stand out) */
 }
-#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-fa {
-  background-color: var(--dnfl-green-bg, #dcfce7) !important;
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-my-team-subtle {
+  background-color: var(--dnfl-bg-subhead, #f8fafc) !important;
+  color: var(--dnfl-text-secondary, #475569);
 }
-#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-fa td.dnfl-sticky-col-1,
-#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-fa td.dnfl-sticky-col-2 {
-  background-color: var(--dnfl-green-bg, #dcfce7) !important;
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-my-team-subtle td.dnfl-sticky-col-1,
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-my-team-subtle td.dnfl-sticky-col-2 {
+  background-color: var(--dnfl-bg-subhead, #f8fafc) !important;
 }
-#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-fa:hover {
-  background-color: var(--dnfl-green-border, #bbf7d0) !important;
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-my-team-subtle:hover {
+  background-color: var(--dnfl-border-subtle, #e2e8f0) !important;
 }
-#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-fa:hover td.dnfl-sticky-col-1,
-#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-fa:hover td.dnfl-sticky-col-2 {
-  background-color: var(--dnfl-green-border, #bbf7d0) !important;
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-my-team-subtle:hover td.dnfl-sticky-col-1,
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-my-team-subtle:hover td.dnfl-sticky-col-2 {
+  background-color: var(--dnfl-border-subtle, #e2e8f0) !important;
+}
+#dnfl-waivers-container .dnfl-waivers-table {
+  /* Rival Rostered Players Gray Row (All Players / Rostered Views) */
+}
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-rostered-gray {
+  background-color: var(--dnfl-bg-subhead, #f8fafc) !important;
+}
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-rostered-gray td.dnfl-sticky-col-1,
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-rostered-gray td.dnfl-sticky-col-2 {
+  background-color: var(--dnfl-bg-subhead, #f8fafc) !important;
+}
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-rostered-gray:hover {
+  background-color: var(--dnfl-border-subtle, #e2e8f0) !important;
+}
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-rostered-gray:hover td.dnfl-sticky-col-1,
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-rostered-gray:hover td.dnfl-sticky-col-2 {
+  background-color: var(--dnfl-border-subtle, #e2e8f0) !important;
+}
+#dnfl-waivers-container .dnfl-waivers-table {
+  /* Free Agent White Row across all views (Mint green removed) */
+}
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-fa-white {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+}
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-fa-white td.dnfl-sticky-col-1,
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-fa-white td.dnfl-sticky-col-2 {
+  background-color: var(--dnfl-bg-card, #ffffff) !important;
+}
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-fa-white:hover {
+  background-color: var(--dnfl-primary-ultra-light, #f0f9ff) !important;
+}
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-fa-white:hover td.dnfl-sticky-col-1,
+#dnfl-waivers-container .dnfl-waivers-table tr.dnfl-row-fa-white:hover td.dnfl-sticky-col-2 {
+  background-color: var(--dnfl-primary-ultra-light, #f0f9ff) !important;
 }
 #dnfl-waivers-container {
-  /* 3. Status Badges & Pills */
+  /* 3. Text Styles & Badges */
 }
-#dnfl-waivers-container .dnfl-badge-replace-red {
+#dnfl-waivers-container .dnfl-text-red {
+  color: var(--dnfl-red-text, #dc2626);
+  font-weight: 700;
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
-  background-color: var(--dnfl-red-bg, #fee2e2);
-  color: var(--dnfl-red-text, #b91c1c);
-  border: 1px solid var(--dnfl-red-border, #fecaca);
-  border-radius: var(--dnfl-radius-sm, 4px);
-  font-size: 0.75rem;
-  font-weight: 700;
-  padding: 0.2rem 0.5rem;
+  gap: 4px;
 }
 #dnfl-waivers-container .dnfl-badge-replace-amber {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 4px;
   background-color: var(--dnfl-amber-bg, #fef3c7);
   color: var(--dnfl-amber-text, #b45309);
   border: 1px solid var(--dnfl-amber-border, #fde68a);
-  border-radius: var(--dnfl-radius-sm, 4px);
-  font-size: 0.75rem;
+  border-radius: 4px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 0.2rem 0.5rem;
+  padding: 2px 6px;
 }
 #dnfl-waivers-container .dnfl-badge-green {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
   background-color: var(--dnfl-green-bg, #dcfce7);
   color: var(--dnfl-green-text, #15803d);
   border: 1px solid var(--dnfl-green-border, #bbf7d0);
-  border-radius: var(--dnfl-radius-sm, 4px);
-  font-size: 0.75rem;
+  border-radius: 4px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 0.2rem 0.5rem;
+  padding: 2px 6px;
 }
 #dnfl-waivers-container .dnfl-badge-fa {
-  display: inline-flex;
-  align-items: center;
-  background-color: var(--dnfl-gray-bg, #f1f5f9);
-  color: var(--dnfl-gray-text, #64748b);
-  border: 1px solid var(--dnfl-gray-border, #e2e8f0);
-  border-radius: var(--dnfl-radius-sm, 4px);
-  font-size: 0.75rem;
+  background-color: var(--dnfl-bg-subhead, #f1f5f9);
+  color: var(--dnfl-text-secondary, #475569);
+  border: 1px solid var(--dnfl-border-subtle, #cbd5e1);
+  border-radius: 4px;
+  font-size: 11px;
   font-weight: 600;
-  padding: 0.2rem 0.5rem;
+  padding: 2px 6px;
 }
 #dnfl-waivers-container {
-  /* 4. Position Colors mapped to DNFL Variables */
+  /* Position Colors */
 }
 #dnfl-waivers-container .dnfl-pos-badge {
   display: inline-block;
-  padding: 0.15rem 0.4rem;
-  border-radius: var(--dnfl-radius-sm, 4px);
-  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
   font-weight: 700;
   text-align: center;
-  min-width: 32px;
 }
 #dnfl-waivers-container .dnfl-pos-badge.dnfl-pos-qb {
-  background-color: var(--dnfl-blue-bg, #dbeafe);
-  color: var(--dnfl-blue-text, #1d4ed8);
+  background-color: var(--dnfl-red-bg, #fee2e2);
+  color: var(--dnfl-red-text, #991b1b);
 }
 #dnfl-waivers-container .dnfl-pos-badge.dnfl-pos-rb {
-  background-color: var(--dnfl-green-bg, #dcfce7);
-  color: var(--dnfl-green-text, #15803d);
+  background-color: var(--dnfl-blue-bg, #e0f2fe);
+  color: var(--dnfl-blue-text, #075985);
 }
 #dnfl-waivers-container .dnfl-pos-badge.dnfl-pos-wr {
-  background-color: var(--dnfl-amber-bg, #fef3c7);
-  color: var(--dnfl-amber-text, #b45309);
+  background-color: var(--dnfl-green-bg, #dcfce7);
+  color: var(--dnfl-green-text, #166534);
 }
 #dnfl-waivers-container .dnfl-pos-badge.dnfl-pos-te {
-  background-color: #f3e8ff;
-  color: #6b21a8;
+  background-color: var(--dnfl-amber-bg, #fef3c7);
+  color: var(--dnfl-amber-text, #92400e);
 }
 #dnfl-waivers-container .dnfl-pos-badge.dnfl-pos-pk {
-  background-color: #e0e7ff;
-  color: #3730a3;
+  background-color: var(--dnfl-gray-bg, #f1f5f9);
+  color: var(--dnfl-text-secondary, #475569);
 }
 #dnfl-waivers-container .dnfl-pos-badge.dnfl-pos-def {
   background-color: var(--dnfl-gray-bg, #f1f5f9);
-  color: var(--dnfl-gray-text, #64748b);
+  color: var(--dnfl-text-secondary, #475569);
 }
 #dnfl-waivers-container {
-  /* 5. Table Cell Alignments */
+  /* Table Cell Alignments */
 }
 #dnfl-waivers-container .dnfl-td-index, #dnfl-waivers-container .dnfl-th-index {
   text-align: center;
@@ -2560,9 +2579,9 @@ a.dnfl-btn-secondary:hover,
 }
 #dnfl-waivers-container .dnfl-td-empty {
   text-align: center;
-  padding: 1.5rem;
+  padding: 24px;
   color: var(--dnfl-text-muted, #555555);
-  font-size: 0.875rem;
+  font-size: 14px;
 }
 
 /* ==========================================================================
