@@ -1,0 +1,169 @@
+/* Duke Networking Fantasy League (DNFL) - Waiver Target & Player Matrix Partial v4.13 */
+
+#dnfl-waivers-container {
+  .dnfl-legend-panel {
+    background-color: var(--dnfl-bg-subtle, #f8fafc) !important;
+    border: 1px solid var(--dnfl-border-subtle, #e2e8f0) !important;
+    border-radius: var(--dnfl-radius-md, 8px) !important;
+    padding: 0.75rem 1rem !important;
+    margin-bottom: 1rem !important;
+
+    .dnfl-legend-header {
+      margin-bottom: 0.5rem !important;
+      .dnfl-legend-title {
+        font-size: 0.85rem !important;
+        font-weight: 700 !important;
+        color: var(--dnfl-text-secondary, #475569) !important;
+      }
+    }
+
+    .dnfl-legend-pills-wrapper {
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: 0.5rem !important;
+    }
+  }
+
+  .dnfl-floor-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    padding: 0.25rem 0.6rem !important;
+    border-radius: 9999px !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.15s ease-in-out !important;
+
+    .dnfl-floor-pill__label {
+      font-weight: 700 !important;
+    }
+
+    .dnfl-floor-pill__value {
+      font-weight: 600 !important;
+    }
+
+    &.dnfl-floor-pill--active {
+      background-color: #dcfce7 !important;
+      border: 1px solid #bbf7d0 !important;
+      color: #15803d !important;
+
+      &:hover {
+        background-color: #bbf7d0 !important;
+      }
+    }
+
+    &.dnfl-floor-pill--secure {
+      background-color: #ffffff !important;
+      border: 1px solid #e2e8f0 !important;
+      color: #475569 !important;
+
+      &:hover {
+        background-color: #f1f5f9 !important;
+      }
+    }
+  }
+
+  /* Table Header Alignment & Sort Arrows */
+  table.dnfl-table {
+    thead th {
+      white-space: nowrap !important;
+      
+      .dnfl-sort-icon {
+        margin-left: 4px !important;
+        font-size: 0.75rem !important;
+
+        &.dnfl-sort-icon--inactive {
+          color: #94a3b8 !important;
+        }
+
+        &.dnfl-sort-icon--active {
+          color: var(--dnfl-primary, #0577B1) !important;
+        }
+      }
+    }
+
+    .dnfl-th-val    { min-width: 75px !important; }
+    .dnfl-th-delta  { min-width: 85px !important; }
+    .dnfl-th-pts    { min-width: 65px !important; }
+    .dnfl-th-ppg    { min-width: 65px !important; }
+    .dnfl-th-bye    { min-width: 55px !important; }
+    .dnfl-th-acq    { min-width: 100px !important; }
+    .dnfl-th-owner  { min-width: 120px !important; }
+    .dnfl-th-status { min-width: 48px !important; text-align: center !important; }
+    .dnfl-th-wk     { min-width: 55px !important; text-align: center !important; }
+
+    tbody td {
+      &.dnfl-td-status, &.dnfl-td-wk {
+        text-align: center !important;
+      }
+    }
+
+    /* Flat Row Color Hierarchy (No Zebra Striping) */
+    tr.dnfl-row-my-team {
+      background-color: #fef9c3 !important; /* Official Canary Yellow across ALL 4 views */
+      td.dnfl-sticky-col-1, td.dnfl-sticky-col-2 { background-color: #fef9c3 !important; }
+      &:hover {
+        background-color: #fef08a !important;
+        td.dnfl-sticky-col-1, td.dnfl-sticky-col-2 { background-color: #fef08a !important; }
+      }
+    }
+
+    tr.dnfl-row-rostered-gray {
+      background-color: #f8fafc !important;
+      td.dnfl-sticky-col-1, td.dnfl-sticky-col-2 { background-color: #f8fafc !important; }
+      &:hover {
+        background-color: #f1f5f9 !important;
+        td.dnfl-sticky-col-1, td.dnfl-sticky-col-2 { background-color: #f1f5f9 !important; }
+      }
+    }
+
+    tr.dnfl-row-fa-white {
+      background-color: #ffffff !important;
+      td.dnfl-sticky-col-1, td.dnfl-sticky-col-2 { background-color: #ffffff !important; }
+      &:hover {
+        background-color: #f8fafc !important;
+        td.dnfl-sticky-col-1, td.dnfl-sticky-col-2 { background-color: #f8fafc !important; }
+      }
+    }
+  }
+
+  /* Dollar Badges & Shorthand Status Badges */
+  .dnfl-badge-replace-red {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    background-color: #fee2e2 !important;
+    color: #b91c1c !important;
+    border: 1px solid #fecaca !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    padding: 1px 5px !important;
+  }
+
+  .dnfl-badge-replace-amber {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+    background-color: #fef3c7 !important;
+    color: #b45309 !important;
+    border: 1px solid #fde68a !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    padding: 1px 5px !important;
+  }
+
+  .dnfl-badge-green {
+    display: inline-flex !important;
+    align-items: center !important;
+    background-color: #dcfce7 !important;
+    color: #15803d !important;
+    border: 1px solid #bbf7d0 !important;
+    border-radius: 4px !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    padding: 1px 5px !important;
+  }
+}
