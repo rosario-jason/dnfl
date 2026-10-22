@@ -1,0 +1,82 @@
+<!-- Duke Networking Fantasy League (DNFL) - Waiver Target & Player Matrix Embed v4.11 -->
+<div class="dnfl-card" id="dnfl-waivers-container">
+    <div class="dnfl-card-header">
+        <h3 class="dnfl-card-title">
+            <i class="fa-solid fa-bullseye"></i> DNFL Waiver Targets
+        </h3>
+    </div>
+    <div class="dnfl-card-body">
+        <!-- Control Toolbar -->
+        <div class="dnfl-toolbar">
+            <div class="dnfl-filter-group">
+                <label for="dnfl-waivers-view-filter">View</label>
+                <select id="dnfl-waivers-view-filter" class="dnfl-select">
+                    <option value="waiverTargets">Waiver Targets</option>
+                    <option value="allPlayers">All Players</option>
+                    <option value="freeAgents">Free Agents</option>
+                    <option value="rostered">Rostered Players</option>
+                </select>
+            </div>
+            <div class="dnfl-filter-group">
+                <label for="dnfl-waivers-pos-filter">Position</label>
+                <select id="dnfl-waivers-pos-filter" class="dnfl-select">
+                    <option value="ALL">All Positions</option>
+                    <option value="QB">QB</option>
+                    <option value="RB">RB</option>
+                    <option value="WR">WR</option>
+                    <option value="TE">TE</option>
+                    <option value="FLEX">FLEX (RB/WR/TE)</option>
+                    <option value="PK">PK</option>
+                    <option value="DEF">DEF</option>
+                </select>
+            </div>
+            <div class="dnfl-filter-group dnfl-search-group">
+                <label for="dnfl-waivers-search-input">Search Player</label>
+                <input type="text" id="dnfl-waivers-search-input" class="dnfl-input" placeholder="Search name, team, status...">
+            </div>
+        </div>
+
+        <!-- Position Floor Benchmark Legend Panel -->
+        <div class="dnfl-legend-panel" id="dnfl-waivers-benchmark-panel">
+            <div class="dnfl-legend-header">
+                <span class="dnfl-legend-title">
+                    <i class="fa-solid fa-scale-balanced"></i> Position Roster Floors:
+                </span>
+            </div>
+            <div class="dnfl-legend-pills-wrapper" id="dnfl-waivers-banner-pills">
+                <span class="dnfl-floor-pill">Loading Benchmarks...</span>
+            </div>
+        </div>
+
+        <!-- Hardware-Accelerated Touch Scrolling Table Wrapper -->
+        <div class="dnfl-table-wrapper">
+            <table class="dnfl-table dnfl-waivers-table">
+                <thead>
+                    <tr id="dnfl-waivers-thead-row">
+                        <th class="dnfl-sticky-col-1 dnfl-th-index" data-col="index">#</th>
+                        <th class="dnfl-sticky-col-2 dnfl-th-player" data-col="name">Player</th>
+                        <th class="dnfl-th-pos" data-col="pos">Pos</th>
+                        <th class="dnfl-th-nfl" data-col="team">NFL</th>
+                        <th class="dnfl-th-val" data-col="mktVal">Val <i class="fa-solid fa-sort-down"></i></th>
+                        <th class="dnfl-th-delta" data-col="valDelta">Delta</th>
+                        <th class="dnfl-th-pts" data-col="pts">Pts</th>
+                        <th class="dnfl-th-ppg" data-col="ppg">PPG</th>
+                        <th class="dnfl-th-bye" data-col="bye">Bye</th>
+                        <th class="dnfl-th-owner" data-col="ownerName">Owner</th>
+                        <th class="dnfl-th-status" data-col="statusShorthand">Status</th>
+                        <th class="dnfl-th-acq" data-col="acqInfo">Acquired</th>
+                        <!-- Dynamic Week Columns (W1..WN) appended via JS -->
+                    </tr>
+                </thead>
+                <tbody id="dnfl-waivers-tbody">
+                    <tr>
+                        <td colspan="13" class="dnfl-td-empty">Loading Waiver Targets & Player Matrix...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Row Count Summary Footer -->
+        <div class="dnfl-table-summary" id="dnfl-waivers-count-summary"></div>
+    </div>
+</div>
