@@ -1,10 +1,10 @@
 /**
- * Duke Networking Fantasy League (DNFL) - Waiver Target & Player Matrix Module v4.07
- * File: scripts/dnfl-waivers-v4_07.js
+ * Duke Networking Fantasy League (DNFL) - Waiver Target & Player Matrix Module v4.08
+ * File: scripts/dnfl-waivers-v4_08.js
  * 
  * Baseline: Built on v4.04 infrastructure.
- * Key Features v4.07:
- * 1. Static Market Value Feed: Fetches strictly from https://dnfl.live/dnfl_market/fantasycalc_values_current.json.
+ * Key Features v4.08:
+ * 1. Static Market Value Feed: Fetches strictly from https://dnfl.live/dnfl_market/${year}/fantasycalc_values_current.json.
  *    No synthetic fallback. Explicit UI alert if file is missing/invalid.
  * 2. Default Sort Order: Sorted by Market Value Descending (mktVal desc) across all views.
  * 3. Clean Currency & Delta Badges:
@@ -12,7 +12,7 @@
  *    - Delta: Houses all comparison badges (Red ⚠️, Amber ↗️, Green +$X, Muted -$X).
  * 4. Keeper-Compliant Standalone Acquired Column:
  *    - Drafted / Traded: Preserves original draft slot (10.05) across trades for keeper cost accuracy.
- *    - Waived & Claimed: Invalidates draft pick if player was waived, displaying waiver origin (BB $8.00 / FCFS).
+ *    - Waived & Claimed: Invalidates draft pick if player was waived (explicit DROP/CUT), displaying waiver origin (BB $12.50 / FCFS).
  *    - Free Agents: Displays '-'.
  * 5. Authentic Franchise Status: Displays official MFL Franchise Names in Status column.
  * 6. Strict 6-Position Filtering: Strictly limits player database to QB, RB, WR, TE, PK, DEF.
@@ -22,8 +22,8 @@
 (function (window, document) {
     'use strict';
 
-    if (window.DNFLWaiversLoaded_v4_07) return;
-    window.DNFLWaiversLoaded_v4_07 = true;
+    if (window.DNFLWaiversLoaded_v4_08) return;
+    window.DNFLWaiversLoaded_v4_08 = true;
 
     // Namespace initialization
     window.DNFL = window.DNFL || {};
@@ -41,22 +41,21 @@
     let cachedDraftPickMap = {};
     let cachedWasWaivedSet = new Set();
     let cachedTransAcqMap = {};
+
     let activeUserFid = '0000';
     let activeConfId = '1';
-
-    let currentViewMode = 'waiverTargets'; // 'waiverTargets' | 'allPlayers' | 'freeAgents' | 'rostered'
-    let currentPosFilter = 'ALL';          // 'ALL' | 'QB' | 'RB' | 'WR' | 'TE' | 'FLEX' | 'PK' | 'DEF'
+    let currentViewMode = 'waiverTargets'; // 'waiverTargets', 'allPlayers', 'freeAgents', 'rostered'
+    let currentPosFilter = 'ALL';          // 'ALL', 'QB', 'RB', 'WR', 'TE', 'FLEX', 'PK', 'DEF'
     let currentSearchTerm = '';
     let currentSortColumn = 'mktVal';      // Default sort column (Market Value)
-    let currentSortDir = 'desc';           // Default sort direction (Descending)
+    let currentSortDir = 'desc';
 
-    // Retry configuration
     let initRetries = 0;
-    const MAX_RETRIES = 50;
-    const RETRY_INTERVAL = 100;
+    const MAX_RETRIES = 10;
+    const RETRY_INTERVAL = 250;
 
     function getApiClient() {
-        return window.DNFLClient || window.DNFL?.Client || null;
+        return window.DNFL && window.DNFL.Client ? window.DNFL.Client : null;
     }
 
     function toArray(val) {
@@ -64,80 +63,67 @@
         return Array.isArray(val) ? val : [val];
     }
 
-    function norm(val) {
-        return String(val || '').trim().toLowerCase();
+    function normFranchiseId(fid) {
+        if (!fid) return '0000';
+        const str = String(fid).trim();
+        return str.padStart(4, '0');
     }
 
-    function normClean(val) {
-        return String(val || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    }
-
-    function normFranchiseId(id) {
-        if (!id) return '';
-        const clean = String(id).trim().replace(/^0+/, '');
-        return clean ? clean.padStart(4, '0') : '0000';
-    }
-
-    function formatPlayerName(nameStr) {
-        if (!nameStr) return 'Unknown Player';
-        let clean = String(nameStr).trim();
-        if (clean.includes(',')) {
-            const parts = clean.split(',');
-            const last = parts[0].trim();
-            const first = parts.slice(1).join(',').trim();
-            return `${first} ${last}`;
+    function formatPlayerName(rawName) {
+        if (!rawName) return 'Unknown Player';
+        if (rawName.includes(',')) {
+            const parts = rawName.split(',');
+            const lastName = parts[0].trim();
+            const firstName = parts.slice(1).join(',').trim();
+            return `${firstName} ${lastName}`.trim();
         }
-        return clean;
+        return rawName.trim();
     }
 
     function resolveActiveUser() {
-        if (window.DNFL?.currentFranchiseId) return normFranchiseId(window.DNFL.currentFranchiseId);
-        if (window.franchise_id || window.mflFranchiseId || window.mfl_franchise_id) {
-            return normFranchiseId(window.franchise_id || window.mflFranchiseId || window.mfl_franchise_id);
-        }
-        if (typeof window.mflCookie !== 'undefined' && window.mflCookie.franchise_id) {
-            return normFranchiseId(window.mflCookie.franchise_id);
-        }
-        try {
-            const urlParams = new URLSearchParams(window.location.search);
-            const f = urlParams.get('FRANCHISE') || urlParams.get('F');
-            if (f) return normFranchiseId(f);
-        } catch (e) {}
-        return '0000'; // Default to 0000 (Commissioner / Unassigned)
+        if (window.franchise_id) return normFranchiseId(window.franchise_id);
+        const urlParams = new URLSearchParams(window.location.search);
+        const fidParam = urlParams.get('FRANCHISE') || urlParams.get('F') || urlParams.get('fid');
+        if (fidParam) return normFranchiseId(fidParam);
+        return '0000';
     }
 
     function buildConferenceMap(leagueInfo) {
         const divToConfMap = {};
-        const divisions = toArray(leagueInfo?.divisions?.division);
-        divisions.forEach(d => {
-            if (d.id && d.conference) {
-                divToConfMap[normFranchiseId(d.id)] = String(d.conference).trim();
+        const rawDivisions = toArray(leagueInfo?.divisions?.division);
+        rawDivisions.forEach(d => {
+            if (d && d.id) {
+                divToConfMap[String(d.id)] = String(d.conference || '');
             }
         });
 
+        const franchiseMap = {};
         const franchiseConfMap = {};
-        const franchises = toArray(leagueInfo?.franchises?.franchise);
-        franchises.forEach(f => {
-            const fid = normFranchiseId(f.id);
-            const div = normFranchiseId(f.division);
-            const conf = f.conference ? String(f.conference).trim() : (divToConfMap[div] || '1');
-            franchiseConfMap[fid] = conf;
+        const rawFranchises = toArray(leagueInfo?.franchises?.franchise);
+        rawFranchises.forEach(f => {
+            if (f && f.id) {
+                const fid = normFranchiseId(f.id);
+                franchiseMap[fid] = f.name || `Franchise ${fid}`;
+                const divId = String(f.division || '');
+                const confId = String(f.conference || f.conf || divToConfMap[divId] || '1');
+                franchiseConfMap[fid] = confId;
+            }
         });
 
-        return { divToConfMap, franchiseConfMap };
+        return { franchiseMap, franchiseConfMap };
     }
 
     function getFranchiseName(fid) {
-        const normFid = normFranchiseId(fid);
-        const fList = toArray(cachedLeagueInfo?.franchises?.franchise);
-        const fObj = fList.find(f => normFranchiseId(f.id) === normFid);
-        return fObj ? (fObj.name || `Franchise ${normFid}`) : (normFid === '0000' ? 'Free Agent' : `Franchise ${normFid}`);
+        if (!cachedLeagueInfo) return `Franchise ${fid}`;
+        const { franchiseMap } = buildConferenceMap(cachedLeagueInfo);
+        return franchiseMap[fid] || `Franchise ${fid}`;
     }
 
-    // Load FantasyCalc market values from static endpoint. NO fallback calculations.
+    // Static FantasyCalc API Fetcher
     async function fetchFantasyCalcMap() {
         const client = getApiClient();
-        const targetUrl = 'https://dnfl.live/dnfl_market/fantasycalc_values_current.json';
+        const year = cachedLeagueInfo?.year || '2026';
+        const targetUrl = `https://dnfl.live/dnfl_market/${year}/fantasycalc_values_current.json`;
 
         let rawJson = null;
         try {
@@ -222,13 +208,18 @@
             const padded = unpadded.padStart(4, '0');
             const rawName = String(p.name || `Player ${pid}`).trim();
             const formattedName = formatPlayerName(rawName);
+
+            // Read native bye_week parameter directly from MFL player object
+            const rawBye = p.bye_week || p.byeWeek || p.bye;
+            const byeStr = rawBye ? `W${rawBye}` : '-';
+
             const pObj = {
                 id: pid,
                 rawName: rawName,
                 name: formattedName,
                 pos: pos,
                 team: (p.team || p.nflTeam || 'FA').toUpperCase(),
-                bye: p.bye_week ? `W${p.bye_week}` : 'N/A'
+                bye: byeStr
             };
             cachedPlayersMap[pid] = pObj;
             cachedPlayersMap[unpadded] = pObj;
@@ -258,30 +249,24 @@
             cachedAvgScoresMap[unpadded] = ppg;
         });
 
-        // Parallel Fetch Weekly Results (W1 .. W_currentWk)
+        // Fetch Weekly Results (W1 .. W_currentWk)
         cachedWeeklyScoresMap = {};
         const weeklyPromises = [];
         for (let w = 1; w <= currentWk; w++) {
-            weeklyPromises.push(client.fetchData('weeklyResults', { W: w }).catch(() => null));
+            weeklyPromises.push(client.fetchData('playerScores', { W: w }).catch(() => null));
         }
         const weeklyResultsArr = await Promise.all(weeklyPromises);
         weeklyResultsArr.forEach((wRes, idx) => {
             const weekNum = idx + 1;
-            const matchArr = toArray(wRes?.weeklyResults?.matchup || wRes?.weeklyResults?.schedule?.matchup);
-            matchArr.forEach(m => {
-                const franchiseArr = toArray(m.franchise);
-                franchiseArr.forEach(f => {
-                    const playerArr = toArray(f.player);
-                    playerArr.forEach(p => {
-                        const pid = String(p.id || p).trim();
-                        const unpadded = pid.replace(/^0+/, '');
-                        const pts = parseFloat(p.score || 0);
-                        if (!cachedWeeklyScoresMap[pid]) cachedWeeklyScoresMap[pid] = {};
-                        if (!cachedWeeklyScoresMap[unpadded]) cachedWeeklyScoresMap[unpadded] = {};
-                        cachedWeeklyScoresMap[pid][weekNum] = pts;
-                        cachedWeeklyScoresMap[unpadded][weekNum] = pts;
-                    });
-                });
+            const psList = toArray(wRes?.playerScores?.playerScore);
+            psList.forEach(ps => {
+                const pid = String(ps.id || '').trim();
+                const unpadded = pid.replace(/^0+/, '');
+                const pts = parseFloat(ps.score || 0);
+                if (!cachedWeeklyScoresMap[pid]) cachedWeeklyScoresMap[pid] = {};
+                if (!cachedWeeklyScoresMap[unpadded]) cachedWeeklyScoresMap[unpadded] = {};
+                cachedWeeklyScoresMap[pid][weekNum] = pts;
+                cachedWeeklyScoresMap[unpadded][weekNum] = pts;
             });
         });
 
@@ -313,21 +298,35 @@
                 if (franchiseConfMap[fid] === activeConfId) {
                     const type = (t.type || '').toUpperCase();
                     const rawTx = String(t.transaction || t.description || '');
+
+                    // Track if player was ever explicitly dropped or cut
+                    if (type.includes('DROP') || type.includes('CUT') || type.includes('WAIVER_DROP')) {
+                        const droppedPids = rawTx.match(/\b\d{4,5}\b/g) || [];
+                        droppedPids.forEach(pid => {
+                            const cleanPid = String(pid).trim();
+                            const unpadded = cleanPid.replace(/^0+/, '');
+                            cachedWasWaivedSet.add(cleanPid);
+                            cachedWasWaivedSet.add(unpadded);
+                        });
+                    }
+
                     const pids = rawTx.match(/\b\d{4,5}\b/g) || [];
                     pids.forEach(pid => {
                         const cleanPid = String(pid).trim();
                         const unpadded = cleanPid.replace(/^0+/, '');
 
-                        // Track if player was ever claimed off waivers or dropped & added
-                        if (type.includes('BBID') || type.includes('WAIVER') || type.includes('FREE_AGENT') || type.includes('ADD')) {
-                            cachedWasWaivedSet.add(cleanPid);
-                            cachedWasWaivedSet.add(unpadded);
-                        }
-
                         if (!cachedTransAcqMap[cleanPid]) {
                             let acqText = 'FCFS';
                             if (type.includes('BBID') || type.includes('WAIVER') || t.bid || t.bbidAmount) {
-                                const bidAmt = parseFloat(t.bid || t.bbidAmount || t.amount || 0);
+                                // Extract bid dollar amount
+                                let bidAmt = 0;
+                                if (t.bbidAmount !== undefined && t.bbidAmount !== '') bidAmt = parseFloat(t.bbidAmount);
+                                else if (t.bid !== undefined && t.bid !== '') bidAmt = parseFloat(t.bid);
+                                else if (t.amount !== undefined && t.amount !== '') bidAmt = parseFloat(t.amount);
+                                else {
+                                    const match = rawTx.match(/\$(\d+(\.\d+)?)/);
+                                    if (match) bidAmt = parseFloat(match[1]);
+                                }
                                 acqText = `BB $${bidAmt.toFixed(2)}`;
                             } else if (type.includes('TRADE')) {
                                 acqText = 'Trade';
@@ -388,15 +387,15 @@
             const weeklyScores = cachedWeeklyScoresMap[pid] || cachedWeeklyScoresMap[unpadded] || {};
 
             // Acquisition info (Keeper-aware):
-            // 1. If drafted in active conf AND never waived -> Keep draft pick slot (10.05) even if traded!
-            // 2. If waived and claimed -> Use waiver acquisition (BB $8.00 / FCFS)
+            // 1. If drafted in active conf AND never dropped -> Keep draft pick slot (10.05) even if traded!
+            // 2. If dropped and claimed -> Use waiver acquisition (BB $12.50 / FCFS)
             // 3. Free Agents -> '-'
             let acqInfo = '-';
             const draftSlot = cachedDraftPickMap[pid] || cachedDraftPickMap[unpadded];
-            const wasWaived = cachedWasWaivedSet.has(pid) || cachedWasWaivedSet.has(unpadded);
+            const wasDropped = cachedWasWaivedSet.has(pid) || cachedWasWaivedSet.has(unpadded);
             const transAcq = cachedTransAcqMap[pid] || cachedTransAcqMap[unpadded];
 
-            if (draftSlot && !wasWaived) {
+            if (draftSlot && !wasDropped) {
                 acqInfo = draftSlot;
             } else if (transAcq) {
                 acqInfo = transAcq;
@@ -422,228 +421,176 @@
                 isFA: isFA,
                 isMyTeam: isMyTeam,
                 acqInfo: acqInfo,
-                valDelta: 0,
-                badgeType: null // 'lowestFloor' | 'upgradeable' | null
+                valDelta: 0
             });
         });
 
         return masterList;
     }
 
-    // Compute Positional Roster Floors for Active User
+    // Calculate Active User Position Floor Benchmarks & Top FA Values
     function calculateActiveUserFloors(masterList) {
-        const myPlayers = masterList.filter(p => p.isMyTeam);
-
         const posFloors = {
-            QB: { lowestVal: Infinity, lowestPlayer: null, hasFAUpgrade: false, topFaVal: 0 },
-            RB: { lowestVal: Infinity, lowestPlayer: null, hasFAUpgrade: false, topFaVal: 0 },
-            WR: { lowestVal: Infinity, lowestPlayer: null, hasFAUpgrade: false, topFaVal: 0 },
-            TE: { lowestVal: Infinity, lowestPlayer: null, hasFAUpgrade: false, topFaVal: 0 },
-            FLEX: { lowestVal: Infinity, lowestPlayer: null, hasFAUpgrade: false, topFaVal: 0 },
-            PK: { lowestVal: Infinity, lowestPlayer: null, hasFAUpgrade: false, topFaVal: 0 },
-            DEF: { lowestVal: Infinity, lowestPlayer: null, hasFAUpgrade: false, topFaVal: 0 }
+            QB: { lowestVal: 0, topFaVal: 0 },
+            RB: { lowestVal: 0, topFaVal: 0 },
+            WR: { lowestVal: 0, topFaVal: 0 },
+            TE: { lowestVal: 0, topFaVal: 0 },
+            FLEX: { lowestVal: 0, topFaVal: 0 },
+            PK: { lowestVal: 0, topFaVal: 0 },
+            DEF: { lowestVal: 0, topFaVal: 0 }
         };
 
-        // Find lowest rostered market value per position
-        myPlayers.forEach(p => {
+        const myRosterValByPos = { QB: [], RB: [], WR: [], TE: [], PK: [], DEF: [] };
+
+        masterList.forEach(p => {
             const pos = p.pos;
-            if (posFloors[pos]) {
-                if (p.mktVal < posFloors[pos].lowestVal) {
-                    posFloors[pos].lowestVal = p.mktVal;
-                    posFloors[pos].lowestPlayer = p;
+            if (p.isMyTeam && myRosterValByPos[pos]) {
+                myRosterValByPos[pos].push(p.mktVal);
+            }
+            if (p.isFA) {
+                if (posFloors[pos] && p.mktVal > posFloors[pos].topFaVal) {
+                    posFloors[pos].topFaVal = p.mktVal;
+                }
+                if (['RB', 'WR', 'TE'].includes(pos) && p.mktVal > posFloors.FLEX.topFaVal) {
+                    posFloors.FLEX.topFaVal = p.mktVal;
                 }
             }
-            if (['RB', 'WR', 'TE'].includes(pos)) {
-                if (p.mktVal < posFloors.FLEX.lowestVal) {
-                    posFloors.FLEX.lowestVal = p.mktVal;
-                    posFloors.FLEX.lowestPlayer = p;
-                }
+        });
+
+        // Calculate lowest roster value (Floor)
+        Object.keys(myRosterValByPos).forEach(pos => {
+            const vals = myRosterValByPos[pos];
+            if (vals.length > 0) {
+                posFloors[pos].lowestVal = Math.min(...vals);
             }
         });
 
-        // Fix Infinity if position has no rostered players
-        Object.keys(posFloors).forEach(pos => {
-            if (posFloors[pos].lowestVal === Infinity) {
-                posFloors[pos].lowestVal = 0;
-            }
-        });
-
-        // Find top Free Agent value per position
-        const faPlayers = masterList.filter(p => p.isFA);
-        faPlayers.forEach(p => {
-            const pos = p.pos;
-            if (posFloors[pos] && p.mktVal > posFloors[pos].topFaVal) {
-                posFloors[pos].topFaVal = p.mktVal;
-            }
-            if (['RB', 'WR', 'TE'].includes(pos) && p.mktVal > posFloors.FLEX.topFaVal) {
-                posFloors.FLEX.topFaVal = p.mktVal;
-            }
-        });
-
-        // Evaluate if FAs exceed roster floor ($1+)
-        Object.keys(posFloors).forEach(pos => {
-            posFloors[pos].hasFAUpgrade = posFloors[pos].topFaVal > posFloors[pos].lowestVal;
-        });
+        const flexVals = [...myRosterValByPos.RB, ...myRosterValByPos.WR, ...myRosterValByPos.TE];
+        if (flexVals.length > 0) {
+            posFloors.FLEX.lowestVal = Math.min(...flexVals);
+        }
 
         return posFloors;
     }
 
-    // Apply Deltas and Badges to Master Dataset
+    // Annotate Master List with ValDeltas and Badges
     function annotateMasterList(masterList, posFloors) {
-        const faPlayers = masterList.filter(p => p.isFA);
-
-        // Annotate Free Agents with Value Delta vs lowest rostered player
-        faPlayers.forEach(p => {
+        masterList.forEach(p => {
             const pos = p.pos;
-            const floorObj = posFloors[pos] || posFloors.FLEX;
-            const myFloor = floorObj ? floorObj.lowestVal : 0;
-            p.valDelta = p.mktVal - myFloor;
-        });
+            const myFloor = posFloors[pos]?.lowestVal || 0;
 
-        // Annotate My Roster players with Replaceability Badges
-        const myPlayers = masterList.filter(p => p.isMyTeam);
-        const posGroups = {};
-        myPlayers.forEach(p => {
-            if (!posGroups[p.pos]) posGroups[p.pos] = [];
-            posGroups[p.pos].push(p);
-        });
-
-        Object.keys(posGroups).forEach(pos => {
-            const group = posGroups[pos];
-            group.sort((a, b) => a.mktVal - b.mktVal); // Lowest market value first
-
-            const topFaVal = posFloors[pos] ? posFloors[pos].topFaVal : 0;
-
-            group.forEach((p, idx) => {
-                const isLowestInGroup = (idx === 0);
-                if (topFaVal > p.mktVal) { // FA is worth $1+ more
-                    if (isLowestInGroup) {
-                        p.badgeType = 'lowestFloor'; // 🔴 Red
-                    } else {
-                        p.badgeType = 'upgradeable';  // 🟠 Amber
-                    }
-                } else {
-                    p.badgeType = null; // Position secure
-                }
-            });
+            if (p.isFA) {
+                p.valDelta = p.mktVal - myFloor;
+            } else if (p.isMyTeam) {
+                const topFaVal = posFloors[pos]?.topFaVal || 0;
+                p.valDelta = p.mktVal - topFaVal;
+            } else {
+                p.valDelta = 0;
+            }
         });
     }
 
-    // Render Banner
+    // Render Summary Banner & Floor Pills
     function renderSummaryBanner(posFloors) {
-        const bannerEl = document.getElementById('dnfl-waivers-banner-pills');
-        if (!bannerEl) return;
-
-        if (activeUserFid === '0000') {
-            bannerEl.innerHTML = `<span class="dnfl-text-muted"><i class="fa-solid fa-user-shield"></i> Commissioner View: Displaying full league player database and roster assignments.</span>`;
-            return;
-        }
+        const container = document.getElementById('dnfl-waivers-banner');
+        if (!container) return;
 
         const positions = ['QB', 'RB', 'WR', 'TE', 'FLEX', 'PK', 'DEF'];
-        let html = '';
+        let html = '<div class="dnfl-banner-pills-wrapper">';
 
         positions.forEach(pos => {
-            const floorObj = posFloors[pos];
-            if (!floorObj) return;
+            const floorObj = posFloors[pos] || { lowestVal: 0, topFaVal: 0 };
+            const isUpgradeable = floorObj.topFaVal > floorObj.lowestVal && floorObj.topFaVal > 0;
+            const activeClass = (currentPosFilter === pos) ? 'dnfl-floor-pill--active' : '';
+            const statusClass = isUpgradeable ? 'dnfl-floor-pill--upgrade' : 'dnfl-floor-pill--secure';
 
-            const isSecure = !floorObj.hasFAUpgrade;
             const valStr = cachedFcError ? '--' : `$${floorObj.lowestVal.toLocaleString()}`;
-            const statusClass = isSecure ? 'dnfl-floor-pill--secure' : 'dnfl-floor-pill--active';
-            const secureTag = isSecure ? ' ✓' : '';
 
             html += `
-                <button type="button" class="dnfl-floor-pill ${statusClass}" data-pos="${pos}">
+                <div class="dnfl-floor-pill ${statusClass} ${activeClass}" data-pos="${pos}">
                     <span class="dnfl-floor-pill__label">${pos}:</span>
-                    <span class="dnfl-floor-pill__value">${valStr}${secureTag}</span>
-                </button>
+                    <span class="dnfl-floor-pill__value">${valStr}</span>
+                    ${isUpgradeable ? '<i class="fa-solid fa-arrow-trend-up dnfl-pill-icon-amber"></i>' : ''}
+                </div>
             `;
         });
 
-        bannerEl.innerHTML = html;
+        html += '</div>';
+        container.innerHTML = html;
 
-        // Bind click events to pills
-        bannerEl.querySelectorAll('.dnfl-floor-pill').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const pos = btn.getAttribute('data-pos');
-                currentViewMode = 'waiverTargets';
-                currentPosFilter = pos;
-
-                const viewSelect = document.getElementById('dnfl-waivers-view-filter');
+        // Bind click on pills
+        const pills = container.querySelectorAll('.dnfl-floor-pill');
+        pills.forEach(pill => {
+            pill.addEventListener('click', () => {
+                const clickedPos = pill.getAttribute('data-pos');
+                currentPosFilter = (currentPosFilter === clickedPos) ? 'ALL' : clickedPos;
                 const posSelect = document.getElementById('dnfl-waivers-pos-filter');
-                if (viewSelect) viewSelect.value = 'waiverTargets';
-                if (posSelect) posSelect.value = pos;
-
+                if (posSelect) posSelect.value = currentPosFilter;
+                renderSummaryBanner(posFloors);
                 renderTable();
             });
         });
     }
 
-    // Render Table
+    // Render Master Data Table
     function renderTable() {
-        const tableHeadEl = document.getElementById('dnfl-waivers-thead');
-        const tableBodyEl = document.getElementById('dnfl-waivers-tbody');
-        const countSummaryEl = document.getElementById('dnfl-waivers-count-summary');
-        if (!tableBodyEl || !tableHeadEl) return;
+        const tableBody = document.getElementById('dnfl-waivers-tbody');
+        const tableHead = document.getElementById('dnfl-waivers-thead');
+        if (!tableBody || !tableHead) return;
 
-        const masterList = window.DNFL_WAIVERS_MASTER_DATA || [];
+        let masterList = window.DNFL_WAIVERS_MASTER_DATA || [];
         const currentWk = parseInt(cachedLeagueInfo?.currentWk || 1, 10);
 
-        // 1. Filter Data based on Active View & Controls
-        let filtered = masterList.slice();
-
-        // View Mode filter
+        // Filter View Mode
         if (currentViewMode === 'waiverTargets') {
-            filtered = filtered.filter(p => (p.isFA && p.valDelta > 0) || p.isMyTeam);
+            masterList = masterList.filter(p => p.isFA || p.isMyTeam);
         } else if (currentViewMode === 'freeAgents') {
-            filtered = filtered.filter(p => p.isFA);
+            masterList = masterList.filter(p => p.isFA);
         } else if (currentViewMode === 'rostered') {
-            filtered = filtered.filter(p => !p.isFA);
-        } // 'allPlayers' shows all
+            masterList = masterList.filter(p => !p.isFA);
+        }
 
-        // Position filter
+        // Filter Position
         if (currentPosFilter !== 'ALL') {
             if (currentPosFilter === 'FLEX') {
-                filtered = filtered.filter(p => ['RB', 'WR', 'TE'].includes(p.pos));
+                masterList = masterList.filter(p => ['RB', 'WR', 'TE'].includes(p.pos));
             } else {
-                filtered = filtered.filter(p => p.pos === currentPosFilter);
+                masterList = masterList.filter(p => p.pos === currentPosFilter);
             }
         }
 
-        // Search term filter (Punctuation-Agnostic)
-        if (currentSearchTerm) {
-            const cleanTerm = normClean(currentSearchTerm);
-            filtered = filtered.filter(p => 
-                normClean(p.name).includes(cleanTerm) || 
-                normClean(p.rawName).includes(cleanTerm) || 
-                normClean(p.nflTeam).includes(cleanTerm) || 
-                normClean(p.pos).includes(cleanTerm) || 
-                normClean(p.statusText).includes(cleanTerm) ||
-                normClean(p.acqInfo).includes(cleanTerm)
+        // Filter Search Term
+        if (currentSearchTerm.trim() !== '') {
+            const query = currentSearchTerm.toLowerCase().trim();
+            masterList = masterList.filter(p =>
+                p.name.toLowerCase().includes(query) ||
+                p.pos.toLowerCase().includes(query) ||
+                p.nflTeam.toLowerCase().includes(query) ||
+                p.statusText.toLowerCase().includes(query)
             );
         }
 
-        // 2. Sort Data
-        filtered.sort((a, b) => {
+        // Sort Master List
+        masterList.sort((a, b) => {
             let valA = a[currentSortColumn];
             let valB = b[currentSortColumn];
 
-            if (valA === undefined || valA === null) valA = '';
-            if (valB === undefined || valB === null) valB = '';
-
-            if (typeof valA === 'string') valA = valA.toLowerCase();
-            if (typeof valB === 'string') valB = valB.toLowerCase();
+            if (typeof valA === 'string') {
+                valA = valA.toLowerCase();
+                valB = String(valB).toLowerCase();
+            }
 
             if (valA < valB) return currentSortDir === 'asc' ? -1 : 1;
             if (valA > valB) return currentSortDir === 'asc' ? 1 : -1;
             return 0;
         });
 
-        // 3. Determine Column Visibility
+        // Determine Columns to Show
         const showDelta = (currentViewMode === 'waiverTargets' || currentViewMode === 'freeAgents');
-        const showStatus = (currentViewMode !== 'freeAgents');
-        const showAcquired = (currentViewMode !== 'freeAgents');
+        const showStatus = (currentViewMode === 'waiverTargets' || currentViewMode === 'allPlayers' || currentViewMode === 'rostered');
+        const showAcquired = (currentViewMode === 'waiverTargets' || currentViewMode === 'allPlayers' || currentViewMode === 'rostered');
 
-        // 4. Render Header
+        // Build Table Header
         let headHtml = `
             <tr>
                 <th class="dnfl-th-index dnfl-sticky-col-1">#</th>
@@ -658,9 +605,9 @@
         }
 
         headHtml += `
-                <th class="dnfl-th-pts dnfl-sortable" data-sort="ytdPts">Pts ${getSortIcon('ytdPts')}</th>
-                <th class="dnfl-th-ppg dnfl-sortable" data-sort="ppg">PPG ${getSortIcon('ppg')}</th>
-                <th class="dnfl-th-bye dnfl-sortable" data-sort="bye">Bye ${getSortIcon('bye')}</th>
+            <th class="dnfl-th-pts dnfl-sortable" data-sort="ytdPts">Pts ${getSortIcon('ytdPts')}</th>
+            <th class="dnfl-th-ppg dnfl-sortable" data-sort="ppg">PPG ${getSortIcon('ppg')}</th>
+            <th class="dnfl-th-bye dnfl-sortable" data-sort="bye">Bye ${getSortIcon('bye')}</th>
         `;
 
         if (showStatus) {
@@ -671,54 +618,39 @@
             headHtml += `<th class="dnfl-th-acq dnfl-sortable" data-sort="acqInfo">Acquired ${getSortIcon('acqInfo')}</th>`;
         }
 
-        // Render Weekly Columns (W1 .. W_currentWk)
         for (let w = 1; w <= currentWk; w++) {
-            headHtml += `<th class="dnfl-th-wk dnfl-sortable" data-sort="wk_${w}">W${w} ${getSortIcon(`wk_${w}`)}</th>`;
+            headHtml += `<th class="dnfl-th-wk dnfl-sortable" data-sort="w${w}">W${w} ${getSortIcon(`w${w}`)}</th>`;
         }
 
-        headHtml += `</tr>`;
-        tableHeadEl.innerHTML = headHtml;
+        headHtml += '</tr>';
+        tableHead.innerHTML = headHtml;
 
-        // 5. Render Rows
-        if (filtered.length === 0) {
+        // Build Table Body
+        if (masterList.length === 0) {
             let colSpan = 8 + (showDelta ? 1 : 0) + (showStatus ? 1 : 0) + (showAcquired ? 1 : 0) + currentWk;
-            tableBodyEl.innerHTML = `
-                <tr>
-                    <td colspan="${colSpan}" class="dnfl-td-empty">
-                        <i class="fa-solid fa-circle-info"></i> No players found matching the selected criteria.
-                    </td>
-                </tr>
-            `;
-            if (countSummaryEl) countSummaryEl.textContent = `Showing 0 players`;
+            tableBody.innerHTML = `<tr><td colspan="${colSpan}" class="dnfl-td-empty"><i class="fa-solid fa-circle-info"></i> No matching player records found.</td></tr>`;
             return;
         }
 
         let bodyHtml = '';
-        filtered.forEach((p, idx) => {
-            const rankIndex = idx + 1; // Always dynamic 1..N
-            let rowClass = idx % 2 === 0 ? 'dnfl-row-even' : 'dnfl-row-odd';
+        masterList.forEach((p, idx) => {
+            let rowClass = (idx % 2 === 0) ? 'dnfl-row-even' : 'dnfl-row-odd';
+            if (p.isMyTeam) rowClass = 'dnfl-row-my-team';
+            else if (p.isFA && currentViewMode === 'allPlayers') rowClass = 'dnfl-row-fa';
 
-            if (p.isMyTeam) {
-                rowClass = 'dnfl-row-my-team'; // Canary Yellow
-            } else if (currentViewMode === 'allPlayers' && p.isFA) {
-                rowClass = 'dnfl-row-fa'; // Mint Green Tint
-            }
-
-            // Pos badge
-            const posBadgeClass = `dnfl-pos-badge dnfl-pos-${p.pos.toLowerCase()}`;
-
-            // Clean Currency in Val column
+            const posClass = `dnfl-pos-${p.pos.toLowerCase()}`;
             let valDisplay = cachedFcError ? '--' : `$${p.mktVal.toLocaleString()}`;
-
-            // Delta Column Badges
             let deltaDisplay = '--';
+
             if (cachedFcError) {
                 deltaDisplay = '--';
-            } else if (p.isMyTeam && p.badgeType) {
-                if (p.badgeType === 'lowestFloor') {
+            } else if (p.isMyTeam) {
+                if (p.valDelta < 0) {
                     deltaDisplay = `<span class="dnfl-badge-replace-red">-$${Math.abs(p.valDelta).toLocaleString()} <i class="fa-solid fa-triangle-exclamation"></i></span>`;
-                } else if (p.badgeType === 'upgradeable') {
-                    deltaDisplay = `<span class="dnfl-badge-replace-amber">-$${Math.abs(p.valDelta).toLocaleString()} <i class="fa-solid fa-arrow-trend-up"></i></span>`;
+                } else if (p.valDelta === 0) {
+                    deltaDisplay = `<span class="dnfl-badge-replace-amber">-$0 <i class="fa-solid fa-arrow-trend-up"></i></span>`;
+                } else {
+                    deltaDisplay = `<span class="dnfl-badge-green">+$${p.valDelta.toLocaleString()}</span>`;
                 }
             } else if (p.isFA) {
                 if (p.valDelta > 0) {
@@ -726,15 +658,15 @@
                 } else {
                     deltaDisplay = `<span class="dnfl-text-muted">-$${Math.abs(p.valDelta).toLocaleString()}</span>`;
                 }
-            } else if (p.isMyTeam) {
+            } else {
                 deltaDisplay = `<span class="dnfl-badge-green">+$${p.mktVal.toLocaleString()}</span>`;
             }
 
             bodyHtml += `
                 <tr class="${rowClass}">
-                    <td class="dnfl-td-index dnfl-sticky-col-1">${rankIndex}</td>
+                    <td class="dnfl-td-index dnfl-sticky-col-1">${idx + 1}</td>
                     <td class="dnfl-td-player dnfl-sticky-col-2">${p.name}</td>
-                    <td class="dnfl-td-pos"><span class="${posBadgeClass}">${p.pos}</span></td>
+                    <td class="dnfl-td-pos"><span class="dnfl-pos-badge ${posClass}">${p.pos}</span></td>
                     <td class="dnfl-td-nfl">${p.nflTeam}</td>
                     <td class="dnfl-td-val">${valDisplay}</td>
             `;
@@ -744,49 +676,51 @@
             }
 
             bodyHtml += `
-                    <td class="dnfl-td-pts">${parseFloat(p.ytdPts || 0).toFixed(2)}</td>
-                    <td class="dnfl-td-ppg">${parseFloat(p.ppg || 0).toFixed(2)}</td>
-                    <td class="dnfl-td-bye">${p.bye}</td>
+                <td class="dnfl-td-pts">${p.ytdPts.toFixed(1)}</td>
+                <td class="dnfl-td-ppg">${p.ppg.toFixed(1)}</td>
+                <td class="dnfl-td-bye">${p.bye}</td>
             `;
 
             if (showStatus) {
-                let statusDisplay = p.isFA ? `<span class="dnfl-badge-fa">Free Agent</span>` : p.statusText;
-                bodyHtml += `<td class="dnfl-td-status">${statusDisplay}</td>`;
+                bodyHtml += `<td class="dnfl-td-status">${p.statusText}</td>`;
             }
 
             if (showAcquired) {
-                let acqDisplay = p.isFA ? (currentViewMode === 'allPlayers' ? 'N/A' : '-') : p.acqInfo;
-                bodyHtml += `<td class="dnfl-td-acq">${acqDisplay}</td>`;
+                bodyHtml += `<td class="dnfl-td-acq">${p.acqInfo}</td>`;
             }
 
-            // Render Weekly Scores
             for (let w = 1; w <= currentWk; w++) {
-                const wkPts = p.weeklyScores[w] !== undefined ? parseFloat(p.weeklyScores[w]).toFixed(2) : '--';
-                bodyHtml += `<td class="dnfl-td-wk">${wkPts}</td>`;
+                const wScore = p.weeklyScores[w] !== undefined ? p.weeklyScores[w].toFixed(2) : '-';
+                bodyHtml += `<td class="dnfl-td-wk">${wScore}</td>`;
             }
 
-            bodyHtml += `</tr>`;
+            bodyHtml += '</tr>';
         });
 
-        tableBodyEl.innerHTML = bodyHtml;
+        tableBody.innerHTML = bodyHtml;
+        bindSortEvents();
+    }
 
-        if (countSummaryEl) {
-            countSummaryEl.textContent = `Showing ${filtered.length} players`;
-        }
+    // Bind Sorting Events
+    function bindSortEvents() {
+        const tableHead = document.getElementById('dnfl-waivers-thead');
+        if (!tableHead) return;
 
-        // Bind Header Sorting Click Events
-        tableHeadEl.querySelectorAll('.dnfl-sortable').forEach(th => {
+        const sortables = tableHead.querySelectorAll('.dnfl-sortable');
+        sortables.forEach(th => {
             th.addEventListener('click', () => {
                 const col = th.getAttribute('data-sort');
-                if (col.startsWith('wk_')) {
-                    const wkNum = parseInt(col.replace('wk_', ''), 10);
+                if (!col) return;
+
+                if (col.startsWith('w')) {
+                    const wkNum = parseInt(col.replace('w', ''), 10);
                     if (currentSortColumn === col) {
                         currentSortDir = currentSortDir === 'asc' ? 'desc' : 'asc';
                     } else {
                         currentSortColumn = col;
                         currentSortDir = 'desc';
                     }
-                    // Sort by specific weekly score
+                    let masterList = window.DNFL_WAIVERS_MASTER_DATA || [];
                     masterList.forEach(p => p[col] = p.weeklyScores[wkNum] || 0);
                 } else {
                     if (currentSortColumn === col) {
@@ -808,7 +742,6 @@
 
     // Bind Control Bar Events
     function bindToolbarEvents() {
-        // View Select
         const viewSelect = document.getElementById('dnfl-waivers-view-filter');
         if (viewSelect) {
             viewSelect.addEventListener('change', () => {
@@ -819,7 +752,6 @@
             });
         }
 
-        // Position Select
         const posSelect = document.getElementById('dnfl-waivers-pos-filter');
         if (posSelect) {
             posSelect.addEventListener('change', () => {
@@ -828,7 +760,6 @@
             });
         }
 
-        // Search Input
         const searchInput = document.getElementById('dnfl-waivers-search-input');
         if (searchInput) {
             searchInput.addEventListener('input', () => {
@@ -870,7 +801,7 @@
 
             renderTable();
 
-            console.log('[DNFL Waivers] Module v4.07 initialized successfully.');
+            console.log('[DNFL Waivers] Module v4.08 initialized successfully.');
         } catch (err) {
             console.error('[DNFL Waivers Error]:', err);
             const statusEl = document.getElementById('dnfl-waivers-count-summary');
@@ -896,4 +827,4 @@
         getMasterData: () => window.DNFL_WAIVERS_MASTER_DATA
     };
 
-})(typeof window !== "undefined" ? window : this, typeof document !== "undefined" ? document : null);
+})(typeof window !== 'undefined' ? window : this, typeof document !== 'undefined' ? document : null);
