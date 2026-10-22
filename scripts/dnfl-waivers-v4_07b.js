@@ -896,4 +896,4 @@
         getMasterData: () => window.DNFL_WAIVERS_MASTER_DATA
     };
 
-})();
+})(typeof window !== "undefined" ? window : this, typeof document !== "undefined" ? document : null);
