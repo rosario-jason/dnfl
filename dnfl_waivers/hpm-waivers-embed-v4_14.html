@@ -1,0 +1,80 @@
+<!-- Duke Networking Fantasy League (DNFL) - Waiver Target & Player Matrix Embed v4.14 -->
+<div class="dnfl-card" id="dnfl-waivers-container">
+    
+    <!-- LEVEL 1: CARD HEADER -->
+    <div class="dnfl-card-header">
+        <h3 class="dnfl-card-title">
+            <i class="fa-solid fa-bullseye"></i> DNFL Waiver Targets
+        </h3>
+    </div>
+
+    <!-- LEVEL 2: CARD BODY -->
+    <div class="dnfl-card-body">
+
+        <!-- BENCHMARK FLOOR LEGEND PANEL -->
+        <div class="dnfl-legend-panel" id="dnfl-waivers-benchmark-panel">
+            <div class="dnfl-legend-header">
+                <span class="dnfl-legend-title">
+                    <i class="fa-solid fa-scale-balanced"></i> Position Roster Floors:
+                </span>
+            </div>
+            <div class="dnfl-legend-pills-wrapper" id="dnfl-waivers-banner-pills">
+                <!-- Dynamic Floor Pills Rendered via JS -->
+            </div>
+        </div>
+
+        <!-- LEVEL 3: CONTROL TOOLBAR -->
+        <div class="dnfl-toolbar">
+            
+            <!-- VIEW SELECTOR -->
+            <div class="dnfl-filter-group">
+                <label for="dnfl-waivers-view-filter">View</label>
+                <select id="dnfl-waivers-view-filter" class="dnfl-select">
+                    <option value="waiverTargets">Waiver Targets</option>
+                    <option value="allPlayers">All Players</option>
+                    <option value="freeAgents">Free Agents</option>
+                    <option value="rostered">Rostered Players</option>
+                </select>
+            </div>
+
+            <!-- POSITION SELECTOR -->
+            <div class="dnfl-filter-group">
+                <label for="dnfl-waivers-pos-filter">Position</label>
+                <select id="dnfl-waivers-pos-filter" class="dnfl-select">
+                    <option value="ALL">All Positions</option>
+                    <option value="QB">QB</option>
+                    <option value="RB">RB</option>
+                    <option value="WR">WR</option>
+                    <option value="TE">TE</option>
+                    <option value="FLEX">FLEX (RB/WR/TE)</option>
+                    <option value="PK">PK</option>
+                    <option value="DEF">DEF</option>
+                </select>
+            </div>
+
+            <!-- INLINE SEARCH INPUT -->
+            <div class="dnfl-filter-group dnfl-search-group">
+                <label for="dnfl-waivers-search-input">Search Player</label>
+                <input type="text" id="dnfl-waivers-search-input" class="dnfl-input" placeholder="Search name, team, owner...">
+            </div>
+
+        </div>
+
+        <!-- SUMMARY COUNT & DATA TABLE WRAPPER -->
+        <div class="dnfl-table-summary">
+            <span id="dnfl-waivers-count-summary" class="dnfl-text-muted">Loading players...</span>
+        </div>
+        
+        <div class="dnfl-table-wrapper">
+            <table class="dnfl-table dnfl-waivers-table">
+                <thead id="dnfl-waivers-thead">
+                    <!-- Dynamic Headers Rendered via JS -->
+                </thead>
+                <tbody id="dnfl-waivers-tbody">
+                    <!-- Dynamic Rows Rendered via JS -->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
